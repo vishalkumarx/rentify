@@ -217,6 +217,7 @@ a:hover {
 
 .app-main {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
   padding-top: 60px;
@@ -284,6 +285,7 @@ a:hover {
     bottom: 0;
     width: 240px;
     height: 100%;
+    flex-shrink: 0;
     flex-direction: column;
     justify-content: flex-start;
     padding-top: 24px;
