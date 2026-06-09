@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 export default function ItemDetail() {
@@ -10,7 +10,7 @@ export default function ItemDetail() {
   const navigate = useNavigate();
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
-  const [zoomImage, setZoomImage] = useState<string | null>(null);
+  const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
 
   const item = items.find(i => i.id === Number(id));
 
@@ -22,6 +22,8 @@ export default function ItemDetail() {
       </div>
     );
   }
+
+  const allImages = [item.image, ...(item.images || [])];
 
   const handleMessageClick = () => {
     const ownerId = item.userId || `user-${item.id}`;
@@ -69,12 +71,12 @@ export default function ItemDetail() {
           
           {/* Main Image */}
           <div 
-            onClick={() => setZoomImage(item.image)}
+            onClick={() => setZoomImageIndex(0)}
             style={{ width: '100%', aspectRatio: '4/3', position: 'relative', cursor: 'pointer' }}
           >
             <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             <div style={{ position: 'absolute', bottom: '16px', left: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 700, backdropFilter: 'blur(8px)' }}>
-              1 / {item.images ? item.images.length + 1 : 1}
+              1 / {allImages.length}
             </div>
             <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 600, backdropFilter: 'blur(8px)', fontSize: '12px' }}>
               Tap to Zoom
@@ -97,7 +99,7 @@ export default function ItemDetail() {
             )}
 
             <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--primary-glow)', color: 'var(--primary)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--primary)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
                 <Tag size={14} /> {item.category}
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
@@ -118,7 +120,7 @@ export default function ItemDetail() {
                   {item.images.map((img, idx) => (
                     <img 
                       key={idx} 
-                      onClick={() => setZoomImage(img)}
+                      onClick={() => setZoomImageIndex(idx + 1)}
                       src={img} 
                       alt={`Pic ${idx+2}`} 
                       style={{ width: '120px', height: '120px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} 
@@ -165,26 +167,38 @@ export default function ItemDetail() {
       </main>
 
       {/* Image Zoom Modal */}
-      {zoomImage && (
+      {zoomImageIndex !== null && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
           background: 'rgba(0,0,0,0.95)', zIndex: 100,
           display: 'flex', flexDirection: 'column'
         }}>
-          <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', zIndex: 101 }}>
+          <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 101 }}>
+            <span style={{ color: 'white', fontWeight: 600 }}>{zoomImageIndex + 1} / {allImages.length}</span>
             <button 
-              onClick={() => setZoomImage(null)}
+              onClick={() => setZoomImageIndex(null)}
               style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <X size={24} />
             </button>
           </div>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
             <TransformWrapper initialScale={1} minScale={0.5} maxScale={4} centerOnInit>
               <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
-                <img src={zoomImage} alt="Zoomed" style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }} />
+                <img src={allImages[zoomImageIndex]} alt="Zoomed" style={{ maxWidth: '100vw', maxHeight: '70vh', objectFit: 'contain' }} />
               </TransformComponent>
             </TransformWrapper>
+            
+            {zoomImageIndex > 0 && (
+              <button onClick={() => setZoomImageIndex(i => (i !== null ? i - 1 : 0))} style={{ position: 'absolute', left: 10, background: 'rgba(255,255,255,0.2)', borderRadius: '50%', padding: '10px', color: 'white', border: 'none' }}>
+                <ChevronLeft size={24} />
+              </button>
+            )}
+            {zoomImageIndex < allImages.length - 1 && (
+              <button onClick={() => setZoomImageIndex(i => (i !== null ? i + 1 : 0))} style={{ position: 'absolute', right: 10, background: 'rgba(255,255,255,0.2)', borderRadius: '50%', padding: '10px', color: 'white', border: 'none' }}>
+                <ChevronRight size={24} />
+              </button>
+            )}
           </div>
           <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
             Pinch or double tap to zoom. Drag to pan.
