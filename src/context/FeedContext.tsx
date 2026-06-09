@@ -34,13 +34,6 @@ type FeedContextType = {
   toggleBookingStatus: (id: number) => void;
 };
 
-const mockSeller1: SellerProfile = {
-  id: 'u1', name: 'Sarah Jenkins', rating: 4.9, reviewCount: 42, memberSince: 'Sep 2023', verifications: ['ID Verified', 'University Email Confirmed']
-};
-const mockSeller2: SellerProfile = {
-  id: 'u2', name: 'David Chen', rating: 4.6, reviewCount: 15, memberSince: 'Jan 2024', verifications: ['University Email Confirmed']
-};
-
 const initialItems: RentalItem[] = [];
 
 const FeedContext = createContext<FeedContextType>({
