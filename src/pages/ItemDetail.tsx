@@ -135,7 +135,7 @@ export default function ItemDetail() {
                 <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>Meet the Owner</h3>
                 
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                  <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: 'var(--text-main)' }}>
+                  <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: 'var(--text-main)' }}>
                     {item.seller.name.charAt(0)}
                   </div>
                   <div style={{ flex: 1 }}>
