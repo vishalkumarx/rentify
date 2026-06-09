@@ -20,7 +20,7 @@ export default function MobileLayout() {
       
       {/* Top Action Bar */}
       <header className="app-header">
-        <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px' }}>
+        <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>
           {getTitle()}
         </h1>
         <button style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'transparent', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
