@@ -164,6 +164,25 @@ a:hover {
   color: var(--primary-hover);
 }
 
+/* Profile Layout */
+.profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 /* Responsive Layout */
 .app-container {
   display: flex;
@@ -288,5 +307,12 @@ a:hover {
   
   .nav-item-label {
     font-size: 16px;
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 32px;
+    align-items: start;
   }
 }
