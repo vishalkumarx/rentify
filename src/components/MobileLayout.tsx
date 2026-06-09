@@ -40,7 +40,7 @@ export default function MobileLayout() {
 
       {/* Scrollable Content Area */}
       <main className="app-main hide-scrollbar">
-        <div className="animate-fade-in" style={{ height: '100%' }}>
+        <div className="animate-fade-in" style={{ minHeight: '100%' }}>
           <Outlet />
         </div>
       </main>

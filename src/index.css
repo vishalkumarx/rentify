@@ -194,7 +194,7 @@ a:hover {
   overflow-y: auto;
   overflow-x: hidden;
   padding-top: 60px;
-  padding-bottom: 80px;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling: touch;
 }
 
