@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, Send } from 'lucide-react';
+import { ChevronLeft, Send, ShieldAlert } from 'lucide-react';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
@@ -69,6 +69,22 @@ export default function Chat() {
             <h3 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 600 }}>{conversation.itemTitle}</h3>
             <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>Inquiry about this item</p>
           </div>
+        </div>
+
+        {/* Safety Warning Banner */}
+        <div style={{
+          background: 'var(--surface)',
+          border: '1px solid rgba(255, 193, 7, 0.4)',
+          borderRadius: '12px',
+          padding: '12px',
+          display: 'flex',
+          gap: '12px',
+          alignItems: 'flex-start'
+        }}>
+          <ShieldAlert size={20} color="var(--warning)" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            <strong style={{ color: 'var(--text-main)' }}>Safety Notice:</strong> Never pay in advance or share personal banking details. Keep all communication inside the app for your protection.
+          </p>
         </div>
 
         {conversationMessages.length === 0 ? (
