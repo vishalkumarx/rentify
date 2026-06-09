@@ -26,7 +26,7 @@ export default function Login() {
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', background: 'var(--primary)', position: 'relative' }}>
       
       {/* Top Yellow Section */}
-      <div style={{ padding: '24px 24px 48px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ padding: '24px 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
           <button onClick={() => navigate(-1)} style={{ background: 'transparent', padding: 0, border: 'none', color: '#111827', boxShadow: 'none' }}>
             <ArrowLeft size={24} />
@@ -50,8 +50,9 @@ export default function Login() {
         padding: '32px 24px 48px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '24px'
+        alignItems: 'center'
       }}>
+        <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
         
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
@@ -164,6 +165,7 @@ export default function Login() {
           Bypass Login (Developer Mode)
         </button>
 
+        </div>
       </div>
     </div>
   );
