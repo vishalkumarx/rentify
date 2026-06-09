@@ -14,9 +14,16 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) setError(error.message);
-    else navigate('/');
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) {
+      setError(error.message);
+    } else if (data.session) {
+      navigate('/');
+    } else {
+      setError('Success! Please check your email to verify your account before logging in.');
+      // Optional: Clear the password field so they can type it later on login
+      setPassword('');
+    }
     setLoading(false);
   };
 
