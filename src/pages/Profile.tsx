@@ -91,7 +91,7 @@ export default function Profile() {
                     <img src={item.image} alt={item.title} style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                       <h4 style={{ margin: '0 0 4px', fontSize: '15px', color: 'var(--text-main)' }}>{item.title}</h4>
-                      <p style={{ margin: 0, color: 'var(--primary)', fontWeight: 600 }}>₹{item.price}/day</p>
+                      <p style={{ margin: 0, color: 'var(--text-main)', fontWeight: 600 }}>₹{item.price}/day</p>
                     </div>
                   </div>
                 ))}

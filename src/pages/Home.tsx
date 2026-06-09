@@ -222,7 +222,7 @@ export default function Home() {
               />
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>
-                <p style={{ fontSize: '16px', color: 'var(--primary)', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
+                <p style={{ fontSize: '16px', color: 'var(--text-main)', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', maxWidth: 'calc(100% - 36px)' }}>
