@@ -185,7 +185,7 @@ export default function Home() {
       <div style={{ 
         padding: '0 20px 24px', 
         display: 'grid', 
-        gridTemplateColumns: '1fr 1fr', 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
         gap: '16px' 
       }}>
         {filteredItems.length === 0 ? (
