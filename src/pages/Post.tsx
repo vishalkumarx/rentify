@@ -227,7 +227,16 @@ export default function Post() {
             </div>
           </div>
           
-          <button type="submit" disabled={loading} style={{ marginTop: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', padding: '12px 16px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+            <div style={{ color: 'var(--danger)', marginTop: '2px' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+              <span style={{ color: 'var(--danger)', fontWeight: 600 }}>Policy Warning:</span> Do not list prohibited, dangerous, or morally objectionable items. Violations will result in immediate account termination.
+            </p>
+          </div>
+
+          <button type="submit" disabled={loading} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px' }}>
             <Upload size={22} />
             {loading ? 'Publishing...' : 'Publish Listing'}
           </button>
