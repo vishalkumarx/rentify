@@ -36,17 +36,20 @@ function AppRoutes() {
       <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
       <Route path="/signup" element={<AuthRoute><Signup /></AuthRoute>} />
       
-      {/* Authenticated Mobile Layout Routes */}
-      <Route element={<ProtectedRoute><MobileLayout /></ProtectedRoute>}>
+      {/* Mobile Layout Routes */}
+      <Route element={<MobileLayout />}>
+        {/* Public Feed */}
         <Route path="/" element={<Home />} />
-        <Route path="/post" element={<Post />} />
-        <Route path="/messages" element={<Messages />} />
-        <Route path="/profile" element={<Profile />} />
+        
+        {/* Protected Navigation Tabs */}
+        <Route path="/post" element={<ProtectedRoute><Post /></ProtectedRoute>} />
+        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       </Route>
       
       {/* Full Screen Modals/Pages */}
+      <Route path="/item/:id" element={<ItemDetail />} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-      <Route path="/item/:id" element={<ProtectedRoute><ItemDetail /></ProtectedRoute>} />
     </Routes>
   );
 }

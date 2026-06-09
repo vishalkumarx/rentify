@@ -4,6 +4,7 @@ import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const [location, setLocation] = useState('Locating...');
@@ -18,6 +19,7 @@ export default function Home() {
 
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
+  const { session } = useAuth();
   const navigate = useNavigate();
   
   const fetchLocation = () => {
@@ -69,6 +71,10 @@ export default function Home() {
 
   const handleMessageClick = (e: React.MouseEvent, item: any) => {
     e.stopPropagation();
+    if (!session) {
+      navigate('/login');
+      return;
+    }
     const ownerId = item.userId || `user-${item.id}`; // Mock an owner ID
     const ownerName = `Owner of ${item.title}`;
     const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
@@ -256,7 +262,14 @@ export default function Home() {
               
               {/* Heart Button */}
               <button 
-                onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
+                onClick={(e) => { 
+                  e.stopPropagation(); 
+                  if (!session) {
+                    navigate('/login');
+                  } else {
+                    toggleLike(item.id); 
+                  }
+                }}
                 style={{ 
                   position: 'absolute', 
                   top: '8px', 

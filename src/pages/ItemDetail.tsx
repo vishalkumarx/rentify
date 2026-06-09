@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
+import { useAuth } from '../context/AuthContext';
 import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
@@ -10,6 +11,7 @@ export default function ItemDetail() {
   const navigate = useNavigate();
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
+  const { session } = useAuth();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
 
   const item = items.find(i => i.id === Number(id));
@@ -26,6 +28,10 @@ export default function ItemDetail() {
   const allImages = [item.image, ...(item.images || [])];
 
   const handleMessageClick = () => {
+    if (!session) {
+      navigate('/login');
+      return;
+    }
     const ownerId = item.userId || `user-${item.id}`;
     const ownerName = `Owner of ${item.title}`;
     const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
@@ -58,7 +64,13 @@ export default function ItemDetail() {
           {item.title}
         </h1>
         <button 
-          onClick={() => toggleLike(item.id)} 
+          onClick={() => {
+            if (!session) {
+              navigate('/login');
+            } else {
+              toggleLike(item.id);
+            }
+          }} 
           style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: item.liked ? 'var(--danger)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
         >
           <Heart size={20} fill={item.liked ? 'var(--danger)' : 'none'} />
