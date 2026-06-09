@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { ArrowRight } from 'lucide-react';
 
 export default function Signup() {
@@ -9,6 +10,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { loginAsGuest } = useAuth();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,6 +134,22 @@ export default function Signup() {
             <ArrowRight size={18} color="var(--text-muted)" />
           </button>
         </div>
+
+        <button 
+          onClick={loginAsGuest} 
+          style={{ 
+            marginTop: '16px', 
+            background: 'transparent', 
+            border: 'none', 
+            color: 'var(--text-muted)', 
+            boxShadow: 'none',
+            textDecoration: 'underline',
+            fontSize: '14px',
+            cursor: 'pointer'
+          }}
+        >
+          Bypass Registration (Developer Mode)
+        </button>
 
         </div>
       </div>
