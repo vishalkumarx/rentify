@@ -208,7 +208,7 @@ export default function ItemDetail() {
         justifyContent: 'center'
       }}>
         <div style={{ maxWidth: '800px', width: '100%' }}>
-          <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px' }}>
+          <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none' }}>
             <MessageCircle size={22} />
             Message Owner
           </button>

@@ -83,7 +83,7 @@ export default function Post() {
               <div 
                 onClick={() => fileInputRef.current?.click()}
                 className="glass-panel" 
-                style={{ height: '240px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed', borderWidth: '2px', cursor: 'pointer', color: 'var(--primary)' }}
+                style={{ height: '240px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderStyle: 'dashed', borderWidth: '2px', cursor: 'pointer', color: 'var(--text-main)' }}
               >
                 <Camera size={36} style={{ marginBottom: '12px' }} />
                 <span style={{ fontWeight: 600, fontSize: '15px' }}>Add Cover</span>
