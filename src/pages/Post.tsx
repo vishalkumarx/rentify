@@ -239,7 +239,7 @@ export default function Post() {
             </p>
           </div>
 
-          <button type="submit" disabled={loading} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--text-main)', color: 'var(--surface)' }}>
+          <button type="submit" disabled={loading} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none' }}>
             <Upload size={22} />
             {loading ? 'Publishing...' : 'Publish Listing'}
           </button>
