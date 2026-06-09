@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, PlusSquare, User, Bell, MessageCircle, Search } from 'lucide-react';
+import { Home, PlusSquare, User, Bell, MessageCircle } from 'lucide-react';
 
 export default function MobileLayout() {
   const location = useLocation();

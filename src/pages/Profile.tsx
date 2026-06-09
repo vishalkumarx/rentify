@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { useFeed } from '../context/FeedContext';
-import { User as UserIcon, Settings, LogOut, Package, Heart, Star, CreditCard, Shield, ChevronRight } from 'lucide-react';
+import { User as UserIcon, Settings, LogOut, Package, Heart, CreditCard, Shield, ChevronRight } from 'lucide-react';
 
 export default function Profile() {
   const { user } = useAuth();
