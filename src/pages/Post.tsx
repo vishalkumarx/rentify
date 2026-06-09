@@ -75,7 +75,7 @@ export default function Post() {
             {images[0] ? (
               <div style={{ position: 'relative', height: '240px' }}>
                 <img src={images[0]} alt="Cover" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
-                <button type="button" onClick={() => removeImage(0)} style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'var(--surface)', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
+                <button type="button" onClick={() => removeImage(0)} style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
                   <X size={18} />
                 </button>
               </div>
@@ -95,7 +95,7 @@ export default function Post() {
               {images[1] ? (
                 <div style={{ position: 'relative', height: '100%' }}>
                   <img src={images[1]} alt="Pic 2" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
-                  <button type="button" onClick={() => removeImage(1)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', padding: 0, borderRadius: '14px', background: 'var(--surface)', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
+                  <button type="button" onClick={() => removeImage(1)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', padding: 0, borderRadius: '14px', background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
                     <X size={16} />
                   </button>
                 </div>
@@ -109,7 +109,7 @@ export default function Post() {
               {images[2] ? (
                 <div style={{ position: 'relative', height: '100%' }}>
                   <img src={images[2]} alt="Pic 3" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '16px' }} />
-                  <button type="button" onClick={() => removeImage(2)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', padding: 0, borderRadius: '14px', background: 'var(--surface)', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
+                  <button type="button" onClick={() => removeImage(2)} style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', padding: 0, borderRadius: '14px', background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
                     <X size={16} />
                   </button>
                 </div>
