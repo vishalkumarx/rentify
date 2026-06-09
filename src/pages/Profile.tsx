@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { User as UserIcon, Settings, LogOut, Package, Heart, CreditCard, Shield, ChevronRight } from 'lucide-react';
+import { User as UserIcon, Settings, LogOut, Package, Heart, CreditCard, Shield, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
 
 export default function Profile() {
   const { user } = useAuth();
@@ -26,16 +26,31 @@ export default function Profile() {
       {/* Sidebar: Profile Info & Settings */}
       <div className="profile-sidebar">
         {/* Profile Header */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}>
-            <UserIcon size={36} />
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0, fontSize: '32px', fontWeight: 700 }}>
+              C
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Campus User</h2>
+                <ShieldCheck size={20} color="var(--success)" />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                <Star size={16} fill="var(--warning)" color="var(--warning)" />
+                <span style={{ fontSize: '15px', fontWeight: 700 }}>4.8</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(24 reviews)</span>
+              </div>
+            </div>
           </div>
-          <div style={{ overflow: 'hidden' }}>
-            <h2 style={{ fontSize: '22px', margin: '0 0 4px', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Campus User</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '15px', margin: 0, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user?.email || 'guest@campusrent.com'}</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '6px', color: 'var(--secondary)' }}>
-              <Shield size={14} />
-              <span style={{ fontSize: '13px', fontWeight: 600 }}>Verified Student</span>
+          
+          <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <h4 style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Verifications</h4>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
+              <CheckCircle2 size={16} /> ID Verified
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
+              <CheckCircle2 size={16} /> University Email Confirmed
             </div>
           </div>
         </div>

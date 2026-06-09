@@ -1,6 +1,15 @@
 import { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 
+export type SellerProfile = {
+  id: string;
+  name: string;
+  rating: number;
+  reviewCount: number;
+  memberSince: string;
+  verifications: string[];
+};
+
 export type RentalItem = {
   id: number;
   title: string;
@@ -12,6 +21,9 @@ export type RentalItem = {
   images?: string[]; // Additional images
   description?: string;
   userId?: string;
+  itemRating?: number;
+  itemReviewCount?: number;
+  seller?: SellerProfile;
 };
 
 type FeedContextType = {
@@ -20,10 +32,17 @@ type FeedContextType = {
   toggleLike: (id: number) => void;
 };
 
+const mockSeller1: SellerProfile = {
+  id: 'u1', name: 'Sarah Jenkins', rating: 4.9, reviewCount: 42, memberSince: 'Sep 2023', verifications: ['ID Verified', 'University Email Confirmed']
+};
+const mockSeller2: SellerProfile = {
+  id: 'u2', name: 'David Chen', rating: 4.6, reviewCount: 15, memberSince: 'Jan 2024', verifications: ['University Email Confirmed']
+};
+
 const initialItems: RentalItem[] = [
-  { id: 1, title: 'MacBook Pro M2', price: '400', category: 'Electronics', department: 'Computer Science', liked: false, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400' },
-  { id: 2, title: 'Sony A7III Camera', price: '350', category: 'Electronics', department: 'Mass Communication', liked: true, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=400' },
-  { id: 3, title: 'Electric Scooter', price: '150', category: 'Mobility', department: 'Mechanical Engineering', liked: false, image: 'https://images.unsplash.com/photo-1593805342412-2c5e5233bc54?auto=format&fit=crop&q=80&w=400' },
+  { id: 1, title: 'MacBook Pro M2', price: '400', category: 'Electronics', department: 'Computer Science', liked: false, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400', itemRating: 4.8, itemReviewCount: 12, seller: mockSeller1 },
+  { id: 2, title: 'Sony A7III Camera', price: '350', category: 'Electronics', department: 'Mass Communication', liked: true, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=400', itemRating: 5.0, itemReviewCount: 8, seller: mockSeller2 },
+  { id: 3, title: 'Electric Scooter', price: '150', category: 'Mobility', department: 'Mechanical Engineering', liked: false, image: 'https://images.unsplash.com/photo-1593805342412-2c5e5233bc54?auto=format&fit=crop&q=80&w=400', itemRating: 4.2, itemReviewCount: 5, seller: mockSeller1 },
 ];
 
 const FeedContext = createContext<FeedContextType>({

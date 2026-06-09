@@ -127,27 +127,30 @@ export default function Post() {
           <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 700 }}>Details</h2>
           
           {/* Category Selector */}
-          <div className="hide-scrollbar" style={{ overflowX: 'auto', display: 'flex', gap: '8px', margin: '-8px 0 4px' }}>
-            {postingCategories.map(cat => (
-              <div 
-                key={cat}
-                onClick={() => setCategory(cat)}
-                style={{ 
-                  padding: '10px 20px', 
-                  borderRadius: '20px', 
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  background: category === cat ? 'var(--primary-glow)' : 'var(--surface)',
-                  border: `1px solid ${category === cat ? 'var(--primary)' : 'var(--surface-border)'}`,
-                  color: category === cat ? 'var(--primary)' : 'var(--text-muted)',
-                  boxShadow: category === cat ? 'none' : 'var(--card-shadow)'
-                }}
-              >
-                {cat}
-              </div>
-            ))}
+          <div style={{ position: 'relative', marginTop: '-8px' }}>
+            <Tag size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '16px 16px 16px 48px',
+                borderRadius: '16px',
+                border: '1px solid var(--surface-border)',
+                background: 'var(--surface)',
+                color: category ? 'var(--text-main)' : 'var(--text-muted)',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '16px',
+                outline: 'none',
+                appearance: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="" disabled>Select a Category</option>
+              {postingCategories.map(cat => (
+                <option key={cat} value={cat} style={{ color: 'var(--text-main)' }}>{cat}</option>
+              ))}
+            </select>
           </div>
 
           {/* Inputs */}
