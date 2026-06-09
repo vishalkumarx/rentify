@@ -7,6 +7,7 @@ export type Message = {
   senderId: string;
   text: string;
   timestamp: number;
+  status: 'sent' | 'delivered' | 'read';
 };
 
 export type Conversation = {
@@ -18,12 +19,14 @@ export type Conversation = {
   otherUserName: string;
   lastMessage?: string;
   lastMessageTime?: number;
+  unreadCount: number;
 };
 
 type ChatContextType = {
   conversations: Conversation[];
   messages: Message[];
   sendMessage: (conversationId: string, senderId: string, text: string) => void;
+  markAsRead: (conversationId: string) => void;
   getOrCreateConversation: (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
 };
 
@@ -37,6 +40,7 @@ const initialConversations: Conversation[] = [
     otherUserName: 'Alex (Owner)',
     lastMessage: 'Is it still available for this weekend?',
     lastMessageTime: Date.now() - 3600000,
+    unreadCount: 0,
   }
 ];
 
@@ -47,6 +51,7 @@ const initialMessages: Message[] = [
     senderId: 'me',
     text: 'Is it still available for this weekend?',
     timestamp: Date.now() - 3600000,
+    status: 'read',
   }
 ];
 
@@ -54,6 +59,7 @@ const ChatContext = createContext<ChatContextType>({
   conversations: [],
   messages: [],
   sendMessage: () => {},
+  markAsRead: () => {},
   getOrCreateConversation: () => '',
 });
 
@@ -68,16 +74,52 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       senderId,
       text,
       timestamp: Date.now(),
+      status: 'sent',
     };
     
     setMessages(prev => [...prev, newMsg]);
     
     setConversations(prev => prev.map(conv => {
       if (conv.id === conversationId) {
-        return { ...conv, lastMessage: text, lastMessageTime: newMsg.timestamp };
+        return { 
+          ...conv, 
+          lastMessage: text, 
+          lastMessageTime: newMsg.timestamp,
+          unreadCount: senderId !== 'me' ? conv.unreadCount + 1 : conv.unreadCount 
+        };
       }
       return conv;
     }));
+
+    // Auto-Reply Simulation
+    if (senderId === 'me') {
+      // 1. Mark as Delivered after 1s
+      setTimeout(() => {
+        setMessages(prev => prev.map(m => m.id === newMsg.id ? { ...m, status: 'delivered' } : m));
+      }, 1000);
+
+      // 2. Mark as Read after 2.5s
+      setTimeout(() => {
+        setMessages(prev => prev.map(m => m.id === newMsg.id ? { ...m, status: 'read' } : m));
+      }, 2500);
+
+      // 3. Send Auto-Reply after 4s
+      setTimeout(() => {
+        const conv = conversations.find(c => c.id === conversationId);
+        if (conv) {
+          sendMessage(conversationId, conv.otherUserId, "Thanks for reaching out! Yes, I can do that.");
+        }
+      }, 4000);
+    }
+  };
+
+  const markAsRead = (conversationId: string) => {
+    setConversations(prev => prev.map(conv => 
+      conv.id === conversationId ? { ...conv, unreadCount: 0 } : conv
+    ));
+    setMessages(prev => prev.map(msg => 
+      (msg.conversationId === conversationId && msg.senderId !== 'me') ? { ...msg, status: 'read' } : msg
+    ));
   };
 
   const getOrCreateConversation = (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => {
@@ -91,6 +133,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       itemImage,
       otherUserId,
       otherUserName,
+      unreadCount: 0,
     };
     
     setConversations(prev => [newConv, ...prev]);
@@ -98,7 +141,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <ChatContext.Provider value={{ conversations, messages, sendMessage, getOrCreateConversation }}>
+    <ChatContext.Provider value={{ conversations, messages, sendMessage, markAsRead, getOrCreateConversation }}>
       {children}
     </ChatContext.Provider>
   );

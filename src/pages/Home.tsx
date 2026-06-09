@@ -222,11 +222,18 @@ export default function Home() {
               className="glass-panel animate-slide-in" 
               style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer' }}
             >
-              <img 
-                src={item.image} 
-                alt={item.title} 
-                style={{ width: '100%', height: '160px', borderRadius: '14px', objectFit: 'cover' }}
-              />
+              <div style={{ position: 'relative' }}>
+                <img 
+                  src={item.image} 
+                  alt={item.title} 
+                  style={{ width: '100%', height: '160px', borderRadius: '14px', objectFit: 'cover', opacity: item.status === 'booked' ? 0.7 : 1 }}
+                />
+                {item.status === 'booked' && (
+                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.7)', padding: '6px 14px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '1px' }}>
+                    BOOKED
+                  </div>
+                )}
+              </div>
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>
                 <p style={{ fontSize: '16px', color: 'var(--text-main)', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>

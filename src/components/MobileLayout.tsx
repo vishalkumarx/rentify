@@ -1,10 +1,14 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
 import { Home, PlusSquare, User, Bell, MessageCircle } from 'lucide-react';
+import { useChat } from '../context/ChatContext';
 
 export default function MobileLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { conversations } = useChat();
+  
+  const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
 
   const getTitle = () => {
     switch (location.pathname) {
@@ -47,7 +51,7 @@ export default function MobileLayout() {
         {/* Added App Logo/Brand for Sidebar context (hidden on mobile via CSS optionally, but let's just show it or keep simple) */}
         
         <NavItem icon={<Home size={24} />} label="Explore" isActive={location.pathname === '/'} onClick={() => navigate('/')} />
-        <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} onClick={() => navigate('/messages')} />
+        <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<PlusSquare size={24} />} label="Post" isActive={location.pathname === '/post'} onClick={() => navigate('/post')} />
         <NavItem icon={<User size={24} />} label="Profile" isActive={location.pathname === '/profile'} onClick={() => navigate('/profile')} />
       </nav>
@@ -63,7 +67,7 @@ export default function MobileLayout() {
   );
 }
 
-function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode, label: string, isActive: boolean, onClick: () => void }) {
+function NavItem({ icon, label, isActive, badgeCount, onClick }: { icon: React.ReactNode, label: string, isActive: boolean, badgeCount?: number, onClick: () => void }) {
   return (
     <button 
       onClick={onClick}
@@ -71,8 +75,13 @@ function NavItem({ icon, label, isActive, onClick }: { icon: React.ReactNode, la
     >
       <div style={{ position: 'relative' }}>
         {icon}
+        {badgeCount !== undefined && badgeCount > 0 && (
+          <span style={{ position: 'absolute', top: '-4px', right: '-6px', background: 'var(--danger)', color: 'white', fontSize: '10px', fontWeight: 800, padding: '2px 4px', borderRadius: '10px', minWidth: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {badgeCount}
+          </span>
+        )}
         {isActive && (
-          <div style={{ position: 'absolute', bottom: '-4px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '2px', background: 'var(--primary)' }} />
+          <span style={{ position: 'absolute', bottom: '-8px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '50%', background: 'var(--text-main)' }} />
         )}
       </div>
       <span className="nav-item-label">{label}</span>

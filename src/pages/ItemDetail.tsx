@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
-import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight, Bell } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 export default function ItemDetail() {
@@ -97,7 +97,12 @@ export default function ItemDetail() {
 
           <div style={{ padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-              <h1 style={{ fontSize: '26px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {item.status === 'booked' && (
+                  <span style={{ display: 'inline-block', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start' }}>BOOKED</span>
+                )}
+                <h1 style={{ fontSize: '26px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
+              </div>
               <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)' }}>₹{item.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
             </div>
             
@@ -234,10 +239,17 @@ export default function ItemDetail() {
         justifyContent: 'center'
       }}>
         <div style={{ maxWidth: '800px', width: '100%' }}>
-          <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none' }}>
-            <MessageCircle size={22} />
-            Message Owner
-          </button>
+          {item.status === 'booked' ? (
+            <button onClick={() => alert("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%' }}>
+              <Bell size={22} />
+              Notify Me
+            </button>
+          ) : (
+            <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%' }}>
+              <MessageCircle size={22} />
+              Message Owner
+            </button>
+          )}
         </div>
       </div>
 

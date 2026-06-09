@@ -6,7 +6,7 @@ import { ChevronLeft, Send, ShieldAlert } from 'lucide-react';
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { conversations, messages, sendMessage } = useChat();
+  const { conversations, messages, sendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -18,7 +18,13 @@ export default function Chat() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [conversationMessages]);
+  }, [conversationMessages.length]);
+
+  useEffect(() => {
+    if (id) {
+      markAsRead(id);
+    }
+  }, [id, conversationMessages.length, markAsRead]);
 
   if (!conversation) {
     return <div style={{ padding: '20px' }}>Conversation not found.</div>;
@@ -105,9 +111,18 @@ export default function Chat() {
                   border: isMe ? 'none' : '1px solid var(--surface-border)'
                 }}>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>{msg.text}</p>
-                  <span style={{ fontSize: '10px', opacity: 0.7, marginTop: '4px', display: 'block', textAlign: isMe ? 'right' : 'left' }}>
-                    {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: '4px', marginTop: '4px' }}>
+                    <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    {isMe && (
+                      <span style={{ display: 'flex', alignItems: 'center' }}>
+                        {msg.status === 'sent' && <Check size={12} color="rgba(255,255,255,0.7)" />}
+                        {msg.status === 'delivered' && <CheckCheck size={12} color="rgba(255,255,255,0.7)" />}
+                        {msg.status === 'read' && <CheckCheck size={12} color="#00E5FF" />}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );

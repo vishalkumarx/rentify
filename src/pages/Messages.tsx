@@ -44,9 +44,16 @@ export default function Messages() {
                     </span>
                   )}
                 </div>
-                <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  {conv.lastMessage || `Chat about ${conv.itemTitle}`}
-                </p>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={{ margin: 0, fontSize: '14px', color: conv.unreadCount > 0 ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: conv.unreadCount > 0 ? 600 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {conv.lastMessage || `Chat about ${conv.itemTitle}`}
+                  </p>
+                  {conv.unreadCount > 0 && (
+                    <span style={{ background: 'var(--danger)', color: 'white', fontSize: '11px', fontWeight: 800, padding: '2px 6px', borderRadius: '10px', marginLeft: '8px' }}>
+                      {conv.unreadCount}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
           ))}

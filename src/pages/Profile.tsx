@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 import { Settings, LogOut, Package, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
 
 export default function Profile() {
-  const { items } = useFeed();
+  const { items, toggleBookingStatus } = useFeed();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Listings');
 
@@ -89,9 +89,29 @@ export default function Profile() {
                 {myItems.map(item => (
                   <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '12px', display: 'flex', gap: '16px', cursor: 'pointer' }}>
                     <img src={item.image} alt={item.title} style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover' }} />
-                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
                       <h4 style={{ margin: '0 0 4px', fontSize: '15px', color: 'var(--text-main)' }}>{item.title}</h4>
                       <p style={{ margin: 0, color: 'var(--text-main)', fontWeight: 600 }}>₹{item.price}/day</p>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleBookingStatus(item.id);
+                        }}
+                        style={{ 
+                          padding: '6px 12px', 
+                          borderRadius: '8px', 
+                          fontSize: '12px', 
+                          fontWeight: 600,
+                          border: 'none',
+                          background: item.status === 'booked' ? 'var(--surface-border)' : 'var(--primary-glow)',
+                          color: item.status === 'booked' ? 'var(--text-muted)' : 'var(--primary)',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {item.status === 'booked' ? 'Mark Available' : 'Mark Booked'}
+                      </button>
                     </div>
                   </div>
                 ))}
