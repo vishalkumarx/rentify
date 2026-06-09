@@ -51,9 +51,9 @@ export default function Post() {
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
+    <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
       
-      <form onSubmit={handleSubmit} className="post-grid">
+      <form onSubmit={handleSubmit} className="post-grid glass-panel" style={{ padding: '32px', borderRadius: '24px' }}>
         
         {/* Hidden File Input */}
         <input 
