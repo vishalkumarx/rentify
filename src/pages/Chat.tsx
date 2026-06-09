@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, Send, ShieldAlert } from 'lucide-react';
+import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck } from 'lucide-react';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
