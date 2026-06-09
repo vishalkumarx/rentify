@@ -14,6 +14,7 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(false);
   const [filterDept, setFilterDept] = useState('All');
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
+  const [displayCount, setDisplayCount] = useState(10);
 
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
@@ -208,7 +209,7 @@ export default function Home() {
             <p>No items found for this category or search.</p>
           </div>
         ) : (
-          filteredItems.map((item, index) => (
+          filteredItems.slice(0, displayCount).map((item, index) => (
             <div 
               key={item.id} 
               onClick={() => navigate(`/item/${item.id}`)}
@@ -279,6 +280,19 @@ export default function Home() {
           ))
         )}
       </div>
+
+      {/* Load More Button */}
+      {filteredItems.length > displayCount && (
+        <div style={{ padding: '0 20px 40px', display: 'flex', justifyContent: 'center' }}>
+          <button 
+            onClick={() => setDisplayCount(prev => prev + 10)}
+            style={{ padding: '14px 32px', background: 'var(--text-main)', color: 'var(--surface)', borderRadius: '24px', fontWeight: 600, fontSize: '15px', border: 'none', boxShadow: 'none', cursor: 'pointer' }}
+          >
+            Load More Items
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }

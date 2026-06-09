@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useState, useRef } from 'react';
 import { Home, PlusSquare, User, Bell, MessageCircle } from 'lucide-react';
 
 export default function MobileLayout() {
@@ -15,11 +16,24 @@ export default function MobileLayout() {
     }
   };
 
+  const [showHeader, setShowHeader] = useState(true);
+  const lastScrollY = useRef(0);
+
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    const currentScrollY = e.currentTarget.scrollTop;
+    if (currentScrollY > 60 && currentScrollY > lastScrollY.current + 10) {
+      setShowHeader(false); // scrolling down
+    } else if (currentScrollY < lastScrollY.current - 10 || currentScrollY <= 60) {
+      setShowHeader(true); // scrolling up or at top
+    }
+    lastScrollY.current = currentScrollY;
+  };
+
   return (
     <div className="app-container">
       
       {/* Top Action Bar */}
-      <header className="app-header">
+      <header className="app-header" style={{ transform: showHeader ? 'translateY(0)' : 'translateY(-100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>
           {getTitle()}
         </h1>
@@ -39,7 +53,7 @@ export default function MobileLayout() {
       </nav>
 
       {/* Scrollable Content Area */}
-      <main className="app-main hide-scrollbar">
+      <main className="app-main hide-scrollbar" onScroll={handleScroll} style={{ top: showHeader ? '60px' : '0px', transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <div className="animate-fade-in" style={{ minHeight: '100%' }}>
           <Outlet />
         </div>
