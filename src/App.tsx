@@ -1,4 +1,4 @@
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { FeedProvider } from './context/FeedContext';
 import { ChatProvider } from './context/ChatContext';
@@ -12,11 +12,26 @@ import Messages from './pages/Messages';
 import Chat from './pages/Chat';
 import ItemDetail from './pages/ItemDetail';
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
   
   if (loading) return <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
-  if (!session) return <Navigate to="/login" replace />;
+  if (!session) {
+    return (
+      <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', minHeight: '60vh', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
+          <span style={{ fontSize: '32px' }}>🔒</span>
+        </div>
+        <h2 style={{ fontSize: '24px', marginBottom: '12px', fontWeight: 800 }}>Authentication Required</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '16px', lineHeight: 1.5 }}>
+          {message || 'Please log in or create an account to access this feature.'}
+        </p>
+        <Link to="/login" style={{ display: 'inline-block', background: 'var(--text-main)', color: 'var(--bg)', padding: '16px 32px', borderRadius: '24px', fontSize: '16px', fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+          Login / Sign Up
+        </Link>
+      </div>
+    );
+  }
   
   return <>{children}</>;
 };
@@ -42,9 +57,9 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         
         {/* Protected Navigation Tabs */}
-        <Route path="/post" element={<ProtectedRoute><Post /></ProtectedRoute>} />
-        <Route path="/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/post" element={<ProtectedRoute message="Login to post a new rental listing."><Post /></ProtectedRoute>} />
+        <Route path="/messages" element={<ProtectedRoute message="Login to view your messages and chat with owners."><Messages /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute message="Login to view your profile and manage your active listings."><Profile /></ProtectedRoute>} />
       </Route>
       
       {/* Full Screen Modals/Pages */}
