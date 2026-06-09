@@ -183,6 +183,13 @@ a:hover {
   gap: 24px;
 }
 
+/* Post Layout */
+.post-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 /* Responsive Layout */
 .app-container {
   display: flex;
@@ -313,6 +320,13 @@ a:hover {
     display: grid;
     grid-template-columns: 320px 1fr;
     gap: 32px;
+    align-items: start;
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
     align-items: start;
   }
 }
