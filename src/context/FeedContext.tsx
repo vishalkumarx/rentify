@@ -72,7 +72,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
     // Optional: Set up realtime subscription
     const channel = supabase
       .channel('public:rental_items')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'rental_items' }, payload => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'rental_items' }, () => {
         fetchItems(); // Refetch on any change for simplicity
       })
       .subscribe();
