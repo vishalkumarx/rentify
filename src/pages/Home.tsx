@@ -90,9 +90,9 @@ export default function Home() {
               {(location === 'Location Unavailable' || location === 'Location Denied') ? (
                 <button 
                   onClick={fetchLocation} 
-                  style={{ marginLeft: '8px', padding: '4px 10px', background: 'var(--surface-border)', border: 'none', borderRadius: '12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  style={{ marginLeft: '6px', padding: '4px', background: 'transparent', border: 'none', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', boxShadow: 'none' }}
                 >
-                  <RefreshCcw size={12} /> Retry
+                  <RefreshCcw size={14} /> Retry
                 </button>
               ) : (
                 <ChevronRight size={16} color="var(--text-muted)" />
