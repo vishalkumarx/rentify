@@ -154,7 +154,7 @@ export default function Home() {
               </select>
             </div>
 
-            <button onClick={() => setShowFilters(false)} style={{ marginTop: '8px', padding: '16px', borderRadius: '24px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: 600, fontSize: '16px' }}>Apply Filters</button>
+            <button onClick={() => setShowFilters(false)} style={{ marginTop: '8px', padding: '16px', borderRadius: '24px', background: 'var(--primary)', color: 'var(--text-main)', border: 'none', fontWeight: 600, fontSize: '16px' }}>Apply Filters</button>
           </div>
         </div>
       )}

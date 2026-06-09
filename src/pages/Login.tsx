@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -27,10 +27,7 @@ export default function Login() {
       
       {/* Top Yellow Section */}
       <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'transparent', padding: 0, border: 'none', color: '#111827', boxShadow: 'none' }}>
-            <ArrowLeft size={24} />
-          </button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '32px' }}>
           <Link to="/signup" style={{ color: '#111827', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Register</Link>
         </div>
         

@@ -23,7 +23,7 @@ export default function MobileLayout() {
         <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px' }}>
           {getTitle()}
         </h1>
-        <button style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
+        <button style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
           <Bell size={20} />
         </button>
       </header>

@@ -174,7 +174,7 @@ export default function ItemDetail() {
           <div style={{ padding: '20px', display: 'flex', justifyContent: 'flex-end', zIndex: 101 }}>
             <button 
               onClick={() => setZoomImage(null)}
-              style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--surface)', color: 'var(--text-main)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <X size={24} />
             </button>

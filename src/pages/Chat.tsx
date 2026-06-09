@@ -121,7 +121,7 @@ export default function Chat() {
               alignItems: 'center', 
               justifyContent: 'center',
               background: inputText.trim() ? 'var(--primary)' : 'var(--surface-border)',
-              color: '#fff',
+              color: 'var(--text-main)',
               boxShadow: inputText.trim() ? 'var(--primary-glow)' : 'none'
             }}
           >
