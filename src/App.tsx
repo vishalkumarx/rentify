@@ -10,6 +10,7 @@ import Post from './pages/Post';
 import Profile from './pages/Profile';
 import Messages from './pages/Messages';
 import Chat from './pages/Chat';
+import ItemDetail from './pages/ItemDetail';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { session, loading } = useAuth();
@@ -45,6 +46,7 @@ function AppRoutes() {
       
       {/* Full Screen Modals/Pages */}
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+      <Route path="/item/:id" element={<ProtectedRoute><ItemDetail /></ProtectedRoute>} />
     </Routes>
   );
 }

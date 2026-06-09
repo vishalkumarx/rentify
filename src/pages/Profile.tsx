@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabase';
 import { useFeed } from '../context/FeedContext';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 import { User as UserIcon, Settings, LogOut, Package, Heart, CreditCard, Shield, ChevronRight } from 'lucide-react';
 
 export default function Profile() {
   const { user } = useAuth();
   const { items } = useFeed();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Listings');
 
   const tabs = ['Listings', 'Saved', 'Reviews'];
@@ -95,7 +97,7 @@ export default function Profile() {
               <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <h3 style={{ margin: '0 0 8px', fontSize: '16px', color: 'var(--text-main)' }}>Your Active Listings ({myItems.length})</h3>
                 {myItems.map(item => (
-                  <div key={item.id} className="glass-panel" style={{ padding: '12px', display: 'flex', gap: '16px' }}>
+                  <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '12px', display: 'flex', gap: '16px', cursor: 'pointer' }}>
                     <img src={item.image} alt={item.title} style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover' }} />
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                       <h4 style={{ margin: '0 0 4px', fontSize: '15px', color: 'var(--text-main)' }}>{item.title}</h4>

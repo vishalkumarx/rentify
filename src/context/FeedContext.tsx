@@ -10,6 +10,7 @@ export type RentalItem = {
   liked: boolean;
   image: string; // Cover image
   images?: string[]; // Additional images
+  description?: string;
   userId?: string;
 };
 

@@ -61,7 +61,8 @@ export default function Home() {
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
 
-  const handleMessageClick = (item: any) => {
+  const handleMessageClick = (e: React.MouseEvent, item: any) => {
+    e.stopPropagation();
     const ownerId = item.userId || `user-${item.id}`; // Mock an owner ID
     const ownerName = `Owner of ${item.title}`;
     const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
@@ -194,7 +195,12 @@ export default function Home() {
           </div>
         ) : (
           filteredItems.map((item, index) => (
-            <div key={item.id} className="glass-panel animate-slide-in" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s` }}>
+            <div 
+              key={item.id} 
+              onClick={() => navigate(`/item/${item.id}`)}
+              className="glass-panel animate-slide-in" 
+              style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer' }}
+            >
               <img 
                 src={item.image} 
                 alt={item.title} 
@@ -212,7 +218,7 @@ export default function Home() {
                   
                   {/* Message Button (Icon Only for grid) */}
                   <button 
-                    onClick={() => handleMessageClick(item)}
+                    onClick={(e) => handleMessageClick(e, item)}
                     style={{ 
                       width: '30px',
                       height: '30px',
@@ -235,7 +241,7 @@ export default function Home() {
               
               {/* Heart Button */}
               <button 
-                onClick={() => toggleLike(item.id)}
+                onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
                 style={{ 
                   position: 'absolute', 
                   top: '8px', 
