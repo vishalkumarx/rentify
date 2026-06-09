@@ -10,7 +10,8 @@ export const CATEGORIES = [
   'Sports Gear',
   'Photography',
   'Gaming',
-  'Music Instruments'
+  'Music Instruments',
+  'Others'
 ];
 
 export const DEPARTMENTS = [
