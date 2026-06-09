@@ -10,7 +10,6 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { loginAsGuest } = useAuth();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();

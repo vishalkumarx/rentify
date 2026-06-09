@@ -10,7 +10,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { loginAsGuest } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
