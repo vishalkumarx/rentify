@@ -183,10 +183,10 @@ export default function Home() {
 
       {/* Feed Content */}
       <div style={{ 
-        padding: '0 20px 24px', 
+        padding: '0 20px 32px', 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
-        gap: '16px' 
+        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
+        gap: '20px' 
       }}>
         {filteredItems.length === 0 ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
@@ -194,11 +194,11 @@ export default function Home() {
           </div>
         ) : (
           filteredItems.map((item, index) => (
-            <div key={item.id} className="glass-panel animate-slide-in" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', animationDelay: `${index * 0.1}s` }}>
+            <div key={item.id} className="glass-panel animate-slide-in" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s` }}>
               <img 
                 src={item.image} 
                 alt={item.title} 
-                style={{ width: '100%', height: '140px', borderRadius: '12px', objectFit: 'cover' }}
+                style={{ width: '100%', height: '160px', borderRadius: '14px', objectFit: 'cover' }}
               />
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>
