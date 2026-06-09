@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -13,35 +14,61 @@ export default function Signup() {
     e.preventDefault();
     setLoading(true);
     setError('');
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (error) {
-      setError(error.message);
-    } else {
-      navigate('/');
-    }
+    const { error } = await supabase.auth.signUp({ email, password });
+    if (error) setError(error.message);
+    else navigate('/');
     setLoading(false);
   };
 
   return (
-    <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', minHeight: '100vh', justifyContent: 'center' }}>
-      <div className="glass-panel animate-fade-in" style={{ padding: '32px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '32px', marginBottom: '8px', color: 'var(--primary)' }}>Join CampusRent</h1>
-        <p style={{ color: 'var(--text-muted)', marginBottom: '32px' }}>Create an account to start renting</p>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', background: 'var(--primary)', position: 'relative' }}>
+      
+      {/* Top Blue Section */}
+      <div style={{ padding: '24px 24px 48px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'transparent', padding: 0, border: 'none', color: 'white', boxShadow: 'none' }}>
+            <ArrowLeft size={24} />
+          </button>
+          <Link to="/login" style={{ color: 'white', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Sign In</Link>
+        </div>
+        
+        <div style={{ marginTop: '20px' }}>
+          <h1 style={{ fontSize: '42px', fontWeight: 800, margin: '0 0 12px', color: 'white' }}>Register</h1>
+          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
+            everything you need, in your vicinity.
+          </p>
+        </div>
+      </div>
 
+      {/* Bottom White Sheet */}
+      <div style={{ 
+        flex: 1,
+        background: 'var(--surface)', 
+        borderRadius: '32px 32px 0 0', 
+        padding: '32px 24px 48px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '24px'
+      }}>
+        
         <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '12px' }}>{error}</div>}
+          {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
           
           <input
             type="email"
-            placeholder="University Email"
+            placeholder="Username or Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
+            style={{
+              background: 'var(--surface-border)',
+              border: 'none',
+              borderRadius: '24px',
+              padding: '18px 24px',
+              fontSize: '15px',
+              fontWeight: 500,
+              color: 'var(--text-main)'
+            }}
           />
           <input
             type="password"
@@ -50,27 +77,64 @@ export default function Signup() {
             onChange={(e) => setPassword(e.target.value)}
             required
             minLength={6}
+            style={{
+              background: 'var(--surface-border)',
+              border: 'none',
+              borderRadius: '24px',
+              padding: '18px 24px',
+              fontSize: '15px',
+              fontWeight: 500,
+              color: 'var(--text-main)'
+            }}
           />
           
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', textAlign: 'left', cursor: 'pointer', background: 'rgba(255,255,255,0.03)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+          <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', textAlign: 'left', cursor: 'pointer', background: 'var(--surface-border)', padding: '16px', borderRadius: '24px' }}>
             <input 
               type="checkbox" 
               required 
-              style={{ width: '20px', height: '20px', flexShrink: 0, marginTop: '2px', accentColor: 'var(--primary)', cursor: 'pointer' }}
+              style={{ width: '20px', height: '20px', flexShrink: 0, marginTop: '2px', accentColor: 'var(--primary)', cursor: 'pointer', border: 'none' }}
             />
-            <span style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              I agree to the <span style={{ color: 'var(--primary)' }}>Privacy Policy</span> and confirm I will not post objectionable or prohibited content. I understand I am solely responsible for any legal action taken against me due to my listings.
+            <span style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5, fontWeight: 500 }}>
+              I agree to the <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>Privacy Policy</span> and confirm I will not post objectionable content. I understand I am solely responsible for any legal action taken against me.
             </span>
           </label>
           
-          <button type="submit" disabled={loading} style={{ marginTop: '8px' }}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+          <button type="submit" disabled={loading} style={{ 
+            background: 'var(--text-main)', 
+            color: 'var(--surface)', 
+            borderRadius: '24px', 
+            padding: '18px', 
+            fontSize: '16px', 
+            fontWeight: 700,
+            marginTop: '8px',
+            boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+          }}>
+            {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
         </form>
 
-        <p style={{ marginTop: '24px', fontSize: '15px' }}>
-          Already have an account? <Link to="/login">Sign in</Link>
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+          <button style={{ 
+            background: 'var(--surface)', 
+            border: '1px solid var(--surface-border)', 
+            borderRadius: '24px', 
+            padding: '16px 24px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            color: 'var(--text-main)',
+            fontWeight: 600,
+            fontSize: '15px',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" style={{ width: '20px', height: '20px' }} />
+              Continue with Google
+            </div>
+            <ArrowRight size={18} color="var(--text-muted)" />
+          </button>
+        </div>
+
       </div>
     </div>
   );

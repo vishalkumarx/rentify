@@ -23,8 +23,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const loginAsGuest = () => {
     // Mock user for development
-    setUser({ email: 'guest@campusrent.com', id: 'guest-123' } as User);
-    setSession({ user: { email: 'guest@campusrent.com' } } as Session);
+    setUser({ email: 'guest@vicinity.app', id: 'guest-123' } as User);
+    setSession({ user: { email: 'guest@vicinity.app' } } as Session);
   };
 
   useEffect(() => {

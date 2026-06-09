@@ -7,11 +7,11 @@ export default function MobileLayout() {
 
   const getTitle = () => {
     switch (location.pathname) {
-      case '/': return 'CampusRent';
+      case '/': return 'vicinity';
       case '/post': return 'New Listing';
       case '/messages': return 'Messages';
       case '/profile': return 'My Profile';
-      default: return 'CampusRent';
+      default: return 'vicinity';
     }
   };
 
