@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { User as UserIcon, Settings, LogOut, Package, Heart, CreditCard, Shield, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
+import { Settings, LogOut, Package, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
 
 export default function Profile() {
-  const { user } = useAuth();
   const { items } = useFeed();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Listings');
