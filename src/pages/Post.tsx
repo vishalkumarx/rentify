@@ -3,6 +3,7 @@ import { Camera, Upload, Tag, DollarSign, AlignLeft, Plus, X, Building } from 'l
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
+import { supabase } from '../lib/supabase';
 
 export default function Post() {
   const [title, setTitle] = useState('');
@@ -12,6 +13,7 @@ export default function Post() {
   const [department, setDepartment] = useState('');
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addPost } = useFeed();
@@ -25,29 +27,57 @@ export default function Post() {
       const filesArray = Array.from(e.target.files);
       const newImageUrls = filesArray.map(file => URL.createObjectURL(file));
       setImages(prev => [...prev, ...newImageUrls].slice(0, 3)); // Max 3 images
+      setImageFiles(prev => [...prev, ...filesArray].slice(0, 3));
     }
   };
 
   const removeImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     
-    setTimeout(() => {
-      addPost({
+    try {
+      let finalImageUrl = 'https://images.unsplash.com/photo-1588702545922-76289d043477?auto=format&fit=crop&q=80&w=400';
+      
+      if (imageFiles.length > 0) {
+        const file = imageFiles[0];
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('item-images')
+          .upload(filePath, file);
+          
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('item-images')
+          .getPublicUrl(filePath);
+          
+        finalImageUrl = publicUrl;
+      }
+      
+      await addPost({
         title,
         price,
         category,
         department: department || 'Other',
-        image: images.length > 0 ? images[0] : 'https://images.unsplash.com/photo-1588702545922-76289d043477?auto=format&fit=crop&q=80&w=400',
-        images: images,
+        image: finalImageUrl,
+        images: [finalImageUrl],
       });
+      
       setLoading(false);
       navigate('/');
-    }, 800);
+    } catch (error: any) {
+      console.error('Error posting item:', error);
+      alert('Failed to post item: ' + error.message);
+      setLoading(false);
+    }
   };
 
   return (
