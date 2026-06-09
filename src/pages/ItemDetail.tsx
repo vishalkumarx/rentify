@@ -28,7 +28,7 @@ export default function ItemDetail() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-color)' }} className="animate-slide-in">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: 'var(--bg-color)' }} className="animate-slide-in">
       
       {/* Header */}
       <header style={{ 
@@ -114,6 +114,7 @@ export default function ItemDetail() {
         left: 0, 
         right: 0, 
         padding: '20px', 
+        paddingBottom: 'calc(20px + env(safe-area-inset-bottom))',
         background: 'var(--surface)', 
         borderTop: '1px solid var(--surface-border)', 
         backdropFilter: 'blur(12px)',
