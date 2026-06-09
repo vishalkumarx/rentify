@@ -20,6 +20,14 @@ export default function Login() {
     setLoading(false);
   };
 
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
+    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
+    if (error) setError(error.message);
+    setLoading(false);
+  };
+
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: 'var(--primary)', position: 'relative' }}>
       
@@ -104,7 +112,7 @@ export default function Login() {
         </form>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-          <button style={{ 
+          <button onClick={handleGoogleSignIn} disabled={loading} style={{ 
             background: 'var(--surface)', 
             border: '1px solid var(--surface-border)', 
             borderRadius: '24px', 
@@ -115,7 +123,8 @@ export default function Login() {
             color: 'var(--text-main)',
             fontWeight: 600,
             fontSize: '15px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
+            boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+            cursor: loading ? 'not-allowed' : 'pointer'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" style={{ width: '20px', height: '20px' }} />
