@@ -163,3 +163,130 @@ a {
 a:hover {
   color: var(--primary-hover);
 }
+
+/* Responsive Layout */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.app-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 50;
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 20px var(--primary-glow);
+}
+
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-top: 60px;
+  padding-bottom: 80px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 50;
+  border-top: 1px solid var(--surface-border);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.nav-item.active {
+  color: var(--primary);
+  transform: scale(1.05);
+}
+
+.nav-item-label {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.nav-item.active .nav-item-label {
+  font-weight: 600;
+}
+
+/* Desktop Breakpoint */
+@media (min-width: 768px) {
+  .app-container {
+    flex-direction: row;
+  }
+  
+  .app-header {
+    left: 240px;
+  }
+  
+  .app-nav {
+    top: 0;
+    bottom: 0;
+    width: 240px;
+    height: 100%;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 24px;
+    padding-bottom: 0;
+    border-top: none;
+    border-right: 1px solid var(--surface-border);
+  }
+  
+  .app-main {
+    padding-left: 240px;
+    padding-bottom: 0;
+  }
+
+  .nav-item {
+    flex-direction: row;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 16px 32px;
+    gap: 16px;
+    border-radius: 0;
+  }
+
+  .nav-item.active {
+    background: rgba(79, 70, 229, 0.1);
+    transform: none;
+    border-right: 4px solid var(--primary);
+  }
+  
+  .nav-item-label {
+    font-size: 16px;
+  }
+}
