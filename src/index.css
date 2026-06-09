@@ -5,9 +5,9 @@
   --bg-gradient: linear-gradient(135deg, #f8f9fc 0%, #eef1f6 100%);
   --text-main: #1e293b;
   --text-muted: #64748b;
-  --primary: #ffb800;
-  --primary-hover: #e6a600;
-  --primary-glow: rgba(255, 184, 0, 0.4);
+  --primary: #ffcc00;
+  --primary-hover: #ffb800;
+  --primary-glow: rgba(255, 204, 0, 0.4);
   --secondary: #10b981;
   --danger: #ef4444;
   --surface: rgba(255, 255, 255, 0.85);
@@ -22,9 +22,9 @@
     --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     --text-main: #f8fafc;
     --text-muted: #94a3b8;
-    --primary: #ffc226;
-    --primary-hover: #ffd15c;
-    --primary-glow: rgba(255, 194, 38, 0.5);
+    --primary: #ffd633;
+    --primary-hover: #ffcc00;
+    --primary-glow: rgba(255, 214, 51, 0.5);
     --surface: rgba(30, 41, 59, 0.7);
     --surface-border: rgba(255, 255, 255, 0.1);
     --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -309,7 +309,7 @@ a:hover {
   }
 
   .nav-item.active {
-    background: rgba(79, 70, 229, 0.1);
+    background: var(--primary-glow);
     transform: none;
     border-right: 4px solid var(--primary);
   }
