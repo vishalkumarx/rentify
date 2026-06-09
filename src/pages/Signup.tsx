@@ -135,22 +135,6 @@ export default function Signup() {
           </button>
         </div>
 
-        <button 
-          onClick={loginAsGuest} 
-          style={{ 
-            marginTop: '16px', 
-            background: 'transparent', 
-            border: 'none', 
-            color: 'var(--text-muted)', 
-            boxShadow: 'none',
-            textDecoration: 'underline',
-            fontSize: '14px',
-            cursor: 'pointer'
-          }}
-        >
-          Bypass Registration (Developer Mode)
-        </button>
-
         </div>
       </div>
     </div>
