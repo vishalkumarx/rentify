@@ -30,30 +30,9 @@ type ChatContextType = {
   getOrCreateConversation: (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
 };
 
-const initialConversations: Conversation[] = [
-  {
-    id: 'conv-1',
-    itemId: 1,
-    itemTitle: 'MacBook Pro M2',
-    itemImage: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400',
-    otherUserId: 'user-2',
-    otherUserName: 'Alex (Owner)',
-    lastMessage: 'Is it still available for this weekend?',
-    lastMessageTime: Date.now() - 3600000,
-    unreadCount: 0,
-  }
-];
+const initialConversations: Conversation[] = [];
 
-const initialMessages: Message[] = [
-  {
-    id: 'msg-1',
-    conversationId: 'conv-1',
-    senderId: 'me',
-    text: 'Is it still available for this weekend?',
-    timestamp: Date.now() - 3600000,
-    status: 'read',
-  }
-];
+const initialMessages: Message[] = [];
 
 const ChatContext = createContext<ChatContextType>({
   conversations: [],

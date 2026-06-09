@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
 import { Settings, LogOut, Package, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
 
 export default function Profile() {
   const { items, toggleBookingStatus } = useFeed();
+  const { session } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Listings');
 
   const tabs = ['Listings', 'Saved', 'Reviews'];
 
-  // Mock user's own items (say they own the new ones)
-  const myItems = items.filter(item => item.id > 3);
+  // Filter items owned by the current user
+  const myItems = items.filter(item => item.userId === session?.user?.id);
 
   const handleSignOut = () => {
     supabase.auth.signOut();
@@ -27,17 +29,19 @@ export default function Profile() {
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0, fontSize: '32px', fontWeight: 700 }}>
-              C
+              {session?.user?.email?.[0].toUpperCase() || 'U'}
             </div>
             <div style={{ overflow: 'hidden' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>Campus User</h2>
+                <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                  {session?.user?.email?.split('@')[0] || 'User'}
+                </h2>
                 <ShieldCheck size={20} color="var(--success)" />
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                 <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontSize: '15px', fontWeight: 700 }}>4.8</span>
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(24 reviews)</span>
+                <span style={{ fontSize: '15px', fontWeight: 700 }}>New</span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(0 reviews)</span>
               </div>
             </div>
           </div>
@@ -45,10 +49,7 @@ export default function Profile() {
           <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <h4 style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Verifications</h4>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
-              <CheckCircle2 size={16} /> ID Verified
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
-              <CheckCircle2 size={16} /> University Email Confirmed
+              <CheckCircle2 size={16} /> Email Registered
             </div>
           </div>
         </div>

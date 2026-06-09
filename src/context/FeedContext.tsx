@@ -41,11 +41,7 @@ const mockSeller2: SellerProfile = {
   id: 'u2', name: 'David Chen', rating: 4.6, reviewCount: 15, memberSince: 'Jan 2024', verifications: ['University Email Confirmed']
 };
 
-const initialItems: RentalItem[] = [
-  { id: 1, title: 'MacBook Pro M2', price: '400', category: 'Electronics', department: 'Computer Science', liked: false, image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&q=80&w=400', itemRating: 4.8, itemReviewCount: 12, seller: mockSeller1 },
-  { id: 2, title: 'Sony A7III Camera', price: '350', category: 'Electronics', department: 'Mass Communication', liked: true, image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=400', itemRating: 5.0, itemReviewCount: 8, seller: mockSeller2 },
-  { id: 3, title: 'Electric Scooter', price: '150', category: 'Mobility', department: 'Mechanical Engineering', liked: false, image: 'https://images.unsplash.com/photo-1593805342412-2c5e5233bc54?auto=format&fit=crop&q=80&w=400', itemRating: 4.2, itemReviewCount: 5, seller: mockSeller1, status: 'booked' },
-];
+const initialItems: RentalItem[] = [];
 
 const FeedContext = createContext<FeedContextType>({
   items: [],
