@@ -25,18 +25,18 @@ export default function Login() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', minHeight: '100dvh', background: 'var(--primary)', position: 'relative' }}>
       
-      {/* Top Blue Section */}
+      {/* Top Yellow Section */}
       <div style={{ padding: '24px 24px 48px', display: 'flex', flexDirection: 'column' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'transparent', padding: 0, border: 'none', color: 'white', boxShadow: 'none' }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'transparent', padding: 0, border: 'none', color: '#111827', boxShadow: 'none' }}>
             <ArrowLeft size={24} />
           </button>
-          <Link to="/signup" style={{ color: 'white', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Register</Link>
+          <Link to="/signup" style={{ color: '#111827', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Register</Link>
         </div>
         
         <div style={{ marginTop: '20px' }}>
-          <h1 style={{ fontSize: '42px', fontWeight: 800, margin: '0 0 12px', color: 'white' }}>Sign In</h1>
-          <p style={{ color: 'rgba(255,255,255,0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
+          <h1 style={{ fontSize: '42px', fontWeight: 800, margin: '0 0 12px', color: '#111827' }}>Sign In</h1>
+          <p style={{ color: 'rgba(17, 24, 39, 0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
             everything you need, in your vicinity.
           </p>
         </div>
