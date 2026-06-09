@@ -26,7 +26,7 @@ const ProtectedRoute = ({ children, message }: { children: React.ReactNode, mess
         <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '16px', lineHeight: 1.5 }}>
           {message || 'Please log in or create an account to access this feature.'}
         </p>
-        <Link to="/login" style={{ display: 'inline-block', background: 'var(--text-main)', color: 'var(--bg)', padding: '16px 32px', borderRadius: '24px', fontSize: '16px', fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+        <Link to="/login" style={{ display: 'inline-block', background: 'var(--text-main)', color: 'white', padding: '16px 32px', borderRadius: '24px', fontSize: '16px', fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
           Login / Sign Up
         </Link>
       </div>
