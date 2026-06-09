@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Heart, ChevronRight, Search, SlidersHorizontal, MessageCircle, Building } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, MessageCircle, Building } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +19,8 @@ export default function Home() {
   const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
   
-  useEffect(() => {
+  const fetchLocation = () => {
+    setLocation('Fetching Location...');
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
@@ -45,6 +46,10 @@ export default function Home() {
     } else {
       setLocation('Geolocation Unsupported');
     }
+  };
+
+  useEffect(() => {
+    fetchLocation();
   }, []);
 
   // Filter items based on active category, search, and department
@@ -82,7 +87,16 @@ export default function Home() {
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>Current Location</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <h2 style={{ fontSize: '16px', margin: 0, color: 'var(--text-main)', fontWeight: 600 }}>{location}</h2>
-              <ChevronRight size={16} color="var(--text-muted)" />
+              {(location === 'Location Unavailable' || location === 'Location Denied') ? (
+                <button 
+                  onClick={fetchLocation} 
+                  style={{ marginLeft: '8px', padding: '4px 10px', background: 'var(--surface-border)', border: 'none', borderRadius: '12px', fontSize: '12px', fontWeight: 600, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  <RefreshCcw size={12} /> Retry
+                </button>
+              ) : (
+                <ChevronRight size={16} color="var(--text-muted)" />
+              )}
             </div>
           </div>
         </div>
