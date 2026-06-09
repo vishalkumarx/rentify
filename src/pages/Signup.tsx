@@ -39,10 +39,10 @@ export default function Signup() {
 
       {/* Bottom White Sheet */}
       <div style={{ 
-        flex: 1,
+        flexGrow: 1,
         background: 'var(--surface)', 
         borderRadius: '32px 32px 0 0', 
-        padding: '32px 24px 48px',
+        padding: '32px 24px calc(48px + env(safe-area-inset-bottom))',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center'
