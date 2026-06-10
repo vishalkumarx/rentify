@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { Settings, LogOut, Package, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
 
 export default function Profile() {
-  const { items, toggleBookingStatus } = useFeed();
+  const { items, toggleBookingStatus, deletePost } = useFeed();
   const { session } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('Listings');
@@ -94,7 +94,7 @@ export default function Profile() {
                       <h4 style={{ margin: '0 0 4px', fontSize: '15px', color: 'var(--text-main)' }}>{item.title}</h4>
                       <p style={{ margin: 0, color: 'var(--text-main)', fontWeight: 600 }}>₹{item.price}/day</p>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                       <button 
                         onClick={(e) => {
                           e.stopPropagation();
@@ -112,6 +112,26 @@ export default function Profile() {
                         }}
                       >
                         {item.status === 'booked' ? 'Mark Available' : 'Mark Booked'}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/edit/${item.id}`);
+                        }}
+                        style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', cursor: 'pointer' }}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Are you sure you want to delete this listing?')) {
+                            await deletePost(item.id);
+                          }
+                        }}
+                        style={{ padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer' }}
+                      >
+                        Delete
                       </button>
                     </div>
                   </div>

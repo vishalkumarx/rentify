@@ -31,6 +31,8 @@ export type RentalItem = {
 type FeedContextType = {
   items: RentalItem[];
   addPost: (item: Omit<RentalItem, 'id' | 'liked'>) => Promise<void>;
+  updatePost: (id: number, updates: Partial<RentalItem>) => Promise<void>;
+  deletePost: (id: number) => Promise<void>;
   toggleLike: (id: number) => void;
   toggleBookingStatus: (id: number) => void;
 };
@@ -40,6 +42,8 @@ const initialItems: RentalItem[] = [];
 const FeedContext = createContext<FeedContextType>({
   items: [],
   addPost: async () => {},
+  updatePost: async () => {},
+  deletePost: async () => {},
   toggleLike: () => {},
   toggleBookingStatus: () => {},
 });
@@ -119,6 +123,41 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updatePost = async (id: number, updates: Partial<RentalItem>) => {
+    // Convert camelCase to snake_case for DB
+    const dbUpdates: any = { ...updates };
+    if (updates.userId) dbUpdates.user_id = updates.userId;
+    delete dbUpdates.userId;
+    delete dbUpdates.id;
+    delete dbUpdates.liked;
+    
+    const { error } = await supabase
+      .from('rental_items')
+      .update(dbUpdates)
+      .eq('id', id);
+      
+    if (error) {
+      console.error('Error updating post:', error);
+      throw error;
+    }
+    
+    setItems((prev) => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+  };
+
+  const deletePost = async (id: number) => {
+    const { error } = await supabase
+      .from('rental_items')
+      .delete()
+      .eq('id', id);
+      
+    if (error) {
+      console.error('Error deleting post:', error);
+      throw error;
+    }
+    
+    setItems((prev) => prev.filter(item => item.id !== id));
+  };
+
   const toggleLike = (id: number) => {
     setItems((prev) => prev.map(item => item.id === id ? { ...item, liked: !item.liked } : item));
   };
@@ -146,7 +185,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <FeedContext.Provider value={{ items, addPost, toggleLike, toggleBookingStatus }}>
+    <FeedContext.Provider value={{ items, addPost, updatePost, deletePost, toggleLike, toggleBookingStatus }}>
       {children}
     </FeedContext.Provider>
   );
