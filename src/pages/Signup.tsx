@@ -148,8 +148,24 @@ export default function Signup() {
               <option value="Computer Science">Computer Science</option>
               <option value="Engineering">Engineering</option>
               <option value="Business">Business</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Physics">Physics</option>
+              <option value="Chemistry">Chemistry</option>
+              <option value="Biology">Biology</option>
+              <option value="Economics">Economics</option>
+              <option value="Psychology">Psychology</option>
+              <option value="English & Literature">English & Literature</option>
+              <option value="History">History</option>
+              <option value="Political Science">Political Science</option>
+              <option value="Philosophy">Philosophy</option>
+              <option value="Sociology">Sociology</option>
+              <option value="Medicine">Medicine</option>
+              <option value="Law">Law</option>
+              <option value="Architecture">Architecture</option>
+              <option value="Design">Design</option>
+              <option value="Education">Education</option>
               <option value="Arts">Arts</option>
-              <option value="Sciences">Sciences</option>
+              <option value="Other Sciences">Other Sciences</option>
               <option value="Other">Other</option>
             </select>
 
