@@ -37,19 +37,16 @@ export default function MobileLayout() {
     <div className="app-container">
       
       {/* Top Action Bar */}
-      <header className="app-header" style={{ transform: showHeader ? 'translateY(0)' : 'translateY(-100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <header className="app-header" style={{ transform: showHeader ? 'translateY(0)' : 'translateY(-100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {getTitle() === 'vicinity' ? (
-          <h1 style={{ flex: 1, textAlign: 'center', marginLeft: '40px', fontSize: '32px', margin: 0, fontWeight: 400, letterSpacing: '1px', color: 'var(--text-main)', fontFamily: '"Holiday", "Pacifico", cursive', textTransform: 'lowercase' }}>
+          <h1 style={{ textAlign: 'center', fontSize: '32px', margin: 0, fontWeight: 400, letterSpacing: '1px', color: 'var(--text-main)', fontFamily: '"Holiday", "Pacifico", cursive', textTransform: 'lowercase' }}>
             vicinity
           </h1>
         ) : (
-          <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>
+          <h1 style={{ textAlign: 'center', fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>
             {getTitle()}
           </h1>
         )}
-        <button style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'transparent', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'none' }}>
-          <Bell size={20} />
-        </button>
       </header>
 
       {/* Bottom/Side Navigation */}

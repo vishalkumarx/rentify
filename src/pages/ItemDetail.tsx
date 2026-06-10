@@ -78,7 +78,7 @@ export default function ItemDetail() {
       </header>
 
       {/* Content */}
-      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '100px' }}>
+      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '200px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           
           {/* Main Image */}
