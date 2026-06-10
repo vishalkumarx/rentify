@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef } from 'react';
-import { Home, PlusSquare, User, Bell, MessageCircle } from 'lucide-react';
+import { Home, PlusSquare, User, MessageCircle } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 
 export default function MobileLayout() {
