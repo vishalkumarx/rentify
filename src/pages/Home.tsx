@@ -190,7 +190,14 @@ export default function Home() {
           <div className="animate-slide-up" style={{ width: '100%', background: 'var(--bg)', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '24px', paddingBottom: 'calc(24px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>Filters</h2>
-              <button onClick={() => setShowFilters(false)} style={{ background: 'var(--surface)', padding: '6px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontSize: '13px', fontWeight: 600 }}>Done</button>
+            </div>
+            
+            {/* Category Filter */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Category</label>
+              <select value={activeCategory} onChange={e => setActiveCategory(e.target.value)} style={{ padding: '14px 16px', borderRadius: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}>
+                {CATEGORIES.map(c => <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>)}
+              </select>
             </div>
             
             {/* Department Filter */}
