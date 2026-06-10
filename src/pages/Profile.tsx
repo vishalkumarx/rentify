@@ -28,7 +28,7 @@ export default function Profile() {
         {/* Profile Header */}
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0, fontSize: '32px', fontWeight: 700 }}>
+            <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', flexShrink: 0, fontSize: '32px', fontWeight: 700 }}>
               {session?.user?.email?.[0].toUpperCase() || 'U'}
             </div>
             <div style={{ overflow: 'hidden' }}>
@@ -106,8 +106,8 @@ export default function Profile() {
                           fontSize: '12px', 
                           fontWeight: 600,
                           border: 'none',
-                          background: item.status === 'booked' ? 'var(--surface-border)' : 'var(--primary-glow)',
-                          color: item.status === 'booked' ? 'var(--text-muted)' : 'var(--primary)',
+                          background: item.status === 'booked' ? 'var(--surface-border)' : '#000000',
+                          color: item.status === 'booked' ? 'var(--text-muted)' : '#ffffff',
                           cursor: 'pointer'
                         }}
                       >
