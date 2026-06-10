@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { session } = useAuth();
   const { conversations, messages, sendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -32,8 +34,8 @@ export default function Chat() {
 
   const handleSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
-    sendMessage(conversation.id, 'me', inputText);
+    if (!inputText.trim() || !session?.user?.id) return;
+    sendMessage(conversation.id, session.user.id, inputText);
     setInputText('');
   };
 
@@ -106,7 +108,7 @@ export default function Chat() {
           </div>
         ) : (
           conversationMessages.map(msg => {
-            const isMe = msg.senderId === 'me';
+            const isMe = msg.senderId === session?.user?.id;
             return (
               <div key={msg.id} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
                 <div style={{ 
