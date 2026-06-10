@@ -41,25 +41,32 @@ export default function Post() {
     setLoading(true);
     
     try {
-      let finalImageUrl = 'https://images.unsplash.com/photo-1588702545922-76289d043477?auto=format&fit=crop&q=80&w=400';
+      let uploadedUrls: string[] = [];
       
       if (imageFiles.length > 0) {
-        const file = imageFiles[0];
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${fileName}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('item-images')
-          .upload(filePath, file);
+        // Upload all images concurrently
+        const uploadPromises = imageFiles.map(async (file) => {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `${fileName}`;
           
-        if (uploadError) throw uploadError;
-        
-        const { data: { publicUrl } } = supabase.storage
-          .from('item-images')
-          .getPublicUrl(filePath);
+          const { error: uploadError } = await supabase.storage
+            .from('item-images')
+            .upload(filePath, file);
+            
+          if (uploadError) throw uploadError;
           
-        finalImageUrl = publicUrl;
+          const { data: { publicUrl } } = supabase.storage
+            .from('item-images')
+            .getPublicUrl(filePath);
+            
+          return publicUrl;
+        });
+
+        uploadedUrls = await Promise.all(uploadPromises);
+      } else {
+        // Fallback placeholder if no images uploaded
+        uploadedUrls = ['https://images.unsplash.com/photo-1588702545922-76289d043477?auto=format&fit=crop&q=80&w=400'];
       }
       
       await addPost({
@@ -67,8 +74,8 @@ export default function Post() {
         price,
         category,
         department: department || 'Other',
-        image: finalImageUrl,
-        images: [finalImageUrl],
+        image: uploadedUrls[0], // First image is cover
+        images: uploadedUrls,   // All images
       });
       
       setLoading(false);

@@ -96,6 +96,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
           category: newItem.category,
           department: newItem.department,
           image: newItem.image,
+          images: newItem.images || [newItem.image],
           status: 'available',
           user_id: userData.user.id
         }
