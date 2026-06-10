@@ -1,13 +1,11 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase, getStorageJson } from '../lib/supabase';
+import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 
 type AuthContextType = {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  hasProfile: boolean;
-  setHasProfile: (has: boolean) => void;
   loginAsGuest: () => void;
 };
 
@@ -15,8 +13,6 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
   loading: true,
-  hasProfile: false,
-  setHasProfile: () => {},
   loginAsGuest: () => {},
 });
 
@@ -24,7 +20,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [hasProfile, setHasProfile] = useState(false);
 
   const loginAsGuest = () => {
     // Mock user for development
@@ -44,7 +39,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Ensure profile exists for live data
         const profilePath = `profiles/${currentSession.user.id}.json`;
         const existingProfile = await getStorageJson(profilePath);
-        setHasProfile(!!existingProfile);
+        if (!existingProfile) {
+          const fallbackName = currentSession.user.user_metadata?.full_name || 'User ' + currentSession.user.id.substring(0, 5);
+          await setStorageJson(profilePath, {
+            name: fallbackName,
+            department: 'Campus Member',
+            rating: 5.0,
+            memberSince: new Date().getFullYear().toString(),
+            verifications: ['Email Confirmed']
+          });
+        }
         
         setSession(currentSession);
         setUser(currentSession.user);
@@ -72,7 +76,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, hasProfile, setHasProfile, loginAsGuest }}>
+    <AuthContext.Provider value={{ session, user, loading, loginAsGuest }}>
       {children}
     </AuthContext.Provider>
   );

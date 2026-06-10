@@ -1,56 +1,50 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase, setStorageJson } from '../lib/supabase';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 export default function Signup() {
-  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [department, setDepartment] = useState('Computer Science');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [userId, setUserId] = useState<string | null>(null);
-  const { setHasProfile } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserId(session.user.id);
-      } else {
-        // If they reach this page without being logged in, redirect them to login
-        navigate('/login');
-      }
-    });
-  }, [navigate]);
-
-  const handleCompleteProfile = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userId) return;
-    
     setLoading(true);
     setError('');
     
-    try {
-      await setStorageJson(`profiles/${userId}.json`, {
-        name: fullName,
-        email: email,
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    
+    if (error) {
+      setError(error.message);
+    } else if (data.user) {
+      await setStorageJson(`profiles/${data.user.id}.json`, {
+        name: fullName || 'User ' + data.user.id.substring(0, 5),
         department: department,
         rating: 5.0,
         memberSince: new Date().getFullYear().toString(),
-        verifications: ['Phone Confirmed']
+        verifications: ['Email Confirmed']
       });
-      setHasProfile(true);
       navigate('/');
-    } catch (err: any) {
-      setError(err.message || 'Failed to save profile');
     }
     setLoading(false);
   };
 
-  const handleCancel = async () => {
-    await supabase.auth.signOut();
-    navigate('/login');
+  const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError('');
+    const { error } = await supabase.auth.signInWithOAuth({ 
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + window.location.pathname
+      }
+    });
+    if (error) setError(error.message);
+    setLoading(false);
   };
 
   return (
@@ -58,12 +52,11 @@ export default function Signup() {
       
       {/* Top Yellow Section */}
       <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '32px' }}>
-          <button onClick={handleCancel} style={{ background: 'none', border: 'none', color: '#111827', fontWeight: 600, fontSize: '15px', cursor: 'pointer', padding: 0 }}>
-            &larr; Sign Out
-          </button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '32px' }}>
+          <Link to="/login" style={{ color: '#111827', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Sign In</Link>
         </div>
-        <div style={{ marginTop: '0px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        
+        <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div style={{ fontFamily: 'Holiday, sans-serif', fontSize: '72px', color: '#111827', marginBottom: '16px', lineHeight: 0.9 }}>vicinity</div>
           <p style={{ color: 'rgba(17, 24, 39, 0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
             everything you need,<br />in your vicinity.
@@ -82,12 +75,51 @@ export default function Signup() {
         alignItems: 'center'
       }}>
         <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0', color: 'var(--text-main)' }}>Complete Profile</h1>
-          <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>Almost there! Please tell us a bit about yourself.</p>
+          <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0', color: 'var(--text-main)' }}>Register</h1>
         
-        <form onSubmit={handleCompleteProfile} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
           
+          <input
+            type="email"
+            placeholder="Email Address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            style={{ 
+              width: '100%', 
+              padding: '16px', 
+              borderRadius: '16px', 
+              border: '1px solid var(--surface-border)', 
+              background: 'var(--surface)', 
+              color: 'var(--text-main)', 
+              fontSize: '15px', 
+              outline: 'none',
+              transition: 'border-color 0.2s',
+              fontFamily: 'inherit'
+            }}
+          />
+
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            style={{ 
+              width: '100%', 
+              padding: '16px', 
+              borderRadius: '16px', 
+              border: '1px solid var(--surface-border)', 
+              background: 'var(--surface)', 
+              color: 'var(--text-main)', 
+              fontSize: '15px', 
+              outline: 'none',
+              transition: 'border-color 0.2s',
+              fontFamily: 'inherit'
+            }}
+          />
+
           <input 
             type="text" 
             placeholder="Full Name" 
@@ -107,26 +139,6 @@ export default function Signup() {
               fontFamily: 'inherit'
             }}
           />
-
-          <input 
-            type="email" 
-            placeholder="Email Address (Optional)" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '16px', 
-              borderRadius: '16px', 
-              border: '1px solid var(--surface-border)', 
-              background: 'var(--surface)', 
-              color: 'var(--text-main)', 
-              fontSize: '15px', 
-              outline: 'none',
-              transition: 'border-color 0.2s',
-              fontFamily: 'inherit'
-            }}
-          />
-
           <select 
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
@@ -170,7 +182,7 @@ export default function Signup() {
 
           <button 
             type="submit" 
-            disabled={loading || !userId}
+            disabled={loading}
             style={{
               width: '100%',
               padding: '18px',
@@ -180,8 +192,8 @@ export default function Signup() {
               color: 'var(--primary)',
               fontSize: '16px',
               fontWeight: 700,
-              cursor: (loading || !userId) ? 'not-allowed' : 'pointer',
-              opacity: (loading || !userId) ? 0.7 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -190,7 +202,40 @@ export default function Signup() {
               transition: 'all 0.2s'
             }}
           >
-            {loading ? 'Processing...' : 'Complete Profile'}
+            {loading ? 'Processing...' : 'Create Account'}
+            {!loading && <ArrowRight size={20} />}
+          </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0', opacity: 0.5 }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--surface-border)' }}></div>
+            <span style={{ padding: '0 12px', fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>OR</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--surface-border)' }}></div>
+          </div>
+          
+          <button 
+            type="button" 
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: '24px',
+              border: '1px solid var(--surface-border)',
+              background: 'var(--surface)',
+              color: 'var(--text-main)',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              opacity: loading ? 0.7 : 1,
+              transition: 'all 0.2s'
+            }}
+          >
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style={{ width: '20px', height: '20px' }} />
+            Continue with Google
           </button>
         </form>
         </div>
