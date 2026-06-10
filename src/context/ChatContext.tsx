@@ -151,7 +151,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       chatData.lastMessageTime = newMsg.timestamp;
       
       // Increment unread count for everyone except sender
-      const otherUserIds = Object.keys(chatData.participants).filter(id => id !== myId);
+      if (!chatData.unreadCounts) chatData.unreadCounts = {};
+      const otherUserIds = Object.keys(chatData.participants || {}).filter(id => id !== myId);
       otherUserIds.forEach(id => {
         chatData.unreadCounts[id] = (chatData.unreadCounts[id] || 0) + 1;
       });
@@ -174,11 +175,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       let chatData = await getStorageJson(chatPath) as Conversation;
       if (!chatData) return;
 
-      if (chatData.unreadCounts?.[myId] && chatData.unreadCounts[myId] > 0) {
-        chatData.unreadCounts[myId] = 0;
-        await setStorageJson(chatPath, chatData);
-        fetchChats();
-      }
+      if (!chatData.unreadCounts) chatData.unreadCounts = {};
+      if (chatData.unreadCounts[myId] === 0) return; // Already read
+
+      chatData.unreadCounts[myId] = 0;
+      await setStorageJson(chatPath, chatData);
+      fetchChats();
     } catch (err) {
       console.error("Failed to mark as read", err);
     }
