@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase, getStorageJson } from '../lib/supabase';
+import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 
 type AuthContextType = {
   session: Session | null;
@@ -36,6 +36,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(null);
         setUser(null);
       } else {
+        // Ensure profile exists for live data
+        const profilePath = `profiles/${currentSession.user.id}.json`;
+        const existingProfile = await getStorageJson(profilePath);
+        if (!existingProfile) {
+          const fallbackName = currentSession.user.user_metadata?.full_name || 'User ' + currentSession.user.id.substring(0, 5);
+          await setStorageJson(profilePath, {
+            name: fallbackName,
+            department: 'Campus Member',
+            rating: 5.0,
+            memberSince: new Date().getFullYear().toString(),
+            verifications: ['Email Confirmed']
+          });
+        }
+        
         setSession(currentSession);
         setUser(currentSession.user);
       }

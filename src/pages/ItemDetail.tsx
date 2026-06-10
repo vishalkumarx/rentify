@@ -194,7 +194,7 @@ export default function ItemDetail() {
                   </div>
                 </div>
 
-                <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {item.seller.verifications.map((ver, idx) => (
                     <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
                       <CheckCircle2 size={16} />

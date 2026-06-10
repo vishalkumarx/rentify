@@ -1,15 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useChat } from '../context/ChatContext';
+
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ArrowLeft, Star, ShieldCheck, CheckCircle2, AlertTriangle, BadgeCheck, X, MessageCircle, Send } from 'lucide-react';
+import { ArrowLeft, Star, ShieldCheck, CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
-  const { getOrCreateConversation } = useChat();
 
   const [loading, setLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
@@ -23,14 +22,7 @@ export default function UserProfile() {
   const [reportDesc, setReportDesc] = useState('');
   const [reporting, setReporting] = useState(false);
 
-  // Mock User Data (in a real app, you'd fetch this from the profiles table)
-  const user = {
-    id: id || '',
-    name: id?.includes('user-') ? 'User ' + id.split('-')[1] : 'Verified User',
-    rating: 4.8,
-    memberSince: '2025',
-    verifications: ['Email Confirmed', 'Phone Verified'],
-  };
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -40,6 +32,20 @@ export default function UserProfile() {
       const apps = await getStorageJson('admin/approvals.json') || [];
       if (apps.includes(id)) {
         setIsVerified(true);
+      }
+
+      // Fetch Profile Data
+      const pData = await getStorageJson(`profiles/${id}.json`);
+      if (pData) {
+        setProfile(pData);
+      } else {
+        setProfile({
+          name: 'User ' + (id ? id.substring(0, 5) : ''),
+          department: 'Campus Member',
+          rating: 4.8,
+          memberSince: new Date().getFullYear().toString(),
+          verifications: ['Email Confirmed']
+        });
       }
 
       // Fetch Reviews from Storage
@@ -60,14 +66,7 @@ export default function UserProfile() {
     fetchUserData();
   }, [id]);
 
-  const handleContact = () => {
-    if (!session) {
-      alert("Please log in to message this user.");
-      return;
-    }
-    const convId = getOrCreateConversation(-1, `Chat with ${user.name}`, '', id!, user.name);
-    navigate(`/chat/${convId}`);
-  };
+
 
   const handleReport = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,7 +136,7 @@ export default function UserProfile() {
         {/* User Card */}
         <div className="glass-panel" style={{ padding: '32px 24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '24px' }}>
           <div style={{ width: '96px', height: '96px', borderRadius: '48px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '16px', position: 'relative' }}>
-            {user.name.charAt(0)}
+            {profile?.name?.charAt(0) || 'U'}
             {isVerified && (
               <div style={{ position: 'absolute', bottom: '0', right: '0', background: 'var(--surface)', borderRadius: '50%', padding: '2px' }}>
                 <BadgeCheck size={28} fill="#1877F2" color="white" />
@@ -145,24 +144,22 @@ export default function UserProfile() {
             )}
           </div>
           
-          <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 8px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-            {user.name}
+          <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            {profile?.name}
           </h2>
+          {profile?.department && (
+            <p style={{ margin: '0 0 12px 0', fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500 }}>
+              {profile.department}
+            </p>
+          )}
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Star size={16} fill="var(--warning)" color="var(--warning)" /> {user.rating} 
+              <Star size={16} fill="var(--warning)" color="var(--warning)" /> {profile?.rating} 
             </span>
             <span>•</span>
-            <span>Joined {user.memberSince}</span>
+            <span>Joined {profile?.memberSince}</span>
           </div>
-
-          <button 
-            onClick={handleContact}
-            style={{ marginTop: '24px', width: '100%', padding: '16px', background: 'var(--text-main)', color: 'var(--surface)', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
-          >
-            <MessageCircle size={20} /> Message User
-          </button>
         </div>
 
         {/* Verifications */}
@@ -174,7 +171,7 @@ export default function UserProfile() {
                 <ShieldCheck size={20} /> Official University ID Verified
               </div>
             )}
-            {user.verifications.map((ver, idx) => (
+            {profile?.verifications?.map((ver: string, idx: number) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', padding: '16px', borderRadius: '16px', color: 'var(--success)', fontWeight: 600 }}>
                 <CheckCircle2 size={20} /> {ver}
               </div>

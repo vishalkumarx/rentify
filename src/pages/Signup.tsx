@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, setStorageJson } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [department, setDepartment] = useState('Computer Science');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -17,8 +19,22 @@ export default function Signup() {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
       setError(error.message);
-    } else if (data.session) {
-      navigate('/');
+    } else if (data.session || data.user) {
+      // Save profile data
+      if (data.user) {
+        await setStorageJson(`profiles/${data.user.id}.json`, {
+          name: fullName || 'User ' + data.user.id.substring(0, 5),
+          department: department,
+          rating: 5.0,
+          memberSince: new Date().getFullYear().toString(),
+          verifications: ['Email Confirmed']
+        });
+      }
+      if (data.session) navigate('/');
+      else {
+        setError('Success! Please check your email to verify your account before logging in.');
+        setPassword('');
+      }
     } else {
       setError('Success! Please check your email to verify your account before logging in.');
       // Optional: Clear the password field so they can type it later on login
@@ -79,17 +95,65 @@ export default function Signup() {
             onChange={(e) => setEmail(e.target.value)}
             required
             style={{
-              background: 'var(--surface-border)',
-              border: 'none',
-              borderRadius: '24px',
-              padding: '18px 24px',
-              fontSize: '15px',
-              fontWeight: 500,
-              color: 'var(--text-main)'
-            }}
-          />
-          <input
-            type="password"
+                background: 'var(--surface)', 
+                color: 'var(--text-main)', 
+                fontSize: '15px', 
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                fontFamily: 'inherit',
+                padding: '18px 24px',
+                borderRadius: '24px',
+                border: '1px solid var(--surface-border)'
+              }}
+            />
+
+            <input 
+              type="text" 
+              placeholder="Full Name" 
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+              style={{ 
+                width: '100%', 
+                padding: '16px', 
+                borderRadius: '16px', 
+                border: '1px solid var(--surface-border)', 
+                background: 'var(--surface)', 
+                color: 'var(--text-main)', 
+                fontSize: '15px', 
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                fontFamily: 'inherit'
+              }}
+            />
+
+            <select 
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              style={{ 
+                width: '100%', 
+                padding: '16px', 
+                borderRadius: '16px', 
+                border: '1px solid var(--surface-border)', 
+                background: 'var(--surface)', 
+                color: 'var(--text-main)', 
+                fontSize: '15px', 
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                fontFamily: 'inherit',
+                appearance: 'none'
+              }}
+            >
+              <option value="Computer Science">Computer Science</option>
+              <option value="Engineering">Engineering</option>
+              <option value="Business">Business</option>
+              <option value="Arts">Arts</option>
+              <option value="Sciences">Sciences</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <input 
+              type="password" 
             placeholder="Password (min 6 chars)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
