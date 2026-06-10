@@ -73,6 +73,7 @@ export default function Post() {
         title,
         price,
         category,
+        description,
         department: department || 'Other',
         image: uploadedUrls[0], // First image is cover
         images: uploadedUrls,   // All images
