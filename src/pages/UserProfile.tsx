@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ArrowLeft, Star, ShieldCheck, CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
+import { ChevronLeft, Star, ShieldCheck, CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
@@ -126,7 +126,7 @@ export default function UserProfile() {
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', padding: '16px 20px', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
         <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px' }}>
-          <ArrowLeft size={24} />
+          <ChevronLeft size={28} />
         </button>
         <h1 style={{ flex: 1, textAlign: 'center', margin: 0, fontSize: '18px', fontWeight: 700, marginRight: '32px' }}>Profile</h1>
       </div>
