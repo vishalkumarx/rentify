@@ -65,6 +65,14 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
         ...item,
         userId: item.user_id,
         liked: false, // Default local like state
+        seller: {
+          id: item.user_id,
+          name: 'User ' + (item.user_id ? item.user_id.substring(0, 5) : '123'),
+          rating: 4.8,
+          reviewCount: 0,
+          memberSince: new Date().getFullYear().toString(),
+          verifications: ['Email Confirmed']
+        }
       }));
       setItems(mappedItems);
     }
@@ -118,6 +126,14 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
         ...data,
         userId: data.user_id,
         liked: false,
+        seller: {
+          id: data.user_id,
+          name: 'User ' + data.user_id.substring(0, 5),
+          rating: 4.8,
+          reviewCount: 0,
+          memberSince: new Date().getFullYear().toString(),
+          verifications: ['Email Confirmed']
+        }
       };
       setItems((prev) => [post, ...prev]);
     }
