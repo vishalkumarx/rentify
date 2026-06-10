@@ -20,8 +20,21 @@ export default function EditPost() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>(item?.images || (item?.image ? [item.image] : []));
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [initialized, setInitialized] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (item && !initialized) {
+      setTitle(item.title || '');
+      setPrice(item.price || '');
+      setCategory(item.category || '');
+      setDepartment(item.department || '');
+      setDescription(item.description || '');
+      setImages(item.images || (item.image ? [item.image] : []));
+      setInitialized(true);
+    }
+  }, [item, initialized]);
 
   useEffect(() => {
     // Only alert if we're sure items have been fetched but the item isn't in them
