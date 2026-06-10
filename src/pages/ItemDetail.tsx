@@ -3,8 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
-import { getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight, Bell, AlertTriangle, BadgeCheck } from 'lucide-react';
+import { getStorageJson } from '../lib/supabase';
+import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight, Bell, BadgeCheck } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 export default function ItemDetail() {
@@ -15,10 +15,6 @@ export default function ItemDetail() {
   const { session, loading } = useAuth();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [ownerVerified, setOwnerVerified] = useState(false);
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [reportReason, setReportReason] = useState('Scam / Fraud');
-  const [reportDesc, setReportDesc] = useState('');
-  const [reporting, setReporting] = useState(false);
 
   const item = items.find(i => i.id === Number(id));
 
@@ -54,27 +50,6 @@ export default function ItemDetail() {
     const ownerName = item.seller?.name || `Owner of ${item.title}`;
     const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
     navigate(`/chat/${convId}`);
-  };
-
-  const handleReport = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!session?.user?.id || !item?.userId) return;
-    setReporting(true);
-    try {
-      const report = {
-        reportedUserId: item.userId,
-        reporterId: session.user.id,
-        reason: reportReason,
-        description: reportDesc,
-        timestamp: new Date().toISOString()
-      };
-      await setStorageJson(`reports/${item.userId}-${session.user.id}-${Date.now()}.json`, report);
-      alert('Report submitted successfully. Admins will review it shortly.');
-      setShowReportModal(false);
-    } catch (err) {
-      alert('Failed to submit report');
-    }
-    setReporting(false);
   };
 
   return (
@@ -187,8 +162,15 @@ export default function ItemDetail() {
             )}
             {/* Seller Trust Profile */}
             {item.seller && (
-              <div className="glass-panel" style={{ marginTop: '32px', padding: '20px', borderRadius: '20px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>Meet the Owner</h3>
+              <div 
+                onClick={() => navigate('/user/' + (item.userId || 'user-123'))}
+                className="glass-panel" 
+                style={{ marginTop: '32px', padding: '20px', borderRadius: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px' }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Meet the Owner</h3>
+                  <ChevronRight size={20} color="var(--text-muted)" />
+                </div>
                 
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: 'var(--text-main)' }}>
@@ -222,13 +204,6 @@ export default function ItemDetail() {
                 </div>
               </div>
             )}
-
-            <button 
-              onClick={() => setShowReportModal(true)}
-              style={{ marginTop: '16px', display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', border: 'none', color: 'var(--danger)', fontSize: '14px', fontWeight: 600, cursor: 'pointer', padding: '8px 0' }}
-            >
-              <AlertTriangle size={16} /> Report User
-            </button>
           </div>
         </div>
       </main>
@@ -269,56 +244,6 @@ export default function ItemDetail() {
           </div>
           <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
             Pinch or double tap to zoom. Drag to pan.
-          </div>
-        </div>
-      )}
-
-      {/* Report Modal */}
-      {showReportModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-          <div className="glass-panel animate-slide-in" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', borderRadius: '24px', padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger)' }}>
-                <AlertTriangle size={20} /> Report User
-              </h3>
-              <button onClick={() => setShowReportModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
-                <X size={24} />
-              </button>
-            </div>
-            
-            <form onSubmit={handleReport} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-main)' }}>Reason</label>
-                <select 
-                  value={reportReason} 
-                  onChange={e => setReportReason(e.target.value)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '14px', outline: 'none' }}
-                >
-                  <option value="Scam / Fraud">Scam / Fraud</option>
-                  <option value="Inappropriate Content">Inappropriate Content</option>
-                  <option value="Harassment">Harassment</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
-              <div>
-                <label style={{ display: 'block', fontSize: '14px', fontWeight: 600, marginBottom: '8px', color: 'var(--text-main)' }}>Description (Optional)</label>
-                <textarea 
-                  value={reportDesc}
-                  onChange={e => setReportDesc(e.target.value)}
-                  placeholder="Please provide more details..."
-                  style={{ width: '100%', minHeight: '100px', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '14px', outline: 'none', resize: 'vertical' }}
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                disabled={reporting}
-                style={{ width: '100%', padding: '14px', background: 'var(--danger)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 700, cursor: reporting ? 'not-allowed' : 'pointer', opacity: reporting ? 0.7 : 1 }}
-              >
-                {reporting ? 'Submitting...' : 'Submit Report'}
-              </button>
-            </form>
           </div>
         </div>
       )}
