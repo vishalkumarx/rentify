@@ -38,15 +38,15 @@ export default function Login() {
       
       {/* Top Yellow Section */}
       <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-          <div style={{ fontFamily: 'Holiday, sans-serif', fontSize: '32px', color: '#111827', letterSpacing: '-1px', transform: 'rotate(-2deg)' }}>vicinity</div>
-          <Link to="/signup" style={{ color: '#111827', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(255,255,255,0.2)', padding: '8px 16px', borderRadius: '20px' }}>Register</Link>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '32px' }}>
+          <Link to="/signup" style={{ color: '#111827', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Register</Link>
         </div>
         
-        <div style={{ marginTop: '20px' }}>
-          <h1 style={{ fontSize: '42px', fontWeight: 800, margin: '0 0 12px', color: '#111827' }}>Sign In</h1>
+        <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <div style={{ fontFamily: 'Holiday, sans-serif', fontSize: '72px', color: '#111827', marginBottom: '16px', lineHeight: 0.9 }}>vicinity</div>
+          <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0 0 12px', color: '#111827' }}>Sign In</h1>
           <p style={{ color: 'rgba(17, 24, 39, 0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
-            everything you need, in your <span style={{ fontFamily: 'Holiday, sans-serif', fontSize: '24px', verticalAlign: 'middle', display: 'inline-block', transform: 'translateY(-2px)' }}>vicinity</span>.
+            everything you need, in your vicinity.
           </p>
         </div>
       </div>
