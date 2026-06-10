@@ -37,7 +37,7 @@ export default function Messages() {
               />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{conv.otherUserName}</h3>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{conv.itemTitle}</h3>
                   {conv.lastMessageTime && (
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                       {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -46,7 +46,7 @@ export default function Messages() {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <p style={{ margin: 0, fontSize: '14px', color: conv.unreadCount > 0 ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: conv.unreadCount > 0 ? 600 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {conv.lastMessage || `Chat about ${conv.itemTitle}`}
+                    <span style={{ fontWeight: 600, marginRight: '4px' }}>{conv.otherUserName}:</span> {conv.lastMessage || 'Sent a new message'}
                   </p>
                   {conv.unreadCount > 0 && (
                     <span style={{ background: 'var(--danger)', color: 'white', fontSize: '11px', fontWeight: 800, padding: '2px 6px', borderRadius: '10px', marginLeft: '8px' }}>

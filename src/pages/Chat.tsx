@@ -51,8 +51,8 @@ export default function Chat() {
         </div>
         
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px' }}>{conversation.otherUserName}</h2>
-          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px' }}>Online</p>
+          <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px' }}>{conversation.itemTitle}</h2>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px' }}>{conversation.otherUserName}</p>
         </div>
       </header>
 
