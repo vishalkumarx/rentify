@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, setStorageJson } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Signup() {
   const [fullName, setFullName] = useState('');
@@ -9,6 +10,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [userId, setUserId] = useState<string | null>(null);
+  const { setHasProfile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export default function Signup() {
         memberSince: new Date().getFullYear().toString(),
         verifications: ['Phone Confirmed']
       });
+      setHasProfile(true);
       navigate('/');
     } catch (err: any) {
       setError(err.message || 'Failed to save profile');
@@ -45,12 +48,22 @@ export default function Signup() {
     setLoading(false);
   };
 
+  const handleCancel = async () => {
+    await supabase.auth.signOut();
+    navigate('/login');
+  };
+
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: 'var(--primary)', position: 'relative' }}>
       
       {/* Top Yellow Section */}
       <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
-        <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', marginBottom: '32px' }}>
+          <button onClick={handleCancel} style={{ background: 'none', border: 'none', color: '#111827', fontWeight: 600, fontSize: '15px', cursor: 'pointer', padding: 0 }}>
+            &larr; Sign Out
+          </button>
+        </div>
+        <div style={{ marginTop: '0px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div style={{ fontFamily: 'Holiday, sans-serif', fontSize: '72px', color: '#111827', marginBottom: '16px', lineHeight: 0.9 }}>vicinity</div>
           <p style={{ color: 'rgba(17, 24, 39, 0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
             everything you need,<br />in your vicinity.

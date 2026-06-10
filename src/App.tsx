@@ -16,7 +16,7 @@ import AdminPanel from './pages/AdminPanel';
 import UserProfile from './pages/UserProfile';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
-  const { session, loading } = useAuth();
+  const { session, loading, hasProfile } = useAuth();
   
   if (loading) return <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
   if (!session) {
@@ -35,16 +35,35 @@ const ProtectedRoute = ({ children, message }: { children: React.ReactNode, mess
       </div>
     );
   }
+  if (session && !hasProfile) return <Navigate to="/signup" replace />;
   
   return <>{children}</>;
 };
 
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {
-  const { session, loading } = useAuth();
+  const { session, loading, hasProfile } = useAuth();
   
   if (loading) return null;
-  if (session) return <Navigate to="/" replace />;
+  if (session && hasProfile) return <Navigate to="/" replace />;
+  if (session && !hasProfile) return <Navigate to="/signup" replace />;
   
+  return <>{children}</>;
+};
+
+const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
+  const { session, loading, hasProfile } = useAuth();
+  
+  if (loading) return null;
+  if (!session) return <Navigate to="/login" replace />;
+  if (session && hasProfile) return <Navigate to="/" replace />;
+  
+  return <>{children}</>;
+};
+
+const RequireProfile = ({ children }: { children: React.ReactNode }) => {
+  const { session, loading, hasProfile } = useAuth();
+  if (loading) return null;
+  if (session && !hasProfile) return <Navigate to="/signup" replace />;
   return <>{children}</>;
 };
 
@@ -52,10 +71,10 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
-      <Route path="/signup" element={<AuthRoute><Signup /></AuthRoute>} />
+      <Route path="/signup" element={<OnboardingRoute><Signup /></OnboardingRoute>} />
       
       {/* Mobile Layout Routes */}
-      <Route element={<MobileLayout />}>
+      <Route element={<RequireProfile><MobileLayout /></RequireProfile>}>
         {/* Public Feed */}
         <Route path="/" element={<Home />} />
         
@@ -66,8 +85,8 @@ function AppRoutes() {
       </Route>
       
       {/* Full Screen Modals/Pages */}
-      <Route path="/item/:id" element={<ItemDetail />} />
-      <Route path="/user/:id" element={<UserProfile />} />
+      <Route path="/item/:id" element={<RequireProfile><ItemDetail /></RequireProfile>} />
+      <Route path="/user/:id" element={<RequireProfile><UserProfile /></RequireProfile>} />
       <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
