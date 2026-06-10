@@ -53,7 +53,8 @@ export default function AdminPanel() {
   const filteredUsers = users.filter(u => u.email.toLowerCase().includes(search.toLowerCase()) || u.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }} className="animate-slide-in">
+    <div style={{ height: '100vh', overflowY: 'auto' }}>
+      <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%', minHeight: '100vh', display: 'flex', flexDirection: 'column' }} className="animate-slide-in">
       
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', background: 'var(--surface)', padding: '24px', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: 'var(--card-shadow)' }}>
@@ -153,6 +154,7 @@ export default function AdminPanel() {
         )}
       </div>
 
+    </div>
     </div>
   );
 }
