@@ -96,7 +96,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         };
       });
 
-      setConversations(uiConvs);
+      setConversations(prev => {
+        // Keep optimistic conversations that haven't appeared in storage list yet
+        const existingOptimistic = prev.filter(p => !uiConvs.find(u => u.id === p.id));
+        return [...existingOptimistic, ...uiConvs].sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
+      });
 
       // Flatten messages for the UI
       const allMessages = validChats.flatMap(c => c.messages || []).sort((a, b) => a.timestamp - b.timestamp);
