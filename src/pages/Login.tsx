@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
-import { Link, useNavigate } from 'react-router-dom';
+import { supabase, getStorageJson } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 export default function Login() {
@@ -27,9 +27,21 @@ export default function Login() {
     setLoading(true);
     setError('');
     const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
-    const { error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
-    if (error) setError(error.message);
-    else navigate('/');
+    const { data, error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
+    if (error) {
+      setError(error.message);
+    } else {
+      if (data.user) {
+        const profile = await getStorageJson(`profiles/${data.user.id}.json`);
+        if (profile) {
+          navigate('/');
+        } else {
+          navigate('/signup');
+        }
+      } else {
+        navigate('/');
+      }
+    }
     setLoading(false);
   };
 
@@ -51,10 +63,6 @@ export default function Login() {
       
       {/* Top Yellow Section */}
       <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '32px' }}>
-          <Link to="/signup" style={{ color: '#111827', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Register</Link>
-        </div>
-        
         <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
           <div style={{ fontFamily: 'Holiday, sans-serif', fontSize: '72px', color: '#111827', marginBottom: '16px', lineHeight: 0.9 }}>vicinity</div>
           <p style={{ color: 'rgba(17, 24, 39, 0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
@@ -146,7 +154,7 @@ export default function Login() {
             justifyContent: 'center',
             gap: '8px'
           }}>
-            {loading ? 'Processing...' : (otpSent ? 'Verify & Sign In' : 'Send SMS Code')}
+            {loading ? 'Processing...' : (otpSent ? 'Verify & Sign In' : 'Get Code')}
             {!loading && <ArrowRight size={20} />}
           </button>
         </form>
