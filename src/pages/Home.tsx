@@ -11,6 +11,43 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   
+  // Animated Placeholder
+  const phrases = [
+    "Search for Books...",
+    "Search for Electronics...",
+    "Search for Furniture...",
+    "Search for Bicycles...",
+    "Search for Notes..."
+  ];
+  const [placeholderText, setPlaceholderText] = useState("");
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const currentPhrase = phrases[phraseIndex];
+    
+    if (isDeleting) {
+      if (placeholderText === "") {
+        setIsDeleting(false);
+        setPhraseIndex((prev) => (prev + 1) % phrases.length);
+      } else {
+        timer = setTimeout(() => {
+          setPlaceholderText(currentPhrase.substring(0, placeholderText.length - 1));
+        }, 30);
+      }
+    } else {
+      if (placeholderText === currentPhrase) {
+        timer = setTimeout(() => setIsDeleting(true), 2000);
+      } else {
+        timer = setTimeout(() => {
+          setPlaceholderText(currentPhrase.substring(0, placeholderText.length + 1));
+        }, 80);
+      }
+    }
+    return () => clearTimeout(timer);
+  }, [placeholderText, isDeleting, phraseIndex]);
+  
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
   const [filterDept, setFilterDept] = useState('All');
@@ -115,7 +152,7 @@ export default function Home() {
           <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
           <input
             type="text"
-            placeholder="Search for anything..."
+            placeholder={placeholderText || "Search..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ 
