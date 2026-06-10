@@ -235,6 +235,7 @@ export default function Signup() {
           
           <button 
             type="button" 
+            className="google-auth-btn"
             onClick={handleGoogleSignIn}
             disabled={loading}
             style={{
