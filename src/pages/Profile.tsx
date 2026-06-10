@@ -3,7 +3,7 @@ import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Package, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star } from 'lucide-react';
+import { Settings, LogOut, Package, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star, BadgeCheck, Upload, Clock } from 'lucide-react';
 
 export default function Profile() {
   const { items, toggleBookingStatus, deletePost } = useFeed();
@@ -18,6 +18,37 @@ export default function Profile() {
 
   const handleSignOut = () => {
     supabase.auth.signOut();
+  };
+
+  const isVerified = session?.user?.user_metadata?.is_verified;
+  const isVerificationPending = session?.user?.user_metadata?.verification_pending;
+
+  const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !session?.user?.id) return;
+    
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('item-images')
+        .upload(`verifications/${fileName}`, file);
+        
+      if (uploadError) throw uploadError;
+      
+      // Update user metadata to mark as pending
+      const { error: updateError } = await supabase.auth.updateUser({
+        data: { verification_pending: true }
+      });
+      
+      if (updateError) throw updateError;
+      
+      alert('ID uploaded successfully! It is now pending admin review.');
+    } catch (err: any) {
+      console.error(err);
+      alert('Failed to upload ID: ' + err.message);
+    }
   };
 
   return (
@@ -36,7 +67,11 @@ export default function Profile() {
                 <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                   {session?.user?.email?.split('@')[0] || 'User'}
                 </h2>
-                <ShieldCheck size={20} color="var(--success)" />
+                {isVerified ? (
+                  <BadgeCheck size={24} fill="#1877F2" color="white" />
+                ) : (
+                  <ShieldCheck size={20} color="var(--success)" />
+                )}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                 <Star size={16} fill="var(--warning)" color="var(--warning)" />
@@ -51,6 +86,26 @@ export default function Profile() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
               <CheckCircle2 size={16} /> Email Registered
             </div>
+
+            {!isVerified && !isVerificationPending && (
+              <div style={{ marginTop: '4px', padding: '12px', background: 'rgba(24, 119, 242, 0.05)', borderRadius: '12px', border: '1px dashed rgba(24, 119, 242, 0.3)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-main)', lineHeight: 1.4 }}>
+                  <strong>Upload University ID</strong> to get the verified badge on your profile.
+                </p>
+                <label style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: '#1877F2', color: 'white', padding: '8px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, width: 'max-content' }}>
+                  <Upload size={14} />
+                  Upload ID
+                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleIdUpload} />
+                </label>
+              </div>
+            )}
+
+            {!isVerified && isVerificationPending && (
+              <div style={{ marginTop: '4px', padding: '10px 12px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Clock size={16} color="#F59E0B" />
+                <span style={{ fontSize: '13px', color: '#F59E0B', fontWeight: 600 }}>ID Verification Pending</span>
+              </div>
+            )}
           </div>
         </div>
 
