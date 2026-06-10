@@ -12,6 +12,7 @@ import Messages from './pages/Messages';
 import Chat from './pages/Chat';
 import ItemDetail from './pages/ItemDetail';
 import EditPost from './pages/EditPost';
+import AdminPanel from './pages/AdminPanel';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -67,6 +68,7 @@ function AppRoutes() {
       <Route path="/item/:id" element={<ItemDetail />} />
       <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
+      <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
     </Routes>
   );
 }
