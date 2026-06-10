@@ -38,15 +38,9 @@ export default function MobileLayout() {
       
       {/* Top Action Bar */}
       <header className="app-header" style={{ transform: showHeader ? 'translateY(0)' : 'translateY(-100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {getTitle() === 'vicinity' ? (
-          <h1 style={{ textAlign: 'center', fontSize: '32px', margin: 0, fontWeight: 400, letterSpacing: '1px', color: 'var(--text-main)', fontFamily: '"Holiday", "Pacifico", cursive', textTransform: 'lowercase' }}>
-            vicinity
-          </h1>
-        ) : (
-          <h1 style={{ textAlign: 'center', fontSize: '20px', margin: 0, fontWeight: 700, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>
-            {getTitle()}
-          </h1>
-        )}
+        <h1 style={{ textAlign: 'center', fontSize: '32px', margin: 0, fontWeight: 400, letterSpacing: '1px', color: 'var(--text-main)', fontFamily: '"Holiday", "Pacifico", cursive', textTransform: 'lowercase' }}>
+          vicinity
+        </h1>
       </header>
 
       {/* Bottom/Side Navigation */}
