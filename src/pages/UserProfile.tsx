@@ -225,9 +225,9 @@ export default function UserProfile() {
         <div style={{ textAlign: 'center', marginTop: '48px', marginBottom: '24px' }}>
           <button 
             onClick={() => setShowReportModal(true)}
-            style={{ background: 'transparent', border: 'none', color: 'var(--danger)', fontSize: '15px', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '12px' }}
+            style={{ background: 'transparent', border: 'none', color: 'var(--danger)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px' }}
           >
-            <AlertTriangle size={18} /> Report This User
+            <AlertTriangle size={16} /> Report This User
           </button>
           <p style={{ margin: '8px 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
             If you suspect suspicious behavior, please report it immediately.
