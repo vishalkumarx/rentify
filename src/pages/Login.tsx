@@ -4,17 +4,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+    const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
+    if (error) setError(error.message);
+    else setOtpSent(true);
+    setLoading(false);
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+    const { error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
     if (error) setError(error.message);
     else navigate('/');
     setLoading(false);
@@ -63,45 +76,49 @@ export default function Login() {
         <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0', color: 'var(--text-main)' }}>Sign In</h1>
         
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={otpSent ? handleVerifyOtp : handleSendCode} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
           
-          <input
-            type="email"
-            placeholder="Username or Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{
-              background: 'var(--surface-border)',
-              border: 'none',
-              borderRadius: '24px',
-              padding: '18px 24px',
-              fontSize: '15px',
-              fontWeight: 500,
-              color: 'var(--text-main)'
-            }}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{
-              background: 'var(--surface-border)',
-              border: 'none',
-              borderRadius: '24px',
-              padding: '18px 24px',
-              fontSize: '15px',
-              fontWeight: 500,
-              color: 'var(--text-main)'
-            }}
-          />
-          
-          <div style={{ textAlign: 'right' }}>
-            <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600, cursor: 'pointer' }}>Forgot Password?</span>
-          </div>
+          {!otpSent ? (
+            <input
+              type="tel"
+              placeholder="Phone Number (e.g. +1234567890)"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              style={{
+                background: 'var(--surface-border)',
+                border: 'none',
+                borderRadius: '24px',
+                padding: '18px 24px',
+                fontSize: '15px',
+                fontWeight: 500,
+                color: 'var(--text-main)',
+                outline: 'none'
+              }}
+            />
+          ) : (
+            <input
+              type="text"
+              placeholder="6-digit Code"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+              maxLength={6}
+              style={{
+                background: 'var(--surface-border)',
+                border: 'none',
+                borderRadius: '24px',
+                padding: '18px 24px',
+                fontSize: '15px',
+                fontWeight: 500,
+                color: 'var(--text-main)',
+                letterSpacing: '4px',
+                textAlign: 'center',
+                outline: 'none'
+              }}
+            />
+          )}
           
           <button type="submit" disabled={loading} style={{ 
             background: 'var(--text-main)', 
@@ -111,9 +128,16 @@ export default function Login() {
             fontSize: '16px', 
             fontWeight: 700,
             marginTop: '8px',
-            boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
+            boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            opacity: loading ? 0.7 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
           }}>
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? 'Processing...' : (otpSent ? 'Verify & Sign In' : 'Send SMS Code')}
+            {!loading && <ArrowRight size={20} />}
           </button>
         </form>
 
@@ -130,36 +154,17 @@ export default function Login() {
             fontWeight: 600,
             fontSize: '15px',
             boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-            cursor: loading ? 'not-allowed' : 'pointer'
+            cursor: loading ? 'not-allowed' : 'pointer',
+            opacity: loading ? 0.7 : 1
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" style={{ width: '20px', height: '20px' }} />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="G" style={{ width: '20px', height: '20px' }} />
               Continue with Google
             </div>
             <ArrowRight size={18} color="var(--text-muted)" />
           </button>
-          
-          <button style={{ 
-            background: 'var(--surface)', 
-            border: '1px solid var(--surface-border)', 
-            borderRadius: '24px', 
-            padding: '16px 24px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            color: 'var(--text-main)',
-            fontWeight: 600,
-            fontSize: '15px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.05)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <img src="https://www.svgrepo.com/show/475647/facebook-color.svg" alt="F" style={{ width: '20px', height: '20px' }} />
-              Continue with Facebook
-            </div>
-            <ArrowRight size={18} color="var(--text-muted)" />
-          </button>
         </div>
-
+        
         </div>
       </div>
     </div>

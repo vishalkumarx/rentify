@@ -4,41 +4,54 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 export default function Signup() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [fullName, setFullName] = useState('');
   const [department, setDepartment] = useState('Computer Science');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    
+    // Ensure phone starts with +
+    const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+    
+    const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
+    if (error) {
+      setError(error.message);
+    } else {
+      setOtpSent(true);
+    }
+    setLoading(false);
+  };
+
+  const handleVerifyOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    
+    const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+    
+    const { data, error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
+    
     if (error) {
       setError(error.message);
     } else if (data.session || data.user) {
-      // Save profile data
       if (data.user) {
         await setStorageJson(`profiles/${data.user.id}.json`, {
           name: fullName || 'User ' + data.user.id.substring(0, 5),
           department: department,
           rating: 5.0,
           memberSince: new Date().getFullYear().toString(),
-          verifications: ['Email Confirmed']
+          verifications: ['Phone Confirmed']
         });
       }
-      if (data.session) navigate('/');
-      else {
-        setError('Success! Please check your email to verify your account before logging in.');
-        setPassword('');
-      }
-    } else {
-      setError('Success! Please check your email to verify your account before logging in.');
-      // Optional: Clear the password field so they can type it later on login
-      setPassword('');
+      navigate('/');
     }
     setLoading(false);
   };
@@ -86,51 +99,98 @@ export default function Signup() {
         <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0', color: 'var(--text-main)' }}>Register</h1>
         
-        <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={otpSent ? handleVerifyOtp : handleSendCode} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
           
-          <input
-            type="email"
-            placeholder="Username or Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{
-                background: 'var(--surface)', 
-                color: 'var(--text-main)', 
-                fontSize: '15px', 
-                outline: 'none',
-                transition: 'border-color 0.2s',
-                fontFamily: 'inherit',
-                padding: '18px 24px',
-                borderRadius: '24px',
-                border: '1px solid var(--surface-border)'
-              }}
-            />
-
-            <input 
-              type="text" 
-              placeholder="Full Name" 
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+          {!otpSent ? (
+            <>
+              <input
+                type="tel"
+                placeholder="Phone Number (e.g. +1234567890)"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                style={{ 
+                  width: '100%', 
+                  padding: '16px', 
+                  borderRadius: '16px', 
+                  border: '1px solid var(--surface-border)', 
+                  background: 'var(--surface)', 
+                  color: 'var(--text-main)', 
+                  fontSize: '15px', 
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  fontFamily: 'inherit'
+                }}
+              />
+              <input 
+                type="text" 
+                placeholder="Full Name" 
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                style={{ 
+                  width: '100%', 
+                  padding: '16px', 
+                  borderRadius: '16px', 
+                  border: '1px solid var(--surface-border)', 
+                  background: 'var(--surface)', 
+                  color: 'var(--text-main)', 
+                  fontSize: '15px', 
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  fontFamily: 'inherit'
+                }}
+              />
+              <select 
+                value={department}
+                onChange={(e) => setDepartment(e.target.value)}
+                style={{ 
+                  width: '100%', 
+                  padding: '16px', 
+                  borderRadius: '16px', 
+                  border: '1px solid var(--surface-border)', 
+                  background: 'var(--surface)', 
+                  color: 'var(--text-main)', 
+                  fontSize: '15px', 
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
+                  fontFamily: 'inherit',
+                  appearance: 'none'
+                }}
+              >
+                <option value="Computer Science">Computer Science</option>
+                <option value="Engineering">Engineering</option>
+                <option value="Business">Business</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Chemistry">Chemistry</option>
+                <option value="Biology">Biology</option>
+                <option value="Economics">Economics</option>
+                <option value="Psychology">Psychology</option>
+                <option value="English & Literature">English & Literature</option>
+                <option value="History">History</option>
+                <option value="Political Science">Political Science</option>
+                <option value="Philosophy">Philosophy</option>
+                <option value="Sociology">Sociology</option>
+                <option value="Medicine">Medicine</option>
+                <option value="Law">Law</option>
+                <option value="Architecture">Architecture</option>
+                <option value="Design">Design</option>
+                <option value="Education">Education</option>
+                <option value="Arts">Arts</option>
+                <option value="Other Sciences">Other Sciences</option>
+                <option value="Other">Other</option>
+              </select>
+            </>
+          ) : (
+            <input
+              type="text"
+              placeholder="6-digit Code"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
               required
-              style={{ 
-                width: '100%', 
-                padding: '16px', 
-                borderRadius: '16px', 
-                border: '1px solid var(--surface-border)', 
-                background: 'var(--surface)', 
-                color: 'var(--text-main)', 
-                fontSize: '15px', 
-                outline: 'none',
-                transition: 'border-color 0.2s',
-                fontFamily: 'inherit'
-              }}
-            />
-
-            <select 
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
+              maxLength={6}
               style={{ 
                 width: '100%', 
                 padding: '16px', 
@@ -142,99 +202,70 @@ export default function Signup() {
                 outline: 'none',
                 transition: 'border-color 0.2s',
                 fontFamily: 'inherit',
-                appearance: 'none'
+                letterSpacing: '4px',
+                textAlign: 'center'
               }}
-            >
-              <option value="Computer Science">Computer Science</option>
-              <option value="Engineering">Engineering</option>
-              <option value="Business">Business</option>
-              <option value="Mathematics">Mathematics</option>
-              <option value="Physics">Physics</option>
-              <option value="Chemistry">Chemistry</option>
-              <option value="Biology">Biology</option>
-              <option value="Economics">Economics</option>
-              <option value="Psychology">Psychology</option>
-              <option value="English & Literature">English & Literature</option>
-              <option value="History">History</option>
-              <option value="Political Science">Political Science</option>
-              <option value="Philosophy">Philosophy</option>
-              <option value="Sociology">Sociology</option>
-              <option value="Medicine">Medicine</option>
-              <option value="Law">Law</option>
-              <option value="Architecture">Architecture</option>
-              <option value="Design">Design</option>
-              <option value="Education">Education</option>
-              <option value="Arts">Arts</option>
-              <option value="Other Sciences">Other Sciences</option>
-              <option value="Other">Other</option>
-            </select>
-
-            <input 
-              type="password" 
-            placeholder="Password (min 6 chars)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-            style={{
-              background: 'var(--surface-border)',
-              border: 'none',
-              borderRadius: '24px',
-              padding: '18px 24px',
-              fontSize: '15px',
-              fontWeight: 500,
-              color: 'var(--text-main)'
-            }}
-          />
-          
-          <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', textAlign: 'left', cursor: 'pointer', background: 'var(--surface-border)', padding: '16px', borderRadius: '24px' }}>
-            <input 
-              type="checkbox" 
-              required 
-              style={{ width: '20px', height: '20px', flexShrink: 0, marginTop: '2px', accentColor: 'var(--primary)', cursor: 'pointer', border: 'none' }}
             />
-            <span style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5, fontWeight: 500 }}>
-              I agree to the <span style={{ color: 'var(--text-main)', fontWeight: 700 }}>Privacy Policy</span> and confirm I will not post objectionable content. I understand I am solely responsible for any legal action taken against me.
-            </span>
-          </label>
+          )}
+
+          <button 
+            type="submit" 
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '18px',
+              borderRadius: '24px',
+              border: 'none',
+              background: 'var(--primary-glow)',
+              color: 'var(--primary)',
+              fontSize: '16px',
+              fontWeight: 700,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.7 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginTop: '8px',
+              transition: 'all 0.2s'
+            }}
+          >
+            {loading ? 'Processing...' : (otpSent ? 'Verify & Create Account' : 'Send SMS Code')}
+            {!loading && <ArrowRight size={20} />}
+          </button>
           
-          <button type="submit" disabled={loading} style={{ 
-            background: 'var(--text-main)', 
-            color: 'var(--surface)', 
-            borderRadius: '24px', 
-            padding: '18px', 
-            fontSize: '16px', 
-            fontWeight: 700,
-            marginTop: '8px',
-            boxShadow: '0 8px 16px rgba(0,0,0,0.1)'
-          }}>
-            {loading ? 'Creating Account...' : 'Sign Up'}
+          <div style={{ display: 'flex', alignItems: 'center', margin: '8px 0', opacity: 0.5 }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--surface-border)' }}></div>
+            <span style={{ padding: '0 12px', fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>OR</span>
+            <div style={{ flex: 1, height: '1px', background: 'var(--surface-border)' }}></div>
+          </div>
+          
+          <button 
+            type="button" 
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '16px',
+              borderRadius: '24px',
+              border: '1px solid var(--surface-border)',
+              background: 'var(--surface)',
+              color: 'var(--text-main)',
+              fontSize: '15px',
+              fontWeight: 600,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              opacity: loading ? 0.7 : 1,
+              transition: 'all 0.2s'
+            }}
+          >
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style={{ width: '20px', height: '20px' }} />
+            Continue with Google
           </button>
         </form>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
-          <button onClick={handleGoogleSignIn} disabled={loading} style={{ 
-            background: 'var(--surface)', 
-            border: '1px solid var(--surface-border)', 
-            borderRadius: '24px', 
-            padding: '16px 24px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'space-between',
-            color: 'var(--text-main)',
-            fontWeight: 600,
-            fontSize: '15px',
-            boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" style={{ width: '20px', height: '20px' }} />
-              Continue with Google
-            </div>
-            <ArrowRight size={18} color="var(--text-muted)" />
-          </button>
-        </div>
-
         </div>
       </div>
     </div>
