@@ -104,7 +104,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       // Flatten messages for the UI
       const allMessages = validChats.flatMap(c => c.messages || []).sort((a, b) => a.timestamp - b.timestamp);
-      setMessages(allMessages);
+      
+      setMessages(prev => {
+        // Keep optimistic messages that haven't appeared in storage list yet
+        const existingOptimistic = prev.filter(p => !allMessages.find(m => m.id === p.id));
+        return [...allMessages, ...existingOptimistic].sort((a, b) => a.timestamp - b.timestamp);
+      });
       
     } catch (err) {
       console.error("Error fetching chats", err);
