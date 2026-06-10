@@ -186,6 +186,20 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     // Initialize in background if it doesn't exist
     const initializeChat = async () => {
+      // Optimistic UI insertion to prevent "Conversation not found" delay
+      setConversations(prev => {
+        if (prev.find(c => c.id === convId)) return prev;
+        return [{
+          id: convId,
+          itemId,
+          itemTitle,
+          itemImage,
+          otherUserId,
+          otherUserName,
+          unreadCount: 0
+        }, ...prev];
+      });
+
       const chatPath = `chats/${convId}.json`;
       const existing = await getStorageJson(chatPath);
       

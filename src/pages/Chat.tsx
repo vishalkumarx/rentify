@@ -29,7 +29,7 @@ export default function Chat() {
   }, [id, conversationMessages.length, markAsRead]);
 
   if (!conversation) {
-    return <div style={{ padding: '20px' }}>Conversation not found.</div>;
+    return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading conversation...</div>;
   }
 
   const handleSend = (e: React.FormEvent) => {
