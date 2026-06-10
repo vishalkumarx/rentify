@@ -15,7 +15,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+    const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
     const { error } = await supabase.auth.signInWithOtp({ phone: formattedPhone });
     if (error) setError(error.message);
     else setOtpSent(true);
@@ -26,7 +26,7 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     setError('');
-    const formattedPhone = phone.startsWith('+') ? phone : `+${phone}`;
+    const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
     const { error } = await supabase.auth.verifyOtp({ phone: formattedPhone, token: otp, type: 'sms' });
     if (error) setError(error.message);
     else navigate('/');
@@ -80,23 +80,33 @@ export default function Login() {
           {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
           
           {!otpSent ? (
-            <input
-              type="tel"
-              placeholder="Phone Number (e.g. +1234567890)"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              style={{
-                background: 'var(--surface-border)',
-                border: 'none',
-                borderRadius: '24px',
-                padding: '18px 24px',
-                fontSize: '15px',
-                fontWeight: 500,
-                color: 'var(--text-main)',
-                outline: 'none'
-              }}
-            />
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              background: 'var(--surface-border)', 
+              borderRadius: '24px',
+              padding: '0 24px',
+            }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: '15px', fontWeight: 600, marginRight: '8px' }}>+91</span>
+              <input
+                type="tel"
+                placeholder="Phone Number (e.g. 9876543210)"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '18px 0',
+                  fontSize: '15px',
+                  fontWeight: 500,
+                  color: 'var(--text-main)',
+                  outline: 'none',
+                  width: '100%'
+                }}
+              />
+            </div>
           ) : (
             <input
               type="text"
