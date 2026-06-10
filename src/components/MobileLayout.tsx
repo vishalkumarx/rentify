@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Home, PlusSquare, User, MessageCircle } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 
@@ -9,8 +9,22 @@ export default function MobileLayout() {
   const { conversations } = useChat();
   
   const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
+  
+  const [showBanner, setShowBanner] = useState(false);
+  const [bannerText, setBannerText] = useState('');
+  const prevUnread = useRef(totalUnread);
 
-
+  useEffect(() => {
+    if (totalUnread > prevUnread.current) {
+      const latestConv = conversations.find(c => c.unreadCount > 0);
+      if (latestConv && location.pathname !== `/chat/${latestConv.id}`) {
+        setBannerText(`New message from ${latestConv.otherUserName}`);
+        setShowBanner(true);
+        setTimeout(() => setShowBanner(false), 3000);
+      }
+    }
+    prevUnread.current = totalUnread;
+  }, [totalUnread, conversations, location.pathname]);
 
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
@@ -34,6 +48,31 @@ export default function MobileLayout() {
           vicinity
         </h1>
       </header>
+
+      {/* Message Banner */}
+      <div 
+        onClick={() => { setShowBanner(false); navigate('/messages'); }}
+        style={{
+        position: 'fixed',
+        top: showBanner ? '70px' : '-100px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'var(--primary)',
+        color: '#111827',
+        padding: '12px 24px',
+        borderRadius: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        zIndex: 9999,
+        transition: 'top 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        fontWeight: 600,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer'
+      }}>
+        <MessageCircle size={20} />
+        {bannerText}
+      </div>
 
       {/* Bottom/Side Navigation */}
       <nav className="app-nav">
