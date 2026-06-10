@@ -24,11 +24,12 @@ export default function EditPost() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!item) {
+    // Only alert if we're sure items have been fetched but the item isn't in them
+    if (items.length > 0 && !item) {
       alert('Item not found');
       navigate('/profile');
     }
-  }, [item, navigate]);
+  }, [items.length, item, navigate]);
 
   // Exclude 'All' from posting categories
   const postingCategories = CATEGORIES.filter(c => c !== 'All');
@@ -52,7 +53,7 @@ export default function EditPost() {
     setLoading(true);
     
     try {
-      let finalUrls = images;
+      let finalUrls = [...images];
 
       if (imageFiles.length > 0) {
         // Upload all images concurrently
@@ -75,7 +76,14 @@ export default function EditPost() {
         });
 
         const uploadedUrls = await Promise.all(uploadPromises);
-        finalUrls = uploadedUrls;
+        
+        let uploadIndex = 0;
+        finalUrls = finalUrls.map(url => {
+          if (url.startsWith('blob:')) {
+            return uploadedUrls[uploadIndex++];
+          }
+          return url;
+        });
       }
       
       await updatePost(Number(id), {
@@ -97,10 +105,14 @@ export default function EditPost() {
     }
   };
 
+  if (items.length === 0) {
+    return <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center' }}>Loading...</div>;
+  }
   if (!item) return null;
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
+    <div style={{ height: '100vh', overflowY: 'auto' }}>
+      <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
       
       <form onSubmit={handleSubmit} className="post-grid glass-panel" style={{ padding: '32px', borderRadius: '24px' }}>
         
@@ -304,6 +316,7 @@ export default function EditPost() {
         </div>
 
       </form>
+      </div>
     </div>
   );
 }
