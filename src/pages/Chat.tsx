@@ -59,6 +59,13 @@ export default function Chat() {
       {/* Messages */}
       <main ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         
+        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', marginBottom: '8px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+          <ShieldAlert size={20} style={{ color: 'var(--warning)', flexShrink: 0 }} />
+          <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+            <strong>Safety Warning:</strong> CampusRent does not mediate transactions and is not responsible or liable for any lost, stolen, or damaged items. Please verify the item's condition before renting and exchange items in safe, public locations.
+          </p>
+        </div>
+        
         {/* Product Banner */}
         <div style={{ 
           background: 'var(--surface)', 

@@ -276,6 +276,10 @@ export default function Post() {
             </p>
           </div>
 
+          <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.4 }}>
+            <strong>Liability Disclaimer:</strong> CampusRent is not responsible for any lost, stolen, or damaged items resulting from rentals on this platform. Please secure collateral or take precautions when renting to others.
+          </p>
+
           <button type="submit" disabled={loading} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none' }}>
             <Upload size={22} />
             {loading ? 'Publishing...' : 'Publish Listing'}

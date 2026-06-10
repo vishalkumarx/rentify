@@ -240,16 +240,20 @@ export default function ItemDetail() {
       }}>
         <div style={{ maxWidth: '800px', width: '100%' }}>
           {item.status === 'booked' ? (
-            <button onClick={() => alert("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%' }}>
+            <button onClick={() => alert("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
               <Bell size={22} />
               Notify Me
             </button>
           ) : (
-            <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%' }}>
+            <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
               <MessageCircle size={22} />
               Message Owner
             </button>
           )}
+          
+          <p style={{ margin: '12px 0 0 0', fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.4 }}>
+            <strong>Safety Disclaimer:</strong> CampusRent is a platform connecting students. We are not responsible or liable for any lost, stolen, or damaged items. Inspect all items thoroughly and proceed at your own risk.
+          </p>
         </div>
       </div>
 
