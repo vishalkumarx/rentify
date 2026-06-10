@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabase, getStorageJson } from '../lib/supabase';
 
 type AuthContextType = {
   session: Session | null;
@@ -28,18 +28,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    const checkBlocked = async (currentSession: Session) => {
+      const blockedUsers = await getStorageJson('admin/blocked_users.json') || [];
+      if (blockedUsers.includes(currentSession.user.id)) {
+        alert('Your account has been terminated due to policy violations.');
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+      } else {
+        setSession(currentSession);
+        setUser(currentSession.user);
+      }
+    };
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        setSession(session);
-        setUser(session.user);
+        checkBlocked(session).finally(() => setLoading(false));
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
-        setSession(session);
-        setUser(session.user);
+        checkBlocked(session);
+      } else {
+        setSession(null);
+        setUser(null);
       }
     });
 
