@@ -156,27 +156,47 @@ export default function Signup() {
               appearance: 'none'
             }}
           >
-            <option value="Computer Science">Computer Science</option>
-            <option value="Engineering">Engineering</option>
-            <option value="Business">Business</option>
-            <option value="Mathematics">Mathematics</option>
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-            <option value="Biology">Biology</option>
-            <option value="Economics">Economics</option>
-            <option value="Psychology">Psychology</option>
-            <option value="English & Literature">English & Literature</option>
-            <option value="History">History</option>
-            <option value="Political Science">Political Science</option>
-            <option value="Philosophy">Philosophy</option>
-            <option value="Sociology">Sociology</option>
-            <option value="Medicine">Medicine</option>
-            <option value="Law">Law</option>
+            <option value="Agriculture">Agriculture</option>
+            <option value="Apparel and Textile Technology">Apparel and Textile Technology</option>
             <option value="Architecture">Architecture</option>
-            <option value="Design">Design</option>
+            <option value="Biotechnology">Biotechnology</option>
+            <option value="Botanical and Environmental Sciences">Botanical and Environmental Sciences</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Computational Statistics and Data Analytics">Computational Statistics and Data Analytics</option>
+            <option value="Computer Engineering and Technology">Computer Engineering and Technology</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Economics">Economics</option>
             <option value="Education">Education</option>
-            <option value="Arts">Arts</option>
-            <option value="Other Sciences">Other Sciences</option>
+            <option value="Electronics Technology">Electronics Technology</option>
+            <option value="English">English</option>
+            <option value="Food Science and Technology">Food Science and Technology</option>
+            <option value="Foreign Languages">Foreign Languages</option>
+            <option value="Guru Nanak Studies">Guru Nanak Studies</option>
+            <option value="Hindi">Hindi</option>
+            <option value="History">History</option>
+            <option value="Hotel Management and Tourism">Hotel Management and Tourism</option>
+            <option value="Human Genetics">Human Genetics</option>
+            <option value="Laws">Laws</option>
+            <option value="Library and Information Science">Library and Information Science</option>
+            <option value="Mass Communication">Mass Communication</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Microbiology">Microbiology</option>
+            <option value="Molecular Biology and Biochemistry">Molecular Biology and Biochemistry</option>
+            <option value="MYAS GNDU Sports Sciences and Medicine">MYAS GNDU Sports Sciences and Medicine</option>
+            <option value="Physical Education">Physical Education</option>
+            <option value="Physics">Physics</option>
+            <option value="Physiotherapy">Physiotherapy</option>
+            <option value="Planning">Planning</option>
+            <option value="Political Science">Political Science</option>
+            <option value="Psychology">Psychology</option>
+            <option value="Punjabi">Punjabi</option>
+            <option value="Sanskrit, Pali and Prakrit">Sanskrit, Pali and Prakrit</option>
+            <option value="School of Social Sciences">School of Social Sciences</option>
+            <option value="Sociology">Sociology</option>
+            <option value="Surjit Patar Centre for Ethical AI">Surjit Patar Centre for Ethical AI</option>
+            <option value="University Business School">University Business School</option>
+            <option value="Urdu and Persian">Urdu and Persian</option>
+            <option value="Zoology">Zoology</option>
             <option value="Other">Other</option>
           </select>
 
@@ -188,8 +208,9 @@ export default function Signup() {
               padding: '18px',
               borderRadius: '24px',
               border: 'none',
-              background: 'var(--primary-glow)',
-              color: 'var(--primary)',
+              background: 'var(--text-main)',
+              color: 'var(--surface)',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
               fontSize: '16px',
               fontWeight: 700,
               cursor: loading ? 'not-allowed' : 'pointer',
