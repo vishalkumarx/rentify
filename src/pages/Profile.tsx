@@ -206,11 +206,11 @@ export default function Profile() {
           <h3 style={{ padding: '20px 20px 8px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Account Settings</h3>
           
           <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><CreditCard size={20} color="var(--primary)" /> <span style={{ fontWeight: 500 }}>Payment Methods</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><CreditCard size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Payment Methods</span></div>
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
           <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Heart size={20} color="var(--danger)" /> <span style={{ fontWeight: 500 }}>Saved Items</span></div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Heart size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Saved Items</span></div>
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
           <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
