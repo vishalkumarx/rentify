@@ -10,15 +10,7 @@ export default function MobileLayout() {
   
   const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
 
-  const getTitle = () => {
-    switch (location.pathname) {
-      case '/': return 'vicinity';
-      case '/post': return 'New Listing';
-      case '/messages': return 'Messages';
-      case '/profile': return 'My Profile';
-      default: return 'vicinity';
-    }
-  };
+
 
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
