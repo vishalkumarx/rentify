@@ -7,13 +7,14 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import banner1 from '../assets/banners/banner1.jpg';
 import banner2 from '../assets/banners/banner2.jpg';
+import banner3 from '../assets/banners/banner3.jpg';
 
 export default function Home() {
   const [location, setLocation] = useState('Locating...');
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const banners = [banner1, banner2];
+  const banners = [banner1, banner2, banner3];
   
   // Auto-scroll Carousel
   useEffect(() => {
