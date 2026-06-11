@@ -95,6 +95,11 @@ export default function Home() {
   // Filter items based on active category, search, and department
   const filteredItems = items
     .filter(item => {
+      // Hide posts made by the logged-in user
+      if (session?.user?.id && item.userId === session.user.id) {
+        return false;
+      }
+
       const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
       const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesDept = filterDept === 'All' || item.department === filterDept;
