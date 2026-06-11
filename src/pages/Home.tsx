@@ -5,12 +5,24 @@ import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
+import banner1 from '../assets/banners/banner1.jpg';
+import banner2 from '../assets/banners/banner2.jpg';
 
 export default function Home() {
   const [location, setLocation] = useState('Locating...');
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [carouselIndex, setCarouselIndex] = useState(0);
+  const banners = [banner1, banner2];
   
+  // Auto-scroll Carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCarouselIndex((prev) => (prev + 1) % banners.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [banners.length]);
+
   // Animated Placeholder
   const phrases = [
     "Search for Books...",
@@ -187,6 +199,42 @@ export default function Home() {
         >
           <SlidersHorizontal size={20} />
         </button>
+      </div>
+
+      {/* Carousel Banner */}
+      <div style={{ width: '100%', padding: '0 0 16px 0', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ 
+          display: 'flex', 
+          transition: 'transform 0.5s ease-in-out', 
+          transform: `translateX(-${carouselIndex * 100}%)`
+        }}>
+          {banners.map((src, i) => (
+            <img 
+              key={i} 
+              src={src} 
+              alt={`Banner ${i+1}`} 
+              style={{ width: '100%', flexShrink: 0, objectFit: 'cover', aspectRatio: '21/9', display: 'block' }} 
+            />
+          ))}
+        </div>
+        
+        {/* Carousel Indicators */}
+        <div style={{ position: 'absolute', bottom: '24px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '6px' }}>
+          {banners.map((_, i) => (
+            <div 
+              key={i}
+              onClick={() => setCarouselIndex(i)}
+              style={{ 
+                width: carouselIndex === i ? '20px' : '6px', 
+                height: '6px', 
+                borderRadius: '3px', 
+                background: carouselIndex === i ? 'var(--primary)' : 'rgba(255,255,255,0.6)', 
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Filter Modal */}

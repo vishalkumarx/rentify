@@ -125,9 +125,9 @@ export default function UserProfile() {
       
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', padding: '16px 20px', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px' }}>
+        <div onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px', boxShadow: 'none' }}>
           <ChevronLeft size={28} />
-        </button>
+        </div>
         <h1 style={{ flex: 1, textAlign: 'center', margin: 0, fontSize: '18px', fontWeight: 700, marginRight: '32px' }}>Profile</h1>
       </div>
 
@@ -195,7 +195,7 @@ export default function UserProfile() {
               <button 
                 type="submit" 
                 disabled={submittingReview || !newReviewText.trim()}
-                style={{ width: '48px', height: '48px', borderRadius: '24px', background: newReviewText.trim() ? 'var(--text-main)' : 'var(--surface-border)', color: 'var(--surface)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed' }}
+                style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#000000', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
               >
                 <Send size={20} />
               </button>
@@ -223,12 +223,12 @@ export default function UserProfile() {
 
         {/* Report Action */}
         <div style={{ textAlign: 'center', marginTop: '48px', marginBottom: '24px' }}>
-          <button 
+          <div 
             onClick={() => setShowReportModal(true)}
-            style={{ background: 'transparent', border: 'none', color: 'var(--danger)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px' }}
+            style={{ width: 'auto', background: 'transparent', border: 'none', color: 'var(--danger)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '0px', boxShadow: 'none' }}
           >
             <AlertTriangle size={16} /> Report This User
-          </button>
+          </div>
           <p style={{ margin: '8px 0 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
             If you suspect suspicious behavior, please report it immediately.
           </p>
@@ -274,13 +274,15 @@ export default function UserProfile() {
                 />
               </div>
 
-              <button 
-                type="submit" 
-                disabled={reporting}
-                style={{ width: '100%', padding: '14px', background: 'var(--danger)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 700, cursor: reporting ? 'not-allowed' : 'pointer', opacity: reporting ? 0.7 : 1 }}
-              >
-                {reporting ? 'Submitting...' : 'Submit Report'}
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '8px' }}>
+                <button 
+                  type="submit" 
+                  disabled={reporting}
+                  style={{ width: 'auto', padding: '12px 32px', background: 'var(--danger)', color: 'white', border: 'none', borderRadius: '12px', fontSize: '16px', fontWeight: 700, cursor: reporting ? 'not-allowed' : 'pointer', opacity: reporting ? 0.7 : 1 }}
+                >
+                  {reporting ? 'Submitting...' : 'Submit Report'}
+                </button>
+              </div>
             </form>
           </div>
         </div>

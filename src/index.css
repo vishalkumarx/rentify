@@ -131,13 +131,10 @@ button {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 14px var(--primary-glow);
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--primary-glow);
-  background: var(--primary-hover);
 }
 
 button:active {

@@ -34,6 +34,7 @@ export type UIConversation = {
   otherUserName: string;
   lastMessage?: string;
   lastMessageTime?: number;
+  lastSenderId?: string;
   unreadCount: number;
 };
 
@@ -64,25 +65,47 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     const myId = session.user.id;
 
     try {
-      const { data: chatFiles } = await supabase.storage.from('item-images').list('chats');
+      const { data: chatFiles, error: listError } = await supabase.storage.from('item-images').list('reviews');
+      console.log('[DEBUG] list(reviews) returned:', chatFiles, 'error:', listError);
       if (!chatFiles) return;
 
-      // Filter files that contain my user ID in the name
-      const myChatFiles = chatFiles.filter(f => f.name.includes(myId));
+      // Filter files that contain my user ID in the name AND start with chat-
+      const myChatFiles = chatFiles.filter(f => f.name.startsWith('chat-') && f.name.includes(myId));
+      console.log('[DEBUG] myChatFiles after filtering:', myChatFiles.map(f => f.name));
       
       const loadedChats = await Promise.all(
         myChatFiles.map(async f => {
-          const chatData = await getStorageJson(`chats/${f.name}`);
+          const chatData = await getStorageJson(`reviews/${f.name}`);
+          if (chatData && chatData.messages) {
+            let needsSave = false;
+            chatData.messages.forEach((m: Message) => {
+              // If we just downloaded this and see a 'sent' message from the other person, mark it delivered
+              if (m.senderId !== myId && m.status === 'sent') {
+                m.status = 'delivered';
+                needsSave = true;
+              }
+            });
+            if (needsSave) {
+              // Fire and forget upload to tell the sender it was delivered to our device
+              setStorageJson(`reviews/${f.name}`, chatData).catch(console.error);
+            }
+          }
           return chatData as Conversation;
         })
       );
 
       const validChats = loadedChats.filter(Boolean).sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
+      console.log('[DEBUG] validChats count:', validChats.length);
 
       // Convert to UI Conversations
       const uiConvs = validChats.map(c => {
-        const otherUserId = Object.keys(c.participants).find(id => id !== myId) || myId;
-        const otherUserName = c.participants[otherUserId] || 'Unknown User';
+        const participants = c.participants || {};
+        const otherUserId = Object.keys(participants).find(id => id !== myId) || myId;
+        const otherUserName = participants[otherUserId] || 'Unknown User';
+        
+        // Find last sender
+        const lastMsg = c.messages?.[c.messages.length - 1];
+        
         return {
           id: c.id,
           itemId: c.itemId,
@@ -92,6 +115,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           otherUserName,
           lastMessage: c.lastMessage,
           lastMessageTime: c.lastMessageTime,
+          lastSenderId: lastMsg?.senderId,
           unreadCount: c.unreadCounts?.[myId] || 0
         };
       });
@@ -124,7 +148,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(interval);
   }, [session?.user?.id, fetchChats]);
 
-  const sendMessage = async (conversationId: string, senderId: string, text: string) => {
+  const sendMessage = useCallback(async (conversationId: string, senderId: string, text: string) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
 
@@ -142,7 +166,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     // Update in Storage
     try {
-      const chatPath = `chats/${conversationId}.json`;
+      const chatPath = `reviews/${conversationId}.json`;
       let chatData = await getStorageJson(chatPath) as Conversation;
       
       if (!chatData) {
@@ -187,14 +211,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error("Failed to send message", err);
     }
-  };
+  }, [session?.user?.id, conversations, fetchChats]);
 
-  const markAsRead = async (conversationId: string) => {
+  const markAsRead = useCallback(async (conversationId: string) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
 
     try {
-      const chatPath = `chats/${conversationId}.json`;
+      const chatPath = `reviews/${conversationId}.json`;
       let chatData = await getStorageJson(chatPath) as Conversation;
       if (!chatData) return;
 
@@ -207,9 +231,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     } catch (err) {
       console.error("Failed to mark as read", err);
     }
-  };
+  }, [session?.user?.id, fetchChats]);
 
-  const getOrCreateConversation = (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => {
+  const getOrCreateConversation = useCallback((itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => {
     if (!session?.user?.id) return '';
     const myId = session.user.id;
     const myName = session.user.user_metadata?.full_name || 'Me';
@@ -234,7 +258,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         }, ...prev];
       });
 
-      const chatPath = `chats/${convId}.json`;
+      const chatPath = `reviews/${convId}.json`;
       const existing = await getStorageJson(chatPath);
       
       if (!existing) {
@@ -260,7 +284,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     initializeChat();
     return convId;
-  };
+  }, [session?.user?.id, fetchChats]);
 
   return (
     <ChatContext.Provider value={{ conversations, messages, sendMessage, markAsRead, getOrCreateConversation }}>

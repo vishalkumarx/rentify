@@ -44,17 +44,30 @@ export default function Chat() {
       
       {/* Header */}
       <header style={{ height: '64px', padding: '0 16px', display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <button onClick={() => navigate(-1)} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: 'var(--text-main)', padding: 0, margin: 0, boxShadow: 'none' }}>
+        <div onClick={() => navigate(-1)} style={{ width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: 'var(--text-main)', padding: 0, margin: 0, boxShadow: 'none', cursor: 'pointer' }}>
           <ChevronLeft size={24} />
-        </button>
+        </div>
         
-        <div style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold' }}>
+        <div 
+          onClick={() => navigate(`/user/${conversation.otherUserId}`)}
+          style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', cursor: 'pointer' }}
+        >
           {conversation.otherUserName.charAt(0)}
         </div>
         
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <h2 style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px' }}>{conversation.itemTitle}</h2>
-          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px' }}>{conversation.otherUserName}</p>
+          <h2 
+            onClick={() => navigate(`/item/${conversation.itemId}`)}
+            style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px', cursor: 'pointer' }}
+          >
+            {conversation.itemTitle}
+          </h2>
+          <p 
+            onClick={() => navigate(`/user/${conversation.otherUserId}`)}
+            style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer' }}
+          >
+            {conversation.otherUserName}
+          </p>
         </div>
       </header>
 
