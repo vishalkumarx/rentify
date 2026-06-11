@@ -7,10 +7,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export const getStorageJson = async (path: string) => {
   try {
-    const { data } = supabase.storage.from('item-images').getPublicUrl(path);
-    const res = await fetch(`${data.publicUrl}?t=${Date.now()}`, { cache: 'no-store' });
-    if (!res.ok) return null;
-    return await res.json();
+    const { data, error } = await supabase.storage.from('item-images').download(path);
+    if (error || !data) return null;
+    const text = await data.text();
+    return JSON.parse(text);
   } catch (e) {
     return null;
   }

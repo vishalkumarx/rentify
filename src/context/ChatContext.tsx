@@ -144,7 +144,30 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     try {
       const chatPath = `chats/${conversationId}.json`;
       let chatData = await getStorageJson(chatPath) as Conversation;
-      if (!chatData) return;
+      
+      if (!chatData) {
+        // Fallback: reconstruct from UI state if the file wasn't created in time
+        const uiConv = conversations.find(c => c.id === conversationId);
+        if (!uiConv) {
+          console.error("Conversation not found in UI state either");
+          return;
+        }
+        chatData = {
+          id: conversationId,
+          itemId: uiConv.itemId,
+          itemTitle: uiConv.itemTitle,
+          itemImage: uiConv.itemImage,
+          participants: {
+            [myId]: session.user.user_metadata?.full_name || 'Me',
+            [uiConv.otherUserId]: uiConv.otherUserName
+          },
+          messages: [],
+          unreadCounts: {
+            [myId]: 0,
+            [uiConv.otherUserId]: 0
+          }
+        };
+      }
 
       chatData.messages = [...(chatData.messages || []), newMsg];
       chatData.lastMessage = text;
