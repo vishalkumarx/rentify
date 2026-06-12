@@ -234,6 +234,11 @@ a:hover {
   background: var(--surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app-nav.nav-hidden {
+  transform: translateY(100%);
 }
 
 .nav-item {
@@ -291,6 +296,10 @@ a:hover {
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+  
+  .app-nav.nav-hidden {
+    transform: translateY(-100%);
   }
   
   .app-main {
