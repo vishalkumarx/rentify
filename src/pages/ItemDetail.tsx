@@ -15,6 +15,7 @@ export default function ItemDetail() {
   const { session, loading } = useAuth();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [ownerVerified, setOwnerVerified] = useState(false);
+  const [ownerProfile, setOwnerProfile] = useState<any>(null);
 
   const item = items.find(i => i.id === Number(id));
 
@@ -24,6 +25,9 @@ export default function ItemDetail() {
         if (apps && Array.isArray(apps) && apps.includes(item.userId)) {
           setOwnerVerified(true);
         }
+      });
+      getStorageJson(`profiles/${item.userId}.json`).then(profile => {
+        if (profile) setOwnerProfile(profile);
       });
     }
   }, [item?.userId]);
@@ -40,6 +44,8 @@ export default function ItemDetail() {
   }
 
   const allImages = [item.image, ...(item.images || [])];
+  
+  const ownerName = ownerProfile?.name || item.seller?.name || `Owner of ${item.title}`;
 
   const handleMessageClick = () => {
     if (!session) {
@@ -47,7 +53,6 @@ export default function ItemDetail() {
       return;
     }
     const ownerId = item.userId || `user-${item.id}`;
-    const ownerName = item.seller?.name || `Owner of ${item.title}`;
     const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
     navigate(`/chat/${convId}`);
   };
@@ -110,7 +115,7 @@ export default function ItemDetail() {
           </div>
 
           <div style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {item.status === 'booked' && (
                   <span style={{ display: 'inline-block', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start' }}>BOOKED</span>
@@ -174,11 +179,11 @@ export default function ItemDetail() {
                 
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <div style={{ width: '60px', height: '60px', borderRadius: '30px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: 'var(--text-main)' }}>
-                    {item.seller.name.charAt(0)}
+                    {ownerName.charAt(0)}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{item.seller.name}</h4>
+                      <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{ownerName}</h4>
                       {ownerVerified ? (
                         <BadgeCheck size={20} fill="#1877F2" color="white" />
                       ) : (
