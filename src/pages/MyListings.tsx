@@ -1,17 +1,57 @@
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Package } from 'lucide-react';
+import { Package, CalendarCheck, Check, X } from 'lucide-react';
+import { useBookings } from '../context/BookingContext';
 
 export default function MyListings() {
   const { items, toggleBookingStatus, deletePost } = useFeed();
   const { session } = useAuth();
+  const { requests, updateRequestStatus } = useBookings();
   const navigate = useNavigate();
 
   const myItems = items.filter(item => item.userId === session?.user?.id);
+  const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
 
   return (
     <div className="animate-slide-in" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '100px' }}>
+      
+      {myIncomingRequests.length > 0 && (
+        <div style={{ marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <CalendarCheck size={24} /> Pending Requests
+          </h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {myIncomingRequests.map(req => {
+              const reqItem = items.find(i => i.id === req.item_id);
+              return (
+                <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', borderLeft: '4px solid var(--warning)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div>
+                      <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>
+                        {req.start_date} to {req.end_date}
+                      </p>
+                      <p style={{ margin: '4px 0 0', fontSize: '15px', fontWeight: 700, color: 'var(--primary)' }}>
+                        Total: ₹{req.total_price}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => updateRequestStatus(req.id, 'accepted')} style={{ width: '36px', height: '36px', borderRadius: '18px', border: 'none', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <Check size={18} />
+                      </button>
+                      <button onClick={() => updateRequestStatus(req.id, 'rejected')} style={{ width: '36px', height: '36px', borderRadius: '18px', border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <X size={18} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <h2 style={{ fontSize: '24px', fontWeight: 800, marginBottom: '24px' }}>My Listings</h2>
       {myItems.length > 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

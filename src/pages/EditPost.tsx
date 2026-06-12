@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, Tag, DollarSign, AlignLeft, Plus, X, Building, ArrowLeft } from 'lucide-react';
+import { Camera, Upload, Tag, DollarSign, AlignLeft, Plus, X, ArrowLeft } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
+import { CATEGORIES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
+import LocationPicker from '../components/LocationPicker';
+import type { LocationType } from '../components/LocationPicker';
 
 export default function EditPost() {
   const { id } = useParams();
@@ -15,7 +17,7 @@ export default function EditPost() {
   const [title, setTitle] = useState(item?.title || '');
   const [price, setPrice] = useState(item?.price || '');
   const [category, setCategory] = useState(item?.category || '');
-  const [department, setDepartment] = useState(item?.department || '');
+  const [location, setLocation] = useState<LocationType>(item?.location || { lat: 28.6139, lng: 77.2090, address: '' });
   const [description, setDescription] = useState(item?.description || '');
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>(item?.images || (item?.image ? [item.image] : []));
@@ -29,7 +31,7 @@ export default function EditPost() {
       setTitle(item.title || '');
       setPrice(item.price || '');
       setCategory(item.category || '');
-      setDepartment(item.department || '');
+      setLocation(item.location || { lat: 28.6139, lng: 77.2090, address: '' });
       setDescription(item.description || '');
       setImages(item.images || (item.image ? [item.image] : []));
       setInitialized(true);
@@ -104,7 +106,7 @@ export default function EditPost() {
         price,
         category,
         description,
-        department: department || 'Other',
+        location: location,
         image: finalUrls[0], // First image is cover
         images: finalUrls,   // All images
       });
@@ -258,34 +260,9 @@ export default function EditPost() {
               />
             </div>
 
-            <div style={{ position: 'relative' }}>
-              <Building size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
-              <select
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-                required
-                style={{ 
-                  width: '100%',
-                  padding: '16px 16px 16px 48px',
-                  borderRadius: '24px',
-                  border: '1px solid var(--surface-border)',
-                  background: 'var(--surface)',
-                  color: department ? 'var(--text-main)' : 'var(--text-muted)',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: '16px',
-                  outline: 'none',
-                  appearance: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="" disabled>Select your Department</option>
-                {DEPARTMENTS.map(dept => (
-                  <option key={dept} value={dept} style={{ color: 'var(--text-main)' }}>{dept}</option>
-                ))}
-              </select>
-            </div>
+          <LocationPicker location={location} onChange={setLocation} />
 
-            <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative' }}>
               <AlignLeft size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
               <textarea
                 placeholder="Describe your item..."

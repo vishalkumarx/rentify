@@ -41,8 +41,6 @@ export default function UserProfile() {
       } else {
         setProfile({
           name: 'User ' + (id ? id.substring(0, 5) : ''),
-          department: 'Campus Member',
-          rating: 4.8,
           memberSince: new Date().getFullYear().toString(),
           verifications: ['Email Confirmed']
         });
@@ -147,11 +145,6 @@ export default function UserProfile() {
           <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 4px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
             {profile?.name}
           </h2>
-          {profile?.department && (
-            <p style={{ margin: '0 0 12px 0', fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500 }}>
-              {profile.department}
-            </p>
-          )}
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>

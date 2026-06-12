@@ -15,7 +15,11 @@ export type RentalItem = {
   id: number;
   title: string;
   price: string;
-  department: string;
+  location: {
+    lat: number;
+    lng: number;
+    address: string;
+  };
   category: string;
   liked: boolean;
   image: string; // Cover image
@@ -61,9 +65,17 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
       console.error('Error fetching items:', error);
     } else if (data) {
       // Map the DB fields (snake_case) to our RentalItem type (camelCase)
-      const mappedItems = data.map((item: any) => ({
-        ...item,
-        userId: item.user_id,
+      const mappedItems = data.map((item: any) => {
+        let parsedLocation = { lat: 28.6139, lng: 77.2090, address: item.department || 'Unknown Location' };
+        try {
+          if (item.department && item.department.startsWith('{')) {
+            parsedLocation = JSON.parse(item.department);
+          }
+        } catch(e) {}
+        return {
+          ...item,
+          location: parsedLocation,
+          userId: item.user_id,
         liked: false, // Default local like state
         seller: {
           id: item.user_id,
@@ -73,7 +85,8 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
           memberSince: new Date().getFullYear().toString(),
           verifications: ['Email Confirmed']
         }
-      }));
+      };
+    });
       setItems(mappedItems);
     }
   };
@@ -106,7 +119,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
           price: newItem.price,
           description: newItem.description,
           category: newItem.category,
-          department: newItem.department,
+          department: JSON.stringify(newItem.location),
           image: newItem.image,
           images: newItem.images || [newItem.image],
           status: 'available',
@@ -122,8 +135,16 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
     }
 
     if (data) {
+      let parsedLocation = { lat: 28.6139, lng: 77.2090, address: data.department || 'Unknown Location' };
+      try {
+        if (data.department && data.department.startsWith('{')) {
+          parsedLocation = JSON.parse(data.department);
+        }
+      } catch(e) {}
+
       const post: RentalItem = {
         ...data,
+        location: parsedLocation,
         userId: data.user_id,
         liked: false,
         seller: {

@@ -7,7 +7,6 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
-  const [department, setDepartment] = useState('Computer Science');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -24,8 +23,6 @@ export default function Signup() {
     } else if (data.user) {
       await setStorageJson(`profiles/${data.user.id}.json`, {
         name: fullName || 'User ' + data.user.id.substring(0, 5),
-        department: department,
-        rating: 5.0,
         memberSince: new Date().getFullYear().toString(),
         verifications: ['Email Confirmed']
       });
@@ -139,67 +136,6 @@ export default function Signup() {
               fontFamily: 'inherit'
             }}
           />
-          <select 
-            value={department}
-            onChange={(e) => setDepartment(e.target.value)}
-            style={{ 
-              width: '100%', 
-              padding: '16px', 
-              borderRadius: '16px', 
-              border: '1px solid var(--surface-border)', 
-              background: 'var(--surface)', 
-              color: 'var(--text-main)', 
-              fontSize: '15px', 
-              outline: 'none',
-              transition: 'border-color 0.2s',
-              fontFamily: 'inherit',
-              appearance: 'none'
-            }}
-          >
-            <option value="Agriculture">Agriculture</option>
-            <option value="Apparel and Textile Technology">Apparel and Textile Technology</option>
-            <option value="Architecture">Architecture</option>
-            <option value="Biotechnology">Biotechnology</option>
-            <option value="Botanical and Environmental Sciences">Botanical and Environmental Sciences</option>
-            <option value="Chemistry">Chemistry</option>
-            <option value="Computational Statistics and Data Analytics">Computational Statistics and Data Analytics</option>
-            <option value="Computer Engineering and Technology">Computer Engineering and Technology</option>
-            <option value="Computer Science">Computer Science</option>
-            <option value="Economics">Economics</option>
-            <option value="Education">Education</option>
-            <option value="Electronics Technology">Electronics Technology</option>
-            <option value="English">English</option>
-            <option value="Food Science and Technology">Food Science and Technology</option>
-            <option value="Foreign Languages">Foreign Languages</option>
-            <option value="Guru Nanak Studies">Guru Nanak Studies</option>
-            <option value="Hindi">Hindi</option>
-            <option value="History">History</option>
-            <option value="Hotel Management and Tourism">Hotel Management and Tourism</option>
-            <option value="Human Genetics">Human Genetics</option>
-            <option value="Laws">Laws</option>
-            <option value="Library and Information Science">Library and Information Science</option>
-            <option value="Mass Communication">Mass Communication</option>
-            <option value="Mathematics">Mathematics</option>
-            <option value="Microbiology">Microbiology</option>
-            <option value="Molecular Biology and Biochemistry">Molecular Biology and Biochemistry</option>
-            <option value="MYAS GNDU Sports Sciences and Medicine">MYAS GNDU Sports Sciences and Medicine</option>
-            <option value="Physical Education">Physical Education</option>
-            <option value="Physics">Physics</option>
-            <option value="Physiotherapy">Physiotherapy</option>
-            <option value="Planning">Planning</option>
-            <option value="Political Science">Political Science</option>
-            <option value="Psychology">Psychology</option>
-            <option value="Punjabi">Punjabi</option>
-            <option value="Sanskrit, Pali and Prakrit">Sanskrit, Pali and Prakrit</option>
-            <option value="School of Social Sciences">School of Social Sciences</option>
-            <option value="Sociology">Sociology</option>
-            <option value="Surjit Patar Centre for Ethical AI">Surjit Patar Centre for Ethical AI</option>
-            <option value="University Business School">University Business School</option>
-            <option value="Urdu and Persian">Urdu and Persian</option>
-            <option value="Zoology">Zoology</option>
-            <option value="Other">Other</option>
-          </select>
-
           <button 
             type="submit" 
             disabled={loading}

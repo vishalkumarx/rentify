@@ -2,6 +2,7 @@ import { HashRouter as Router, Routes, Route, Navigate, Link } from 'react-route
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { FeedProvider } from './context/FeedContext';
 import { ChatProvider } from './context/ChatContext';
+import { BookingProvider } from './context/BookingContext';
 import MobileLayout from './components/MobileLayout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -81,11 +82,13 @@ export default function App() {
   return (
     <AuthProvider>
       <FeedProvider>
-        <ChatProvider>
-          <Router>
-            <AppRoutes />
-          </Router>
-        </ChatProvider>
+        <BookingProvider>
+          <ChatProvider>
+            <Router>
+              <AppRoutes />
+            </Router>
+          </ChatProvider>
+        </BookingProvider>
       </FeedProvider>
     </AuthProvider>
   );

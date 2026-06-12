@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, MessageCircle, Building, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, MessageCircle, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
-import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
+import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +11,7 @@ import banner3 from '../assets/banners/banner3.png';
 
 export default function Home() {
   const [location, setLocation] = useState('Locating...');
+  const [userCoords, setUserCoords] = useState<{lat: number, lng: number} | null>(null);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -79,8 +80,7 @@ export default function Home() {
   
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
-  const [filterDept, setFilterDept] = useState('All');
-  const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
+  const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc', 'distance'
   const [displayCount, setDisplayCount] = useState(10);
 
   const { items, toggleLike } = useFeed();
@@ -95,6 +95,7 @@ export default function Home() {
         async (position) => {
           try {
             const { latitude, longitude } = position.coords;
+            setUserCoords({ lat: latitude, lng: longitude });
             const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
             const data = await res.json();
             
@@ -121,7 +122,21 @@ export default function Home() {
     fetchLocation();
   }, []);
 
-  // Filter items based on active category, search, and department
+  // Haversine formula
+  const getDistance = (lat1?: number, lon1?: number, lat2?: number, lon2?: number) => {
+    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+    const R = 6371; // Radius of the earth in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;  
+    const dLon = (lon2 - lon1) * Math.PI / 180; 
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2); 
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    return R * c; // Distance in km
+  }
+
+  // Filter items based on active category, search
   const filteredItems = items
     .filter(item => {
       // Hide posts made by the logged-in user
@@ -131,10 +146,14 @@ export default function Home() {
 
       const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
       const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesDept = filterDept === 'All' || item.department === filterDept;
-      return matchesCategory && matchesSearch && matchesDept;
+      return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
+      if (sortOrder === 'distance' && userCoords) {
+        const distA = getDistance(userCoords.lat, userCoords.lng, a.location?.lat, a.location?.lng) ?? Infinity;
+        const distB = getDistance(userCoords.lat, userCoords.lng, b.location?.lat, b.location?.lng) ?? Infinity;
+        return distA - distB;
+      }
       if (sortOrder === 'price-asc') return Number(a.price) - Number(b.price);
       if (sortOrder === 'price-desc') return Number(b.price) - Number(a.price);
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
@@ -240,10 +259,10 @@ export default function Home() {
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            background: (filterDept !== 'All' || sortOrder !== 'newest') ? 'var(--primary-glow)' : 'var(--surface)',
-            color: (filterDept !== 'All' || sortOrder !== 'newest') ? 'var(--primary)' : 'var(--text-main)',
+            background: sortOrder !== 'newest' ? 'var(--primary-glow)' : 'var(--surface)',
+            color: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--text-main)',
             boxShadow: 'var(--card-shadow)',
-            border: (filterDept !== 'All' || sortOrder !== 'newest') ? '1px solid var(--primary)' : 'none',
+            border: sortOrder !== 'newest' ? '1px solid var(--primary)' : 'none',
           }}
         >
           <SlidersHorizontal size={20} />
@@ -302,14 +321,6 @@ export default function Home() {
               </select>
             </div>
             
-            {/* Department Filter */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Department</label>
-              <select value={filterDept} onChange={e => setFilterDept(e.target.value)} style={{ padding: '14px 16px', borderRadius: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}>
-                <option value="All">All Departments</option>
-                {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
-              </select>
-            </div>
 
             {/* Sort Order */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -389,27 +400,30 @@ export default function Home() {
                 <p style={{ fontSize: '16px', color: 'var(--text-main)', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', maxWidth: 'calc(100% - 36px)' }}>
-                    <Building size={12} style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '11px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.department || 'General'}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                    <MapPin size={12} color="var(--text-muted)" />
+                    <span style={{ fontSize: '11px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {item.location?.address || 'General'}
+                      {userCoords && item.location && (
+                        <span style={{ color: 'var(--primary)', marginLeft: '4px' }}>
+                          ({getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km)
+                        </span>
+                      )}
+                    </span>
                   </div>
                   
                   {/* Message Button (Icon Only for grid) */}
                   <button 
                     onClick={(e) => handleMessageClick(e, item)}
                     style={{ 
-                      width: '30px',
-                      height: '30px',
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center',
-                      padding: 0, 
-                      borderRadius: '15px', 
-                      background: 'var(--primary-glow)', 
-                      color: 'var(--primary)',
-                      border: 'none',
-                      boxShadow: 'none',
-                      flexShrink: 0
+                      flex: 1, 
+                      padding: '12px 16px', 
+                      background: 'rgba(255,255,255,0.05)', 
+                      border: '1px solid var(--surface-border)', 
+                      borderRadius: '12px', 
+                      color: 'var(--text-main)', 
+                      outline: 'none', 
+                      cursor: 'pointer' 
                     }}
                   >
                     <MessageCircle size={16} />

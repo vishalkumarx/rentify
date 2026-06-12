@@ -43,8 +43,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const fallbackName = currentSession.user.user_metadata?.full_name || 'User ' + currentSession.user.id.substring(0, 5);
           await setStorageJson(profilePath, {
             name: fallbackName,
-            department: 'Campus Member',
-            rating: 5.0,
             memberSince: new Date().getFullYear().toString(),
             verifications: ['Email Confirmed']
           });

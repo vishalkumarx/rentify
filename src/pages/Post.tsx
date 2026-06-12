@@ -1,16 +1,18 @@
 import { useState, useRef } from 'react';
-import { Camera, Upload, Tag, DollarSign, AlignLeft, Plus, X, Building } from 'lucide-react';
+import { Camera, Upload, Tag, DollarSign, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
-import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
+import { CATEGORIES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
+import LocationPicker from '../components/LocationPicker';
+import type { LocationType } from '../components/LocationPicker';
 
 export default function Post() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('Electronics');
-  const [department, setDepartment] = useState('');
+  const [category, setCategory] = useState('');
+  const [location, setLocation] = useState<LocationType>({ lat: 28.6139, lng: 77.2090, address: '' });
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -72,9 +74,9 @@ export default function Post() {
       await addPost({
         title,
         price,
-        category,
+        category: category || 'Other',
         description,
-        department: department || 'Other',
+        location: location,
         image: uploadedUrls[0], // First image is cover
         images: uploadedUrls,   // All images
       });
@@ -217,33 +219,11 @@ export default function Post() {
               />
             </div>
 
-            <div style={{ position: 'relative' }}>
-              <Building size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
-              <select
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-                required
-                style={{ 
-                  width: '100%',
-                  padding: '16px 16px 16px 48px',
-                  borderRadius: '24px',
-                  border: '1px solid var(--surface-border)',
-                  background: 'var(--surface)',
-                  color: department ? 'var(--text-main)' : 'var(--text-muted)',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: '16px',
-                  outline: 'none',
-                  appearance: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="" disabled>Select your Department</option>
-                {DEPARTMENTS.map(dept => (
-                  <option key={dept} value={dept} style={{ color: 'var(--text-main)' }}>{dept}</option>
-                ))}
-              </select>
-            </div>
+          </div>
 
+          <LocationPicker location={location} onChange={setLocation} />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ position: 'relative' }}>
               <AlignLeft size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
               <textarea

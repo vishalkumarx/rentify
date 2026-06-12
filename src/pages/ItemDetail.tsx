@@ -4,8 +4,10 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Building, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar, CheckCircle } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { useBookings } from '../context/BookingContext';
+import { differenceInDays, parseISO, isValid } from 'date-fns';
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -13,10 +15,13 @@ export default function ItemDetail() {
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
   const { session, loading } = useAuth();
+  const { createRequest } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [ownerVerified, setOwnerVerified] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
-
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  
   const item = items.find(i => i.id === Number(id));
 
   useEffect(() => {
@@ -55,6 +60,38 @@ export default function ItemDetail() {
     const ownerId = item.userId || `user-${item.id}`;
     const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
     navigate(`/chat/${convId}`);
+  };
+
+  const handleBookRequest = async () => {
+    if (!session) {
+      navigate('/login');
+      return;
+    }
+    if (!startDate || !endDate) return alert('Select dates');
+    const days = differenceInDays(parseISO(endDate), parseISO(startDate));
+    if (days < 0) return alert('End date must be after start date');
+    const totalDays = days === 0 ? 1 : days;
+    const totalPrice = totalDays * Number(item.price);
+
+    await createRequest({
+      item_id: item.id,
+      requester_id: session.user.id,
+      owner_id: item.userId || `user-${item.id}`,
+      start_date: startDate,
+      end_date: endDate,
+      total_price: totalPrice,
+    });
+    setStartDate('');
+    setEndDate('');
+  };
+
+  const calculateDays = () => {
+    if (!startDate || !endDate) return 0;
+    const s = parseISO(startDate);
+    const e = parseISO(endDate);
+    if (!isValid(s) || !isValid(e)) return 0;
+    const days = differenceInDays(e, s);
+    return days < 0 ? 0 : days === 0 ? 1 : days;
   };
 
   return (
@@ -139,7 +176,7 @@ export default function ItemDetail() {
                 <Tag size={14} /> {item.category}
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <Building size={14} /> {item.department}
+                <MapPin size={14} /> {item.location?.address || 'Unknown Location'}
               </span>
             </div>
 
@@ -197,6 +234,70 @@ export default function ItemDetail() {
                 </div>
               </div>
             )}
+            
+            {/* Booking Calendar Section */}
+            <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Calendar size={20} /> Reserve Dates
+              </h3>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>From</label>
+                  <input 
+                    type="date" 
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', outline: 'none' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>To</label>
+                  <input 
+                    type="date" 
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', outline: 'none' }}
+                  />
+                </div>
+              </div>
+
+              {startDate && endDate && calculateDays() > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '16px' }}>
+                  <span style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
+                    ₹{item.price} x {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
+                  </span>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>
+                    ₹{calculateDays() * Number(item.price)}
+                  </span>
+                </div>
+              )}
+
+              <button 
+                onClick={handleBookRequest}
+                disabled={!startDate || !endDate || calculateDays() === 0}
+                style={{ 
+                  width: '100%', 
+                  padding: '16px', 
+                  borderRadius: '16px', 
+                  background: (!startDate || !endDate || calculateDays() === 0) ? 'var(--surface-border)' : 'var(--text-main)', 
+                  color: (!startDate || !endDate || calculateDays() === 0) ? 'var(--text-muted)' : 'var(--surface)', 
+                  fontSize: '16px', 
+                  fontWeight: 700, 
+                  border: 'none', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center', 
+                  gap: '8px',
+                  transition: '0.2s',
+                  cursor: (!startDate || !endDate || calculateDays() === 0) ? 'not-allowed' : 'pointer'
+                }}
+              >
+                <CheckCircle size={20} />
+                Request to Book
+              </button>
+            </div>
+
           </div>
         </div>
       </main>
