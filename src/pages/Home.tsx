@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, MessageCircle, Building } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, MessageCircle, Building, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +15,22 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
   const banners = [banner1, banner2, banner3];
+  
+  const categoryIcons: Record<string, React.ReactNode> = {
+    'All': <LayoutGrid size={18} />,
+    'Electronics': <Laptop size={18} />,
+    'Textbooks': <Book size={18} />,
+    'Mobility': <Bike size={18} />,
+    'Dorm Essentials': <Bed size={18} />,
+    'Party Supplies': <PartyPopper size={18} />,
+    'Tools & Hardware': <Wrench size={18} />,
+    'Clothing & Formalwear': <Shirt size={18} />,
+    'Sports Gear': <Dumbbell size={18} />,
+    'Photography': <Camera size={18} />,
+    'Gaming': <Gamepad2 size={18} />,
+    'Music Instruments': <Music size={18} />,
+    'Others': <MoreHorizontal size={18} />
+  };
   
   // Auto-scroll Carousel
   useEffect(() => {
@@ -137,7 +153,39 @@ export default function Home() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+    <div className="home-layout">
+      {/* Desktop Sidebar Categories */}
+      <div className="desktop-categories hide-scrollbar">
+        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', paddingLeft: '8px' }}>Categories</h3>
+        {CATEGORIES.map(cat => (
+          <button 
+            key={`desktop-${cat}`}
+            onClick={() => setActiveCategory(cat)}
+            style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              width: '100%', 
+              padding: '12px 16px', 
+              borderRadius: '16px', 
+              fontSize: '15px',
+              fontWeight: activeCategory === cat ? 700 : 500,
+              boxShadow: 'none',
+              background: activeCategory === cat ? 'var(--primary-glow)' : 'transparent',
+              border: 'none',
+              color: activeCategory === cat ? 'var(--primary)' : 'var(--text-main)',
+              textAlign: 'left',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            {categoryIcons[cat]}
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Main Content Area */}
+      <div className="home-main-content">
       
       {/* Location Banner */}
       <div style={{ padding: '16px 20px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -278,13 +326,16 @@ export default function Home() {
         </div>
       )}
 
-      {/* Horizontal Categories */}
-      <div className="hide-scrollbar" style={{ overflowX: 'auto', padding: '0 20px 16px', display: 'flex', gap: '8px' }}>
+      {/* Horizontal Categories (Mobile Only) */}
+      <div className="mobile-categories hide-scrollbar">
         {CATEGORIES.map(cat => (
           <button 
-            key={cat}
+            key={`mobile-${cat}`}
             onClick={() => setActiveCategory(cat)}
             style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               width: 'auto', 
               padding: '8px 16px', 
               borderRadius: '20px', 
@@ -296,6 +347,7 @@ export default function Home() {
               color: activeCategory === cat ? '#fff' : 'var(--text-main)'
             }}
           >
+            {categoryIcons[cat]}
             {cat}
           </button>
         ))}
@@ -410,6 +462,8 @@ export default function Home() {
           </button>
         </div>
       )}
+      
+      </div> {/* End Main Content Area */}
 
     </div>
   );
