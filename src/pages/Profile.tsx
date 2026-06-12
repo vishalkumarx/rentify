@@ -154,10 +154,6 @@ export default function Profile() {
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
           <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Heart size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Saved Items</span></div>
-            <ChevronRight size={20} color="var(--text-muted)" />
-          </button>
-          <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Settings size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Preferences</span></div>
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
