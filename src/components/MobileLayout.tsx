@@ -75,7 +75,7 @@ export default function MobileLayout() {
       </div>
 
       {/* Bottom/Side Navigation */}
-      <nav className={`app-nav ${showHeader ? '' : 'nav-hidden'}`}>
+      <nav className="app-nav">
         {/* Added App Logo/Brand for Sidebar context (hidden on mobile via CSS optionally, but let's just show it or keep simple) */}
         
         <NavItem icon={<Home size={24} />} label="Explore" isActive={location.pathname === '/'} onClick={() => navigate('/')} />
