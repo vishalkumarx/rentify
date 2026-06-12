@@ -214,7 +214,7 @@ export default function Home() {
               key={i} 
               src={src} 
               alt={`Banner ${i+1}`} 
-              style={{ width: '100%', flexShrink: 0, objectFit: 'cover', aspectRatio: '21/9', display: 'block' }} 
+              style={{ width: '100%', height: 'auto', flexShrink: 0, display: 'block' }} 
             />
           ))}
         </div>
