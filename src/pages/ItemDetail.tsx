@@ -4,7 +4,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Building, Tag, Star, ShieldCheck, CheckCircle2, X, ChevronRight, Bell, BadgeCheck } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Building, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 export default function ItemDetail() {
@@ -191,21 +191,9 @@ export default function ItemDetail() {
                       )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <span style={{ fontSize: '14px', fontWeight: 600 }}>{item.seller.rating}</span>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>({item.seller.reviewCount} reviews)</span>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginLeft: '4px' }}>• Joined {item.seller.memberSince}</span>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Joined {item.seller.memberSince}</span>
                     </div>
                   </div>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  {item.seller.verifications.map((ver, idx) => (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
-                      <CheckCircle2 size={16} />
-                      {ver}
-                    </div>
-                  ))}
                 </div>
               </div>
             )}
