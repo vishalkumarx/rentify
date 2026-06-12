@@ -5,9 +5,9 @@ import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
-import banner1 from '../assets/banners/banner1.jpg';
-import banner2 from '../assets/banners/banner2.jpg';
-import banner3 from '../assets/banners/banner3.jpg';
+import banner1 from '../assets/banners/banner1.png';
+import banner2 from '../assets/banners/banner2.png';
+import banner3 from '../assets/banners/banner3.png';
 
 export default function Home() {
   const [location, setLocation] = useState('Locating...');
