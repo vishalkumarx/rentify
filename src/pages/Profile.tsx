@@ -55,7 +55,7 @@ export default function Profile() {
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', flexShrink: 0, fontSize: '32px', fontWeight: 700 }}>
-              {session?.user?.email?.[0].toUpperCase() || 'U'}
+              {session?.user?.email?.[0]?.toUpperCase() || 'U'}
             </div>
             <div style={{ overflow: 'hidden' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
