@@ -1,5 +1,25 @@
-import { useState } from 'react';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { useState, useRef, useMemo } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default Leaflet icon in React
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+const DefaultIcon = L.icon({
+  iconUrl,
+  iconRetinaUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 export type LocationType = {
   lat: number;
@@ -12,33 +32,49 @@ interface LocationPickerProps {
   onChange: (location: LocationType) => void;
 }
 
-const containerStyle = {
-  width: '100%',
-  height: '100%'
-};
-
-const DEFAULT_CENTER = {
-  lat: 28.6139,
-  lng: 77.2090
-};
-
-export default function LocationPicker({ location, onChange }: LocationPickerProps) {
-  const { isLoaded } = useJsApiLoader({
-    id: 'google-map-script',
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''
+function LocationMarker({ position, setPosition }: { position: L.LatLng | null, setPosition: (pos: L.LatLng) => void }) {
+  const markerRef = useRef<L.Marker>(null);
+  const map = useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+      map.flyTo(e.latlng, map.getZoom());
+    },
   });
 
-  const [position, setPosition] = useState<{lat: number, lng: number}>(
-    location.lat && location.lng ? { lat: location.lat, lng: location.lng } : DEFAULT_CENTER
+  const eventHandlers = useMemo(
+    () => ({
+      dragend() {
+        const marker = markerRef.current;
+        if (marker != null) {
+          setPosition(marker.getLatLng());
+        }
+      },
+    }),
+    [setPosition]
+  );
+
+  return position === null ? null : (
+    <Marker
+      draggable={true}
+      eventHandlers={eventHandlers}
+      position={position}
+      ref={markerRef}
+    />
+  );
+}
+
+export default function LocationPicker({ location, onChange }: LocationPickerProps) {
+  const [position, setPosition] = useState<L.LatLng | null>(
+    location.lat && location.lng ? new L.LatLng(location.lat, location.lng) : new L.LatLng(28.6139, 77.2090) // Default to New Delhi or similar
   );
   
   const [addressInput, setAddressInput] = useState(location.address || '');
 
-  const handlePositionChange = (lat: number, lng: number) => {
-    setPosition({ lat, lng });
+  const handlePositionChange = (pos: L.LatLng) => {
+    setPosition(pos);
     onChange({
-      lat,
-      lng,
+      lat: pos.lat,
+      lng: pos.lng,
       address: addressInput
     });
   };
@@ -81,32 +117,13 @@ export default function LocationPicker({ location, onChange }: LocationPickerPro
       </p>
 
       <div style={{ height: '300px', width: '100%', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
-        {!isLoaded ? (
-          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)' }}>
-            <p style={{ color: 'var(--text-muted)' }}>Loading Google Maps...</p>
-          </div>
-        ) : (
-          <GoogleMap
-            mapContainerStyle={containerStyle}
-            center={position}
-            zoom={13}
-            onClick={(e) => {
-              if (e.latLng) {
-                handlePositionChange(e.latLng.lat(), e.latLng.lng());
-              }
-            }}
-          >
-            <Marker 
-              position={position}
-              draggable={true}
-              onDragEnd={(e) => {
-                if (e.latLng) {
-                  handlePositionChange(e.latLng.lat(), e.latLng.lng());
-                }
-              }}
-            />
-          </GoogleMap>
-        )}
+        <MapContainer center={position || [28.6139, 77.2090]} zoom={13} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <LocationMarker position={position} setPosition={handlePositionChange} />
+        </MapContainer>
       </div>
     </div>
   );
