@@ -199,10 +199,10 @@ export default function Home() {
           <div style={{ background: 'var(--primary-glow)', padding: '10px', borderRadius: '14px', display: 'flex' }}>
             <MapPin size={20} color="var(--primary)" />
           </div>
-          <div>
+          <div style={{ minWidth: 0, flex: 1 }}>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>Current Location</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <h2 style={{ fontSize: '16px', margin: 0, color: 'var(--text-main)', fontWeight: 600 }}>{location}</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', maxWidth: '100%' }}>
+              <h2 style={{ fontSize: '16px', margin: 0, color: 'var(--text-main)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{location}</h2>
               {(location === 'Location Unavailable' || location === 'Location Denied') ? (
                 <button 
                   onClick={() => {
@@ -391,9 +391,9 @@ export default function Home() {
                 <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>
                 <p style={{ fontSize: '16px', color: 'var(--text-main)', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
                 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
-                    <MapPin size={12} color="var(--text-muted)" />
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)', maxWidth: '100%', minWidth: 0 }}>
+                    <MapPin size={12} color="var(--text-muted)" style={{ flexShrink: 0 }} />
                     <span style={{ fontSize: '11px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {userCoords && item.location 
                         ? `${getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km away` 
