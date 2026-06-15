@@ -385,7 +385,7 @@ export default function ItemDetail() {
           ) : (
             <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
               <Calendar size={22} />
-              Book to Chat
+              Request Booking
             </button>
           )}
           
