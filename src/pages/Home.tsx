@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, MessageCircle, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
-import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import banner1 from '../assets/banners/banner1.png';
 import banner2 from '../assets/banners/banner2.png';
@@ -84,7 +83,6 @@ export default function Home() {
   const [displayCount, setDisplayCount] = useState(10);
 
   const { items, toggleLike } = useFeed();
-  const { getOrCreateConversation } = useChat();
   const { session } = useAuth();
   const navigate = useNavigate();
   
@@ -159,17 +157,6 @@ export default function Home() {
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
 
-  const handleMessageClick = (e: React.MouseEvent, item: any) => {
-    e.stopPropagation();
-    if (!session) {
-      navigate('/login');
-      return;
-    }
-    const ownerId = item.userId || `user-${item.id}`; // Mock an owner ID
-    const ownerName = `Owner of ${item.title}`;
-    const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
-    navigate(`/chat/${convId}`);
-  };
 
   return (
     <div className="home-layout">
@@ -218,7 +205,12 @@ export default function Home() {
               <h2 style={{ fontSize: '16px', margin: 0, color: 'var(--text-main)', fontWeight: 600 }}>{location}</h2>
               {(location === 'Location Unavailable' || location === 'Location Denied') ? (
                 <button 
-                  onClick={fetchLocation} 
+                  onClick={() => {
+                    if (location === 'Location Denied') {
+                      alert('Please enable location permissions in your browser settings to continue.');
+                    }
+                    fetchLocation();
+                  }} 
                   style={{ marginLeft: '6px', padding: '4px', background: 'transparent', border: 'none', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', boxShadow: 'none' }}
                 >
                   <RefreshCcw size={14} /> Retry
@@ -403,31 +395,11 @@ export default function Home() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
                     <MapPin size={12} color="var(--text-muted)" />
                     <span style={{ fontSize: '11px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {item.location?.address || 'General'}
-                      {userCoords && item.location && (
-                        <span style={{ color: 'var(--primary)', marginLeft: '4px' }}>
-                          ({getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km)
-                        </span>
-                      )}
+                      {userCoords && item.location 
+                        ? `${getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km away` 
+                        : (item.location?.address || 'General')}
                     </span>
                   </div>
-                  
-                  {/* Message Button (Icon Only for grid) */}
-                  <button 
-                    onClick={(e) => handleMessageClick(e, item)}
-                    style={{ 
-                      flex: 1, 
-                      padding: '12px 16px', 
-                      background: 'rgba(255,255,255,0.05)', 
-                      border: '1px solid var(--surface-border)', 
-                      borderRadius: '12px', 
-                      color: 'var(--text-main)', 
-                      outline: 'none', 
-                      cursor: 'pointer' 
-                    }}
-                  >
-                    <MessageCircle size={16} />
-                  </button>
                 </div>
               </div>
               
