@@ -3,17 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useFeed } from '../context/FeedContext';
+import { Ban } from 'lucide-react';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
+  const { items } = useFeed();
   const { conversations, messages, sendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const conversation = conversations.find(c => c.id === id);
   const conversationMessages = messages.filter(m => m.conversationId === id);
+  
+  const isItemDeleted = conversation && !items.some(item => item.id === Number(conversation.itemId));
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -89,7 +94,7 @@ export default function Chat() {
           display: 'flex', 
           gap: '12px', 
           alignItems: 'center',
-          marginBottom: '16px',
+          marginBottom: isItemDeleted ? '0px' : '16px',
           border: '1px solid var(--surface-border)'
         }}>
           <img src={conversation.itemImage} alt={conversation.itemTitle} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
@@ -98,6 +103,25 @@ export default function Chat() {
             <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>Inquiry about this item</p>
           </div>
         </div>
+
+        {/* Deleted Item Banner */}
+        {isItemDeleted && (
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid var(--danger)',
+            borderRadius: '12px',
+            padding: '12px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            marginBottom: '16px'
+          }}>
+            <Ban size={20} color="var(--danger)" style={{ flexShrink: 0 }} />
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--danger)', fontWeight: 600 }}>
+              This item has been deleted by the owner. Chat operations are disabled.
+            </p>
+          </div>
+        )}
 
         {/* Safety Warning Banner */}
         <div style={{
@@ -157,14 +181,15 @@ export default function Chat() {
         <form onSubmit={handleSend} style={{ display: 'flex', gap: '12px' }}>
           <input
             type="text"
-            placeholder="Type a message..."
+            placeholder={isItemDeleted ? "Chat disabled" : "Type a message..."}
             value={inputText}
             onChange={e => setInputText(e.target.value)}
-            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)' }}
+            disabled={isItemDeleted}
+            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', opacity: isItemDeleted ? 0.5 : 1 }}
           />
           <button 
             type="submit" 
-            disabled={!inputText.trim()}
+            disabled={!inputText.trim() || isItemDeleted}
             style={{ 
               width: '46px', 
               height: '46px', 
@@ -173,9 +198,10 @@ export default function Chat() {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              background: inputText.trim() ? 'var(--primary)' : 'var(--surface-border)',
+              background: inputText.trim() && !isItemDeleted ? 'var(--primary)' : 'var(--surface-border)',
               color: 'var(--text-main)',
-              boxShadow: inputText.trim() ? 'var(--primary-glow)' : 'none'
+              boxShadow: inputText.trim() && !isItemDeleted ? 'var(--primary-glow)' : 'none',
+              opacity: isItemDeleted ? 0.5 : 1
             }}
           >
             <Send size={20} />
