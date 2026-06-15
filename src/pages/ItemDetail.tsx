@@ -4,7 +4,8 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon } from 'lucide-react';
+import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
 import { differenceInDays, parseISO, isValid } from 'date-fns';
@@ -240,29 +241,18 @@ export default function ItemDetail() {
             {/* Booking Calendar Section */}
             <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Calendar size={20} /> Reserve Dates
+                <CalendarIcon size={20} /> Reserve Dates
               </h3>
+              <h2 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px' }}>Select Rental Dates</h2>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>From</label>
-                  <input 
-                    type="date" 
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', outline: 'none' }}
-                  />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>To</label>
-                  <input 
-                    type="date" 
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', outline: 'none' }}
-                  />
-                </div>
-              </div>
+              <Calendar 
+                startDate={startDate} 
+                endDate={endDate} 
+                onChange={(start, end) => {
+                  setStartDate(start);
+                  setEndDate(end);
+                }} 
+              />
 
               {startDate && endDate && calculateDays() > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '16px' }}>
@@ -373,7 +363,7 @@ export default function ItemDetail() {
                 }
               }} 
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
-              <Calendar size={22} />
+              <CalendarIcon size={22} />
               Request Booking
             </button>
           )}
