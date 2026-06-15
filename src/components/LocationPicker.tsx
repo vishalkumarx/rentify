@@ -187,7 +187,8 @@ export default function LocationPicker({ location, onChange }: LocationPickerPro
             fontSize: '12px', 
             fontWeight: 700,
             cursor: isLocating ? 'not-allowed' : 'pointer',
-            flexShrink: 0
+            flexShrink: 0,
+            width: 'auto'
           }}
         >
           <Locate size={14} />
