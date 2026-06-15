@@ -182,11 +182,10 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deletePost = async (id: number) => {
-    const { data, error } = await supabase
+    const { error, count } = await supabase
       .from('rental_items')
-      .delete()
-      .eq('id', id)
-      .select();
+      .delete({ count: 'exact' })
+      .eq('id', id);
       
     if (error) {
       console.error('Error deleting post:', error);
@@ -194,9 +193,8 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
 
-    // If RLS blocked the delete, data will be empty
-    if (!data || data.length === 0) {
-      alert('Permission denied. You can only delete items that you posted.');
+    if (count === 0) {
+      alert('Permission denied. You can only delete items that you posted. (Or item already deleted)');
       return;
     }
     
