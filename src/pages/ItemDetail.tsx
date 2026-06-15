@@ -15,7 +15,7 @@ export default function ItemDetail() {
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
   const { session, loading } = useAuth();
-  const { createRequest } = useBookings();
+  const { createRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [ownerVerified, setOwnerVerified] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
@@ -23,6 +23,8 @@ export default function ItemDetail() {
   const [endDate, setEndDate] = useState('');
   
   const item = items.find(i => i.id === Number(id));
+  const isOwner = session?.user?.id === item?.userId;
+  const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id) : null;
 
   useEffect(() => {
     if (item?.userId) {
@@ -358,15 +360,32 @@ export default function ItemDetail() {
         justifyContent: 'center'
       }}>
         <div style={{ maxWidth: '800px', width: '100%' }}>
-          {item.status === 'booked' ? (
+          {isOwner ? (
+            <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer' }}>
+              Edit Your Item
+            </button>
+          ) : item.status === 'booked' ? (
             <button onClick={() => alert("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
               <Bell size={22} />
               Notify Me
             </button>
-          ) : (
+          ) : userRequest?.status === 'accepted' ? (
             <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
               <MessageCircle size={22} />
               Message Owner
+            </button>
+          ) : userRequest?.status === 'pending' ? (
+            <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
+              Booking Pending Approval...
+            </button>
+          ) : userRequest?.status === 'rejected' ? (
+            <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
+              Booking Request Declined
+            </button>
+          ) : (
+            <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
+              <Calendar size={22} />
+              Book to Chat
             </button>
           )}
           

@@ -4,13 +4,15 @@ import { useChat } from '../context/ChatContext';
 import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
-import { Ban } from 'lucide-react';
+import { useBookings } from '../context/BookingContext';
+import { Ban, Lock } from 'lucide-react';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { session } = useAuth();
   const { items } = useFeed();
+  const { requests } = useBookings();
   const { conversations, messages, sendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -19,6 +21,15 @@ export default function Chat() {
   const conversationMessages = messages.filter(m => m.conversationId === id);
   
   const isItemDeleted = conversation && !items.some(item => item.id === Number(conversation.itemId));
+
+  const hasAcceptedBooking = conversation && session && requests.some(r => 
+    r.item_id === Number(conversation.itemId) && 
+    ((r.requester_id === session.user.id && r.owner_id === conversation.otherUserId) || 
+     (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId)) &&
+    r.status === 'accepted'
+  );
+
+  const isChatDisabled = isItemDeleted || !hasAcceptedBooking;
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -104,6 +115,44 @@ export default function Chat() {
           </div>
         </div>
 
+        {/* Deleted Item Banner */}
+        {isItemDeleted && (
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid var(--danger)',
+            borderRadius: '12px',
+            padding: '12px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            marginBottom: '16px'
+          }}>
+            <Ban size={20} color="var(--danger)" style={{ flexShrink: 0 }} />
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--danger)', fontWeight: 600 }}>
+              This item has been deleted by the owner. Chat operations are disabled.
+            </p>
+          </div>
+        )}
+
+        {/* Not Accepted Banner */}
+        {!isItemDeleted && !hasAcceptedBooking && (
+          <div style={{
+            background: 'rgba(255, 193, 7, 0.1)',
+            border: '1px solid var(--warning)',
+            borderRadius: '12px',
+            padding: '12px',
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            marginBottom: '16px'
+          }}>
+            <Lock size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--warning)', fontWeight: 600 }}>
+              Chat is locked until the booking request is accepted.
+            </p>
+          </div>
+        )}
+
         {/* Safety Warning Banner */}
         <div style={{
           background: 'var(--surface)',
@@ -162,15 +211,15 @@ export default function Chat() {
         <form onSubmit={handleSend} style={{ display: 'flex', gap: '12px' }}>
           <input
             type="text"
-            placeholder={isItemDeleted ? "Chat disabled" : "Type a message..."}
+            placeholder={isItemDeleted ? "Item deleted" : !hasAcceptedBooking ? "Chat locked" : "Type a message..."}
             value={inputText}
             onChange={e => setInputText(e.target.value)}
-            disabled={isItemDeleted}
-            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', opacity: isItemDeleted ? 0.5 : 1 }}
+            disabled={isChatDisabled}
+            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', opacity: isChatDisabled ? 0.5 : 1 }}
           />
           <button 
             type="submit" 
-            disabled={!inputText.trim() || isItemDeleted}
+            disabled={!inputText.trim() || isChatDisabled}
             style={{ 
               width: '46px', 
               height: '46px', 
@@ -179,10 +228,10 @@ export default function Chat() {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              background: inputText.trim() && !isItemDeleted ? 'var(--primary)' : 'var(--surface-border)',
+              background: inputText.trim() && !isChatDisabled ? 'var(--primary)' : 'var(--surface-border)',
               color: 'var(--text-main)',
-              boxShadow: inputText.trim() && !isItemDeleted ? 'var(--primary-glow)' : 'none',
-              opacity: isItemDeleted ? 0.5 : 1
+              boxShadow: inputText.trim() && !isChatDisabled ? 'var(--primary-glow)' : 'none',
+              opacity: isChatDisabled ? 0.5 : 1
             }}
           >
             <Send size={20} />
