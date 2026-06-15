@@ -153,13 +153,13 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
       
       <div style={{ marginTop: '16px', display: 'flex', gap: '12px', alignItems: 'center' }}>
         <div style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'var(--bg-color)', border: '1px solid var(--surface-border)', fontSize: '13px' }}>
-          <div style={{ color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>Check-in</div>
+          <div style={{ color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>From</div>
           <div style={{ color: 'var(--text-main)', fontWeight: 700 }}>
             {startDate ? format(parseISO(startDate), 'MMM dd, yyyy') : 'Select date'}
           </div>
         </div>
         <div style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'var(--bg-color)', border: '1px solid var(--surface-border)', fontSize: '13px' }}>
-          <div style={{ color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>Check-out</div>
+          <div style={{ color: 'var(--text-muted)', fontWeight: 600, marginBottom: '4px' }}>To</div>
           <div style={{ color: 'var(--text-main)', fontWeight: 700 }}>
             {endDate ? format(parseISO(endDate), 'MMM dd, yyyy') : 'Select date'}
           </div>
