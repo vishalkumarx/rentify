@@ -4,7 +4,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar, CheckCircle } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
 import { differenceInDays, parseISO, isValid } from 'date-fns';
@@ -275,29 +275,6 @@ export default function ItemDetail() {
                 </div>
               )}
 
-              <button 
-                onClick={handleBookRequest}
-                disabled={!startDate || !endDate || calculateDays() === 0}
-                style={{ 
-                  width: '100%', 
-                  padding: '16px', 
-                  borderRadius: '16px', 
-                  background: (!startDate || !endDate || calculateDays() === 0) ? 'var(--surface-border)' : 'var(--text-main)', 
-                  color: (!startDate || !endDate || calculateDays() === 0) ? 'var(--text-muted)' : 'var(--surface)', 
-                  fontSize: '16px', 
-                  fontWeight: 700, 
-                  border: 'none', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center', 
-                  gap: '8px',
-                  transition: '0.2s',
-                  cursor: (!startDate || !endDate || calculateDays() === 0) ? 'not-allowed' : 'pointer'
-                }}
-              >
-                <CheckCircle size={20} />
-                Request to Book
-              </button>
             </div>
 
           </div>
@@ -383,7 +360,19 @@ export default function ItemDetail() {
               Booking Request Declined
             </button>
           ) : (
-            <button onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
+            <button 
+              onClick={() => {
+                if (!startDate || !endDate || calculateDays() === 0) {
+                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                  // If they are already near the bottom, just trigger the alert via handleBookRequest
+                  if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
+                    handleBookRequest();
+                  }
+                } else {
+                  handleBookRequest();
+                }
+              }} 
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
               <Calendar size={22} />
               Request Booking
             </button>
