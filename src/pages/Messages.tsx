@@ -9,7 +9,7 @@ export default function Messages() {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }} className="animate-slide-in">
+    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '100px', display: 'flex', flexDirection: 'column', gap: '24px' }} className="animate-slide-in">
       <h1 style={{ fontSize: '28px', margin: 0 }}>Messages</h1>
       
       {conversations.length === 0 ? (
