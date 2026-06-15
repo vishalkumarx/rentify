@@ -94,7 +94,7 @@ export default function Chat() {
           display: 'flex', 
           gap: '12px', 
           alignItems: 'center',
-          marginBottom: isItemDeleted ? '0px' : '16px',
+          marginBottom: '16px',
           border: '1px solid var(--surface-border)'
         }}>
           <img src={conversation.itemImage} alt={conversation.itemTitle} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
@@ -103,25 +103,6 @@ export default function Chat() {
             <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>Inquiry about this item</p>
           </div>
         </div>
-
-        {/* Deleted Item Banner */}
-        {isItemDeleted && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--danger)',
-            borderRadius: '12px',
-            padding: '12px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center',
-            marginBottom: '16px'
-          }}>
-            <Ban size={20} color="var(--danger)" style={{ flexShrink: 0 }} />
-            <p style={{ margin: 0, fontSize: '13px', color: 'var(--danger)', fontWeight: 600 }}>
-              This item has been deleted by the owner. Chat operations are disabled.
-            </p>
-          </div>
-        )}
 
         {/* Safety Warning Banner */}
         <div style={{
@@ -208,6 +189,69 @@ export default function Chat() {
           </button>
         </form>
       </footer>
+
+      {/* Deleted Item Dialog */}
+      {isItemDeleted && (
+        <div style={{
+          position: 'fixed',
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '20px'
+        }}>
+          <div style={{
+            background: 'var(--surface)',
+            padding: '24px',
+            borderRadius: '24px',
+            maxWidth: '320px',
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            boxShadow: 'var(--card-shadow)',
+            border: '1px solid var(--danger)',
+            animation: 'slideUp 0.3s ease-out'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '32px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '16px'
+            }}>
+              <Ban size={32} color="var(--danger)" />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 800 }}>Item Deleted</h3>
+            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              This item has been deleted by its owner. All chat operations have been disabled.
+            </p>
+            <button
+              onClick={() => navigate(-1)}
+              style={{
+                marginTop: '24px',
+                width: '100%',
+                padding: '14px',
+                background: 'var(--surface-border)',
+                color: 'var(--text-main)',
+                border: 'none',
+                borderRadius: '16px',
+                fontWeight: 700,
+                fontSize: '15px',
+                cursor: 'pointer'
+              }}
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
