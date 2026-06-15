@@ -72,6 +72,40 @@ body {
   border-bottom: 1px solid var(--surface-border);
 }
 
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 50;
+  border-bottom: 1px solid var(--surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-title {
+  text-align: center;
+  font-size: 32px;
+  margin: 0;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--text-main);
+  font-family: 'Holiday', 'Pacifico', cursive;
+  text-transform: lowercase;
+}
+
+@media (min-width: 768px) {
+  .app-header {
+    justify-content: flex-start;
+    padding-left: 24px;
+  }
+}
+
 /* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -298,6 +332,10 @@ a:hover {
     left: 0;
     padding: 0 40px;
     justify-content: flex-start;
+  }
+  
+  .app-title {
+    text-align: left;
   }
   
   .app-nav {
