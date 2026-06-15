@@ -182,16 +182,25 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const deletePost = async (id: number) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('rental_items')
       .delete()
-      .eq('id', id);
+      .eq('id', id)
+      .select();
       
     if (error) {
       console.error('Error deleting post:', error);
+      alert('Error deleting post: ' + error.message);
       throw error;
     }
+
+    // If RLS blocked the delete, data will be empty
+    if (!data || data.length === 0) {
+      alert('Permission denied. You can only delete items that you posted.');
+      return;
+    }
     
+    // Only remove from local state if it successfully deleted in the DB
     setItems((prev) => prev.filter(item => item.id !== id));
   };
 
