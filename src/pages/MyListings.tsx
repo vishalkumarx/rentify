@@ -36,12 +36,12 @@ export default function MyListings() {
                         Total: ₹{req.total_price}
                       </p>
                     </div>
-                    <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => updateRequestStatus(req.id, 'accepted')} style={{ width: '36px', height: '36px', borderRadius: '18px', border: 'none', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                        <Check size={18} />
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <button onClick={() => updateRequestStatus(req.id, 'accepted')} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
+                        <Check size={26} strokeWidth={2.5} />
                       </button>
-                      <button onClick={() => updateRequestStatus(req.id, 'rejected')} style={{ width: '36px', height: '36px', borderRadius: '18px', border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-                        <X size={18} />
+                      <button onClick={() => updateRequestStatus(req.id, 'rejected')} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
+                        <X size={26} strokeWidth={2.5} />
                       </button>
                     </div>
                   </div>
