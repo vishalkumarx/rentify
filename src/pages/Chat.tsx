@@ -21,15 +21,19 @@ export default function Chat() {
   const conversationMessages = messages.filter(m => m.conversationId === id);
   
   const item = items.find(i => i.id === Number(conversation?.itemId));
-  const isOwner = session && item && item.userId === session.user.id;
-
-  const isItemDeleted = conversation && !item;
-
+  
   const bookingReq = conversation && session ? requests.find(r => 
     r.item_id === Number(conversation.itemId) && 
     ((r.requester_id === session.user.id && r.owner_id === conversation.otherUserId) || 
      (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId))
   ) : null;
+
+  const isOwner = session && (
+    (item && item.userId === session.user.id) || 
+    (bookingReq && bookingReq.owner_id === session.user.id)
+  );
+
+  const isItemDeleted = conversation && !item && !bookingReq;
 
   const hasAcceptedBooking = bookingReq?.status === 'accepted';
 

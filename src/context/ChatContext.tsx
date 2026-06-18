@@ -106,11 +106,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         // Find last sender
         const lastMsg = c.messages?.[c.messages.length - 1];
         
+        // Fallback for older chats that didn't store itemId
+        const fallbackItemId = c.id ? Number(c.id.split('-')[1]) : undefined;
+        
         return {
           id: c.id,
-          itemId: c.itemId,
-          itemTitle: c.itemTitle,
-          itemImage: c.itemImage,
+          itemId: c.itemId || fallbackItemId,
+          itemTitle: c.itemTitle || 'Item',
+          itemImage: c.itemImage || '',
           otherUserId,
           otherUserName,
           lastMessage: c.lastMessage,
