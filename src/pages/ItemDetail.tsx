@@ -4,11 +4,11 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
-import { differenceInDays, parseISO, isValid } from 'date-fns';
+import { differenceInDays, parseISO, isValid, format } from 'date-fns';
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -29,7 +29,7 @@ export default function ItemDetail() {
     }
   }, [zoomImageIndex]);
 
-  const [showBookingConfirm, setShowBookingConfirm] = useState(false);
+  const [bookingSheetState, setBookingSheetState] = useState<'none' | 'confirm' | 'success'>('none');
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [ownerVerified, setOwnerVerified] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
@@ -87,7 +87,7 @@ export default function ItemDetail() {
     if (!startDate || !endDate) return alert('Select dates');
     const days = differenceInDays(parseISO(endDate), parseISO(startDate));
     if (days < 0) return alert('End date must be after start date');
-    setShowBookingConfirm(true);
+    setBookingSheetState('confirm');
   };
 
   const handleConfirmBookRequest = async () => {
@@ -103,7 +103,10 @@ export default function ItemDetail() {
       end_date: endDate,
       total_price: totalPrice,
     });
-    setShowBookingConfirm(false);
+    setBookingSheetState('success');
+    setTimeout(() => {
+      setBookingSheetState('none');
+    }, 3000);
   };
 
   const calculateDays = () => {
@@ -414,36 +417,55 @@ export default function ItemDetail() {
         </div>
       </div>
 
-      {showBookingConfirm && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Confirm Booking</h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
-              You are about to request to book <strong>{item.title}</strong>.
-            </p>
-            <div style={{ padding: '16px', background: 'var(--surface-border)', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>From:</span>
-                <span style={{ fontWeight: 600 }}>{startDate}</span>
+      {bookingSheetState !== 'none' && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setBookingSheetState('none')}>
+          <div 
+            className="animate-slide-up" 
+            onClick={e => e.stopPropagation()}
+            style={{ width: '100%', maxWidth: '600px', background: 'var(--surface)', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}
+          >
+            {bookingSheetState === 'confirm' ? (
+              <>
+                <div style={{ width: '40px', height: '6px', background: 'var(--surface-border)', borderRadius: '3px', margin: '0 auto', marginBottom: '8px' }} />
+                <h3 style={{ margin: 0, fontSize: '22px', fontWeight: 800 }}>Confirm Booking</h3>
+                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+                  You are requesting to book <strong>{item.title}</strong>.
+                </p>
+                <div style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-border)', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>From</span>
+                    <span style={{ fontWeight: 700 }}>{format(parseISO(startDate), 'MMM dd, yyyy')}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
+                    <span style={{ color: 'var(--text-muted)' }}>To</span>
+                    <span style={{ fontWeight: 700 }}>{format(parseISO(endDate), 'MMM dd, yyyy')}</span>
+                  </div>
+                  <div style={{ height: '1px', background: 'var(--surface-border)', margin: '8px 0' }} />
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Total</span>
+                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '24px' }}>₹{calculateDays() * Number(item.price)}</span>
+                  </div>
+                </div>
+                <button onClick={handleConfirmBookRequest} style={{ width: '100%', padding: '18px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#fff', fontSize: '18px', fontWeight: 700, cursor: 'pointer', marginTop: '8px', boxShadow: 'var(--primary-glow)' }}>
+                  Confirm Request
+                </button>
+              </>
+            ) : (
+              <div style={{ padding: '32px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px' }}>
+                <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Check size={32} strokeWidth={3} />
+                </div>
+                <div>
+                  <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800 }}>Request Sent!</h3>
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.5 }}>
+                    The owner has been notified. You can check the status in your <strong>My Bookings</strong> tab.
+                  </p>
+                </div>
+                <button onClick={() => setBookingSheetState('none')} style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 700, cursor: 'pointer', marginTop: '16px' }}>
+                  Done
+                </button>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>To:</span>
-                <span style={{ fontWeight: 600 }}>{endDate}</span>
-              </div>
-              <div style={{ height: '1px', background: 'var(--surface)', margin: '4px 0' }} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px' }}>
-                <span style={{ color: 'var(--text-muted)' }}>Total:</span>
-                <span style={{ fontWeight: 800, color: 'var(--primary)' }}>₹{calculateDays() * Number(item.price)}</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button onClick={() => setShowBookingConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
-                Cancel
-              </button>
-              <button onClick={handleConfirmBookRequest} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
-                Confirm
-              </button>
-            </div>
+            )}
           </div>
         </div>
       )}
