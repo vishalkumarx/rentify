@@ -16,8 +16,9 @@ export default function ItemDetail() {
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation } = useChat();
   const { session, loading } = useAuth();
-  const { createRequest, requests } = useBookings();
+  const { createRequest, deleteRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
+  const [showBookingConfirm, setShowBookingConfirm] = useState(false);
   const [ownerVerified, setOwnerVerified] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
   const [startDate, setStartDate] = useState('');
@@ -65,7 +66,7 @@ export default function ItemDetail() {
     navigate(`/chat/${convId}`);
   };
 
-  const handleBookRequest = async () => {
+  const handleRequestClick = () => {
     if (!session) {
       navigate('/login');
       return;
@@ -73,19 +74,23 @@ export default function ItemDetail() {
     if (!startDate || !endDate) return alert('Select dates');
     const days = differenceInDays(parseISO(endDate), parseISO(startDate));
     if (days < 0) return alert('End date must be after start date');
+    setShowBookingConfirm(true);
+  };
+
+  const handleConfirmBookRequest = async () => {
+    const days = differenceInDays(parseISO(endDate), parseISO(startDate));
     const totalDays = days === 0 ? 1 : days;
     const totalPrice = totalDays * Number(item.price);
 
     await createRequest({
       item_id: item.id,
-      requester_id: session.user.id,
+      requester_id: session!.user.id,
       owner_id: item.userId || `user-${item.id}`,
       start_date: startDate,
       end_date: endDate,
       total_price: totalPrice,
     });
-    setStartDate('');
-    setEndDate('');
+    setShowBookingConfirm(false);
   };
 
   const calculateDays = () => {
@@ -341,8 +346,15 @@ export default function ItemDetail() {
               Message Owner
             </button>
           ) : userRequest?.status === 'pending' ? (
-            <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
-              Booking Pending Approval...
+            <button 
+              onClick={() => {
+                if (window.confirm("Are you sure you want to cancel your booking request?")) {
+                  deleteRequest(userRequest.id);
+                }
+              }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
+              <X size={22} />
+              Cancel Booking Request
             </button>
           ) : userRequest?.status === 'rejected' ? (
             <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
@@ -353,12 +365,12 @@ export default function ItemDetail() {
               onClick={() => {
                 if (!startDate || !endDate || calculateDays() === 0) {
                   window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                  // If they are already near the bottom, just trigger the alert via handleBookRequest
+                  // If they are already near the bottom, just trigger the alert via handleRequestClick
                   if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
-                    handleBookRequest();
+                    handleRequestClick();
                   }
                 } else {
-                  handleBookRequest();
+                  handleRequestClick();
                 }
               }} 
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
@@ -372,6 +384,40 @@ export default function ItemDetail() {
           </p>
         </div>
       </div>
+
+      {showBookingConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Confirm Booking</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              You are about to request to book <strong>{item.title}</strong>.
+            </p>
+            <div style={{ padding: '16px', background: 'var(--surface-border)', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                <span style={{ color: 'var(--text-muted)' }}>From:</span>
+                <span style={{ fontWeight: 600 }}>{startDate}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '14px' }}>
+                <span style={{ color: 'var(--text-muted)' }}>To:</span>
+                <span style={{ fontWeight: 600 }}>{endDate}</span>
+              </div>
+              <div style={{ height: '1px', background: 'var(--surface)', margin: '4px 0' }} />
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px' }}>
+                <span style={{ color: 'var(--text-muted)' }}>Total:</span>
+                <span style={{ fontWeight: 800, color: 'var(--primary)' }}>₹{calculateDays() * Number(item.price)}</span>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button onClick={() => setShowBookingConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button onClick={handleConfirmBookRequest} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

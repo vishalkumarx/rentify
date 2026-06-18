@@ -24,6 +24,7 @@ interface BookingContextType {
   requests: BookingRequest[];
   createRequest: (booking: Omit<BookingRequest, 'id' | 'created_at' | 'status'>) => Promise<void>;
   updateRequestStatus: (id: number, status: BookingStatus) => Promise<void>;
+  deleteRequest: (id: number) => Promise<void>;
   refreshRequests: () => Promise<void>;
 }
 
@@ -31,6 +32,7 @@ const BookingContext = createContext<BookingContextType>({
   requests: [],
   createRequest: async () => {},
   updateRequestStatus: async () => {},
+  deleteRequest: async () => {},
   refreshRequests: async () => {},
 });
 
@@ -109,8 +111,20 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     setRequests(prev => prev.map(req => req.id === id ? { ...req, status } : req));
   };
 
+  const deleteRequest = async (id: number) => {
+    const { error } = await supabase
+      .from('booking_requests')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting request:', error);
+    }
+    setRequests(prev => prev.filter(req => req.id !== id));
+  };
+
   return (
-    <BookingContext.Provider value={{ requests, createRequest, updateRequestStatus, refreshRequests }}>
+    <BookingContext.Provider value={{ requests, createRequest, updateRequestStatus, deleteRequest, refreshRequests }}>
       {children}
     </BookingContext.Provider>
   );
