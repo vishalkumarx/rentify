@@ -107,7 +107,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         const lastMsg = c.messages?.[c.messages.length - 1];
         
         // Fallback for older chats that didn't store itemId
-        const fallbackItemId = c.id ? Number(c.id.split('-')[1]) : undefined;
+        const fallbackItemId = c.id && !isNaN(Number(c.id.split('-')[1])) ? Number(c.id.split('-')[1]) : 0;
         
         return {
           id: c.id,
