@@ -15,6 +15,7 @@ export default function MyListings() {
 
   const [activeTab, setActiveTab] = useState<'requests' | 'listings'>('requests');
   const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
+  const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected' } | null>(null);
 
   const myItems = items.filter(item => item.userId === session?.user?.id);
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
@@ -129,10 +130,10 @@ export default function MyListings() {
                         </p>
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <button onClick={() => updateRequestStatus(req.id, 'accepted')} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
+                        <button onClick={() => setConfirmAction({ id: req.id, action: 'accepted' })} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
                           <Check size={26} strokeWidth={2.5} />
                         </button>
-                        <button onClick={() => updateRequestStatus(req.id, 'rejected')} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
+                        <button onClick={() => setConfirmAction({ id: req.id, action: 'rejected' })} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
                           <X size={26} strokeWidth={2.5} />
                         </button>
                       </div>
@@ -214,6 +215,33 @@ export default function MyListings() {
           )}
         </div>
       )}
+      {confirmAction && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>
+              {confirmAction.action === 'accepted' ? 'Accept Request?' : 'Reject Request?'}
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              Are you sure you want to {confirmAction.action === 'accepted' ? 'accept' : 'reject'} this booking request?
+              {confirmAction.action === 'accepted' ? ' You will be expected to fulfill this booking.' : ' The user will be notified.'}
+            </p>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button onClick={() => setConfirmAction(null)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  updateRequestStatus(confirmAction.id, confirmAction.action);
+                  setConfirmAction(null);
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: confirmAction.action === 'accepted' ? 'var(--success)' : 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Yes, {confirmAction.action === 'accepted' ? 'Accept' : 'Reject'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
