@@ -18,6 +18,7 @@ export default function ItemDetail() {
   const { session, loading } = useAuth();
   const { createRequest, deleteRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
+  const [currentMainImageIndex, setCurrentMainImageIndex] = useState(0);
   const [showBookingConfirm, setShowBookingConfirm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [ownerVerified, setOwnerVerified] = useState(false);
@@ -53,7 +54,8 @@ export default function ItemDetail() {
     );
   }
 
-  const allImages = [item.image, ...(item.images || [])];
+  const validImages = (item.images || []).filter(img => img && img.trim() !== '');
+  const allImages = [item.image, ...validImages];
   
   const ownerName = ownerProfile?.name || item.seller?.name || `Owner of ${item.title}`;
 
@@ -146,18 +148,49 @@ export default function ItemDetail() {
       <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '200px' }}>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
           
-          {/* Main Image */}
-          <div 
-            onClick={() => setZoomImageIndex(0)}
-            style={{ width: '100%', aspectRatio: '4/3', position: 'relative', cursor: 'pointer' }}
-          >
-            <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            <div style={{ position: 'absolute', bottom: '16px', left: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 700, backdropFilter: 'blur(8px)' }}>
-              1 / {allImages.length}
+          {/* Main Image Slider */}
+          <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
+            <div 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                display: 'flex', 
+                overflowX: 'auto', 
+                scrollSnapType: 'x mandatory',
+                scrollBehavior: 'smooth'
+              }}
+              className="hide-scrollbar"
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                const index = Math.round(el.scrollLeft / el.clientWidth);
+                setCurrentMainImageIndex(index);
+              }}
+            >
+              {allImages.map((img, i) => (
+                <div 
+                  key={i} 
+                  style={{ minWidth: '100%', height: '100%', scrollSnapAlign: 'start', position: 'relative', cursor: 'pointer' }}
+                  onClick={() => setZoomImageIndex(i)}
+                >
+                  <img src={img} alt={`${item.title} - ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ))}
             </div>
-            <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 600, backdropFilter: 'blur(8px)', fontSize: '12px' }}>
+            
+            <div style={{ position: 'absolute', bottom: '16px', left: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 700, backdropFilter: 'blur(8px)', pointerEvents: 'none' }}>
+              {currentMainImageIndex + 1} / {allImages.length}
+            </div>
+            <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 600, backdropFilter: 'blur(8px)', fontSize: '12px', pointerEvents: 'none' }}>
               Tap to Zoom
             </div>
+            {/* Dots indicator */}
+            {allImages.length > 1 && (
+              <div style={{ position: 'absolute', bottom: '16px', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '6px', pointerEvents: 'none' }}>
+                {allImages.map((_, i) => (
+                  <div key={i} style={{ width: '6px', height: '6px', borderRadius: '3px', background: i === currentMainImageIndex ? 'white' : 'rgba(255,255,255,0.4)', transition: 'all 0.2s' }} />
+                ))}
+              </div>
+            )}
           </div>
 
           <div style={{ padding: '24px' }}>
@@ -194,23 +227,7 @@ export default function ItemDetail() {
               {item.description || "No description provided for this item. It's currently available for rent in good condition! Reach out to the owner for more details."}
             </p>
 
-            {/* Other Images */}
-            {item.images && item.images.length > 0 && (
-              <div style={{ marginTop: '32px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>More Photos</h3>
-                <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', paddingBottom: '8px' }} className="hide-scrollbar">
-                  {item.images.map((img, idx) => (
-                    <img 
-                      key={idx} 
-                      onClick={() => setZoomImageIndex(idx + 1)}
-                      src={img} 
-                      alt={`Pic ${idx+2}`} 
-                      style={{ width: '120px', height: '120px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} 
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+
             {/* Booking Calendar Section */}
             <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -299,17 +316,7 @@ export default function ItemDetail() {
                 <img src={allImages[zoomImageIndex]} alt="Zoomed" style={{ maxWidth: '100vw', maxHeight: '70vh', objectFit: 'contain' }} />
               </TransformComponent>
             </TransformWrapper>
-            
-            {zoomImageIndex > 0 && (
-              <button onClick={() => setZoomImageIndex(i => (i !== null ? i - 1 : 0))} style={{ position: 'absolute', left: 10, background: 'rgba(255,255,255,0.2)', borderRadius: '50%', padding: '10px', color: 'white', border: 'none' }}>
-                <ChevronLeft size={24} />
-              </button>
-            )}
-            {zoomImageIndex < allImages.length - 1 && (
-              <button onClick={() => setZoomImageIndex(i => (i !== null ? i + 1 : 0))} style={{ position: 'absolute', right: 10, background: 'rgba(255,255,255,0.2)', borderRadius: '50%', padding: '10px', color: 'white', border: 'none' }}>
-                <ChevronRight size={24} />
-              </button>
-            )}
+
           </div>
           <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
             Pinch or double tap to zoom. Drag to pan.
