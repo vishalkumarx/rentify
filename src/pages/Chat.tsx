@@ -20,7 +20,10 @@ export default function Chat() {
   const conversation = conversations.find(c => c.id === id);
   const conversationMessages = messages.filter(m => m.conversationId === id);
   
-  const isItemDeleted = conversation && !items.some(item => item.id === Number(conversation.itemId));
+  const item = items.find(i => i.id === Number(conversation?.itemId));
+  const isOwner = session && item && item.userId === session.user.id;
+
+  const isItemDeleted = conversation && !item;
 
   const hasAcceptedBooking = conversation && session && requests.some(r => 
     r.item_id === Number(conversation.itemId) && 
@@ -29,7 +32,8 @@ export default function Chat() {
     r.status === 'accepted'
   );
 
-  const isChatDisabled = isItemDeleted || !hasAcceptedBooking;
+  const isChatUnlocked = isOwner || hasAcceptedBooking || conversationMessages.length > 0;
+  const isChatDisabled = isItemDeleted || !isChatUnlocked;
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -194,7 +198,7 @@ export default function Chat() {
         <form onSubmit={handleSend} style={{ display: 'flex', gap: '12px' }}>
           <input
             type="text"
-            placeholder={isItemDeleted ? "Item deleted" : !hasAcceptedBooking ? "Chat locked" : "Type a message..."}
+            placeholder={isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             disabled={isChatDisabled}
