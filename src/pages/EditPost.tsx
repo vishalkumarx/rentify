@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X, ArrowLeft } from 'lucide-react';
+import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CATEGORIES } from '../lib/constants';
