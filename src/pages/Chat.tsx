@@ -157,25 +157,27 @@ export default function Chat() {
         
         {conversationMessages.map(msg => {
             const isMe = msg.senderId === session?.user?.id;
+            const isEmojiOnly = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u.test(msg.text) && msg.text.trim().length > 0;
+            
             return (
               <div key={msg.id} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
                 <div style={{ 
                   maxWidth: '75%', 
-                  padding: '12px 16px', 
+                  padding: isEmojiOnly ? '4px' : '12px 16px', 
                   borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                  background: isMe ? 'var(--primary)' : 'var(--surface)',
+                  background: isEmojiOnly ? 'transparent' : (isMe ? 'var(--primary)' : 'var(--surface)'),
                   color: isMe ? '#111827' : 'var(--text-main)',
-                  border: isMe ? 'none' : '1px solid var(--surface-border)'
+                  border: isEmojiOnly ? 'none' : (isMe ? 'none' : '1px solid var(--surface-border)')
                 }}>
-                  <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>{msg.text}</p>
+                  <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.2 }}>{msg.text}</p>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: '4px', marginTop: '4px' }}>
-                    <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                    <span style={{ fontSize: '10px', opacity: 0.7, color: isEmojiOnly ? 'var(--text-muted)' : 'inherit' }}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {isMe && (
                       <span style={{ marginLeft: '4px', display: 'flex' }}>
-                        {msg.status === 'sent' && <Check size={12} color="rgba(0,0,0,0.5)" />}
-                        {msg.status === 'delivered' && <CheckCheck size={12} color="rgba(0,0,0,0.5)" />}
+                        {msg.status === 'sent' && <Check size={12} color={isEmojiOnly ? "var(--text-muted)" : "rgba(0,0,0,0.5)"} />}
+                        {msg.status === 'delivered' && <CheckCheck size={12} color={isEmojiOnly ? "var(--text-muted)" : "rgba(0,0,0,0.5)"} />}
                         {msg.status === 'read' && <CheckCheck size={12} color="#0055FF" />}
                       </span>
                     )}
