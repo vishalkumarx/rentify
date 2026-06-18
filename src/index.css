@@ -235,7 +235,7 @@ a:hover {
   height: 60px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0 20px;
   z-index: 50;
   background: var(--primary);
