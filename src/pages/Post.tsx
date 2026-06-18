@@ -270,6 +270,10 @@ export default function Post() {
             <Upload size={22} />
             {loading ? 'Publishing...' : 'Publish Listing'}
           </button>
+          
+          <button type="button" onClick={() => navigate('/')} style={{ marginTop: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', fontSize: '16px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', boxShadow: 'none' }}>
+            Back to home
+          </button>
         </div>
 
       </form>

@@ -130,12 +130,6 @@ export default function EditPost() {
       
       {/* Top Action Bar */}
       <header className="app-header">
-        <button 
-          onClick={() => navigate(-1)}
-          style={{ position: 'absolute', left: '20px', background: 'transparent', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}
-        >
-          <ArrowLeft size={24} />
-        </button>
         <h1 className="app-title">vicinity</h1>
       </header>
 
@@ -314,6 +308,10 @@ export default function EditPost() {
           <button type="submit" disabled={loading} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none' }}>
             <Upload size={22} />
             {loading ? 'Publishing...' : 'Publish Listing'}
+          </button>
+
+          <button type="button" onClick={() => navigate('/')} style={{ marginTop: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', fontSize: '16px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', boxShadow: 'none' }}>
+            Back to home
           </button>
         </div>
 
