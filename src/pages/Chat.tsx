@@ -39,7 +39,10 @@ export default function Chat() {
 
   const hasAcceptedBooking = bookingReq?.status === 'accepted';
 
-  const isChatUnlocked = hasAcceptedBooking || conversationMessages.length > 0;
+  const ownerId = item?.userId || bookingReq?.owner_id;
+  const hasOwnerMessage = conversationMessages.some(m => m.senderId === ownerId);
+
+  const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage;
   const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked);
 
   useEffect(() => {
