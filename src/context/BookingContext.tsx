@@ -24,7 +24,7 @@ export interface BookingRequest {
 interface BookingContextType {
   requests: BookingRequest[];
   createRequest: (booking: Omit<BookingRequest, 'id' | 'created_at' | 'status'>) => Promise<void>;
-  updateRequestStatus: (id: number, status: BookingStatus) => Promise<void>;
+  updateRequestStatus: (id: number, status: BookingStatus, agreedPrice?: number) => Promise<void>;
   deleteRequest: (id: number) => Promise<void>;
   refreshRequests: () => Promise<void>;
 }
@@ -100,20 +100,25 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateRequestStatus = async (id: number, status: BookingStatus) => {
+  const updateRequestStatus = async (id: number, status: BookingStatus, agreedPrice?: number) => {
+    const updateData: any = { status };
+    if (agreedPrice !== undefined) {
+      updateData.total_price = agreedPrice;
+    }
+
     const { error } = await supabase
       .from('booking_requests')
-      .update({ status })
+      .update(updateData)
       .eq('id', id);
 
     if (error) {
       console.error('Error updating status:', error);
       // Fallback mock
-      setRequests(prev => prev.map(req => req.id === id ? { ...req, status } : req));
+      setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}) } : req));
       return;
     }
 
-    setRequests(prev => prev.map(req => req.id === id ? { ...req, status } : req));
+    setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}) } : req));
 
     // If accepted, update the rental item's status to booked
     if (status === 'accepted') {
