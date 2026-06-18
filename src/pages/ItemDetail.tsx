@@ -64,7 +64,7 @@ export default function ItemDetail() {
     );
   }
 
-  const validImages = (item.images || []).filter(img => img && img.trim() !== '');
+  const validImages = (item.images || []).filter(img => img && img.trim() !== '' && img !== item.image);
   const allImages = [item.image, ...validImages];
   
   const ownerName = ownerProfile?.name || item.seller?.name || `Owner of ${item.title}`;
