@@ -122,7 +122,7 @@ export default function Chat() {
 
 
         {/* Not Accepted Banner */}
-        {!isItemDeleted && !hasAcceptedBooking && (
+        {!isItemDeleted && isChatDisabled && (
           <div style={{
             background: 'rgba(255, 193, 7, 0.1)',
             border: '1px solid var(--warning)',
@@ -135,7 +135,7 @@ export default function Chat() {
           }}>
             <Lock size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
             <p style={{ margin: 0, fontSize: '13px', color: 'var(--warning)', fontWeight: 600 }}>
-              Chat is locked until the booking request is accepted.
+              Chat is locked until the owner initiates or accepts the booking.
             </p>
           </div>
         )}
