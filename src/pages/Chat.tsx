@@ -25,12 +25,13 @@ export default function Chat() {
 
   const isItemDeleted = conversation && !item;
 
-  const hasAcceptedBooking = conversation && session && requests.some(r => 
+  const bookingReq = conversation && session ? requests.find(r => 
     r.item_id === Number(conversation.itemId) && 
     ((r.requester_id === session.user.id && r.owner_id === conversation.otherUserId) || 
-     (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId)) &&
-    r.status === 'accepted'
-  );
+     (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId))
+  ) : null;
+
+  const hasAcceptedBooking = bookingReq?.status === 'accepted';
 
   const isChatUnlocked = isOwner || hasAcceptedBooking || conversationMessages.length > 0;
   const isChatDisabled = isItemDeleted || !isChatUnlocked;
@@ -156,12 +157,32 @@ export default function Chat() {
           </p>
         </div>
 
-        {conversationMessages.length === 0 ? (
+        {bookingReq?.note && (() => {
+          const isMe = bookingReq.requester_id === session?.user?.id;
+          return (
+            <div style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+              <div style={{ 
+                maxWidth: '75%', 
+                padding: '12px 16px', 
+                borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                background: isMe ? 'var(--primary)' : 'var(--surface)',
+                color: isMe ? '#fff' : 'var(--text-main)',
+                border: isMe ? 'none' : '1px solid var(--surface-border)'
+              }}>
+                <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
+                <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>"{bookingReq.note}"</p>
+              </div>
+            </div>
+          );
+        })()}
+
+        {conversationMessages.length === 0 && !bookingReq?.note && (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '40px', fontSize: '14px' }}>
             Send a message to start the conversation!
           </div>
-        ) : (
-          conversationMessages.map(msg => {
+        )}
+        
+        {conversationMessages.map(msg => {
             const isMe = msg.senderId === session?.user?.id;
             return (
               <div key={msg.id} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
@@ -189,8 +210,7 @@ export default function Chat() {
                 </div>
               </div>
             );
-          })
-        )}
+          })}
       </main>
 
       {/* Input */}
