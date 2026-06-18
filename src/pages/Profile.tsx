@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { supabase } from '../lib/supabase';
+import { useState, useEffect } from 'react';
+import { supabase, getStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Settings, LogOut, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star, BadgeCheck, Upload, Clock } from 'lucide-react';
 
@@ -14,6 +14,16 @@ export default function Profile() {
   const handleSignOut = () => {
     supabase.auth.signOut();
   };
+
+  const [profile, setProfile] = useState<any>(null);
+  
+  useEffect(() => {
+    if (session?.user?.id) {
+      getStorageJson(`profiles/${session.user.id}.json`).then(data => {
+        if (data) setProfile(data);
+      });
+    }
+  }, [session?.user?.id]);
 
   const isVerified = session?.user?.user_metadata?.is_verified;
   const isVerificationPending = session?.user?.user_metadata?.verification_pending;
@@ -55,12 +65,12 @@ export default function Profile() {
         <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{ width: '72px', height: '72px', borderRadius: '36px', background: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000000', flexShrink: 0, fontSize: '32px', fontWeight: 700 }}>
-              {session?.user?.email?.[0]?.toUpperCase() || 'U'}
+              {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
             </div>
             <div style={{ overflow: 'hidden' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                  {session?.user?.email?.split('@')[0] || 'User'}
+                  {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
                 </h2>
                 {isVerified ? (
                   <BadgeCheck size={24} fill="#1877F2" color="white" />
@@ -68,7 +78,10 @@ export default function Profile() {
                   <ShieldCheck size={20} color="var(--success)" />
                 )}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+              <div style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '15px' }}>
+                {session?.user?.email}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <Star size={16} fill="var(--warning)" color="var(--warning)" />
                 <span style={{ fontSize: '15px', fontWeight: 700 }}>New</span>
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(0 reviews)</span>
