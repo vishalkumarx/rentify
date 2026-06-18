@@ -21,6 +21,7 @@ export default function MyListings() {
 
   const myItems = items.filter(item => item.userId === session?.user?.id);
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
+  const myAcceptedRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'accepted');
   const myOutgoingRequests = requests.filter(r => r.requester_id === session?.user?.id);
 
   useEffect(() => {
@@ -118,9 +119,14 @@ export default function MyListings() {
 
       {activeTab === 'requests' && (
         <div className="animate-fade-in">
-          {myIncomingRequests.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {myIncomingRequests.map(req => {
+          {myIncomingRequests.length > 0 || myAcceptedRequests.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
+              {myIncomingRequests.length > 0 && (
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-main)' }}>Pending Requests</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {myIncomingRequests.map(req => {
                 const reqItem = items.find(i => i.id === req.item_id);
                 const requesterName = requesterNames[req.requester_id] || 'Loading...';
                 return (
@@ -184,6 +190,68 @@ export default function MyListings() {
                   </div>
                 );
               })}
+                  </div>
+                </div>
+              )}
+
+              {myAcceptedRequests.length > 0 && (
+                <div>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '24px 0 16px', color: 'var(--text-main)' }}>Accepted Bookings</h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {myAcceptedRequests.map(req => {
+                      const reqItem = items.find(i => i.id === req.item_id);
+                      const requesterName = requesterNames[req.requester_id] || 'Loading...';
+                      return (
+                        <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', borderLeft: '4px solid var(--success)' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <div style={{ flex: 1, paddingRight: '12px' }}>
+                              <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
+                              <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                                Rented to <strong 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    navigate(`/user/${req.requester_id}`);
+                                  }}
+                                  style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
+                                >
+                                  {requesterName}
+                                </strong>
+                              </p>
+                              <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
+                                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
+                                  from {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
+                                </p>
+                              </div>
+                              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
+                                Total: ₹{req.total_price}
+                              </p>
+                            </div>
+                            <div style={{ padding: '4px 12px', borderRadius: '16px', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              Accepted
+                            </div>
+                          </div>
+                          
+                          <div style={{ marginTop: '16px', display: 'flex' }}>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!reqItem) return;
+                                const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
+                                navigate(`/chat/${convId}`);
+                              }}
+                              style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                            >
+                              <MessageCircle size={18} />
+                              Chat with User
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
