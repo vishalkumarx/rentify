@@ -5,6 +5,7 @@ import { useAuth } from '../context/AuthContext';
 import { Package, CalendarCheck, Check, X } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { getStorageJson } from '../lib/supabase';
+import { format, parseISO } from 'date-fns';
 
 export default function MyListings() {
   const { items, toggleBookingStatus, deletePost } = useFeed();
@@ -120,7 +121,7 @@ export default function MyListings() {
                         </p>
                         <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
                           <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
-                            {req.start_date} &rarr; {req.end_date}
+                            booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy EEEE') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy EEEE') : ''}
                           </p>
                         </div>
                         <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
