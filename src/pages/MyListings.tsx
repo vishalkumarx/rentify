@@ -227,7 +227,7 @@ export default function MyListings() {
                               </p>
                             </div>
                             <div style={{ padding: '4px 12px', borderRadius: '16px', background: 'rgba(34, 197, 94, 0.1)', color: 'var(--success)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              Accepted
+                              Accepted by you
                             </div>
                           </div>
                           
