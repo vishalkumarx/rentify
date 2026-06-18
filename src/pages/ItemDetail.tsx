@@ -212,7 +212,7 @@ export default function ItemDetail() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {userRequest?.status === 'accepted' ? (
-                  <span style={{ display: 'inline-block', background: 'var(--success)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start', textTransform: 'uppercase' }}>RENTED BY ME</span>
+                  <span style={{ display: 'inline-block', background: 'var(--success)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start', textTransform: 'uppercase' }}>RENTED BY YOU</span>
                 ) : item.status === 'booked' && (
                   <span style={{ display: 'inline-block', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start' }}>BOOKED</span>
                 )}

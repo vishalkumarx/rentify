@@ -394,7 +394,7 @@ export default function Home() {
                     return (
                       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(34, 197, 94, 0.2)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)', zIndex: 10, borderRadius: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
                         <div style={{ background: 'var(--success)', padding: '8px 16px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: 'none' }}>
-                          RENTED BY ME
+                          RENTED BY YOU
                         </div>
                         <button 
                           onClick={async (e) => {
