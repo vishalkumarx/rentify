@@ -134,7 +134,13 @@ export default function UserProfile() {
         {/* User Card */}
         <div className="glass-panel" style={{ padding: '32px 24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '24px' }}>
           <div style={{ width: '96px', height: '96px', borderRadius: '48px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '16px', position: 'relative' }}>
-            {profile?.name?.charAt(0) || 'U'}
+            {(() => {
+              const avatarUrl = profile?.avatar_url || (session?.user?.id === id ? session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture : null);
+              if (avatarUrl) {
+                return <img src={avatarUrl} alt="Profile" style={{ width: '96px', height: '96px', borderRadius: '48px', objectFit: 'cover' }} />;
+              }
+              return profile?.name?.charAt(0)?.toUpperCase() || 'U';
+            })()}
             {isVerified && (
               <div style={{ position: 'absolute', bottom: '0', right: '0', background: 'var(--surface)', borderRadius: '50%', padding: '2px' }}>
                 <BadgeCheck size={28} fill="#1877F2" color="white" />
