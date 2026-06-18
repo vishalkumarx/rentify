@@ -12,10 +12,12 @@ export default function Chat() {
   const navigate = useNavigate();
   const { session } = useAuth();
   const { items } = useFeed();
-  const { requests } = useBookings();
+  const { requests, updateRequestStatus } = useBookings();
   const { conversations, messages, sendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected'; originalPrice?: number } | null>(null);
+  const [customPrice, setCustomPrice] = useState('');
 
   const conversation = conversations.find(c => c.id === id);
   const conversationMessages = messages.filter(m => m.conversationId === id);
@@ -123,6 +125,40 @@ export default function Chat() {
           </div>
         </div>
 
+        {/* Pending Booking Banner for Owner */}
+        {isOwner && bookingReq?.status === 'pending' && (
+          <div style={{
+            background: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid var(--success)',
+            borderRadius: '12px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            marginBottom: '16px'
+          }}>
+            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>
+              <strong>Pending Request:</strong> The user wants to book this item for a total of ₹{bookingReq.total_price}.
+            </p>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                onClick={() => {
+                  setConfirmAction({ id: bookingReq.id, action: 'accepted', originalPrice: bookingReq.total_price });
+                  setCustomPrice(bookingReq.total_price.toString());
+                }}
+                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: 'var(--success)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Accept Booking
+              </button>
+              <button 
+                onClick={() => setConfirmAction({ id: bookingReq.id, action: 'rejected' })}
+                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Decline
+              </button>
+            </div>
+          </div>
+        )}
 
 
         {/* Not Accepted Banner */}
@@ -295,6 +331,51 @@ export default function Chat() {
             >
               Go Back
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Accept / Reject Modal */}
+      {confirmAction && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>
+              {confirmAction.action === 'accepted' ? 'Accept Request?' : 'Reject Request?'}
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              Are you sure you want to {confirmAction.action === 'accepted' ? 'accept' : 'reject'} this booking request?
+              {confirmAction.action === 'accepted' ? ' You will be expected to fulfill this booking.' : ' The user will be notified.'}
+            </p>
+            {confirmAction.action === 'accepted' && (
+              <div style={{ marginTop: '8px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '8px', display: 'block' }}>
+                  Accepting Price (₹)
+                </label>
+                <input
+                  type="number"
+                  value={customPrice}
+                  onChange={e => setCustomPrice(e.target.value)}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
+                />
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
+                  Original requested price: ₹{confirmAction.originalPrice}
+                </p>
+              </div>
+            )}
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button onClick={() => setConfirmAction(null)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  const price = confirmAction.action === 'accepted' ? Number(customPrice) || confirmAction.originalPrice : undefined;
+                  updateRequestStatus(confirmAction.id, confirmAction.action, price);
+                  setConfirmAction(null);
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: confirmAction.action === 'accepted' ? 'var(--success)' : 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Yes, {confirmAction.action === 'accepted' ? 'Accept' : 'Reject'}
+              </button>
+            </div>
           </div>
         </div>
       )}
