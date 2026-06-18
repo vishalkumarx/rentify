@@ -327,10 +327,8 @@ export default function ItemDetail() {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{ownerName}</h4>
-                      {ownerVerified ? (
+                      {ownerVerified && (
                         <BadgeCheck size={20} fill="#1877F2" color="white" />
-                      ) : (
-                        <ShieldCheck size={18} color="var(--success)" />
                       )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>

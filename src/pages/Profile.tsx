@@ -80,10 +80,8 @@ export default function Profile() {
                 <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                   {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
                 </h2>
-                {isVerified ? (
+                {isVerified && (
                   <BadgeCheck size={24} fill="#1877F2" color="white" />
-                ) : (
-                  <ShieldCheck size={20} color="var(--success)" />
                 )}
               </div>
               <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
