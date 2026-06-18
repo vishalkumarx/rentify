@@ -316,7 +316,7 @@ export default function ItemDetail() {
                 style={{ marginTop: '32px', padding: '20px', borderRadius: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Meet the Owner</h3>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Posted by</h3>
                   <ChevronRight size={20} color="var(--text-muted)" />
                 </div>
                 

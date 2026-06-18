@@ -104,13 +104,16 @@ export default function Profile() {
             </div>
 
             {!isVerified && !isVerificationPending && (
-              <div style={{ marginTop: '4px', padding: '12px', background: 'rgba(24, 119, 242, 0.05)', borderRadius: '12px', border: '1px dashed rgba(24, 119, 242, 0.3)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-main)', lineHeight: 1.4 }}>
-                  <strong>Upload University ID</strong> to get the verified badge on your profile.
+              <div style={{ marginTop: '4px', padding: '16px', background: 'linear-gradient(135deg, rgba(24, 119, 242, 0.08), rgba(154, 72, 218, 0.08))', borderRadius: '16px', border: '1px solid rgba(24, 119, 242, 0.15)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <BadgeCheck size={20} fill="#1877F2" color="white" />
+                  <strong style={{ fontSize: '15px', color: 'var(--text-main)', letterSpacing: '0.2px' }}>Vicinity Verified</strong>
+                </div>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                  Build trust in the community. Upload your University ID to get the verified badge.
                 </p>
-                <label style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: '#1877F2', color: 'white', padding: '8px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, width: 'max-content' }}>
-                  <Upload size={14} />
-                  Upload ID
+                <label style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: 'linear-gradient(135deg, #1877F2, #9A48DA)', color: 'white', padding: '12px 16px', borderRadius: '24px', fontSize: '14px', fontWeight: 700, width: '100%', border: 'none', boxShadow: '0 4px 12px rgba(24, 119, 242, 0.3)', transition: 'all 0.2s', marginTop: '4px' }}>
+                  Get Verified
                   <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleIdUpload} />
                 </label>
               </div>
