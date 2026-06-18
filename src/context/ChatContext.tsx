@@ -222,11 +222,27 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       let chatData = await getStorageJson(chatPath) as Conversation;
       if (!chatData) return;
 
-      if (!chatData.unreadCounts) chatData.unreadCounts = {};
-      if (chatData.unreadCounts[myId] === 0) return; // Already read
+      let needsSave = false;
 
-      chatData.unreadCounts[myId] = 0;
-      await setStorageJson(chatPath, chatData);
+      if (!chatData.unreadCounts) chatData.unreadCounts = {};
+      if (chatData.unreadCounts[myId] > 0) {
+        chatData.unreadCounts[myId] = 0;
+        needsSave = true;
+      }
+
+      if (chatData.messages) {
+        chatData.messages.forEach((m: Message) => {
+          if (m.senderId !== myId && m.status !== 'read') {
+            m.status = 'read';
+            needsSave = true;
+          }
+        });
+      }
+
+      if (needsSave) {
+        await setStorageJson(chatPath, chatData);
+        fetchChats();
+      }
       fetchChats();
     } catch (err) {
       console.error("Failed to mark as read", err);
