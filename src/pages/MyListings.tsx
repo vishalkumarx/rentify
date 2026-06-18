@@ -173,7 +173,7 @@ export default function MyListings() {
                         fontSize: '13px', 
                         fontWeight: 600,
                         border: 'none',
-                        background: item.status === 'booked' ? 'var(--surface-border)' : '#000000',
+                        background: item.status === 'booked' ? 'var(--surface-border)' : 'var(--primary)',
                         color: item.status === 'booked' ? 'var(--text-muted)' : '#ffffff',
                         cursor: 'pointer'
                       }}
