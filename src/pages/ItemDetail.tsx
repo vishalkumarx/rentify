@@ -223,7 +223,8 @@ export default function ItemDetail() {
                 onChange={(start, end) => {
                   setStartDate(start);
                   setEndDate(end);
-                }} 
+                }}
+                disabled={!!userRequest}
               />
 
               {startDate && endDate && calculateDays() > 0 && (

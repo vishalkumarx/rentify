@@ -10,9 +10,10 @@ interface CalendarProps {
   startDate: string;
   endDate: string;
   onChange: (start: string, end: string) => void;
+  disabled?: boolean;
 }
 
-export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
+export function Calendar({ startDate, endDate, onChange, disabled = false }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const today = startOfDay(new Date());
@@ -24,6 +25,7 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
   const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
   const handleDateClick = (day: Date) => {
+    if (disabled) return;
     if (isBefore(day, today)) return; // Disable past dates
 
     const dayStr = format(day, 'yyyy-MM-dd');
@@ -38,11 +40,11 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
   };
 
   const renderHeader = () => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', opacity: disabled ? 0.5 : 1 }}>
       <button 
         onClick={prevMonth} 
-        style={{ background: 'var(--surface-border)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}
-        disabled={isBefore(startOfMonth(currentMonth), startOfMonth(today))}
+        style={{ background: 'var(--surface-border)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: disabled ? 'not-allowed' : 'pointer', color: 'var(--text-main)' }}
+        disabled={disabled || isBefore(startOfMonth(currentMonth), startOfMonth(today))}
       >
         <ChevronLeft size={18} />
       </button>
@@ -51,7 +53,8 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
       </div>
       <button 
         onClick={nextMonth} 
-        style={{ background: 'var(--surface-border)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)' }}
+        style={{ background: 'var(--surface-border)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: disabled ? 'not-allowed' : 'pointer', color: 'var(--text-main)' }}
+        disabled={disabled}
       >
         <ChevronRight size={18} />
       </button>
@@ -70,7 +73,7 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
         </div>
       );
     }
-    return <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: '8px' }}>{days}</div>;
+    return <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: '8px', opacity: disabled ? 0.5 : 1 }}>{days}</div>;
   };
 
   const renderCells = () => {
@@ -108,9 +111,11 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
           borderRadius = '0'; // Flat edges for continuous range
         }
 
-        if (isPast) {
+        if (isPast || disabled) {
           color = 'var(--text-muted)';
-          bg = 'transparent';
+          if (!isInRange && !isStart && !isEnd) {
+            bg = 'transparent';
+          }
         }
 
         days.push(
@@ -120,13 +125,13 @@ export function Calendar({ startDate, endDate, onChange }: CalendarProps) {
             style={{
               padding: '8px 0',
               textAlign: 'center',
-              cursor: isPast ? 'not-allowed' : 'pointer',
+              cursor: (isPast || disabled) ? 'not-allowed' : 'pointer',
               background: bg,
               color: color,
               borderRadius: borderRadius,
               fontSize: '14px',
               fontWeight: (isStart || isEnd) ? 700 : 500,
-              opacity: isPast ? 0.3 : 1,
+              opacity: (isPast || disabled) ? 0.4 : 1,
               position: 'relative'
             }}
           >
