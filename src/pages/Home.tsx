@@ -4,6 +4,7 @@ import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useBookings } from '../context/BookingContext';
 import banner1 from '../assets/banners/banner1.png';
 import banner2 from '../assets/banners/banner2.png';
 import banner3 from '../assets/banners/banner3.png';
@@ -14,6 +15,8 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const { session } = useAuth();
+  const { requests } = useBookings();
   const banners = [banner1, banner2, banner3];
   
   const categoryIcons: Record<string, React.ReactNode> = {
@@ -381,11 +384,28 @@ export default function Home() {
                   alt={item.title} 
                   style={{ width: '100%', height: '160px', borderRadius: '14px', objectFit: 'cover', opacity: item.status === 'booked' ? 0.7 : 1 }}
                 />
-                {item.status === 'booked' && (
-                  <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.7)', padding: '6px 14px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '1px' }}>
-                    BOOKED
-                  </div>
-                )}
+                
+                {(() => {
+                  const userAcceptedReq = session ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status === 'accepted') : null;
+                  
+                  if (userAcceptedReq) {
+                    return (
+                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(34, 197, 94, 0.9)', padding: '6px 12px', borderRadius: '12px', color: 'white', fontWeight: 800, fontSize: '11px', letterSpacing: '0.5px', textTransform: 'uppercase', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        Booked by you
+                      </div>
+                    );
+                  }
+                  
+                  if (item.status === 'booked') {
+                    return (
+                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.7)', padding: '6px 14px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '1px' }}>
+                        BOOKED
+                      </div>
+                    );
+                  }
+                  
+                  return null;
+                })()}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>

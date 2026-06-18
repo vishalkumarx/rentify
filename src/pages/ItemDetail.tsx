@@ -247,8 +247,39 @@ export default function ItemDetail() {
             </p>
 
 
+            {/* User's Booking Information */}
+            {userRequest && (
+              <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px', borderLeft: userRequest.status === 'accepted' ? '4px solid var(--success)' : '4px solid var(--warning)' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CalendarIcon size={20} color={userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)'} /> 
+                  Your Booking Information
+                </h3>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Status</span>
+                    <span style={{ fontWeight: 800, color: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                      {userRequest.status}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Dates</span>
+                    <span style={{ fontWeight: 600 }}>
+                      {userRequest.start_date ? format(parseISO(userRequest.start_date), 'dd MMM yyyy') : ''} to {userRequest.end_date ? format(parseISO(userRequest.end_date), 'dd MMM yyyy') : ''}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Total Price</span>
+                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '16px' }}>
+                      ₹{userRequest.total_price}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Booking Calendar Section */}
-            {!isOwner && (
+            {!isOwner && !userRequest && (
               <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CalendarIcon size={20} /> Select booking dates
