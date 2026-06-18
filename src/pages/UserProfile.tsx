@@ -11,7 +11,7 @@ export default function UserProfile() {
   const { session } = useAuth();
 
   const [loading, setLoading] = useState(true);
-  const [isVerified, setIsVerified] = useState(false);
+
   const [reviews, setReviews] = useState<any[]>([]);
   const [newReviewText, setNewReviewText] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -28,11 +28,7 @@ export default function UserProfile() {
     if (!id) return;
     
     const fetchUserData = async () => {
-      // Check Verification
-      const apps = await getStorageJson('admin/approvals.json') || [];
-      if (apps.includes(id)) {
-        setIsVerified(true);
-      }
+
 
       // Fetch Profile Data
       const pData = await getStorageJson(`profiles/${id}.json`);

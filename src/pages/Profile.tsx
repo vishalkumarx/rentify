@@ -25,36 +25,7 @@ export default function Profile() {
     }
   }, [session?.user?.id]);
 
-  const isVerified = session?.user?.user_metadata?.is_verified;
-  const isVerificationPending = session?.user?.user_metadata?.verification_pending;
 
-  const handleIdUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !session?.user?.id) return;
-    
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('item-images')
-        .upload(`verifications/${fileName}`, file);
-        
-      if (uploadError) throw uploadError;
-      
-      // Update user metadata to mark as pending
-      const { error: updateError } = await supabase.auth.updateUser({
-        data: { verification_pending: true }
-      });
-      
-      if (updateError) throw updateError;
-      
-      alert('ID uploaded successfully! It is now pending admin review.');
-    } catch (err: any) {
-      console.error(err);
-      alert('Failed to upload ID: ' + err.message);
-    }
-  };
 
   return (
     <div className="profile-grid animate-slide-in" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
@@ -92,9 +63,7 @@ export default function Profile() {
               </div>
             </div>
           </div>
-          
-
-        </div>
+            </div>
 
         {/* Settings Menu moved to bottom */}
       </div>
