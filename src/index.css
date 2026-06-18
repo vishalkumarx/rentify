@@ -275,7 +275,9 @@ a:hover {
 }
 
 .app-nav.nav-hidden {
-  transform: translateY(100%);
+  transform: translateY(150%) !important;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .home-layout {
@@ -362,7 +364,9 @@ a:hover {
   }
   
   .app-nav.nav-hidden {
-    transform: translateY(-100%);
+    transform: translateY(-100%) !important;
+    opacity: 0;
+    pointer-events: none;
   }
   
   .app-main {
