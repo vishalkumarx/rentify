@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, Star, ShieldCheck, CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
+import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();

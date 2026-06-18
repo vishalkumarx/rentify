@@ -31,7 +31,7 @@ export default function ItemDetail() {
 
   const [bookingSheetState, setBookingSheetState] = useState<'none' | 'confirm' | 'success'>('none');
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-  const [ownerVerified, setOwnerVerified] = useState(false);
+  const [setOwnerVerified] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
