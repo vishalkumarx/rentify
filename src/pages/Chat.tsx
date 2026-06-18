@@ -73,12 +73,21 @@ export default function Chat() {
           <ChevronLeft size={24} />
         </div>
         
-        <div 
-          onClick={() => navigate(`/user/${conversation.otherUserId}`)}
-          style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', cursor: 'pointer' }}
-        >
-          {conversation.otherUserName.charAt(0)}
-        </div>
+        {conversation.itemImage ? (
+          <img 
+            onClick={() => navigate(`/item/${conversation.itemId}`)}
+            src={conversation.itemImage}
+            alt={conversation.itemTitle}
+            style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', objectFit: 'cover', cursor: 'pointer' }}
+          />
+        ) : (
+          <div 
+            onClick={() => navigate(`/item/${conversation.itemId}`)}
+            style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', cursor: 'pointer' }}
+          >
+            {conversation.itemTitle.charAt(0)}
+          </div>
+        )}
         
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h2 

@@ -252,7 +252,7 @@ export default function ItemDetail() {
               <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px', borderLeft: userRequest.status === 'accepted' ? '4px solid var(--success)' : '4px solid var(--warning)' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CalendarIcon size={20} color={userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)'} /> 
-                  Your Booking Information
+                  Booking info
                 </h3>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
