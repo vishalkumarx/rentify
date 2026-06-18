@@ -510,7 +510,7 @@ export default function ItemDetail() {
                       minHeight: '80px',
                       padding: '16px',
                       borderRadius: '16px',
-                      background: 'var(--bg-color)',
+                      background: 'var(--surface-border)',
                       border: '1px solid var(--surface-border)',
                       color: 'var(--text-main)',
                       fontSize: '15px',
