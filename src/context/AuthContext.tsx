@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { createContext, useContext, useEffect, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
@@ -31,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const checkBlocked = async (currentSession: Session) => {
       const blockedUsers = await getStorageJson('admin/blocked_users.json') || [];
       if (blockedUsers.includes(currentSession.user.id)) {
-        alert('Your account has been terminated due to policy violations.');
+        toast.error('Your account has been terminated due to policy violations.');
         await supabase.auth.signOut();
         setSession(null);
         setUser(null);

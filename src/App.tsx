@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { FeedProvider } from './context/FeedContext';
 import { ChatProvider } from './context/ChatContext';
 import { BookingProvider } from './context/BookingContext';
+import { Toaster } from 'react-hot-toast';
 import MobileLayout from './components/MobileLayout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -86,6 +87,16 @@ export default function App() {
           <ChatProvider>
             <Router>
               <AppRoutes />
+              <Toaster position="top-center" toastOptions={{
+                duration: 3000,
+                style: {
+                  background: 'var(--surface)',
+                  color: 'var(--text-main)',
+                  borderRadius: '12px',
+                  boxShadow: 'var(--card-shadow)',
+                  border: '1px solid var(--surface-border)'
+                }
+              }} />
             </Router>
           </ChatProvider>
         </BookingProvider>

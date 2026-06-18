@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -75,10 +76,10 @@ export default function UserProfile() {
         timestamp: new Date().toISOString()
       };
       await setStorageJson(`reports/${id}-${session.user.id}-${Date.now()}.json`, report);
-      alert('Report submitted successfully. Admins will review it shortly.');
+      toast.success('Report submitted successfully. Admins will review it shortly.');
       setShowReportModal(false);
     } catch (err) {
-      alert('Failed to submit report');
+      toast.error('Failed to submit report');
     }
     setReporting(false);
   };
@@ -86,7 +87,7 @@ export default function UserProfile() {
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!session?.user?.id || !id) {
-      alert('Please log in to write a review');
+      toast.error('Please log in to write a review');
       return;
     }
     if (!newReviewText.trim()) return;
@@ -103,9 +104,9 @@ export default function UserProfile() {
       await setStorageJson(`reviews/${id}-${session.user.id}-${Date.now()}.json`, reviewObj);
       setReviews([reviewObj, ...reviews]);
       setNewReviewText('');
-      alert('Review posted successfully!');
+      toast.success('Review posted successfully!');
     } catch (err) {
-      alert('Failed to post review');
+      toast.error('Failed to post review');
     }
     setSubmittingReview(false);
   };

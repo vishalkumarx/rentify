@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useRef } from 'react';
 import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
@@ -85,7 +86,7 @@ export default function Post() {
       navigate('/');
     } catch (error: any) {
       console.error('Error posting item:', error);
-      alert('Failed to post item: ' + error.message);
+      toast.error('Failed to post item: ' + error.message);
       setLoading(false);
     }
   };

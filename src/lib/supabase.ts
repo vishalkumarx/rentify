@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder-project.supabase.co';
@@ -64,13 +65,13 @@ export const setStorageJson = async (path: string, json: any) => {
     }
     
     if (error) {
-      alert(`Backend Error: Failed to save message. ${error.message || 'Unknown error'}`);
+      toast.error(`Backend Error: Failed to save message. ${error.message || 'Unknown error'}`);
       return false;
     }
     return true;
   } catch (e: any) {
     console.error('Exception in setStorageJson:', e);
-    alert(`Exception: Failed to save message. ${e.message || 'Unknown error'}`);
+    toast.error(`Exception: Failed to save message. ${e.message || 'Unknown error'}`);
     return false;
   }
 };

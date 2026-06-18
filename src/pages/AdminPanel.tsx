@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { ShieldCheck, XCircle, CheckCircle, Search, AlertTriangle, Ban } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -81,7 +82,7 @@ export default function AdminPanel() {
     }
     setUsers(users.map(u => u.id === userId ? { ...u, status: 'approved' } : u));
     if (selectedImage) setSelectedImage({ ...selectedImage, status: 'approved' });
-    alert(`User approved successfully!`);
+    toast.success(`User approved successfully!`);
   };
 
   const handleReject = async (userId: string) => {
@@ -90,7 +91,7 @@ export default function AdminPanel() {
     setApprovals(newApps);
     setUsers(users.map(u => u.id === userId ? { ...u, status: 'rejected' } : u));
     if (selectedImage) setSelectedImage({ ...selectedImage, status: 'rejected' });
-    alert(approvals.includes(userId) ? 'Approval revoked.' : 'Verification rejected.');
+    toast.error(approvals.includes(userId) ? 'Approval revoked.' : 'Verification rejected.');
   };
 
   const handleTerminate = async (userId: string) => {
@@ -99,7 +100,7 @@ export default function AdminPanel() {
     if (!blocked.includes(userId)) {
       await setStorageJson('admin/blocked_users.json', [...blocked, userId]);
     }
-    alert(`Account ${userId} has been terminated.`);
+    toast.error(`Account ${userId} has been terminated.`);
   };
 
   const filteredUsers = users.filter(u => u.id.toLowerCase().includes(search.toLowerCase()));

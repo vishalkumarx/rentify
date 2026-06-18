@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
@@ -88,7 +89,7 @@ export default function Home() {
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc', 'distance'
   const [displayCount, setDisplayCount] = useState(10);
 
-  const { items, toggleLike } = useFeed();
+  const { items, toggleLike, loading } = useFeed();
   const navigate = useNavigate();
   
   const fetchLocation = () => {
@@ -212,7 +213,7 @@ export default function Home() {
                 <button 
                   onClick={() => {
                     if (location === 'Location Denied') {
-                      alert('Please enable location permissions in your browser settings to continue.');
+                      toast.error('Please enable location permissions in your browser settings to continue.');
                     }
                     fetchLocation();
                   }} 
@@ -368,8 +369,17 @@ export default function Home() {
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
         gap: '12px' 
       }}>
-        {filteredItems.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
+        {loading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="glass-panel" style={{ padding: '12px 8px', display: 'flex', flexDirection: 'column', gap: '12px', height: '260px' }}>
+              <div className="skeleton" style={{ width: '100%', height: '160px', borderRadius: '0' }}></div>
+              <div className="skeleton" style={{ width: '80%', height: '16px', margin: '4px 0' }}></div>
+              <div className="skeleton" style={{ width: '50%', height: '16px' }}></div>
+            </div>
+          ))
+        ) : filteredItems.length === 0 ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <Search className="animate-float" size={48} color="var(--primary-glow)" />
             <p>No items found for this category or search.</p>
           </div>
         ) : (
@@ -410,7 +420,7 @@ export default function Home() {
                         <button 
                           onClick={(e) => {
                             e.stopPropagation();
-                            alert('Notify functionality coming soon!');
+                            toast.success('Notify functionality coming soon!');
                           }}
                           style={{ padding: '8px 20px', background: 'var(--primary)', color: '#000', border: 'none', borderRadius: '16px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', boxShadow: 'var(--card-shadow)' }}
                         >
@@ -425,7 +435,7 @@ export default function Home() {
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                 <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>
-                <p style={{ fontSize: '16px', color: 'var(--success)', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
+                <p style={{ fontSize: '16px', color: '#000', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
                 
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', minWidth: 0 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)', maxWidth: '100%', minWidth: 0 }}>

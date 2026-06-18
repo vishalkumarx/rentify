@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
@@ -41,7 +42,7 @@ export default function EditPost() {
   useEffect(() => {
     // Only alert if we're sure items have been fetched but the item isn't in them
     if (items.length > 0 && !item) {
-      alert('Item not found');
+      toast.error('Item not found');
       navigate('/profile');
     }
   }, [items.length, item, navigate]);
@@ -115,7 +116,7 @@ export default function EditPost() {
       navigate('/profile');
     } catch (error: any) {
       console.error('Error updating item:', error);
-      alert('Failed to update item: ' + error.message);
+      toast.error('Failed to update item: ' + error.message);
       setLoading(false);
     }
   };

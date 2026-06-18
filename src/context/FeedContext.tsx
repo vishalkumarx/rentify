@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
@@ -39,6 +40,7 @@ type FeedContextType = {
   deletePost: (id: number) => Promise<void>;
   toggleLike: (id: number) => void;
   toggleBookingStatus: (id: number) => void;
+  loading: boolean;
 };
 
 const initialItems: RentalItem[] = [];
@@ -50,10 +52,12 @@ const FeedContext = createContext<FeedContextType>({
   deletePost: async () => {},
   toggleLike: () => {},
   toggleBookingStatus: () => {},
+  loading: true,
 });
 
 export const FeedProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<RentalItem[]>(initialItems);
+  const [loading, setLoading] = useState(true);
 
   const fetchItems = async () => {
     const { data, error } = await supabase
@@ -89,6 +93,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
     });
       setItems(mappedItems);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -189,12 +194,12 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
       
     if (error) {
       console.error('Error deleting post:', error);
-      alert('Error deleting post: ' + error.message);
+      toast.error('Error deleting post: ' + error.message);
       throw error;
     }
 
     if (count === 0) {
-      alert('Permission denied. You can only delete items that you posted. (Or item already deleted)');
+      toast.error('Permission denied. You can only delete items that you posted. (Or item already deleted)');
       return;
     }
     
@@ -229,7 +234,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <FeedContext.Provider value={{ items, addPost, updatePost, deletePost, toggleLike, toggleBookingStatus }}>
+    <FeedContext.Provider value={{ items, addPost, updatePost, deletePost, toggleLike, toggleBookingStatus, loading }}>
       {children}
     </FeedContext.Provider>
   );

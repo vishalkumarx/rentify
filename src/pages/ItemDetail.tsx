@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
@@ -14,7 +15,7 @@ export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, toggleLike } = useFeed();
-  const { getOrCreateConversation, conversations } = useChat();
+  const { getOrCreateConversation, conversations, sendMessage } = useChat();
   const { session, loading } = useAuth();
   const { createRequest, deleteRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
@@ -82,9 +83,9 @@ export default function ItemDetail() {
       navigate('/login');
       return;
     }
-    if (!startDate || !endDate) return alert('Select dates');
+    if (!startDate || !endDate) return toast.error('Select dates');
     const days = differenceInDays(parseISO(endDate), parseISO(startDate));
-    if (days < 0) return alert('End date must be after start date');
+    if (days < 0) return toast.error('End date must be after start date');
     setBookingSheetState('confirm');
   };
 
@@ -102,6 +103,17 @@ export default function ItemDetail() {
       total_price: totalPrice,
       note: bookingNote.trim() !== '' ? bookingNote.trim() : undefined,
     });
+
+    // Create or get conversation and send the note
+    const ownerId = item.userId || `user-${item.id}`;
+    const ownerName = ownerProfile?.name || item.seller?.name || `Owner of ${item.title}`;
+    const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
+    
+    if (bookingNote.trim() !== '') {
+      await sendMessage(convId, session!.user.id, `[Booking Request Note]: ${bookingNote.trim()}`);
+    } else {
+      await sendMessage(convId, session!.user.id, `[Booking Request]: User has requested to book this item from ${format(parseISO(startDate), 'MMM d, yyyy')} to ${format(parseISO(endDate), 'MMM d, yyyy')} for ₹${totalPrice}.`);
+    }
     setBookingSheetState('success');
     setTimeout(() => {
       setBookingSheetState('none');
@@ -413,7 +425,7 @@ export default function ItemDetail() {
               Chat with Owner
             </button>
           ) : item.status === 'booked' ? (
-            <button onClick={() => alert("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
+            <button onClick={() => toast.success("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
               <Bell size={22} />
               Notify Me
             </button>

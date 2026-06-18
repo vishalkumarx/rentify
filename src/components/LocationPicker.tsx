@@ -1,3 +1,4 @@
+import toast from 'react-hot-toast';
 import { useState, useRef, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
 import { Locate } from 'lucide-react';
@@ -134,12 +135,12 @@ export default function LocationPicker({ location, onChange }: LocationPickerPro
         },
         (error) => {
           console.error('Geolocation error:', error);
-          alert('Unable to retrieve your location. Please check browser permissions.');
+          toast.error('Unable to retrieve your location. Please check browser permissions.');
           setIsLocating(false);
         }
       );
     } else {
-      alert('Geolocation is not supported by your browser.');
+      toast.error('Geolocation is not supported by your browser.');
       setIsLocating(false);
     }
   };
