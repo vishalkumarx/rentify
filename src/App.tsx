@@ -66,12 +66,12 @@ function AppRoutes() {
         <Route path="/my-listings" element={<ProtectedRoute message="Login to view your listings."><MyListings /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute message="Login to view your messages and chat with owners."><Messages /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute message="Login to view your profile and manage your active listings."><Profile /></ProtectedRoute>} />
+        <Route path="/edit/:id" element={<ProtectedRoute message="Login to edit your listing."><EditPost /></ProtectedRoute>} />
       </Route>
       
       {/* Full Screen Modals/Pages */}
       <Route path="/item/:id" element={<ItemDetail />} />
       <Route path="/user/:id" element={<UserProfile />} />
-      <Route path="/edit/:id" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
     </Routes>
