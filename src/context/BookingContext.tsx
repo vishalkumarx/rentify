@@ -90,13 +90,11 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
         created_at: new Date().toISOString()
       };
       setRequests(prev => [mockReq, ...prev]);
-      alert('Mock Booking Request sent! (Database table missing)');
       return;
     }
 
     if (data) {
       setRequests(prev => [data, ...prev]);
-      alert('Booking Request sent successfully!');
     }
   };
 
