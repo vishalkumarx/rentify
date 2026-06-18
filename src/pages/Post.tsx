@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Camera, Upload, Tag, DollarSign, AlignLeft, Plus, X } from 'lucide-react';
+import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES } from '../lib/constants';
@@ -93,6 +93,11 @@ export default function Post() {
   return (
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
       
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 800, margin: 0 }}>Create Listing</h1>
+        <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>You are on the post listing page. Fill out the details below to publish your item.</p>
+      </div>
+
       <form onSubmit={handleSubmit} className="post-grid glass-panel" style={{ padding: '32px', borderRadius: '24px' }}>
         
         {/* Hidden File Input */}
@@ -208,7 +213,7 @@ export default function Post() {
             </div>
             
             <div style={{ position: 'relative' }}>
-              <DollarSign size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
+              <IndianRupee size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
               <input
                 type="number"
                 placeholder="Price per day"

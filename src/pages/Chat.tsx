@@ -115,24 +115,7 @@ export default function Chat() {
           </div>
         </div>
 
-        {/* Deleted Item Banner */}
-        {isItemDeleted && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--danger)',
-            borderRadius: '12px',
-            padding: '12px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center',
-            marginBottom: '16px'
-          }}>
-            <Ban size={20} color="var(--danger)" style={{ flexShrink: 0 }} />
-            <p style={{ margin: 0, fontSize: '13px', color: 'var(--danger)', fontWeight: 600 }}>
-              This item has been deleted by the owner. Chat operations are disabled.
-            </p>
-          </div>
-        )}
+
 
         {/* Not Accepted Banner */}
         {!isItemDeleted && !hasAcceptedBooking && (
