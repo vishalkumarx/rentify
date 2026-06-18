@@ -394,7 +394,7 @@ export default function Home() {
                     return (
                       <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(34, 197, 94, 0.2)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)', zIndex: 10, borderRadius: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
                         <div style={{ background: 'var(--success)', padding: '8px 16px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: 'none' }}>
-                          BOOKED BY YOU
+                          RENTED BY ME
                         </div>
                         <button 
                           onClick={async (e) => {
@@ -407,7 +407,7 @@ export default function Home() {
                             const convId = getOrCreateConversation(item.id, item.title, item.image, item.userId || '', ownerName);
                             navigate(`/chat/${convId}`);
                           }}
-                          style={{ padding: '8px 20px', background: 'var(--surface)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', borderRadius: '16px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', boxShadow: 'var(--card-shadow)' }}
+                          style={{ padding: '8px 20px', background: 'var(--surface)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', borderRadius: '16px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', boxShadow: 'var(--card-shadow)', width: 'auto' }}
                         >
                           <MessageCircle size={16} />
                           Message Owner
