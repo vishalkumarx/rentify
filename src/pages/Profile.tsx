@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, getStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight, ShieldCheck, CheckCircle2, Star, BadgeCheck, Clock } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight, CheckCircle2, Star, BadgeCheck, Clock } from 'lucide-react';
 
 export default function Profile() {
   const { session } = useAuth();

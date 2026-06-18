@@ -4,7 +4,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, ShieldCheck, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
