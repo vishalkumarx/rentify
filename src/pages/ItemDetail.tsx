@@ -38,7 +38,7 @@ export default function ItemDetail() {
   
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
-  const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id) : null;
+  const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status !== 'rejected') : null;
 
   useEffect(() => {
     if (item?.userId) {
@@ -388,10 +388,6 @@ export default function ItemDetail() {
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
               <X size={22} />
               Cancel Booking Request
-            </button>
-          ) : userRequest?.status === 'rejected' ? (
-            <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
-              Booking Request Declined
             </button>
           ) : (
             <button 

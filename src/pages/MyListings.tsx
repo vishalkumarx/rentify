@@ -13,12 +13,13 @@ export default function MyListings() {
   const { requests, updateRequestStatus } = useBookings();
   const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState<'requests' | 'listings'>('requests');
+  const [activeTab, setActiveTab] = useState<'requests' | 'listings' | 'myBookings'>('requests');
   const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
   const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected' } | null>(null);
 
   const myItems = items.filter(item => item.userId === session?.user?.id);
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
+  const myOutgoingRequests = requests.filter(r => r.requester_id === session?.user?.id);
 
   useEffect(() => {
     // If there are no requests, auto-switch to listings tab
@@ -94,6 +95,22 @@ export default function MyListings() {
           }}
         >
           My Listings
+        </button>
+        <button
+          onClick={() => setActiveTab('myBookings')}
+          style={{
+            flex: 1,
+            padding: '10px 0',
+            background: activeTab === 'myBookings' ? 'var(--text-main)' : 'transparent',
+            color: activeTab === 'myBookings' ? 'var(--surface)' : 'var(--text-muted)',
+            borderRadius: '12px',
+            fontSize: '14px',
+            fontWeight: 600,
+            boxShadow: activeTab === 'myBookings' ? 'var(--card-shadow)' : 'none',
+            border: 'none'
+          }}
+        >
+          My Bookings
         </button>
       </div>
 
@@ -211,6 +228,47 @@ export default function MyListings() {
               <Package size={64} opacity={0.5} style={{ marginBottom: '16px' }} />
               <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px', color: 'var(--text-main)' }}>No listings yet</h3>
               <p style={{ margin: 0 }}>You haven't posted any items for rent.</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'myBookings' && (
+        <div className="animate-fade-in">
+          {myOutgoingRequests.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {myOutgoingRequests.map(req => {
+                const reqItem = items.find(i => i.id === req.item_id);
+                return (
+                  <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ flex: 1, paddingRight: '12px' }}>
+                        <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
+                        <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                          Status: <strong style={{ color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)' }}>{req.status.toUpperCase()}</strong>
+                        </p>
+                        <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
+                          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
+                            booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy') : ''}
+                          </p>
+                        </div>
+                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
+                          Total: ₹{req.total_price}
+                        </p>
+                      </div>
+                      {reqItem && (
+                        <img src={reqItem.image} alt={reqItem.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+              <CalendarCheck size={64} opacity={0.5} style={{ marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px', color: 'var(--text-main)' }}>No bookings yet</h3>
+              <p style={{ margin: 0 }}>You haven't requested to book any items.</p>
             </div>
           )}
         </div>
