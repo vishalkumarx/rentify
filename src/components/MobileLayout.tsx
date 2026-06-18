@@ -1,18 +1,26 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { Home, PlusSquare, User, MessageCircle, Package } from 'lucide-react';
+import { Home, PlusSquare, User, MessageCircle, Package, CalendarCheck } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
+import { useAuth } from '../context/AuthContext';
+import { useBookings } from '../context/BookingContext';
 
 export default function MobileLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { conversations } = useChat();
+  const { session } = useAuth();
+  const { requests } = useBookings();
   
   const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
+  const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
   
   const [showBanner, setShowBanner] = useState(false);
   const [bannerText, setBannerText] = useState('');
   const prevUnread = useRef(totalUnread);
+
+  const [showBookingBanner, setShowBookingBanner] = useState(false);
+  const prevRequests = useRef(myIncomingRequests.length);
 
   useEffect(() => {
     if (totalUnread > prevUnread.current) {
@@ -25,6 +33,16 @@ export default function MobileLayout() {
     }
     prevUnread.current = totalUnread;
   }, [totalUnread, conversations, location.pathname]);
+
+  useEffect(() => {
+    if (myIncomingRequests.length > prevRequests.current) {
+      if (location.pathname !== `/my-listings`) {
+        setShowBookingBanner(true);
+        setTimeout(() => setShowBookingBanner(false), 3000);
+      }
+    }
+    prevRequests.current = myIncomingRequests.length;
+  }, [myIncomingRequests.length, location.pathname]);
 
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollY = useRef(0);
@@ -74,6 +92,31 @@ export default function MobileLayout() {
         {bannerText}
       </div>
 
+      {/* Booking Banner */}
+      <div 
+        onClick={() => { setShowBookingBanner(false); navigate('/my-listings'); }}
+        style={{
+        position: 'fixed',
+        top: showBookingBanner ? '70px' : '-100px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'var(--success)',
+        color: '#fff',
+        padding: '12px 24px',
+        borderRadius: '24px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        zIndex: 9999,
+        transition: 'top 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+        fontWeight: 600,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        cursor: 'pointer'
+      }}>
+        <CalendarCheck size={20} />
+        New booking request!
+      </div>
+
       {/* Bottom/Side Navigation */}
       <nav className={`app-nav ${!showHeader ? 'nav-hidden' : ''}`}>
         {/* Added App Logo/Brand for Sidebar context (hidden on mobile via CSS optionally, but let's just show it or keep simple) */}
@@ -81,7 +124,7 @@ export default function MobileLayout() {
         <NavItem icon={<Home size={24} />} label="Explore" isActive={location.pathname === '/'} onClick={() => navigate('/')} />
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<PlusSquare size={24} />} label="Post" isActive={location.pathname === '/post'} onClick={() => navigate('/post')} />
-        <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} onClick={() => navigate('/my-listings')} />
+        <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/my-listings')} />
         <NavItem icon={<User size={24} />} label="Profile" isActive={location.pathname === '/profile'} onClick={() => navigate('/profile')} />
       </nav>
 

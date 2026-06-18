@@ -108,7 +108,15 @@ export default function MyListings() {
                       <div style={{ flex: 1, paddingRight: '12px' }}>
                         <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
                         <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                          Requested by <strong style={{ color: 'var(--text-main)' }}>{requesterName}</strong>
+                          Requested by <strong 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/user/${req.requester_id}`);
+                            }}
+                            style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
+                          >
+                            {requesterName}
+                          </strong>
                         </p>
                         <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
                           <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>

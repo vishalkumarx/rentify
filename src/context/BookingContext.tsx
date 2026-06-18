@@ -60,8 +60,11 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    if (!session?.user?.id) return;
     refreshRequests();
-  }, [session]);
+    const interval = setInterval(refreshRequests, 3000);
+    return () => clearInterval(interval);
+  }, [session?.user?.id]);
 
   const createRequest = async (booking: Omit<BookingRequest, 'id' | 'created_at' | 'status'>) => {
     const { data, error } = await supabase
