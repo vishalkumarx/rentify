@@ -86,7 +86,6 @@ export default function Home() {
   const [displayCount, setDisplayCount] = useState(10);
 
   const { items, toggleLike } = useFeed();
-  const { session } = useAuth();
   const navigate = useNavigate();
   
   const fetchLocation = () => {
