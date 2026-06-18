@@ -205,24 +205,6 @@ export default function Chat() {
         )}
 
 
-        {bookingReq?.note && (() => {
-          const isMe = bookingReq.requester_id === session?.user?.id;
-          return (
-            <div style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
-              <div style={{ 
-                maxWidth: '75%', 
-                padding: '12px 16px', 
-                borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                background: isMe ? 'var(--primary)' : 'var(--surface)',
-                color: isMe ? '#111827' : 'var(--text-main)',
-                border: isMe ? 'none' : '1px solid var(--surface-border)'
-              }}>
-                <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
-                <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>"{bookingReq.note}"</p>
-              </div>
-            </div>
-          );
-        })()}
 
         {conversationMessages.length === 0 && !bookingReq?.note && (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '40px', fontSize: '14px' }}>
@@ -244,7 +226,19 @@ export default function Chat() {
                   color: isMe ? '#111827' : 'var(--text-main)',
                   border: isEmojiOnly ? 'none' : (isMe ? 'none' : '1px solid var(--surface-border)')
                 }}>
-                  <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.2 }}>{msg.text}</p>
+                  {msg.text.startsWith('[Booking Request Note]: ') ? (
+                    <>
+                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
+                      <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>"{msg.text.replace('[Booking Request Note]: ', '')}"</p>
+                    </>
+                  ) : msg.text.startsWith('[Booking Request]: ') ? (
+                    <>
+                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Request</p>
+                      <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>{msg.text.replace('[Booking Request]: ', '')}</p>
+                    </>
+                  ) : (
+                    <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.2 }}>{msg.text}</p>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: '4px', marginTop: '4px' }}>
                     <span style={{ fontSize: '10px', opacity: 0.7, color: isEmojiOnly ? 'var(--text-muted)' : 'inherit' }}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
