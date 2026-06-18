@@ -130,7 +130,8 @@ export default function ItemDetail() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: 'var(--bg-color)' }} className="animate-slide-in">
+    <>
+      <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: 'var(--bg-color)' }} className="animate-slide-in">
       
       {/* Header */}
       <header style={{ 
@@ -354,6 +355,7 @@ export default function ItemDetail() {
           </div>
         </div>
       </main>
+    </div>
 
       {/* Image Zoom Modal */}
       {zoomImageIndex !== null && (
@@ -566,6 +568,6 @@ export default function ItemDetail() {
         </div>
       )}
 
-    </div>
+    </>
   );
 }
