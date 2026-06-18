@@ -114,6 +114,17 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     }
 
     setRequests(prev => prev.map(req => req.id === id ? { ...req, status } : req));
+
+    // If accepted, update the rental item's status to booked
+    if (status === 'accepted') {
+      const request = requests.find(r => r.id === id);
+      if (request) {
+        await supabase
+          .from('rental_items')
+          .update({ status: 'booked' })
+          .eq('id', request.item_id);
+      }
+    }
   };
 
   const deleteRequest = async (id: number) => {

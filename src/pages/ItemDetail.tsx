@@ -292,7 +292,7 @@ export default function ItemDetail() {
                     setStartDate(start);
                     setEndDate(end);
                   }}
-                  disabled={!!userRequest}
+                  disabled={!!userRequest || item.status === 'booked'}
                 />
 
                 {startDate && endDate && calculateDays() > 0 && (
