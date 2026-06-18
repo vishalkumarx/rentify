@@ -389,16 +389,28 @@ export default function Home() {
                   
                   if (userAcceptedReq) {
                     return (
-                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(34, 197, 94, 0.9)', padding: '6px 12px', borderRadius: '12px', color: 'white', fontWeight: 800, fontSize: '11px', letterSpacing: '0.5px', textTransform: 'uppercase', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(34, 197, 94, 0.9)', padding: '6px 12px', borderRadius: '12px', color: 'white', fontWeight: 800, fontSize: '11px', letterSpacing: '0.5px', textTransform: 'uppercase', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', gap: '4px', zIndex: 20 }}>
                         Booked by you
                       </div>
                     );
                   }
                   
-                  if (item.status === 'booked') {
+                  const isBookedByOther = item.status === 'booked';
+                  if (isBookedByOther) {
                     return (
-                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'rgba(0,0,0,0.7)', padding: '6px 14px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '1px' }}>
-                        BOOKED
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 10, borderRadius: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
+                        <div style={{ background: 'var(--surface)', padding: '8px 16px', borderRadius: '20px', color: 'var(--text-main)', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: '1px solid var(--surface-border)' }}>
+                          ITEM NOT AVAILABLE
+                        </div>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            alert('Notify functionality coming soon!');
+                          }}
+                          style={{ padding: '8px 20px', background: 'var(--primary)', color: '#000', border: 'none', borderRadius: '16px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', boxShadow: 'var(--card-shadow)' }}
+                        >
+                          Notify Me
+                        </button>
                       </div>
                     );
                   }
