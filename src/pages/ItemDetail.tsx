@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
@@ -19,6 +19,16 @@ export default function ItemDetail() {
   const { createRequest, deleteRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [currentMainImageIndex, setCurrentMainImageIndex] = useState(0);
+  const isInitialModalRender = useRef(false);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (zoomImageIndex !== null && isInitialModalRender.current && modalScrollRef.current) {
+      modalScrollRef.current.scrollLeft = zoomImageIndex * window.innerWidth;
+      isInitialModalRender.current = false;
+    }
+  }, [zoomImageIndex]);
+
   const [showBookingConfirm, setShowBookingConfirm] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [ownerVerified, setOwnerVerified] = useState(false);
@@ -170,7 +180,10 @@ export default function ItemDetail() {
                 <div 
                   key={i} 
                   style={{ minWidth: '100%', height: '100%', scrollSnapAlign: 'start', position: 'relative', cursor: 'pointer' }}
-                  onClick={() => setZoomImageIndex(i)}
+                  onClick={() => {
+                    isInitialModalRender.current = true;
+                    setZoomImageIndex(i);
+                  }}
                 >
                   <img src={img} alt={`${item.title} - ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
@@ -302,7 +315,7 @@ export default function ItemDetail() {
           background: 'rgba(0,0,0,0.95)', zIndex: 100,
           display: 'flex', flexDirection: 'column'
         }}>
-          <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 101 }}>
+          <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 101, position: 'absolute', top: 0, left: 0, right: 0 }}>
             <span style={{ color: 'white', fontWeight: 600 }}>{zoomImageIndex + 1} / {allImages.length}</span>
             <button 
               onClick={() => setZoomImageIndex(null)}
@@ -311,16 +324,30 @@ export default function ItemDetail() {
               <X size={24} />
             </button>
           </div>
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', position: 'relative' }}>
-            <TransformWrapper initialScale={1} minScale={0.5} maxScale={4} centerOnInit>
-              <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
-                <img src={allImages[zoomImageIndex]} alt="Zoomed" style={{ maxWidth: '100vw', maxHeight: '70vh', objectFit: 'contain' }} />
-              </TransformComponent>
-            </TransformWrapper>
-
+          <div 
+            ref={modalScrollRef}
+            style={{ flex: 1, display: 'flex', alignItems: 'center', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100vw' }}
+            className="hide-scrollbar"
+            onScroll={(e) => {
+              const el = e.currentTarget;
+              const index = Math.round(el.scrollLeft / el.clientWidth);
+              if (index !== zoomImageIndex && !isInitialModalRender.current) {
+                setZoomImageIndex(index);
+              }
+            }}
+          >
+            {allImages.map((img, i) => (
+              <div key={i} style={{ minWidth: '100vw', height: '100%', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TransformWrapper initialScale={1} minScale={1} maxScale={4} centerOnInit>
+                  <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
+                    <img src={img} alt={`Zoomed ${i}`} style={{ width: '100vw', maxHeight: '80vh', objectFit: 'contain' }} />
+                  </TransformComponent>
+                </TransformWrapper>
+              </div>
+            ))}
           </div>
-          <div style={{ padding: '20px', textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px' }}>
-            Pinch or double tap to zoom. Drag to pan.
+          <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px', pointerEvents: 'none' }}>
+            Swipe to change, pinch to zoom
           </div>
         </div>
       )}
