@@ -141,11 +141,9 @@ export default function UserProfile() {
               }
               return profile?.name?.charAt(0)?.toUpperCase() || 'U';
             })()}
-            {isVerified && (
               <div style={{ position: 'absolute', bottom: '0', right: '0', background: 'var(--surface)', borderRadius: '50%', padding: '2px' }}>
                 <BadgeCheck size={28} fill="#1877F2" color="white" />
               </div>
-            )}
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', marginBottom: '4px', width: '100%' }}>
@@ -172,11 +170,7 @@ export default function UserProfile() {
         <div style={{ marginBottom: '32px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Verifications</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {isVerified && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(24, 119, 242, 0.1)', padding: '16px', borderRadius: '16px', color: '#1877F2', fontWeight: 600 }}>
-                <ShieldCheck size={20} /> Official University ID Verified
-              </div>
-            )}
+
             {profile?.verifications?.map((ver: string, idx: number) => (
               <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', padding: '16px', borderRadius: '16px', color: 'var(--success)', fontWeight: 600 }}>
                 <CheckCircle2 size={20} /> {ver}

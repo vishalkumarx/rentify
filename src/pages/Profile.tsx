@@ -80,9 +80,7 @@ export default function Profile() {
                 <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                   {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
                 </h2>
-                {isVerified && (
-                  <BadgeCheck size={24} fill="#1877F2" color="white" />
-                )}
+                <BadgeCheck size={24} fill="#1877F2" color="white" />
               </div>
               <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {session?.user?.email}
@@ -95,35 +93,7 @@ export default function Profile() {
             </div>
           </div>
           
-          <div style={{ padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <h4 style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Verifications</h4>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--success)', fontSize: '14px', fontWeight: 500 }}>
-              <CheckCircle2 size={16} /> Email Registered
-            </div>
 
-            {!isVerified && !isVerificationPending && (
-              <div style={{ marginTop: '4px', padding: '16px', background: 'linear-gradient(135deg, rgba(24, 119, 242, 0.08), rgba(154, 72, 218, 0.08))', borderRadius: '16px', border: '1px solid rgba(24, 119, 242, 0.15)', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', overflow: 'hidden' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <BadgeCheck size={20} fill="#1877F2" color="white" />
-                  <strong style={{ fontSize: '15px', color: 'var(--text-main)', letterSpacing: '0.2px' }}>Vicinity Verified</strong>
-                </div>
-                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  Build trust in the community. Upload your University ID to get the verified badge.
-                </p>
-                <label style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', background: 'linear-gradient(135deg, #1877F2, #9A48DA)', color: 'white', padding: '12px 16px', borderRadius: '24px', fontSize: '14px', fontWeight: 700, width: '100%', border: 'none', boxShadow: '0 4px 12px rgba(24, 119, 242, 0.3)', transition: 'all 0.2s', marginTop: '4px' }}>
-                  Get Verified
-                  <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleIdUpload} />
-                </label>
-              </div>
-            )}
-
-            {!isVerified && isVerificationPending && (
-              <div style={{ marginTop: '4px', padding: '10px 12px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Clock size={16} color="#F59E0B" />
-                <span style={{ fontSize: '13px', color: '#F59E0B', fontWeight: 600 }}>ID Verification Pending</span>
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Settings Menu moved to bottom */}

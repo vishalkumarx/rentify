@@ -331,9 +331,7 @@ export default function ItemDetail() {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{ownerName}</h4>
-                      {ownerVerified && (
-                        <BadgeCheck size={20} fill="#1877F2" color="white" />
-                      )}
+                      <BadgeCheck size={20} fill="#1877F2" color="white" />
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                       <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Joined {item.seller.memberSince}</span>
