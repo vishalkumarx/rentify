@@ -366,7 +366,7 @@ export default function Home() {
         padding: '0 20px 32px', 
         display: 'grid', 
         gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
-        gap: '20px' 
+        gap: '12px' 
       }}>
         {filteredItems.length === 0 ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)' }}>
@@ -378,7 +378,7 @@ export default function Home() {
               key={item.id} 
               onClick={() => navigate(`/item/${item.id}`)}
               className="glass-panel animate-slide-in" 
-              style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer', borderRadius: '0' }}
+              style={{ padding: '12px 8px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer', borderRadius: '0' }}
             >
               <div style={{ position: 'relative' }}>
                 <img 
