@@ -9,7 +9,7 @@ import { getStorageJson } from '../lib/supabase';
 import { format, parseISO } from 'date-fns';
 
 export default function MyListings() {
-  const { items, toggleBookingStatus, deletePost } = useFeed();
+  const { items, deletePost } = useFeed();
   const { session } = useAuth();
   const { requests, updateRequestStatus } = useBookings();
   const { getOrCreateConversation } = useChat();
@@ -276,24 +276,7 @@ export default function MyListings() {
                     <p style={{ margin: 0, color: 'var(--text-main)', fontWeight: 700 }}>₹{item.price}/day</p>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleBookingStatus(item.id);
-                      }}
-                      style={{ 
-                        padding: '8px 16px', 
-                        borderRadius: '8px', 
-                        fontSize: '13px', 
-                        fontWeight: 600,
-                        border: 'none',
-                        background: item.status === 'booked' ? 'var(--surface-border)' : 'var(--primary)',
-                        color: item.status === 'booked' ? 'var(--text-muted)' : '#ffffff',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {item.status === 'booked' ? 'Mark Available' : 'Mark Booked'}
-                    </button>
+
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
