@@ -89,6 +89,9 @@ body {
 }
 
 .app-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   text-align: center;
   font-size: 32px;
   margin: 0;
@@ -336,6 +339,9 @@ a:hover {
   
   .app-title {
     text-align: left;
+    position: static;
+    transform: none;
+    left: auto;
   }
   
   .app-nav {
