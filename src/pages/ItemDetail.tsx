@@ -495,7 +495,7 @@ export default function ItemDetail() {
                   <div style={{ height: '1px', background: 'var(--surface-border)', margin: '8px 0' }} />
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', alignItems: 'center' }}>
                     <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Total</span>
-                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '24px' }}>₹{calculateDays() * Number(item.price)}</span>
+                    <span style={{ fontWeight: 800, color: '#000', fontSize: '24px' }}>₹{calculateDays() * Number(item.price)}</span>
                   </div>
                 </div>
                 

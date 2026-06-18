@@ -151,7 +151,7 @@ export default function MyListings() {
                             booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy EEEE') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy EEEE') : ''}
                           </p>
                         </div>
-                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
+                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
                           Total: ₹{req.total_price}
                         </p>
                       </div>
@@ -330,7 +330,7 @@ export default function MyListings() {
                             booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy') : ''}
                           </p>
                         </div>
-                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--primary)' }}>
+                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
                           Total: ₹{req.total_price}
                         </p>
                       </div>
