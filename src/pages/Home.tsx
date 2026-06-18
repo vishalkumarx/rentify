@@ -378,13 +378,13 @@ export default function Home() {
               key={item.id} 
               onClick={() => navigate(`/item/${item.id}`)}
               className="glass-panel animate-slide-in" 
-              style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer' }}
+              style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer', borderRadius: '0' }}
             >
               <div style={{ position: 'relative' }}>
                 <img 
                   src={item.image} 
                   alt={item.title} 
-                  style={{ width: '100%', height: '160px', borderRadius: '14px', objectFit: 'cover', opacity: item.status === 'booked' ? 0.7 : 1 }}
+                  style={{ width: '100%', height: '160px', borderRadius: '0', objectFit: 'cover', opacity: item.status === 'booked' ? 0.7 : 1 }}
                 />
                 
                 {(() => {
@@ -392,7 +392,7 @@ export default function Home() {
                   
                   if (userAcceptedReq) {
                     return (
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(34, 197, 94, 0.2)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)', zIndex: 10, borderRadius: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(34, 197, 94, 0.2)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)', zIndex: 10, borderRadius: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
                         <div style={{ background: 'var(--success)', padding: '8px 16px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: 'none' }}>
                           RENTED BY YOU
                         </div>
@@ -403,7 +403,7 @@ export default function Home() {
                   const isBookedByOther = item.status === 'booked';
                   if (isBookedByOther) {
                     return (
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 10, borderRadius: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 10, borderRadius: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
                         <div style={{ background: 'var(--surface)', padding: '8px 16px', borderRadius: '20px', color: 'var(--text-main)', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: '1px solid var(--surface-border)' }}>
                           ITEM NOT AVAILABLE
                         </div>
