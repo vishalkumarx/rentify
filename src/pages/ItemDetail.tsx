@@ -354,9 +354,9 @@ export default function ItemDetail() {
             <span style={{ color: 'white', fontWeight: 600 }}>{zoomImageIndex + 1} / {allImages.length}</span>
             <button 
               onClick={() => setZoomImageIndex(null)}
-              style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: '56px', height: '56px', borderRadius: '28px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <X size={24} />
+              <X size={32} />
             </button>
           </div>
           <div 
