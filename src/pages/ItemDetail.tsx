@@ -229,33 +229,34 @@ export default function ItemDetail() {
 
 
             {/* Booking Calendar Section */}
-            <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CalendarIcon size={20} /> Select booking dates
-              </h3>
-              
-              <Calendar 
-                startDate={startDate} 
-                endDate={endDate} 
-                onChange={(start, end) => {
-                  setStartDate(start);
-                  setEndDate(end);
-                }}
-                disabled={!!userRequest}
-              />
+            {!isOwner && (
+              <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CalendarIcon size={20} /> Select booking dates
+                </h3>
+                
+                <Calendar 
+                  startDate={startDate} 
+                  endDate={endDate} 
+                  onChange={(start, end) => {
+                    setStartDate(start);
+                    setEndDate(end);
+                  }}
+                  disabled={!!userRequest}
+                />
 
-              {startDate && endDate && calculateDays() > 0 && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '16px' }}>
-                  <span style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
-                    ₹{item.price} x {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
-                  </span>
-                  <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>
-                    ₹{calculateDays() * Number(item.price)}
-                  </span>
-                </div>
-              )}
-
-            </div>
+                {startDate && endDate && calculateDays() > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '16px' }}>
+                    <span style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
+                      ₹{item.price} x {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
+                    </span>
+                    <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>
+                      ₹{calculateDays() * Number(item.price)}
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Seller Trust Profile */}
             {item.seller && (
