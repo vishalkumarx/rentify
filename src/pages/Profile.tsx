@@ -78,7 +78,7 @@ export default function Profile() {
                   <ShieldCheck size={20} color="var(--success)" />
                 )}
               </div>
-              <div style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '15px' }}>
+              <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {session?.user?.email}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>

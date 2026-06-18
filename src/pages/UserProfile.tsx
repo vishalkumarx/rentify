@@ -142,12 +142,12 @@ export default function UserProfile() {
             )}
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', marginBottom: '4px' }}>
-            <h2 style={{ fontSize: '24px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              {profile?.name}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', marginBottom: '4px', width: '100%' }}>
+            <h2 style={{ fontSize: '24px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', maxWidth: '100%', padding: '0 16px' }}>
+              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile?.name}</span>
             </h2>
             {session?.user?.id === id && session?.user?.email && (
-              <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              <p title={session.user.email} style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', maxWidth: '100%', padding: '0 24px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {session.user.email}
               </p>
             )}
