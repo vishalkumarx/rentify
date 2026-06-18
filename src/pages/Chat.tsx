@@ -39,8 +39,8 @@ export default function Chat() {
 
   const hasAcceptedBooking = bookingReq?.status === 'accepted';
 
-  const isChatUnlocked = isOwner || hasAcceptedBooking || conversationMessages.length > 0;
-  const isChatDisabled = isItemDeleted || !isChatUnlocked;
+  const isChatUnlocked = hasAcceptedBooking || conversationMessages.length > 0;
+  const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked);
 
   useEffect(() => {
     // Scroll to bottom on new message
@@ -162,7 +162,7 @@ export default function Chat() {
 
 
         {/* Not Accepted Banner */}
-        {!isItemDeleted && isChatDisabled && (
+        {!isItemDeleted && !isChatUnlocked && (
           <div style={{
             background: 'rgba(255, 193, 7, 0.1)',
             border: '1px solid var(--warning)',
@@ -175,7 +175,7 @@ export default function Chat() {
           }}>
             <Lock size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
             <p style={{ margin: 0, fontSize: '13px', color: 'var(--warning)', fontWeight: 600 }}>
-              Chat is locked until the owner initiates or accepts the booking.
+              {isOwner ? "Chat is currently locked for the requester. Send a message to unlock it." : "Chat is locked until the owner initiates or accepts the booking."}
             </p>
           </div>
         )}

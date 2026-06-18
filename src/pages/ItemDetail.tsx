@@ -410,7 +410,7 @@ export default function ItemDetail() {
               <Bell size={22} />
               Notify Me
             </button>
-          ) : userRequest?.status === 'accepted' || chatExists ? (
+          ) : userRequest?.status === 'accepted' || (chatExists && userRequest) ? (
             <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
               <MessageCircle size={22} />
               Chat with Owner
