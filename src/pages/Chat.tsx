@@ -139,7 +139,7 @@ export default function Chat() {
                 padding: '12px 16px', 
                 borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
                 background: isMe ? 'var(--primary)' : 'var(--surface)',
-                color: isMe ? '#fff' : 'var(--text-main)',
+                color: isMe ? '#111827' : 'var(--text-main)',
                 border: isMe ? 'none' : '1px solid var(--surface-border)'
               }}>
                 <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
@@ -164,7 +164,7 @@ export default function Chat() {
                   padding: '12px 16px', 
                   borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
                   background: isMe ? 'var(--primary)' : 'var(--surface)',
-                  color: isMe ? '#fff' : 'var(--text-main)',
+                  color: isMe ? '#111827' : 'var(--text-main)',
                   border: isMe ? 'none' : '1px solid var(--surface-border)'
                 }}>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>{msg.text}</p>
@@ -173,10 +173,10 @@ export default function Chat() {
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {isMe && (
-                      <span style={{ display: 'flex', alignItems: 'center' }}>
-                        {msg.status === 'sent' && <Check size={12} color="rgba(255,255,255,0.7)" />}
-                        {msg.status === 'delivered' && <CheckCheck size={12} color="rgba(255,255,255,0.7)" />}
-                        {msg.status === 'read' && <CheckCheck size={12} color="#00E5FF" />}
+                      <span style={{ marginLeft: '4px', display: 'flex' }}>
+                        {msg.status === 'sent' && <Check size={12} color="rgba(0,0,0,0.5)" />}
+                        {msg.status === 'delivered' && <CheckCheck size={12} color="rgba(0,0,0,0.5)" />}
+                        {msg.status === 'read' && <CheckCheck size={12} color="#0055FF" />}
                       </span>
                     )}
                   </div>
