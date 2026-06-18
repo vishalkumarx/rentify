@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Package, CalendarCheck, Check, X } from 'lucide-react';
+import { Package, CalendarCheck, Check, X, MessageCircle } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
+import { useChat } from '../context/ChatContext';
 import { getStorageJson } from '../lib/supabase';
 import { format, parseISO } from 'date-fns';
 
@@ -11,6 +12,7 @@ export default function MyListings() {
   const { items, toggleBookingStatus, deletePost } = useFeed();
   const { session } = useAuth();
   const { requests, updateRequestStatus } = useBookings();
+  const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'requests' | 'listings' | 'myBookings'>('requests');
@@ -155,6 +157,30 @@ export default function MyListings() {
                         </button>
                       </div>
                     </div>
+                    
+                    {req.note && (
+                      <div style={{ marginTop: '12px', padding: '12px', background: 'var(--surface-border)', borderRadius: '12px' }}>
+                        <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
+                          "{req.note}"
+                        </p>
+                      </div>
+                    )}
+                    
+                    <div style={{ marginTop: '12px', display: 'flex' }}>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!reqItem) return;
+                          const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
+                          navigate(`/chat/${convId}`);
+                        }}
+                        style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                      >
+                        <MessageCircle size={18} />
+                        Message User
+                      </button>
+                    </div>
+
                   </div>
                 );
               })}

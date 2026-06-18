@@ -14,7 +14,7 @@ export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { items, toggleLike } = useFeed();
-  const { getOrCreateConversation } = useChat();
+  const { getOrCreateConversation, conversations } = useChat();
   const { session, loading } = useAuth();
   const { createRequest, deleteRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
@@ -35,10 +35,12 @@ export default function ItemDetail() {
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [bookingNote, setBookingNote] = useState('');
   
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
   const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status !== 'rejected') : null;
+  const chatExists = item && conversations.some(c => c.itemId === item.id && c.otherUserId === item.userId);
 
   useEffect(() => {
     if (item?.userId) {
@@ -102,6 +104,7 @@ export default function ItemDetail() {
       start_date: startDate,
       end_date: endDate,
       total_price: totalPrice,
+      note: bookingNote.trim() !== '' ? bookingNote.trim() : undefined,
     });
     setBookingSheetState('success');
     setTimeout(() => {
@@ -380,18 +383,24 @@ export default function ItemDetail() {
               <Bell size={22} />
               Notify Me
             </button>
-          ) : userRequest?.status === 'accepted' ? (
+          ) : userRequest?.status === 'accepted' || chatExists ? (
             <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
               <MessageCircle size={22} />
-              Message Owner
+              Chat with Owner
             </button>
           ) : userRequest?.status === 'pending' ? (
-            <button 
-              onClick={() => setShowCancelConfirm(true)}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
-              <X size={22} />
-              Cancel Booking Request
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+              <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
+                <MessageCircle size={22} />
+                Chat Locked (Pending)
+              </button>
+              <button 
+                onClick={() => setShowCancelConfirm(true)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px', fontSize: '16px', borderRadius: '24px', background: 'transparent', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
+                <X size={20} />
+                Cancel Request
+              </button>
+            </div>
           ) : (
             <button 
               onClick={() => {
@@ -446,6 +455,28 @@ export default function ItemDetail() {
                     <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '24px' }}>₹{calculateDays() * Number(item.price)}</span>
                   </div>
                 </div>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Message / Offer to Owner (Optional)</label>
+                  <textarea
+                    value={bookingNote}
+                    onChange={(e) => setBookingNote(e.target.value)}
+                    placeholder="e.g. Hi, I'm a student too, would you be willing to do ₹500 total?"
+                    style={{
+                      width: '100%',
+                      minHeight: '80px',
+                      padding: '16px',
+                      borderRadius: '16px',
+                      background: 'var(--bg-color)',
+                      border: '1px solid var(--surface-border)',
+                      color: 'var(--text-main)',
+                      fontSize: '15px',
+                      resize: 'none',
+                      fontFamily: 'inherit'
+                    }}
+                  />
+                </div>
+
                 <button onClick={handleConfirmBookRequest} style={{ width: '100%', padding: '18px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#fff', fontSize: '18px', fontWeight: 700, cursor: 'pointer', marginTop: '8px', boxShadow: 'var(--primary-glow)' }}>
                   Confirm Request
                 </button>

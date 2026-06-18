@@ -14,6 +14,7 @@ export interface BookingRequest {
   end_date: string;
   status: BookingStatus;
   total_price: number;
+  note?: string;
   created_at?: string;
   // relations
   item?: any;
@@ -72,7 +73,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       .insert([
         {
           ...booking,
-          status: 'pending'
+          status: 'pending',
+          note: booking.note || null
         }
       ])
       .select()
