@@ -130,6 +130,12 @@ export default function EditPost() {
       
       {/* Top Action Bar */}
       <header className="app-header">
+        <button 
+          onClick={() => navigate(-1)}
+          style={{ position: 'absolute', left: '20px', background: 'transparent', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}
+        >
+          <ArrowLeft size={24} />
+        </button>
         <h1 className="app-title">vicinity</h1>
       </header>
 
@@ -211,12 +217,7 @@ export default function EditPost() {
 
         {/* RIGHT COLUMN: Details & Inputs */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button type="button" onClick={() => navigate(-1)} style={{ background: 'var(--surface-border)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-              <ArrowLeft size={20} color="var(--text-main)" />
-            </button>
-            <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 700 }}>Edit Details</h2>
-          </div>
+          <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 700 }}>Details</h2>
           
           {/* Category Selector */}
           <div style={{ position: 'relative', marginTop: '-8px' }}>
