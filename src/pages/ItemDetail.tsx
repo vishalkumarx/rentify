@@ -19,6 +19,7 @@ export default function ItemDetail() {
   const { createRequest, deleteRequest, requests } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [showBookingConfirm, setShowBookingConfirm] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [ownerVerified, setOwnerVerified] = useState(false);
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
   const [startDate, setStartDate] = useState('');
@@ -347,11 +348,7 @@ export default function ItemDetail() {
             </button>
           ) : userRequest?.status === 'pending' ? (
             <button 
-              onClick={() => {
-                if (window.confirm("Are you sure you want to cancel your booking request?")) {
-                  deleteRequest(userRequest.id);
-                }
-              }}
+              onClick={() => setShowCancelConfirm(true)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
               <X size={22} />
               Cancel Booking Request
@@ -413,6 +410,30 @@ export default function ItemDetail() {
               </button>
               <button onClick={handleConfirmBookRequest} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showCancelConfirm && userRequest && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Cancel Request?</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              Are you sure you want to cancel your booking request for <strong>{item.title}</strong>? The owner will no longer see it.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button onClick={() => setShowCancelConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                No, Keep it
+              </button>
+              <button 
+                onClick={() => {
+                  deleteRequest(userRequest.id);
+                  setShowCancelConfirm(false);
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Yes, Cancel
               </button>
             </div>
           </div>
