@@ -87,7 +87,7 @@ export default function Chat() {
             onClick={() => navigate(`/user/${conversation.otherUserId}`)}
             style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer' }}
           >
-            {conversation.otherUserName}
+            {isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`}
           </p>
         </div>
       </header>
@@ -95,28 +95,16 @@ export default function Chat() {
       {/* Messages */}
       <main ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         
-        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', marginBottom: '8px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-          <ShieldAlert size={20} style={{ color: 'var(--warning)', flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-            <strong>Safety Warning:</strong> Vicinity does not mediate transactions and is not responsible or liable for any lost, stolen, or damaged items. Please verify the item's condition before renting and exchange items in safe, public locations.
-          </p>
-        </div>
-        
-        {/* Product Banner */}
-        <div style={{ 
-          background: 'var(--surface)', 
-          borderRadius: '16px', 
-          padding: '12px', 
-          display: 'flex', 
-          gap: '12px', 
-          alignItems: 'center',
-          marginBottom: '16px',
-          border: '1px solid var(--surface-border)'
-        }}>
-          <img src={conversation.itemImage} alt={conversation.itemTitle} style={{ width: '60px', height: '60px', borderRadius: '8px', objectFit: 'cover' }} />
-          <div>
-            <h3 style={{ margin: '0 0 4px', fontSize: '15px', fontWeight: 600 }}>{conversation.itemTitle}</h3>
-            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>Inquiry about this item</p>
+        <div style={{ background: 'var(--surface)', border: '1px solid rgba(255, 193, 7, 0.4)', padding: '12px', borderRadius: '12px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+          <ShieldAlert size={20} color="var(--warning)" style={{ flexShrink: 0, marginTop: '2px' }} />
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            <strong style={{ color: 'var(--text-main)' }}>Safety Guidelines:</strong>
+            <ul style={{ margin: '4px 0 0', paddingLeft: '16px' }}>
+              <li>Vicinity does not mediate transactions and is not liable for items.</li>
+              <li>Verify the item's condition and exchange in public locations.</li>
+              <li>Never pay in advance or share personal banking details.</li>
+              <li>Keep all communication inside the app for protection.</li>
+            </ul>
           </div>
         </div>
 
@@ -141,21 +129,6 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Safety Warning Banner */}
-        <div style={{
-          background: 'var(--surface)',
-          border: '1px solid rgba(255, 193, 7, 0.4)',
-          borderRadius: '12px',
-          padding: '12px',
-          display: 'flex',
-          gap: '12px',
-          alignItems: 'flex-start'
-        }}>
-          <ShieldAlert size={20} color="var(--warning)" style={{ flexShrink: 0, marginTop: '2px' }} />
-          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-            <strong style={{ color: 'var(--text-main)' }}>Safety Notice:</strong> Never pay in advance or share personal banking details. Keep all communication inside the app for your protection.
-          </p>
-        </div>
 
         {bookingReq?.note && (() => {
           const isMe = bookingReq.requester_id === session?.user?.id;
