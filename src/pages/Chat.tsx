@@ -95,11 +95,13 @@ export default function Chat() {
       {/* Messages */}
       <main ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         
-        <div style={{ background: 'var(--surface-border)', padding: '16px', borderRadius: '12px', marginBottom: '16px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-          <ShieldAlert size={20} style={{ color: 'var(--warning)', flexShrink: 0, marginTop: '2px' }} />
+        <div style={{ background: 'var(--surface-border)', padding: '16px', borderRadius: '12px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ShieldAlert size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
+            <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>Safety Guidelines</strong>
+          </div>
           <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-            <strong style={{ color: 'var(--text-main)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Safety Guidelines</strong>
-            <ul style={{ margin: 0, paddingLeft: '18px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
               <li>Vicinity does not mediate transactions and is not liable for items.</li>
               <li>Verify the item's condition and exchange in public locations.</li>
               <li>Never pay in advance or share personal banking details.</li>
