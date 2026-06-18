@@ -259,7 +259,7 @@ export default function ItemDetail() {
             )}
 
             {/* Seller Trust Profile */}
-            {item.seller && (
+            {!isOwner && item.seller && (
               <div 
                 onClick={() => navigate('/user/' + (item.userId || 'user-123'))}
                 className="glass-panel" 
