@@ -130,10 +130,11 @@ export default function Requests() {
                 ))}
               </div>
 
-              {(incomingFilter === 'all' || incomingFilter === 'pending') && myIncomingRequests.length > 0 && (
+              {(incomingFilter === 'all' || incomingFilter === 'pending') && (
                 <div>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-main)' }}>Pending Requests</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  {myIncomingRequests.length > 0 ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {myIncomingRequests.map(req => {
                       const reqItem = items.find(i => i.id === req.item_id);
                       const requesterName = requesterNames[req.requester_id] || 'Loading...';
@@ -198,6 +199,12 @@ export default function Requests() {
                       );
                     })}
                   </div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                      <CalendarCheck size={48} opacity={0.3} style={{ marginBottom: '12px' }} />
+                      <p style={{ margin: 0, fontSize: '15px' }}>No pending requests</p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -259,7 +266,10 @@ export default function Requests() {
                     })}
                   </div>
                   {[...myAcceptedRequests, ...myRejectedRequests].filter(r => incomingFilter === 'all' || r.status === incomingFilter).length === 0 && (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '16px', textAlign: 'center' }}>No {incomingFilter} history to show.</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                      <CalendarCheck size={48} opacity={0.3} style={{ marginBottom: '12px' }} />
+                      <p style={{ margin: 0, fontSize: '15px' }}>No {incomingFilter === 'all' ? 'booking' : incomingFilter} history to show.</p>
+                    </div>
                   )}
                 </div>
               )}
