@@ -468,6 +468,7 @@ export default function Chat() {
                       width: '100%',
                       userSelect: swipeTargetId === msg.id ? 'none' : 'auto',
                       WebkitUserSelect: swipeTargetId === msg.id ? 'none' : 'auto',
+                      touchAction: 'pan-y',
                       zIndex: 2
                     }}
                     onPointerDown={(e) => handlePointerDown(e, msg)}
