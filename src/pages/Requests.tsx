@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { CalendarCheck, Check, X, MessageCircle } from 'lucide-react';
+import { CalendarCheck, Calendar, Check, X, MessageCircle } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { useChat } from '../context/ChatContext';
 import { getStorageJson } from '../lib/supabase';
@@ -153,8 +153,9 @@ export default function Requests() {
                               </strong>
                             </p>
                             <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
-                                from {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
+                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Calendar size={14} />
+                                {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
                               </p>
                             </div>
                             <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
@@ -264,7 +265,8 @@ export default function Requests() {
                               Status: <strong style={{ color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)' }}>{req.status.toUpperCase()}</strong>
                             </p>
                             <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
+                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Calendar size={14} />
                                 booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy') : ''}
                               </p>
                             </div>
