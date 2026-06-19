@@ -137,6 +137,10 @@ export default function Chat() {
     // Cancel long press if finger moves more than 10px
     if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
       if (longPressTimer.current) clearTimeout(longPressTimer.current);
+      
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        window.getSelection()?.removeAllRanges();
+      }
     }
 
     // Swipe right to reply
@@ -449,6 +453,8 @@ export default function Chat() {
                       transform: swipeTargetId === msg.id ? `translateX(${swipeOffset}px)` : 'translateX(0)',
                       transition: swipeTargetId === msg.id ? 'none' : 'transform 0.2s ease-out',
                       width: '100%',
+                      userSelect: swipeTargetId === msg.id ? 'none' : 'auto',
+                      WebkitUserSelect: swipeTargetId === msg.id ? 'none' : 'auto',
                       zIndex: 2
                     }}
                     onPointerDown={(e) => handlePointerDown(e, msg)}
