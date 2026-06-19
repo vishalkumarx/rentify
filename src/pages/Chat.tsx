@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, Fragment } from 'react';
 import { createPortal } from 'react-dom';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X } from 'lucide-react';
@@ -564,12 +565,21 @@ export default function Chat() {
           >
             <X size={32} />
           </button>
-          <img 
-            src={fullscreenImage} 
-            alt="Fullscreen" 
-            style={{ maxWidth: '100vw', maxHeight: '100vh', objectFit: 'contain' }} 
-            onClick={(e) => e.stopPropagation()}
-          />
+          <TransformWrapper
+            initialScale={1}
+            minScale={1}
+            maxScale={4}
+            centerOnInit
+          >
+            <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
+              <img 
+                src={fullscreenImage} 
+                alt="Fullscreen" 
+                style={{ maxWidth: '100vw', maxHeight: '100vh', objectFit: 'contain' }} 
+                onClick={(e) => e.stopPropagation()}
+              />
+            </TransformComponent>
+          </TransformWrapper>
         </div>,
         document.body
       )}
