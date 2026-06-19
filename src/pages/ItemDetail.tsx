@@ -5,7 +5,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check, CheckCircle, Clock, Wallet } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -279,32 +279,75 @@ export default function ItemDetail() {
 
             {/* User's Booking Information */}
             {userRequest && (
-              <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px', borderLeft: userRequest.status === 'accepted' ? '4px solid var(--success)' : '4px solid var(--warning)' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <CalendarIcon size={20} color={userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)'} /> 
-                  Booking info
-                </h3>
+              <div style={{
+                marginTop: '32px',
+                padding: '24px',
+                borderRadius: '24px',
+                background: userRequest.status === 'accepted' 
+                  ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)' 
+                  : 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%)',
+                border: `1px solid ${userRequest.status === 'accepted' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-main)' }}>
+                    <div style={{
+                      background: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)',
+                      width: '40px', height: '40px', borderRadius: '12px',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'
+                    }}>
+                      {userRequest.status === 'accepted' ? <CheckCircle size={20} /> : <Clock size={20} />}
+                    </div>
+                    Your Booking
+                  </h3>
+                  <span style={{
+                    padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px',
+                    background: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)',
+                    color: '#fff',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                  }}>
+                    {userRequest.status}
+                  </span>
+                </div>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Status</span>
-                    <span style={{ fontWeight: 800, color: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                      {userRequest.status}
-                    </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', padding: '20px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ background: 'var(--bg)', padding: '10px', borderRadius: '12px', color: 'var(--primary)' }}>
+                      <CalendarIcon size={20} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '4px' }}>Dates</span>
+                      <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-main)' }}>
+                        {userRequest.start_date ? format(parseISO(userRequest.start_date), 'dd MMM yyyy') : ''} — {userRequest.end_date ? format(parseISO(userRequest.end_date), 'dd MMM yyyy') : ''}
+                      </span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Dates</span>
-                    <span style={{ fontWeight: 600 }}>
-                      {userRequest.start_date ? format(parseISO(userRequest.start_date), 'dd MMM yyyy') : ''} to {userRequest.end_date ? format(parseISO(userRequest.end_date), 'dd MMM yyyy') : ''}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Total Price</span>
-                    <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '16px' }}>
-                      ₹{userRequest.total_price}
-                    </span>
+                  
+                  <div style={{ height: '1px', background: 'var(--surface-border)', width: '100%' }}></div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ background: 'var(--bg)', padding: '10px', borderRadius: '12px', color: 'var(--primary)' }}>
+                      <Wallet size={20} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '4px' }}>Total Price</span>
+                      <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '20px' }}>
+                        ₹{userRequest.total_price}
+                      </span>
+                    </div>
                   </div>
                 </div>
+                
+                {userRequest.status === 'pending' && (
+                  <p style={{ margin: '16px 0 0', fontSize: '14px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
+                    Waiting for owner approval. They will review your request soon.
+                  </p>
+                )}
+                {userRequest.status === 'accepted' && (
+                  <p style={{ margin: '16px 0 0', fontSize: '14px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
+                    Your booking is confirmed! Reach out to the owner to coordinate.
+                  </p>
+                )}
               </div>
             )}
 
