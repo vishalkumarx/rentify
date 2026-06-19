@@ -13,6 +13,7 @@ export type Message = {
   imageUrl?: string;
   location?: { lat: number; lng: number; address: string };
   replyToId?: string;
+  isDeleted?: boolean;
 };
 
 export type Conversation = {
@@ -268,13 +269,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const msgs = [...prev];
       const idx = msgs.findIndex(m => m.id === messageId && m.senderId === myId);
       if (idx !== -1) {
-        if (!msgs[idx].text.trim()) {
-          // If the message only had an image and no text, remove it entirely
-          msgs.splice(idx, 1);
-        } else {
-          // Otherwise, just strip the image
-          msgs[idx].imageUrl = undefined;
-        }
+        msgs[idx].isDeleted = true;
+        msgs[idx].text = "This message was deleted";
+        msgs[idx].imageUrl = undefined;
+        msgs[idx].location = undefined;
       }
       return msgs;
     });
@@ -286,11 +284,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       const idx = chatData.messages.findIndex(m => m.id === messageId && m.senderId === myId);
       if (idx !== -1) {
-        if (!chatData.messages[idx].text.trim()) {
-          chatData.messages.splice(idx, 1);
-        } else {
-          chatData.messages[idx].imageUrl = undefined;
-        }
+        chatData.messages[idx].isDeleted = true;
+        chatData.messages[idx].text = "This message was deleted";
+        chatData.messages[idx].imageUrl = undefined;
+        chatData.messages[idx].location = undefined;
         await setStorageJson(chatPath, chatData);
         fetchChats();
       }

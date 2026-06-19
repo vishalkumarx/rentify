@@ -405,41 +405,50 @@ export default function Chat() {
                     </>
                   ) : (
                     <>
-                      {msg.replyToId && (() => {
-                        const repliedMsg = allConversationMessages.find(m => m.id === msg.replyToId);
-                        if (!repliedMsg) return null;
-                        return (
-                          <div style={{ background: 'rgba(0,0,0,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '8px', fontSize: '13px', borderLeft: '3px solid var(--primary)' }}>
-                            <strong style={{ display: 'block', marginBottom: '4px', color: isMe ? 'inherit' : 'var(--text-main)' }}>{repliedMsg.senderId === session?.user?.id ? 'You' : conversation.otherUserName}</strong>
-                            <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: isMe ? 'inherit' : 'var(--text-muted)' }}>
-                              {repliedMsg.imageUrl ? 'Photo' : repliedMsg.text}
-                            </span>
-                          </div>
-                        );
-                      })()}
-                      {msg.imageUrl && (
-                        <img 
-                          src={msg.imageUrl} 
-                          alt="Attachment" 
-                          onClick={() => setFullscreenImage(msg.imageUrl!)}
-                          style={{ width: '100%', maxWidth: '250px', borderRadius: '12px', marginBottom: msg.text ? '8px' : '0', objectFit: 'cover', cursor: 'zoom-in' }} 
-                        />
-                      )}
-                      {msg.location && (
-                        <a href={`https://maps.google.com/?q=${msg.location.lat},${msg.location.lng}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: msg.text ? '8px' : '0', textDecoration: 'none' }}>
-                          <div style={{ background: 'var(--surface)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
-                            <div style={{ height: '120px', background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <MapPin size={32} color="var(--primary)" />
-                            </div>
-                            <div style={{ padding: '12px', fontSize: '13px', color: 'var(--text-main)' }}>
-                              <strong>{msg.location.address}</strong><br/>
-                              <span style={{ color: 'var(--text-muted)' }}>Tap to view on map</span>
-                            </div>
-                          </div>
-                        </a>
-                      )}
-                      {msg.text && !msg.imageUrl && !msg.location && (
-                        <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
+                      {msg.isDeleted ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: isMe ? 'rgba(0,0,0,0.6)' : 'var(--text-muted)', fontStyle: 'italic', fontSize: '14px' }}>
+                          <Ban size={14} />
+                          <span>This message was deleted</span>
+                        </div>
+                      ) : (
+                        <>
+                          {msg.replyToId && (() => {
+                            const repliedMsg = allConversationMessages.find(m => m.id === msg.replyToId);
+                            if (!repliedMsg) return null;
+                            return (
+                              <div style={{ background: 'rgba(0,0,0,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '8px', fontSize: '13px', borderLeft: '3px solid var(--primary)' }}>
+                                <strong style={{ display: 'block', marginBottom: '4px', color: isMe ? 'inherit' : 'var(--text-main)' }}>{repliedMsg.senderId === session?.user?.id ? 'You' : conversation.otherUserName}</strong>
+                                <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: isMe ? 'inherit' : 'var(--text-muted)' }}>
+                                  {repliedMsg.imageUrl ? 'Photo' : repliedMsg.text}
+                                </span>
+                              </div>
+                            );
+                          })()}
+                          {msg.imageUrl && (
+                            <img 
+                              src={msg.imageUrl} 
+                              alt="Attachment" 
+                              onClick={() => setFullscreenImage(msg.imageUrl!)}
+                              style={{ width: '100%', maxWidth: '250px', borderRadius: '12px', marginBottom: msg.text ? '8px' : '0', objectFit: 'cover', cursor: 'zoom-in' }} 
+                            />
+                          )}
+                          {msg.location && (
+                            <a href={`https://maps.google.com/?q=${msg.location.lat},${msg.location.lng}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: msg.text ? '8px' : '0', textDecoration: 'none' }}>
+                              <div style={{ background: 'var(--surface)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
+                                <div style={{ height: '120px', background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                  <MapPin size={32} color="var(--primary)" />
+                                </div>
+                                <div style={{ padding: '12px', fontSize: '13px', color: 'var(--text-main)' }}>
+                                  <strong>{msg.location.address}</strong><br/>
+                                  <span style={{ color: 'var(--text-muted)' }}>Tap to view on map</span>
+                                </div>
+                              </div>
+                            </a>
+                          )}
+                          {msg.text && !msg.imageUrl && !msg.location && (
+                            <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
+                          )}
+                        </>
                       )}
                     </>
                   )}
@@ -497,18 +506,18 @@ export default function Chat() {
             </button>
             {(() => {
               const msg = allConversationMessages.find(m => m.id === contextMenu.messageId);
-              if (msg && msg.senderId === session?.user?.id && msg.imageUrl) {
+              if (msg && msg.senderId === session?.user?.id && !msg.isDeleted) {
                 return (
                   <button 
                     onClick={() => {
-                      if (window.confirm('Are you sure you want to unsend this image?')) {
+                      if (window.confirm('Are you sure you want to unsend this message?')) {
                         unsendMessage(conversation.id, msg.id);
                       }
                       setContextMenu(null);
                     }}
                     style={{ background: 'transparent', border: 'none', padding: '12px', textAlign: 'left', fontSize: '15px', fontWeight: 600, color: 'var(--danger)', borderRadius: '8px', cursor: 'pointer' }}
                   >
-                    Unsend Image
+                    Unsend Message
                   </button>
                 );
               }
