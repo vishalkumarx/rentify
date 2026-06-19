@@ -290,9 +290,7 @@ export default function ItemDetail() {
                 boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
               }}>
                 <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 8px 0', color: 'var(--text-main)' }}>
-                    Booking
-                  </h3>
+
                   <span style={{
                     padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px',
                     background: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)',
