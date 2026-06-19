@@ -18,6 +18,7 @@ export default function Requests() {
 
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
   const [incomingFilter, setIncomingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
+  const [outgoingFilter, setOutgoingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
   const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
   const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected'; originalPrice?: number } | null>(null);
   const [customPrice, setCustomPrice] = useState('');
@@ -287,33 +288,66 @@ export default function Requests() {
       {activeTab === 'outgoing' && (
         <div className="animate-fade-in">
           {myOutgoingRequests.length > 0 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {myOutgoingRequests.map(req => {
-                const reqItem = items.find(i => i.id === req.item_id);
-                return (
-                  <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div style={{ flex: 1, paddingRight: '12px' }}>
-                        <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
-                        <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                          Status: <strong style={{ color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)' }}>{req.status.toUpperCase()}</strong>
-                        </p>
-                        <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
-                            booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy') : ''}
-                          </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+                {['all', 'pending', 'accepted', 'rejected'].map(f => (
+                  <button 
+                    key={f}
+                    onClick={() => setOutgoingFilter(f as any)}
+                    style={{
+                      padding: '6px 16px',
+                      borderRadius: '20px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      border: '1px solid',
+                      borderColor: outgoingFilter === f ? 'var(--text-main)' : 'var(--surface-border)',
+                      background: outgoingFilter === f ? 'var(--text-main)' : 'var(--surface)',
+                      color: outgoingFilter === f ? 'var(--surface)' : 'var(--text-main)',
+                      textTransform: 'capitalize',
+                      whiteSpace: 'nowrap',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {myOutgoingRequests.filter(req => outgoingFilter === 'all' || req.status === outgoingFilter).length > 0 ? (
+                  myOutgoingRequests.filter(req => outgoingFilter === 'all' || req.status === outgoingFilter).map(req => {
+                    const reqItem = items.find(i => i.id === req.item_id);
+                    return (
+                      <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ flex: 1, paddingRight: '12px' }}>
+                            <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
+                            <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                              Status: <strong style={{ color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)' }}>{req.status.toUpperCase()}</strong>
+                            </p>
+                            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
+                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
+                                booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy') : ''}
+                              </p>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
+                              Total: ₹{req.total_price}
+                            </p>
+                          </div>
+                          {reqItem && (
+                            <img src={reqItem.image} alt={reqItem.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+                          )}
                         </div>
-                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
-                          Total: ₹{req.total_price}
-                        </p>
                       </div>
-                      {reqItem && (
-                        <img src={reqItem.image} alt={reqItem.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
-                      )}
-                    </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                    <CalendarCheck size={48} opacity={0.3} style={{ marginBottom: '12px' }} />
+                    <p style={{ margin: 0, fontSize: '15px' }}>No {outgoingFilter === 'all' ? 'booking' : outgoingFilter} requests found.</p>
                   </div>
-                );
-              })}
+                )}
+              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
