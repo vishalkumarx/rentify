@@ -22,6 +22,7 @@ export default function Chat() {
   const { conversations, messages, sendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [customPrice, setCustomPrice] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
@@ -126,6 +127,9 @@ export default function Chat() {
       if (inputText.trim()) {
         await sendMessage(conversation!.id, session.user.id, inputText);
         setInputText('');
+        if (textareaRef.current) {
+          textareaRef.current.style.height = 'auto';
+        }
       }
     } catch (err) {
       console.error(err);
@@ -461,6 +465,7 @@ export default function Chat() {
           <input type="file" ref={fileInputRef} accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageSelect} />
 
           <textarea
+            ref={textareaRef}
             rows={1}
             placeholder={isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
             value={inputText}
