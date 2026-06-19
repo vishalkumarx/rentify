@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect } from 'react';
-import { Home, PlusSquare, User, MessageCircle, Package, CalendarCheck } from 'lucide-react';
+import { Home, User, MessageCircle, Package, CalendarCheck } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -36,7 +36,7 @@ export default function MobileLayout() {
 
   useEffect(() => {
     if (myIncomingRequests.length > prevRequests.current) {
-      if (location.pathname !== `/my-listings`) {
+      if (location.pathname !== `/requests`) {
         setShowBookingBanner(true);
         setTimeout(() => setShowBookingBanner(false), 3000);
       }
@@ -94,7 +94,7 @@ export default function MobileLayout() {
 
       {/* Booking Banner */}
       <div 
-        onClick={() => { setShowBookingBanner(false); navigate('/my-listings'); }}
+        onClick={() => { setShowBookingBanner(false); navigate('/requests'); }}
         style={{
         position: 'fixed',
         top: showBookingBanner ? '70px' : '-100px',
@@ -120,11 +120,10 @@ export default function MobileLayout() {
       {/* Bottom/Side Navigation */}
       <nav className={`app-nav ${!showHeader ? 'nav-hidden' : ''}`}>
         {/* Added App Logo/Brand for Sidebar context (hidden on mobile via CSS optionally, but let's just show it or keep simple) */}
-        
         <NavItem icon={<Home size={24} />} label="Explore" isActive={location.pathname === '/'} onClick={() => navigate('/')} />
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
-        <NavItem icon={<PlusSquare size={24} />} label="Post" isActive={location.pathname === '/post'} onClick={() => navigate('/post')} />
-        <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/my-listings')} />
+        <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
+        <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} onClick={() => navigate('/my-listings')} />
         <NavItem icon={<User size={24} />} label="Profile" isActive={location.pathname === '/profile'} onClick={() => navigate('/profile')} />
       </nav>
 
