@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, Fragment } from 'react';
+import { useState, useRef, useEffect, Fragment, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -30,8 +30,16 @@ export default function Chat() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
+  const [visibleCount, setVisibleCount] = useState(20);
+
   const conversation = conversations.find(c => c.id === id);
-  const conversationMessages = messages.filter(m => m.conversationId === id);
+  const allConversationMessages = useMemo(() => {
+    return messages.filter(m => m.conversationId === id).sort((a, b) => a.timestamp - b.timestamp);
+  }, [messages, id]);
+
+  const conversationMessages = useMemo(() => {
+    return allConversationMessages.slice(-visibleCount);
+  }, [allConversationMessages, visibleCount]);
   
   const item = items.find(i => i.id === Number(conversation?.itemId));
   
@@ -51,17 +59,33 @@ export default function Chat() {
   const hasAcceptedBooking = bookingReq?.status === 'accepted';
 
   const ownerId = item?.userId || bookingReq?.owner_id;
-  const hasOwnerMessage = conversationMessages.some(m => m.senderId === ownerId);
+  const hasOwnerMessage = allConversationMessages.some(m => m.senderId === ownerId);
 
   const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage;
   const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked);
 
+  const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;
+
   useEffect(() => {
-    // Scroll to bottom on new message
+    // Scroll to bottom on new message or initial load
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [conversationMessages.length]);
+  }, [lastMessageId]);
+
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.currentTarget;
+    if (target.scrollTop <= 0 && visibleCount < allConversationMessages.length) {
+      const oldScrollHeight = target.scrollHeight;
+      setVisibleCount(prev => prev + 20);
+      
+      requestAnimationFrame(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight - oldScrollHeight;
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     if (bookingReq?.status === 'pending' && customPrice === '') {
@@ -73,7 +97,7 @@ export default function Chat() {
     if (id) {
       markAsRead(id);
     }
-  }, [id, conversationMessages.length, markAsRead]);
+  }, [id, allConversationMessages.length, markAsRead]);
 
   if (!conversation) {
     return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading conversation...</div>;
@@ -185,7 +209,7 @@ export default function Chat() {
       </header>
 
       {/* Messages */}
-      <main ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundImage: `url(${chatBg})`, backgroundSize: 'contain', backgroundPosition: 'top left', backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }}>
+      <main onScroll={handleScroll} ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundImage: `url(${chatBg})`, backgroundSize: 'contain', backgroundPosition: 'top left', backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }}>
         
         <div style={{ background: 'var(--surface-border)', padding: '16px', borderRadius: '12px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px', alignSelf: 'center', maxWidth: '300px', width: 'fit-content' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
