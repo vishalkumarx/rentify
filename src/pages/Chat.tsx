@@ -469,12 +469,7 @@ export default function Chat() {
               e.target.style.height = 'auto';
               e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
             }}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSend();
-              }
-            }}
+
             disabled={isChatDisabled}
             style={{ 
               flex: 1, 
