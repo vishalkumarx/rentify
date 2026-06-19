@@ -10,6 +10,8 @@ export type Message = {
   text: string;
   timestamp: number;
   status: 'sent' | 'delivered' | 'read';
+  imageUrl?: string;
+  location?: { lat: number; lng: number; address: string };
 };
 
 export type Conversation = {
@@ -41,7 +43,7 @@ export type UIConversation = {
 type ChatContextType = {
   conversations: UIConversation[];
   messages: Message[];
-  sendMessage: (conversationId: string, senderId: string, text: string) => void;
+  sendMessage: (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string } }) => Promise<void>;
   markAsRead: (conversationId: string) => void;
   getOrCreateConversation: (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
 };
@@ -49,7 +51,7 @@ type ChatContextType = {
 const ChatContext = createContext<ChatContextType>({
   conversations: [],
   messages: [],
-  sendMessage: () => {},
+  sendMessage: async () => {},
   markAsRead: () => {},
   getOrCreateConversation: () => '',
 });
@@ -151,7 +153,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(interval);
   }, [session?.user?.id, fetchChats]);
 
-  const sendMessage = useCallback(async (conversationId: string, senderId: string, text: string) => {
+  const sendMessage = useCallback(async (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string } }) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
 
@@ -162,6 +164,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       text,
       timestamp: Date.now(),
       status: 'sent',
+      imageUrl: options?.imageUrl,
+      location: options?.location
     };
     
     // Optimistic UI Update

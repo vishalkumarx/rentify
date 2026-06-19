@@ -1,13 +1,15 @@
 import { useState, useRef, useEffect, Fragment } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck } from 'lucide-react';
+import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useBookings } from '../context/BookingContext';
 import { Ban, Lock } from 'lucide-react';
 import chatBg from '../assets/chat-bg.png';
 import { format, isToday, isYesterday } from 'date-fns';
+import { supabase } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
@@ -75,6 +77,51 @@ export default function Chat() {
     if (!inputText.trim() || !session?.user?.id) return;
     sendMessage(conversation.id, session.user.id, inputText);
     setInputText('');
+  };
+
+  const [showAttachments, setShowAttachments] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setShowAttachments(false);
+    
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `chat-${Date.now()}-${Math.random()}.${fileExt}`;
+      const { error } = await supabase.storage.from('item-images').upload(fileName, file);
+      if (error) throw error;
+      
+      const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(fileName);
+      
+      await sendMessage(id!, session?.user?.id!, 'Sent an image', { imageUrl: publicUrl });
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to upload image');
+    }
+  };
+
+  const handleLocationShare = () => {
+    setShowAttachments(false);
+    if (!navigator.geolocation) {
+      toast.error('Geolocation is not supported by your browser');
+      return;
+    }
+    
+    toast.success('Fetching location...');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        sendMessage(id!, session?.user?.id!, 'Shared location', { 
+          location: { lat: latitude, lng: longitude, address: 'Current Location' } 
+        });
+      },
+      () => {
+        toast.error('Unable to retrieve your location');
+      }
+    );
   };
 
   return (
@@ -282,7 +329,27 @@ export default function Chat() {
                       <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>{msg.text.replace('[Booking Request]: ', '')}</p>
                     </>
                   ) : (
-                    <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.2 }}>{msg.text}</p>
+                    <>
+                      {msg.imageUrl && (
+                        <img src={msg.imageUrl} alt="Attachment" style={{ width: '100%', maxWidth: '250px', borderRadius: '12px', marginBottom: msg.text ? '8px' : '0', objectFit: 'cover' }} />
+                      )}
+                      {msg.location && (
+                        <a href={`https://maps.google.com/?q=${msg.location.lat},${msg.location.lng}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: msg.text ? '8px' : '0', textDecoration: 'none' }}>
+                          <div style={{ background: 'var(--surface)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
+                            <div style={{ height: '120px', background: '#e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <MapPin size={32} color="var(--primary)" />
+                            </div>
+                            <div style={{ padding: '12px', fontSize: '13px', color: 'var(--text-main)' }}>
+                              <strong>{msg.location.address}</strong><br/>
+                              <span style={{ color: 'var(--text-muted)' }}>Tap to view on map</span>
+                            </div>
+                          </div>
+                        </a>
+                      )}
+                      {msg.text && !msg.imageUrl && !msg.location && (
+                        <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.2 }}>{msg.text}</p>
+                      )}
+                    </>
                   )}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: '4px', marginTop: '4px' }}>
                     <span style={{ fontSize: '10px', opacity: 0.7, color: isEmojiOnly ? 'var(--text-muted)' : 'inherit' }}>
@@ -305,14 +372,37 @@ export default function Chat() {
 
       {/* Input */}
       <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
-        <form onSubmit={handleSend} style={{ display: 'flex', gap: '12px' }}>
+        <form onSubmit={handleSend} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ position: 'relative' }}>
+            <button 
+              type="button"
+              onClick={() => setShowAttachments(!showAttachments)}
+              disabled={isChatDisabled}
+              style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'transparent', border: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
+            >
+              <Paperclip size={20} />
+            </button>
+            
+            {showAttachments && (
+              <div style={{ position: 'absolute', bottom: '50px', left: 0, background: 'var(--surface)', borderRadius: '16px', padding: '8px', boxShadow: '0 4px 20px rgba(0,0,0,0.15)', display: 'flex', flexDirection: 'column', gap: '4px', zIndex: 100, width: '150px' }}>
+                <button type="button" onClick={() => fileInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'transparent', border: 'none', color: 'var(--text-main)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
+                  <ImageIcon size={18} /> Image
+                </button>
+                <button type="button" onClick={handleLocationShare} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'transparent', border: 'none', color: 'var(--text-main)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
+                  <MapPin size={18} /> Location
+                </button>
+              </div>
+            )}
+          </div>
+          <input type="file" ref={fileInputRef} accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+
           <input
             type="text"
             placeholder={isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
             value={inputText}
             onChange={e => setInputText(e.target.value)}
             disabled={isChatDisabled}
-            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', opacity: isChatDisabled ? 0.5 : 1 }}
+            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', opacity: isChatDisabled ? 0.5 : 1, minWidth: 0 }}
           />
           <button 
             type="submit" 
