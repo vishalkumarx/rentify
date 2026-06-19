@@ -121,7 +121,7 @@ export default function Chat() {
         
         <div style={{ background: 'var(--surface-border)', padding: '16px', borderRadius: '12px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldAlert size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
+            <ShieldAlert size={20} color="var(--text-muted)" style={{ flexShrink: 0 }} />
             <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>Safety Guidelines</strong>
           </div>
           <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
