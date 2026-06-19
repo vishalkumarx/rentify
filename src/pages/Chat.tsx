@@ -7,6 +7,7 @@ import { useFeed } from '../context/FeedContext';
 import { useBookings } from '../context/BookingContext';
 import { Ban, Lock } from 'lucide-react';
 import chatBg from '../assets/chat-bg.png';
+import { format, isToday, isYesterday } from 'date-fns';
 
 export default function Chat() {
   const { id } = useParams<{ id: string }>();
@@ -216,12 +217,52 @@ export default function Chat() {
           </div>
         )}
         
-        {conversationMessages.map(msg => {
+        {conversationMessages.map((msg, index) => {
             const isMe = msg.senderId === session?.user?.id;
             const isEmojiOnly = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u.test(msg.text) && msg.text.trim().length > 0;
             
+            const msgDate = new Date(msg.timestamp);
+            let showDateDivider = false;
+            let dateLabel = '';
+            
+            if (index === 0) {
+              showDateDivider = true;
+            } else {
+              const prevMsgDate = new Date(conversationMessages[index - 1].timestamp);
+              if (msgDate.toDateString() !== prevMsgDate.toDateString()) {
+                showDateDivider = true;
+              }
+            }
+
+            if (showDateDivider) {
+              if (isToday(msgDate)) {
+                dateLabel = 'Today';
+              } else if (isYesterday(msgDate)) {
+                dateLabel = 'Yesterday';
+              } else {
+                dateLabel = format(msgDate, 'dd MMMM yyyy');
+              }
+            }
+            
             return (
-              <div key={msg.id} style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+              <div key={msg.id} style={{ display: 'flex', flexDirection: 'column' }}>
+                {showDateDivider && (
+                  <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0 8px' }}>
+                    <span style={{ 
+                      background: 'rgba(0,0,0,0.3)', 
+                      color: '#fff', 
+                      padding: '4px 12px', 
+                      borderRadius: '12px', 
+                      fontSize: '12px', 
+                      fontWeight: 600,
+                      backdropFilter: 'blur(4px)',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    }}>
+                      {dateLabel}
+                    </span>
+                  </div>
+                )}
+                <div style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
                 <div style={{ 
                   maxWidth: '75%', 
                   padding: isEmojiOnly ? '4px' : '12px 16px', 
@@ -257,6 +298,7 @@ export default function Chat() {
                   </div>
                 </div>
               </div>
+            </div>
             );
           })}
       </main>
