@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck } from 'lucide-react';
@@ -245,9 +245,9 @@ export default function Chat() {
             }
             
             return (
-              <div key={msg.id} style={{ display: 'flex', flexDirection: 'column' }}>
+              <Fragment key={msg.id}>
                 {showDateDivider && (
-                  <div style={{ display: 'flex', justifyContent: 'center', margin: '16px 0 8px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 0px', position: 'sticky', top: '10px', zIndex: 10 }}>
                     <span style={{ 
                       background: 'rgba(0,0,0,0.3)', 
                       color: '#fff', 
@@ -298,7 +298,7 @@ export default function Chat() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Fragment>
             );
           })}
       </main>
