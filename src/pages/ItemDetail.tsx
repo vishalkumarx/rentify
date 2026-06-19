@@ -291,7 +291,7 @@ export default function ItemDetail() {
               }}>
                 <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                   <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 8px 0', color: 'var(--text-main)' }}>
-                    Your Booking
+                    Booking
                   </h3>
                   <span style={{
                     padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px',
