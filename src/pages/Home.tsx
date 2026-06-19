@@ -473,7 +473,8 @@ export default function Home() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: item.liked ? 'var(--danger)' : 'var(--text-muted)'
+                  color: item.liked ? 'var(--danger)' : 'var(--text-muted)',
+                  zIndex: 20
                 }}
               >
                 <Heart size={16} fill={item.liked ? 'var(--danger)' : 'none'} />
