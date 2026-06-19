@@ -370,7 +370,7 @@ export default function Chat() {
                         </a>
                       )}
                       {msg.text && !msg.imageUrl && !msg.location && (
-                        <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.2 }}>{msg.text}</p>
+                        <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
                       )}
                     </>
                   )}
@@ -411,7 +411,7 @@ export default function Chat() {
             ))}
           </div>
         )}
-        <form onSubmit={handleSend} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <form onSubmit={handleSend} style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
           <div style={{ position: 'relative' }}>
             <button 
               type="button"
@@ -435,13 +435,37 @@ export default function Chat() {
           </div>
           <input type="file" ref={fileInputRef} accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageSelect} />
 
-          <input
-            type="text"
+          <textarea
+            rows={1}
             placeholder={isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
             value={inputText}
-            onChange={e => setInputText(e.target.value)}
+            onChange={e => {
+              setInputText(e.target.value);
+              e.target.style.height = 'auto';
+              e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
             disabled={isChatDisabled}
-            style={{ flex: 1, borderRadius: '24px', padding: '12px 20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', opacity: isChatDisabled ? 0.5 : 1, minWidth: 0 }}
+            style={{ 
+              flex: 1, 
+              borderRadius: '24px', 
+              padding: '12px 20px', 
+              border: '1px solid var(--surface-border)', 
+              background: 'var(--bg)', 
+              opacity: isChatDisabled ? 0.5 : 1, 
+              minWidth: 0,
+              resize: 'none',
+              fontFamily: 'inherit',
+              fontSize: '16px',
+              maxHeight: '120px',
+              minHeight: '46px',
+              lineHeight: '1.4'
+            }}
           />
           <button 
             type="submit" 
