@@ -175,22 +175,35 @@ export default function Chat() {
     setIsUploading(true);
 
     try {
+      let textToSend = inputText.trim();
+      let sentImagesCount = 0;
+
       if (selectedImages.length > 0) {
-        for (const file of selectedImages) {
+        for (let i = 0; i < selectedImages.length; i++) {
+          const file = selectedImages[i];
           const fileExt = file.name.split('.').pop();
           const fileName = `chat-${Date.now()}-${Math.random()}.${fileExt}`;
           const { error } = await supabase.storage.from('item-images').upload(fileName, file);
           if (error) throw error;
           
           const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(fileName);
-          await sendMessage(conversation!.id, session.user.id, 'Sent an image', { imageUrl: publicUrl, replyToId: replyingToMessage?.id });
+          
+          if (i === selectedImages.length - 1 && textToSend) {
+            await sendMessage(conversation!.id, session.user.id, textToSend, { imageUrl: publicUrl, replyToId: replyingToMessage?.id });
+            textToSend = ''; // Consume text
+          } else {
+            await sendMessage(conversation!.id, session.user.id, '', { imageUrl: publicUrl, replyToId: replyingToMessage?.id });
+          }
+          sentImagesCount++;
         }
         setSelectedImages([]);
-        setReplyingToMessage(null);
       }
 
-      if (inputText.trim()) {
-        await sendMessage(conversation!.id, session.user.id, inputText, { replyToId: replyingToMessage?.id });
+      if (textToSend) {
+        await sendMessage(conversation!.id, session.user.id, textToSend, { replyToId: replyingToMessage?.id });
+      }
+      
+      if (sentImagesCount > 0 || textToSend) {
         setInputText('');
         setReplyingToMessage(null);
         if (textareaRef.current) {
@@ -524,7 +537,7 @@ export default function Chat() {
                               </div>
                             </a>
                           )}
-                          {msg.text && !msg.imageUrl && !msg.location && (
+                          {msg.text && !msg.location && (
                             <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
                           )}
                         </>
