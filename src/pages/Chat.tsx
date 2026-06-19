@@ -560,9 +560,9 @@ export default function Chat() {
         >
           <button 
             onClick={() => setFullscreenImage(null)}
-            style={{ position: 'absolute', top: 'env(safe-area-inset-top, 24px)', right: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 100000, marginTop: '24px' }}
+            style={{ position: 'absolute', top: 'env(safe-area-inset-top, 24px)', right: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: '56px', height: '56px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 100000, marginTop: '24px' }}
           >
-            <X size={24} />
+            <X size={32} />
           </button>
           <img 
             src={fullscreenImage} 
