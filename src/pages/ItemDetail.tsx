@@ -11,6 +11,25 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
 import { differenceInDays, parseISO, isValid, format } from 'date-fns';
 
+const ZoomableImage = ({ img, i }: { img: string, i: number }) => {
+  const [isZoomed, setIsZoomed] = useState(false);
+  return (
+    <TransformWrapper 
+      initialScale={1} 
+      minScale={1} 
+      maxScale={4} 
+      centerOnInit
+      onZoom={(ref: any) => setIsZoomed(ref.state.scale > 1)}
+      onTransform={(ref: any) => setIsZoomed(ref.state.scale > 1)}
+      panning={{ disabled: !isZoomed }}
+    >
+      <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
+        <img src={img} alt={`Zoomed ${i}`} style={{ width: '100vw', maxHeight: '80vh', objectFit: 'contain' }} />
+      </TransformComponent>
+    </TransformWrapper>
+  );
+};
+
 export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -387,11 +406,7 @@ export default function ItemDetail() {
           >
             {allImages.map((img, i) => (
               <div key={i} style={{ minWidth: '100vw', height: '100%', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TransformWrapper initialScale={1} minScale={1} maxScale={4} centerOnInit>
-                  <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }}>
-                    <img src={img} alt={`Zoomed ${i}`} style={{ width: '100vw', maxHeight: '80vh', objectFit: 'contain' }} />
-                  </TransformComponent>
-                </TransformWrapper>
+                <ZoomableImage img={img} i={i} />
               </div>
             ))}
           </div>
