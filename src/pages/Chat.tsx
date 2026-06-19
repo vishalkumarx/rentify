@@ -22,6 +22,8 @@ export default function Chat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const [customPrice, setCustomPrice] = useState('');
+  const [showAttachments, setShowAttachments] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const conversation = conversations.find(c => c.id === id);
   const conversationMessages = messages.filter(m => m.conversationId === id);
@@ -79,8 +81,7 @@ export default function Chat() {
     setInputText('');
   };
 
-  const [showAttachments, setShowAttachments] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
