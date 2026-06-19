@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, Fragment } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin } from 'lucide-react';
+import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useBookings } from '../context/BookingContext';
@@ -24,6 +24,8 @@ export default function Chat() {
   const [customPrice, setCustomPrice] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   const conversation = conversations.find(c => c.id === id);
   const conversationMessages = messages.filter(m => m.conversationId === id);
@@ -74,34 +76,47 @@ export default function Chat() {
     return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading conversation...</div>;
   }
 
-  const handleSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inputText.trim() || !session?.user?.id) return;
-    sendMessage(conversation.id, session.user.id, inputText);
-    setInputText('');
+  const handleSend = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if ((!inputText.trim() && selectedImages.length === 0) || !session?.user?.id || isUploading) return;
+    
+    setIsUploading(true);
+
+    try {
+      if (selectedImages.length > 0) {
+        for (const file of selectedImages) {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `chat-${Date.now()}-${Math.random()}.${fileExt}`;
+          const { error } = await supabase.storage.from('item-images').upload(fileName, file);
+          if (error) throw error;
+          
+          const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(fileName);
+          await sendMessage(conversation!.id, session.user.id, 'Sent an image', { imageUrl: publicUrl });
+        }
+        setSelectedImages([]);
+      }
+
+      if (inputText.trim()) {
+        await sendMessage(conversation!.id, session.user.id, inputText);
+        setInputText('');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to send message');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
 
 
-  const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
     
     setShowAttachments(false);
-    
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `chat-${Date.now()}-${Math.random()}.${fileExt}`;
-      const { error } = await supabase.storage.from('item-images').upload(fileName, file);
-      if (error) throw error;
-      
-      const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(fileName);
-      
-      await sendMessage(id!, session?.user?.id!, 'Sent an image', { imageUrl: publicUrl });
-    } catch (err) {
-      console.error(err);
-      toast.error('Failed to upload image');
-    }
+    setSelectedImages(prev => [...prev, ...files]);
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleLocationShare = () => {
@@ -373,15 +388,31 @@ export default function Chat() {
 
       {/* Input */}
       <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
+        {selectedImages.length > 0 && (
+          <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', marginBottom: '12px', paddingBottom: '8px' }}>
+            {selectedImages.map((file, idx) => (
+              <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', flexShrink: 0 }}>
+                <img src={URL.createObjectURL(file)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--surface-border)' }} />
+                <button 
+                  type="button"
+                  onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))}
+                  style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--danger)', color: '#fff', border: 'none', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', padding: 0 }}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <form onSubmit={handleSend} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <div style={{ position: 'relative' }}>
             <button 
               type="button"
               onClick={() => setShowAttachments(!showAttachments)}
               disabled={isChatDisabled}
-              style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'transparent', border: 'none', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
+              style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'transparent', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
             >
-              <Paperclip size={20} />
+              <Paperclip size={26} strokeWidth={2.5} />
             </button>
             
             {showAttachments && (
@@ -395,7 +426,7 @@ export default function Chat() {
               </div>
             )}
           </div>
-          <input type="file" ref={fileInputRef} accept="image/*" style={{ display: 'none' }} onChange={handleImageSelect} />
+          <input type="file" ref={fileInputRef} accept="image/*" multiple style={{ display: 'none' }} onChange={handleImageSelect} />
 
           <input
             type="text"
@@ -407,7 +438,7 @@ export default function Chat() {
           />
           <button 
             type="submit" 
-            disabled={!inputText.trim() || isChatDisabled}
+            disabled={(!inputText.trim() && selectedImages.length === 0) || isChatDisabled || isUploading}
             style={{ 
               width: '46px', 
               height: '46px', 
@@ -416,10 +447,10 @@ export default function Chat() {
               display: 'flex', 
               alignItems: 'center', 
               justifyContent: 'center',
-              background: inputText.trim() && !isChatDisabled ? 'var(--primary)' : 'var(--surface-border)',
+              background: (inputText.trim() || selectedImages.length > 0) && !isChatDisabled && !isUploading ? 'var(--primary)' : 'var(--surface-border)',
               color: 'var(--text-main)',
-              boxShadow: inputText.trim() && !isChatDisabled ? 'var(--primary-glow)' : 'none',
-              opacity: isChatDisabled ? 0.5 : 1
+              boxShadow: (inputText.trim() || selectedImages.length > 0) && !isChatDisabled && !isUploading ? 'var(--primary-glow)' : 'none',
+              opacity: isChatDisabled || isUploading ? 0.5 : 1
             }}
           >
             <Send size={20} />
