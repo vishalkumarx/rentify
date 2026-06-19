@@ -585,7 +585,7 @@ export default function ItemDetail() {
                 <div>
                   <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800 }}>Request Sent!</h3>
                   <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.5 }}>
-                    The owner has been notified. You can check the status in your <strong>My Bookings</strong> tab.
+                    The owner has been notified. You can check the status in your <strong>Requests</strong> tab.
                   </p>
                 </div>
                 <button onClick={() => setBookingSheetState('none')} style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 700, cursor: 'pointer', marginTop: '16px' }}>
