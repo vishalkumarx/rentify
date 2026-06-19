@@ -379,7 +379,7 @@ export default function ItemDetail() {
             {/* Seller Trust Profile */}
             {!isOwner && item.seller && (
               <div 
-                onClick={() => navigate('/user/' + (item.userId || 'user-123'))}
+                onClick={() => navigate('/user/' + (item.userId || 'user-123'), { state: { avatar_url: ownerProfile?.avatar_url || null } })}
                 className="glass-panel" 
                 style={{ marginTop: '32px', padding: '20px', borderRadius: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px' }}
               >

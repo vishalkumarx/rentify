@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
@@ -9,6 +9,8 @@ import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send } fr
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { avatar_url?: string } | null;
   const { session } = useAuth();
 
   const [loading, setLoading] = useState(true);
@@ -132,7 +134,7 @@ export default function UserProfile() {
         <div className="glass-panel" style={{ padding: '32px 24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '24px' }}>
           <div style={{ width: '96px', height: '96px', borderRadius: '48px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '36px', fontWeight: 700, color: 'var(--text-main)', marginBottom: '16px', position: 'relative' }}>
             {(() => {
-              const avatarUrl = profile?.avatar_url || (session?.user?.id === id ? session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture : null);
+              const avatarUrl = profile?.avatar_url || state?.avatar_url || (session?.user?.id === id ? session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture : null);
               if (avatarUrl) {
                 return <img src={avatarUrl} alt="Profile" style={{ width: '96px', height: '96px', borderRadius: '48px', objectFit: 'cover' }} />;
               }
