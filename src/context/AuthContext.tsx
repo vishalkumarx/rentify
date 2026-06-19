@@ -45,7 +45,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await setStorageJson(profilePath, {
             name: fallbackName,
             memberSince: new Date().getFullYear().toString(),
-            verifications: ['Email Confirmed']
+            verifications: ['Email Confirmed'],
+            avatar_url: currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture
+          });
+        } else if (!existingProfile.avatar_url && (currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture)) {
+          await setStorageJson(profilePath, {
+            ...existingProfile,
+            avatar_url: currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture
           });
         }
         
