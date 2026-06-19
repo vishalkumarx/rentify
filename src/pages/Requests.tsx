@@ -53,6 +53,7 @@ export default function Requests() {
   }, [requests]);
 
   return (
+    <>
     <div className="animate-slide-in" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '100px' }}>
       
       <div style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '24px' }}>
@@ -312,6 +313,7 @@ export default function Requests() {
           )}
         </div>
       )}
+      </div>
       
       {/* Confirm Action Modal */}
       {confirmAction && (
@@ -357,7 +359,6 @@ export default function Requests() {
           </div>
         </div>
       )}
-
-    </div>
+    </>
   );
 }
