@@ -600,7 +600,7 @@ export default function Chat() {
       <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
         
         {replyingToMessage && (
-          <div style={{ padding: '12px', background: 'var(--bg)', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
+          <div style={{ padding: '12px', background: '#f3f4f6', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
               <strong style={{ fontSize: '12px', color: 'var(--primary)' }}>Replying to {replyingToMessage.senderId === session?.user?.id ? 'Yourself' : conversation.otherUserName}</strong>
               <span style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
