@@ -19,10 +19,14 @@ export default function Chat() {
   const { session } = useAuth();
   const { items } = useFeed();
   const { requests, updateRequestStatus } = useBookings();
-  const { conversations, messages, sendMessage, markAsRead } = useChat();
+  const { conversations, messages, sendMessage, unsendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  const [replyingToMessage, setReplyingToMessage] = useState<any>(null);
+  const [contextMenu, setContextMenu] = useState<{ messageId: string, x: number, y: number } | null>(null);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [customPrice, setCustomPrice] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
@@ -100,6 +104,21 @@ export default function Chat() {
     }
   }, [id, allConversationMessages.length, markAsRead]);
 
+  const handlePointerDown = (e: React.PointerEvent, msg: any) => {
+    // Only allow context menu for normal messages (not system notes)
+    if (msg.text.startsWith('[Booking Request Note]:') || msg.text.startsWith('[Booking Request]:')) return;
+    
+    const x = e.clientX;
+    const y = e.clientY;
+    longPressTimer.current = setTimeout(() => {
+      setContextMenu({ messageId: msg.id, x, y });
+    }, 500);
+  };
+
+  const handlePointerUpOrLeave = () => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+  };
+
   if (!conversation) {
     return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading conversation...</div>;
   }
@@ -119,14 +138,16 @@ export default function Chat() {
           if (error) throw error;
           
           const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(fileName);
-          await sendMessage(conversation!.id, session.user.id, 'Sent an image', { imageUrl: publicUrl });
+          await sendMessage(conversation!.id, session.user.id, 'Sent an image', { imageUrl: publicUrl, replyToId: replyingToMessage?.id });
         }
         setSelectedImages([]);
+        setReplyingToMessage(null);
       }
 
       if (inputText.trim()) {
-        await sendMessage(conversation!.id, session.user.id, inputText);
+        await sendMessage(conversation!.id, session.user.id, inputText, { replyToId: replyingToMessage?.id });
         setInputText('');
+        setReplyingToMessage(null);
         if (textareaRef.current) {
           textareaRef.current.style.height = 'auto';
         }
@@ -356,7 +377,14 @@ export default function Chat() {
                     </span>
                   </div>
                 )}
-                <div style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start' }}>
+                <div 
+                  style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', position: 'relative' }}
+                  onPointerDown={(e) => handlePointerDown(e, msg)}
+                  onPointerUp={handlePointerUpOrLeave}
+                  onPointerLeave={handlePointerUpOrLeave}
+                  onPointerCancel={handlePointerUpOrLeave}
+                  onContextMenu={e => e.preventDefault()}
+                >
                 <div style={{ 
                   maxWidth: '75%', 
                   padding: isEmojiOnly ? '4px' : '12px 16px', 
@@ -377,6 +405,18 @@ export default function Chat() {
                     </>
                   ) : (
                     <>
+                      {msg.replyToId && (() => {
+                        const repliedMsg = allConversationMessages.find(m => m.id === msg.replyToId);
+                        if (!repliedMsg) return null;
+                        return (
+                          <div style={{ background: 'rgba(0,0,0,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '8px', fontSize: '13px', borderLeft: '3px solid var(--primary)' }}>
+                            <strong style={{ display: 'block', marginBottom: '4px', color: isMe ? 'inherit' : 'var(--text-main)' }}>{repliedMsg.senderId === session?.user?.id ? 'You' : conversation.otherUserName}</strong>
+                            <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: isMe ? 'inherit' : 'var(--text-muted)' }}>
+                              {repliedMsg.imageUrl ? 'Photo' : repliedMsg.text}
+                            </span>
+                          </div>
+                        );
+                      })()}
                       {msg.imageUrl && (
                         <img 
                           src={msg.imageUrl} 
@@ -422,8 +462,77 @@ export default function Chat() {
           })}
       </main>
 
+      {/* Context Menu Overlay */}
+      {contextMenu && (
+        <div 
+          onClick={() => setContextMenu(null)}
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 9999, background: 'rgba(0,0,0,0.2)' }}
+        >
+          <div 
+            onClick={e => e.stopPropagation()}
+            style={{ 
+              position: 'absolute', 
+              top: Math.min(contextMenu.y, window.innerHeight - 150) + 'px', 
+              left: Math.min(contextMenu.x, window.innerWidth - 150) + 'px', 
+              background: 'var(--surface)', 
+              borderRadius: '16px', 
+              boxShadow: '0 8px 32px rgba(0,0,0,0.15)', 
+              padding: '8px', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '4px',
+              minWidth: '150px'
+            }}
+          >
+            <button 
+              onClick={() => {
+                const msg = allConversationMessages.find(m => m.id === contextMenu.messageId);
+                setReplyingToMessage(msg);
+                setContextMenu(null);
+                setTimeout(() => textareaRef.current?.focus(), 50);
+              }}
+              style={{ background: 'transparent', border: 'none', padding: '12px', textAlign: 'left', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', borderRadius: '8px', cursor: 'pointer' }}
+            >
+              Reply
+            </button>
+            {(() => {
+              const msg = allConversationMessages.find(m => m.id === contextMenu.messageId);
+              if (msg && msg.senderId === session?.user?.id && msg.imageUrl) {
+                return (
+                  <button 
+                    onClick={() => {
+                      if (window.confirm('Are you sure you want to unsend this image?')) {
+                        unsendMessage(conversation.id, msg.id);
+                      }
+                      setContextMenu(null);
+                    }}
+                    style={{ background: 'transparent', border: 'none', padding: '12px', textAlign: 'left', fontSize: '15px', fontWeight: 600, color: 'var(--danger)', borderRadius: '8px', cursor: 'pointer' }}
+                  >
+                    Unsend Image
+                  </button>
+                );
+              }
+              return null;
+            })()}
+          </div>
+        </div>
+      )}
+
       {/* Input */}
       <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
+        
+        {replyingToMessage && (
+          <div style={{ padding: '12px', background: 'var(--bg)', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
+              <strong style={{ fontSize: '12px', color: 'var(--primary)' }}>Replying to {replyingToMessage.senderId === session?.user?.id ? 'Yourself' : conversation.otherUserName}</strong>
+              <span style={{ fontSize: '13px', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {replyingToMessage.imageUrl ? 'Photo' : replyingToMessage.text}
+              </span>
+            </div>
+            <button type="button" onClick={() => setReplyingToMessage(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', padding: '4px', cursor: 'pointer' }}><X size={16} /></button>
+          </div>
+        )}
+
         {selectedImages.length > 0 && (
           <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', marginBottom: '12px', paddingBottom: '8px' }}>
             {selectedImages.map((file, idx) => (

@@ -12,6 +12,7 @@ export type Message = {
   status: 'sent' | 'delivered' | 'read';
   imageUrl?: string;
   location?: { lat: number; lng: number; address: string };
+  replyToId?: string;
 };
 
 export type Conversation = {
@@ -43,7 +44,8 @@ export type UIConversation = {
 type ChatContextType = {
   conversations: UIConversation[];
   messages: Message[];
-  sendMessage: (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string } }) => Promise<void>;
+  sendMessage: (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string }; replyToId?: string }) => Promise<void>;
+  unsendMessage: (conversationId: string, messageId: string) => Promise<void>;
   markAsRead: (conversationId: string) => void;
   getOrCreateConversation: (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
 };
@@ -52,6 +54,7 @@ const ChatContext = createContext<ChatContextType>({
   conversations: [],
   messages: [],
   sendMessage: async () => {},
+  unsendMessage: async () => {},
   markAsRead: () => {},
   getOrCreateConversation: () => '',
 });
@@ -153,7 +156,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     return () => clearInterval(interval);
   }, [session?.user?.id, fetchChats]);
 
-  const sendMessage = useCallback(async (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string } }) => {
+  const sendMessage = useCallback(async (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string }; replyToId?: string }) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
 
@@ -165,7 +168,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       timestamp: Date.now(),
       status: 'sent',
       imageUrl: options?.imageUrl,
-      location: options?.location
+      location: options?.location,
+      replyToId: options?.replyToId
     };
     
     // Optimistic UI Update
@@ -250,9 +254,48 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         await setStorageJson(chatPath, chatData);
         fetchChats();
       }
-      fetchChats();
     } catch (err) {
       console.error("Failed to mark as read", err);
+    }
+  }, [session?.user?.id, fetchChats]);
+
+  const unsendMessage = useCallback(async (conversationId: string, messageId: string) => {
+    if (!session?.user?.id) return;
+    const myId = session.user.id;
+
+    // Optimistic Update
+    setMessages(prev => {
+      const msgs = [...prev];
+      const idx = msgs.findIndex(m => m.id === messageId && m.senderId === myId);
+      if (idx !== -1) {
+        if (!msgs[idx].text.trim()) {
+          // If the message only had an image and no text, remove it entirely
+          msgs.splice(idx, 1);
+        } else {
+          // Otherwise, just strip the image
+          msgs[idx].imageUrl = undefined;
+        }
+      }
+      return msgs;
+    });
+
+    try {
+      const chatPath = `reviews/${conversationId}.json`;
+      const chatData = await getStorageJson(chatPath) as Conversation;
+      if (!chatData || !chatData.messages) return;
+
+      const idx = chatData.messages.findIndex(m => m.id === messageId && m.senderId === myId);
+      if (idx !== -1) {
+        if (!chatData.messages[idx].text.trim()) {
+          chatData.messages.splice(idx, 1);
+        } else {
+          chatData.messages[idx].imageUrl = undefined;
+        }
+        await setStorageJson(chatPath, chatData);
+        fetchChats();
+      }
+    } catch (err) {
+      console.error("Failed to unsend message", err);
     }
   }, [session?.user?.id, fetchChats]);
 
@@ -310,7 +353,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   }, [session?.user?.id, fetchChats]);
 
   return (
-    <ChatContext.Provider value={{ conversations, messages, sendMessage, markAsRead, getOrCreateConversation }}>
+    <ChatContext.Provider value={{
+      conversations,
+      messages,
+      sendMessage,
+      unsendMessage,
+      markAsRead,
+      getOrCreateConversation
+    }}>
       {children}
     </ChatContext.Provider>
   );
