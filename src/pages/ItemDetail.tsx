@@ -5,7 +5,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check, CheckCircle, Clock, Wallet } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check, Wallet } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -289,15 +289,8 @@ export default function ItemDetail() {
                 border: `1px solid ${userRequest.status === 'accepted' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
                 boxShadow: '0 8px 32px rgba(0,0,0,0.05)'
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                  <h3 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-main)' }}>
-                    <div style={{
-                      background: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)',
-                      width: '40px', height: '40px', borderRadius: '12px',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff'
-                    }}>
-                      {userRequest.status === 'accepted' ? <CheckCircle size={20} /> : <Clock size={20} />}
-                    </div>
+                <div style={{ marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '0 0 8px 0', color: 'var(--text-main)' }}>
                     Your Booking
                   </h3>
                   <span style={{
@@ -317,8 +310,12 @@ export default function ItemDetail() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <span style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '4px' }}>Dates</span>
-                      <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-main)' }}>
-                        {userRequest.start_date ? format(parseISO(userRequest.start_date), 'dd MMM yyyy') : ''} — {userRequest.end_date ? format(parseISO(userRequest.end_date), 'dd MMM yyyy') : ''}
+                      <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-main)', display: 'block' }}>
+                        {userRequest.start_date ? format(parseISO(userRequest.start_date), 'dd MMM yyyy') : ''}
+                      </span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: '14px', margin: '2px 0', display: 'block' }}>to</span>
+                      <span style={{ fontWeight: 700, fontSize: '16px', color: 'var(--text-main)', display: 'block' }}>
+                        {userRequest.end_date ? format(parseISO(userRequest.end_date), 'dd MMM yyyy') : ''}
                       </span>
                     </div>
                   </div>
@@ -331,7 +328,7 @@ export default function ItemDetail() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <span style={{ display: 'block', color: 'var(--text-muted)', fontSize: '13px', marginBottom: '4px' }}>Total Price</span>
-                      <span style={{ fontWeight: 800, color: 'var(--primary)', fontSize: '20px' }}>
+                      <span style={{ fontWeight: 800, color: 'var(--text-main)', fontSize: '20px' }}>
                         ₹{userRequest.total_price}
                       </span>
                     </div>
