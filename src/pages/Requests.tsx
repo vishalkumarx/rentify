@@ -16,6 +16,7 @@ export default function Requests() {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
+  const [incomingFilter, setIncomingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
   const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
   const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected'; originalPrice?: number } | null>(null);
   const [customPrice, setCustomPrice] = useState('');
@@ -103,7 +104,31 @@ export default function Requests() {
           {myIncomingRequests.length > 0 || myAcceptedRequests.length > 0 || myRejectedRequests.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              {myIncomingRequests.length > 0 && (
+              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+                {['all', 'pending', 'accepted', 'rejected'].map(f => (
+                  <button 
+                    key={f}
+                    onClick={() => setIncomingFilter(f as any)}
+                    style={{
+                      padding: '6px 16px',
+                      borderRadius: '20px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      border: '1px solid',
+                      borderColor: incomingFilter === f ? 'var(--text-main)' : 'var(--surface-border)',
+                      background: incomingFilter === f ? 'var(--text-main)' : 'var(--surface)',
+                      color: incomingFilter === f ? 'var(--surface)' : 'var(--text-main)',
+                      textTransform: 'capitalize',
+                      whiteSpace: 'nowrap',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {f}
+                  </button>
+                ))}
+              </div>
+
+              {(incomingFilter === 'all' || incomingFilter === 'pending') && myIncomingRequests.length > 0 && (
                 <div>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-main)' }}>Pending Requests</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -174,11 +199,11 @@ export default function Requests() {
                 </div>
               )}
 
-              {(myAcceptedRequests.length > 0 || myRejectedRequests.length > 0) && (
+              {(incomingFilter === 'all' || incomingFilter === 'accepted' || incomingFilter === 'rejected') && (myAcceptedRequests.length > 0 || myRejectedRequests.length > 0) && (
                 <div>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '24px 0 16px', color: 'var(--text-main)' }}>Booking History (Incoming)</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {[...myAcceptedRequests, ...myRejectedRequests].map(req => {
+                    {[...myAcceptedRequests, ...myRejectedRequests].filter(r => incomingFilter === 'all' || r.status === incomingFilter).map(req => {
                       const reqItem = items.find(i => i.id === req.item_id);
                       const requesterName = requesterNames[req.requester_id] || 'Loading...';
                       return (
@@ -231,6 +256,9 @@ export default function Requests() {
                       );
                     })}
                   </div>
+                  {[...myAcceptedRequests, ...myRejectedRequests].filter(r => incomingFilter === 'all' || r.status === incomingFilter).length === 0 && (
+                    <p style={{ color: 'var(--text-muted)', fontSize: '14px', marginTop: '16px', textAlign: 'center' }}>No {incomingFilter} history to show.</p>
+                  )}
                 </div>
               )}
             </div>
