@@ -347,7 +347,7 @@ export default function ItemDetail() {
             )}
 
             {/* Booking Calendar Section */}
-            {!isOwner && !userRequest && (
+            {!isOwner && !userRequest && item.status === 'available' && (
               <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
                 <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <CalendarIcon size={20} /> Select booking dates
@@ -360,7 +360,7 @@ export default function ItemDetail() {
                     setStartDate(start);
                     setEndDate(end);
                   }}
-                  disabled={!!userRequest || item.status === 'booked'}
+                  disabled={!!userRequest}
                 />
 
                 {startDate && endDate && calculateDays() > 0 && (
