@@ -27,6 +27,10 @@ export default function Chat() {
   const [replyingToMessage, setReplyingToMessage] = useState<any>(null);
   const [contextMenu, setContextMenu] = useState<{ messageId: string, x: number, y: number } | null>(null);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const swipeStartX = useRef<number | null>(null);
+  const swipeStartY = useRef<number | null>(null);
+  const [swipeTargetId, setSwipeTargetId] = useState<string | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState(0);
 
   const [customPrice, setCustomPrice] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
@@ -105,18 +109,55 @@ export default function Chat() {
   }, [id, allConversationMessages.length, markAsRead]);
 
   const handlePointerDown = (e: React.PointerEvent, msg: any) => {
-    // Only allow context menu for normal messages (not system notes)
     if (msg.text.startsWith('[Booking Request Note]:') || msg.text.startsWith('[Booking Request]:')) return;
     
     const x = e.clientX;
     const y = e.clientY;
+    
+    // Setup swipe
+    swipeStartX.current = x;
+    swipeStartY.current = y;
+    setSwipeTargetId(msg.id);
+    setSwipeOffset(0);
+
     longPressTimer.current = setTimeout(() => {
-      setContextMenu({ messageId: msg.id, x, y });
+      if (!msg.isDeleted) {
+        setContextMenu({ messageId: msg.id, x, y });
+      }
+      swipeStartX.current = null;
     }, 500);
   };
 
-  const handlePointerUpOrLeave = () => {
+  const handlePointerMove = (e: React.PointerEvent, msg: any) => {
+    if (swipeStartX.current === null || swipeTargetId !== msg.id) return;
+    
+    const diffX = e.clientX - swipeStartX.current;
+    const diffY = e.clientY - swipeStartY.current!;
+
+    // Cancel long press if finger moves more than 10px
+    if (Math.abs(diffX) > 10 || Math.abs(diffY) > 10) {
+      if (longPressTimer.current) clearTimeout(longPressTimer.current);
+    }
+
+    // Swipe right to reply
+    if (diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) {
+      setSwipeOffset(Math.min(diffX * 0.4, 60)); // Max resistance up to 60px
+    }
+  };
+
+  const handlePointerUpOrLeave = (_e: React.PointerEvent, msg: any) => {
     if (longPressTimer.current) clearTimeout(longPressTimer.current);
+    
+    if (swipeStartX.current !== null && swipeTargetId === msg.id) {
+      if (swipeOffset >= 40 && !msg.isDeleted) {
+        setReplyingToMessage(msg);
+        setTimeout(() => textareaRef.current?.focus(), 50);
+      }
+    }
+    swipeStartX.current = null;
+    swipeStartY.current = null;
+    setSwipeTargetId(null);
+    setSwipeOffset(0);
   };
 
   if (!conversation) {
@@ -377,15 +418,47 @@ export default function Chat() {
                     </span>
                   </div>
                 )}
-                <div 
-                  style={{ display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', position: 'relative' }}
-                  onPointerDown={(e) => handlePointerDown(e, msg)}
-                  onPointerUp={handlePointerUpOrLeave}
-                  onPointerLeave={handlePointerUpOrLeave}
-                  onPointerCancel={handlePointerUpOrLeave}
-                  onContextMenu={e => e.preventDefault()}
-                >
-                <div style={{ 
+                <div style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%' }}>
+                  {/* Reply icon revealed on swipe */}
+                  {swipeTargetId === msg.id && swipeOffset > 10 && !msg.isDeleted && (
+                    <div style={{
+                      position: 'absolute',
+                      left: isMe ? 'auto' : `calc(${swipeOffset}px - 40px)`,
+                      right: isMe ? `calc(100% - ${swipeOffset}px + 8px)` : 'auto',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      opacity: Math.min(swipeOffset / 40, 1),
+                      background: 'var(--surface-border)',
+                      borderRadius: '50%',
+                      width: '28px',
+                      height: '28px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--primary)',
+                      zIndex: 1
+                    }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
+                    </div>
+                  )}
+                  <div 
+                    style={{ 
+                      display: 'flex', 
+                      justifyContent: isMe ? 'flex-end' : 'flex-start', 
+                      position: 'relative',
+                      transform: swipeTargetId === msg.id ? `translateX(${swipeOffset}px)` : 'translateX(0)',
+                      transition: swipeTargetId === msg.id ? 'none' : 'transform 0.2s ease-out',
+                      width: '100%',
+                      zIndex: 2
+                    }}
+                    onPointerDown={(e) => handlePointerDown(e, msg)}
+                    onPointerMove={(e) => handlePointerMove(e, msg)}
+                    onPointerUp={(e) => handlePointerUpOrLeave(e, msg)}
+                    onPointerLeave={(e) => handlePointerUpOrLeave(e, msg)}
+                    onPointerCancel={(e) => handlePointerUpOrLeave(e, msg)}
+                    onContextMenu={e => e.preventDefault()}
+                  >
+                  <div style={{ 
                   maxWidth: '75%', 
                   padding: isEmojiOnly ? '4px' : '12px 16px', 
                   borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
@@ -464,9 +537,10 @@ export default function Chat() {
                       </span>
                     )}
                   </div>
+                  </div>
                 </div>
-              </div>
-            </Fragment>
+                </div>
+              </Fragment>
             );
           })}
       </main>
@@ -493,17 +567,6 @@ export default function Chat() {
               minWidth: '150px'
             }}
           >
-            <button 
-              onClick={() => {
-                const msg = allConversationMessages.find(m => m.id === contextMenu.messageId);
-                setReplyingToMessage(msg);
-                setContextMenu(null);
-                setTimeout(() => textareaRef.current?.focus(), 50);
-              }}
-              style={{ background: 'transparent', border: 'none', padding: '12px', textAlign: 'left', fontSize: '15px', fontWeight: 600, color: 'var(--text-main)', borderRadius: '8px', cursor: 'pointer' }}
-            >
-              Reply
-            </button>
             {(() => {
               const msg = allConversationMessages.find(m => m.id === contextMenu.messageId);
               if (msg && msg.senderId === session?.user?.id && !msg.isDeleted) {
