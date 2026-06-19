@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, Fragment } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X } from 'lucide-react';
@@ -23,6 +24,7 @@ export default function Chat() {
 
   const [customPrice, setCustomPrice] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -347,7 +349,12 @@ export default function Chat() {
                   ) : (
                     <>
                       {msg.imageUrl && (
-                        <img src={msg.imageUrl} alt="Attachment" style={{ width: '100%', maxWidth: '250px', borderRadius: '12px', marginBottom: msg.text ? '8px' : '0', objectFit: 'cover' }} />
+                        <img 
+                          src={msg.imageUrl} 
+                          alt="Attachment" 
+                          onClick={() => setFullscreenImage(msg.imageUrl!)}
+                          style={{ width: '100%', maxWidth: '250px', borderRadius: '12px', marginBottom: msg.text ? '8px' : '0', objectFit: 'cover', cursor: 'zoom-in' }} 
+                        />
                       )}
                       {msg.location && (
                         <a href={`https://maps.google.com/?q=${msg.location.lat},${msg.location.lng}`} target="_blank" rel="noreferrer" style={{ display: 'block', marginBottom: msg.text ? '8px' : '0', textDecoration: 'none' }}>
@@ -521,6 +528,27 @@ export default function Chat() {
         </div>
       )}
 
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && createPortal(
+        <div 
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          onClick={() => setFullscreenImage(null)}
+        >
+          <button 
+            onClick={() => setFullscreenImage(null)}
+            style={{ position: 'absolute', top: 'env(safe-area-inset-top, 24px)', right: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '50%', width: '40px', height: '40px', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 100000, marginTop: '24px' }}
+          >
+            <X size={24} />
+          </button>
+          <img 
+            src={fullscreenImage} 
+            alt="Fullscreen" 
+            style={{ maxWidth: '100vw', maxHeight: '100vh', objectFit: 'contain' }} 
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
