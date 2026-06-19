@@ -121,7 +121,7 @@ export default function Chat() {
     setSwipeOffset(0);
 
     longPressTimer.current = setTimeout(() => {
-      if (!msg.isDeleted) {
+      if (!msg.isDeleted && msg.imageUrl && msg.senderId === session?.user?.id) {
         setContextMenu({ messageId: msg.id, x, y });
       }
       swipeStartX.current = null;
