@@ -131,39 +131,38 @@ export default function Requests() {
                 ))}
               </div>
 
-              {(incomingFilter === 'all' || incomingFilter === 'pending') && (
-                <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px', color: 'var(--text-main)' }}>Pending Requests</h3>
-                  {myIncomingRequests.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {myIncomingRequests.map(req => {
-                      const reqItem = items.find(i => i.id === req.item_id);
-                      const requesterName = requesterNames[req.requester_id] || 'Loading...';
-                      return (
-                        <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', borderLeft: '4px solid var(--warning)' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div style={{ flex: 1, paddingRight: '12px' }}>
-                              <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
-                              <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                                Requested by <strong 
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/user/${req.requester_id}`);
-                                  }}
-                                  style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
-                                >
-                                  {requesterName}
-                                </strong>
-                              </p>
-                              <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
-                                  booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy EEEE') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy EEEE') : ''}
-                                </p>
-                              </div>
-                              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
-                                Total: ₹{req.total_price}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {[...myIncomingRequests, ...myAcceptedRequests, ...myRejectedRequests].filter(req => incomingFilter === 'all' || req.status === incomingFilter).length > 0 ? (
+                  [...myIncomingRequests, ...myAcceptedRequests, ...myRejectedRequests].filter(req => incomingFilter === 'all' || req.status === incomingFilter).map(req => {
+                    const reqItem = items.find(i => i.id === req.item_id);
+                    const requesterName = requesterNames[req.requester_id] || 'Loading...';
+                    return (
+                      <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ flex: 1, paddingRight: '12px' }}>
+                            <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
+                            <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                              Requested by <strong 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/user/${req.requester_id}`);
+                                }}
+                                style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
+                              >
+                                {requesterName}
+                              </strong>
+                            </p>
+                            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
+                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
+                                from {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
                               </p>
                             </div>
+                            <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
+                              Total: ₹{req.total_price}
+                            </p>
+                          </div>
+                          
+                          {req.status === 'pending' ? (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(req.total_price.toString()); }} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
                                 <Check size={26} strokeWidth={2.5} />
@@ -172,17 +171,23 @@ export default function Requests() {
                                 <X size={26} strokeWidth={2.5} />
                               </button>
                             </div>
-                          </div>
-                          
-                          {req.note && (
-                            <div style={{ marginTop: '12px', padding: '12px', background: 'var(--surface-border)', borderRadius: '12px' }}>
-                              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
-                                "{req.note}"
-                              </p>
+                          ) : (
+                            <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : 'var(--danger)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              {req.status === 'accepted' ? 'Accepted by you' : 'Rejected by you'}
                             </div>
                           )}
-                          
-                          <div style={{ marginTop: '12px', display: 'flex' }}>
+                        </div>
+                        
+                        {req.status === 'pending' && req.note && (
+                          <div style={{ marginTop: '12px', padding: '12px', background: 'var(--surface-border)', borderRadius: '12px' }}>
+                            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
+                              "{req.note}"
+                            </p>
+                          </div>
+                        )}
+                        
+                        {(req.status === 'pending' || req.status === 'accepted') && (
+                          <div style={{ marginTop: '16px', display: 'flex' }}>
                             <button 
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -190,90 +195,23 @@ export default function Requests() {
                                 const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
                                 navigate(`/chat/${convId}`);
                               }}
-                              style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'transparent', border: '1px solid var(--primary)', color: 'var(--primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                              style={{ flex: 1, padding: '12px', borderRadius: '12px', background: req.status === 'accepted' ? 'var(--surface-border)' : 'transparent', border: req.status === 'pending' ? '1px solid var(--primary)' : 'none', color: req.status === 'pending' ? 'var(--primary)' : 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
                             >
                               <MessageCircle size={18} />
-                              Message User
+                              {req.status === 'pending' ? 'Message User' : 'Chat with User'}
                             </button>
                           </div>
-                        </div>
-                      );
-                    })}
+                        )}
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                    <CalendarCheck size={48} opacity={0.3} style={{ marginBottom: '12px' }} />
+                    <p style={{ margin: 0, fontSize: '15px' }}>No {incomingFilter === 'all' ? 'incoming' : incomingFilter} requests found.</p>
                   </div>
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
-                      <CalendarCheck size={48} opacity={0.3} style={{ marginBottom: '12px' }} />
-                      <p style={{ margin: 0, fontSize: '15px' }}>No pending requests</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {(incomingFilter === 'all' || incomingFilter === 'accepted' || incomingFilter === 'rejected') && (myAcceptedRequests.length > 0 || myRejectedRequests.length > 0) && (
-                <div>
-                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '24px 0 16px', color: 'var(--text-main)' }}>Booking History (Incoming)</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {[...myAcceptedRequests, ...myRejectedRequests].filter(r => incomingFilter === 'all' || r.status === incomingFilter).map(req => {
-                      const reqItem = items.find(i => i.id === req.item_id);
-                      const requesterName = requesterNames[req.requester_id] || 'Loading...';
-                      return (
-                        <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : 'var(--danger)'}` }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                            <div style={{ flex: 1, paddingRight: '12px' }}>
-                              <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
-                              <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                                Requested by <strong 
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    navigate(`/user/${req.requester_id}`);
-                                  }}
-                                  style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
-                                >
-                                  {requesterName}
-                                </strong>
-                              </p>
-                              <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>
-                                  from {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
-                                </p>
-                              </div>
-                              <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
-                                Total: ₹{req.total_price}
-                              </p>
-                            </div>
-                            <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : 'var(--danger)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              {req.status === 'accepted' ? 'Accepted by you' : 'Rejected by you'}
-                            </div>
-                          </div>
-                          
-                          {req.status === 'accepted' && (
-                            <div style={{ marginTop: '16px', display: 'flex' }}>
-                              <button 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (!reqItem) return;
-                                  const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
-                                  navigate(`/chat/${convId}`);
-                                }}
-                                style={{ flex: 1, padding: '12px', borderRadius: '12px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
-                              >
-                                <MessageCircle size={18} />
-                                Chat with User
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {[...myAcceptedRequests, ...myRejectedRequests].filter(r => incomingFilter === 'all' || r.status === incomingFilter).length === 0 && (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '32px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
-                      <CalendarCheck size={48} opacity={0.3} style={{ marginBottom: '12px' }} />
-                      <p style={{ margin: 0, fontSize: '15px' }}>No {incomingFilter === 'all' ? 'booking' : incomingFilter} history to show.</p>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
+              </div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
