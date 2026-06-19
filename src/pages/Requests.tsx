@@ -7,7 +7,7 @@ import { CalendarCheck, Calendar, Check, X, MessageCircle } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { useChat } from '../context/ChatContext';
 import { getStorageJson } from '../lib/supabase';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isToday, isYesterday } from 'date-fns';
 
 export default function Requests() {
   const { items } = useFeed();
@@ -15,6 +15,14 @@ export default function Requests() {
   const { requests, updateRequestStatus } = useBookings();
   const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
+
+  const formatTiming = (dateStr?: string) => {
+    if (!dateStr) return '';
+    const d = parseISO(dateStr);
+    if (isToday(d)) return `Today at ${format(d, 'h:mm a')}`;
+    if (isYesterday(d)) return `Yesterday at ${format(d, 'h:mm a')}`;
+    return format(d, "MMM dd, yyyy 'at' h:mm a");
+  };
 
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
   const [incomingFilter, setIncomingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
@@ -137,58 +145,59 @@ export default function Requests() {
                     const reqItem = items.find(i => i.id === req.item_id);
                     const requesterName = requesterNames[req.requester_id] || 'Loading...';
                     return (
-                      <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                      <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ flex: 1, paddingRight: '12px' }}>
-                            <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
-                            <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                              Requested by <strong 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/user/${req.requester_id}`);
-                                }}
-                                style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}
-                              >
-                                {requesterName}
-                              </strong>
-                            </p>
-                            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <Calendar size={14} />
-                                {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
-                              </p>
+                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            {reqItem?.image && (
+                              <img src={reqItem.image} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
+                            )}
+                            <div>
+                              <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>{reqItem?.title || 'Unknown Item'}</h4>
+                              <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{formatTiming(req.created_at)}</p>
                             </div>
-                            <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
-                              Total: ₹{req.total_price}
-                            </p>
                           </div>
-                          
-                          {req.status === 'pending' ? (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                              <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(req.total_price.toString()); }} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
-                                <Check size={26} strokeWidth={2.5} />
-                              </button>
-                              <button onClick={() => setConfirmAction({ id: req.id, action: 'rejected' })} style={{ width: '48px', height: '48px', borderRadius: '24px', border: 'none', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}>
-                                <X size={26} strokeWidth={2.5} />
-                              </button>
-                            </div>
-                          ) : (
+                          {req.status !== 'pending' && (
                             <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : 'var(--danger)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              {req.status === 'accepted' ? 'Accepted by you' : 'Rejected by you'}
+                              {req.status}
                             </div>
                           )}
                         </div>
-                        
+
+                        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <p style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                              Requested by <strong onClick={(e) => { e.stopPropagation(); navigate(`/user/${req.requester_id}`); }} style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}>{requesterName}</strong>
+                            </p>
+                            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Calendar size={14} />
+                              {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
+                            </p>
+                          </div>
+                          <div style={{ textAlign: 'right' }}>
+                            <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#000' }}>₹{req.total_price}</p>
+                          </div>
+                        </div>
+
                         {req.status === 'pending' && req.note && (
-                          <div style={{ marginTop: '12px', padding: '12px', background: 'var(--surface-border)', borderRadius: '12px' }}>
+                          <div style={{ padding: '12px', background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
                             <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
                               "{req.note}"
                             </p>
                           </div>
                         )}
-                        
-                        {(req.status === 'pending' || req.status === 'accepted') && (
-                          <div style={{ marginTop: '16px', display: 'flex' }}>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          {req.status === 'pending' && (
+                            <>
+                              <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(req.total_price.toString()); }} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
+                                <Check size={18} strokeWidth={2.5} /> Accept
+                              </button>
+                              <button onClick={() => setConfirmAction({ id: req.id, action: 'rejected' })} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
+                                <X size={18} strokeWidth={2.5} /> Reject
+                              </button>
+                            </>
+                          )}
+                          {(req.status === 'pending' || req.status === 'accepted') && (
                             <button 
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -196,13 +205,13 @@ export default function Requests() {
                                 const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
                                 navigate(`/chat/${convId}`);
                               }}
-                              style={{ flex: 1, padding: '12px', borderRadius: '12px', background: req.status === 'accepted' ? 'var(--surface-border)' : 'transparent', border: req.status === 'pending' ? '1px solid var(--primary)' : 'none', color: req.status === 'pending' ? 'var(--primary)' : 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                              style={{ flex: req.status === 'accepted' ? 1 : 'none', width: req.status === 'accepted' ? 'auto' : '44px', height: '44px', borderRadius: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
                             >
                               <MessageCircle size={18} />
-                              {req.status === 'pending' ? 'Message User' : 'Chat with User'}
+                              {req.status === 'accepted' && 'Message User'}
                             </button>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     );
                   })
@@ -257,27 +266,59 @@ export default function Requests() {
                   myOutgoingRequests.filter(req => outgoingFilter === 'all' || req.status === outgoingFilter).map(req => {
                     const reqItem = items.find(i => i.id === req.item_id);
                     return (
-                      <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                      <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ flex: 1, paddingRight: '12px' }}>
-                            <h4 style={{ margin: '0 0 4px', fontSize: '16px' }}>{reqItem?.title || 'Unknown Item'}</h4>
-                            <p style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                              Status: <strong style={{ color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)' }}>{req.status.toUpperCase()}</strong>
-                            </p>
-                            <div style={{ display: 'inline-block', background: 'rgba(255,255,255,0.05)', padding: '6px 12px', borderRadius: '8px', marginBottom: '8px' }}>
-                              <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <Calendar size={14} />
-                                booking from {req.start_date ? format(parseISO(req.start_date), 'dd MMMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMMM yyyy') : ''}
-                              </p>
+                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            {reqItem?.image && (
+                              <img src={reqItem.image} alt="" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover' }} />
+                            )}
+                            <div>
+                              <h4 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 700 }}>{reqItem?.title || 'Unknown Item'}</h4>
+                              <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{formatTiming(req.created_at)}</p>
                             </div>
-                            <p style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: '#000' }}>
-                              Total: ₹{req.total_price}
+                          </div>
+                          <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : req.status === 'rejected' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            {req.status}
+                          </div>
+                        </div>
+
+                        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <p style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--text-muted)' }}>
+                              Requested by <strong>You</strong>
+                            </p>
+                            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <Calendar size={14} />
+                              {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
                             </p>
                           </div>
-                          {reqItem && (
-                            <img src={reqItem.image} alt={reqItem.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
-                          )}
+                          <div style={{ textAlign: 'right' }}>
+                            <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#000' }}>₹{req.total_price}</p>
+                          </div>
                         </div>
+
+                        {req.status === 'pending' && req.note && (
+                          <div style={{ padding: '12px', background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
+                              "{req.note}"
+                            </p>
+                          </div>
+                        )}
+                        
+                        {(req.status === 'pending' || req.status === 'accepted') && (
+                          <button 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (!reqItem) return;
+                              const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.owner_id, "Owner");
+                              navigate(`/chat/${convId}`);
+                            }}
+                            style={{ width: '100%', height: '44px', borderRadius: '12px', background: req.status === 'accepted' ? 'var(--surface)' : 'transparent', border: req.status === 'pending' ? '1px solid var(--primary)' : '1px solid var(--surface-border)', color: req.status === 'pending' ? 'var(--primary)' : 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                          >
+                            <MessageCircle size={18} />
+                            {req.status === 'accepted' ? 'Message Owner' : 'Chat with Owner'}
+                          </button>
+                        )}
                       </div>
                     );
                   })
