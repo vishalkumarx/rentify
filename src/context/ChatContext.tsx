@@ -288,6 +288,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         chatData.messages[idx].text = "This message was deleted";
         chatData.messages[idx].imageUrl = undefined;
         chatData.messages[idx].location = undefined;
+        
+        if (idx === chatData.messages.length - 1) {
+          chatData.lastMessage = "This message was deleted";
+        }
+        
         await setStorageJson(chatPath, chatData);
         fetchChats();
       }
