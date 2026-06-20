@@ -649,7 +649,7 @@ export default function Chat() {
               disabled={isChatDisabled}
               style={{ width: '46px', height: '46px', borderRadius: '23px', background: 'transparent', border: 'none', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}
             >
-              <Paperclip size={32} />
+              <Paperclip size={36} />
             </button>
             
             {showAttachments && (
