@@ -1,7 +1,7 @@
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Package, Plus } from 'lucide-react';
+import { Package, Plus, Edit2, Trash2 } from 'lucide-react';
 
 export default function MyListings() {
   const { items, deletePost } = useFeed();
@@ -18,21 +18,27 @@ export default function MyListings() {
         {myItems.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {myItems.map(item => (
-              <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '16px', display: 'flex', gap: '16px', cursor: 'pointer' }}>
-                <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', flex: 1 }}>
-                  <h4 style={{ margin: '0 0 4px', fontSize: '16px', color: 'var(--text-main)' }}>{item.title}</h4>
-                  <p style={{ margin: 0, color: 'var(--text-main)', fontWeight: 700 }}>₹{item.price}/day</p>
+              <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', borderRadius: '20px' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                  <img src={item.image} alt={item.title} style={{ width: '96px', height: '96px', borderRadius: '16px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h4>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
+                      <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}</span>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600 }}>/day</span>
+                    </div>
+                  </div>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--surface-border)', paddingTop: '16px' }}>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/edit/${item.id}`);
                     }}
-                    style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', cursor: 'pointer' }}
+                    style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
-                    Edit
+                    <Edit2 size={16} /> Edit
                   </button>
                   <button
                     onClick={async (e) => {
@@ -41,9 +47,9 @@ export default function MyListings() {
                         await deletePost(item.id);
                       }
                     }}
-                    style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer' }}
+                    style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
-                    Delete
+                    <Trash2 size={16} /> Delete
                   </button>
                 </div>
               </div>
