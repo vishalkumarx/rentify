@@ -368,7 +368,7 @@ export default function Requests() {
                               <MessageCircle size={18} />
                               {req.status === 'accepted' ? 'Message Owner' : 'Chat with Owner'}
                             </button>
-                            {req.status === 'accepted' && (
+                            {(req.status === 'accepted' || req.status === 'pending') && (
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -376,7 +376,7 @@ export default function Requests() {
                                 }}
                                 style={{ width: '100%', height: '44px', borderRadius: '12px', background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
                               >
-                                <X size={18} /> Cancel Booking
+                                <X size={18} /> {req.status === 'pending' ? 'Withdraw Request' : 'Cancel Booking'}
                               </button>
                             )}
                           </div>
