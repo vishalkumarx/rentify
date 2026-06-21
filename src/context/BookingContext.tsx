@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 
-export type BookingStatus = 'pending' | 'accepted' | 'rejected';
+export type BookingStatus = 'pending' | 'accepted' | 'rejected' | 'cancelled';
 
 export interface BookingRequest {
   id: number;
@@ -119,12 +119,17 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}) } : req));
 
     // If accepted, update the rental item's status to booked
-    if (status === 'accepted') {
-      const request = requests.find(r => r.id === id);
-      if (request) {
+    const request = requests.find(r => r.id === id);
+    if (request) {
+      if (status === 'accepted') {
         await supabase
           .from('rental_items')
           .update({ status: 'booked' })
+          .eq('id', request.item_id);
+      } else if (status === 'cancelled' || status === 'rejected') {
+        await supabase
+          .from('rental_items')
+          .update({ status: 'available' })
           .eq('id', request.item_id);
       }
     }

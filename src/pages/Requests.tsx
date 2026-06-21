@@ -13,7 +13,7 @@ export default function Requests() {
   const { items } = useFeed();
   const { session } = useAuth();
   const { requests, updateRequestStatus } = useBookings();
-  const { getOrCreateConversation } = useChat();
+  const { getOrCreateConversation, sendMessage } = useChat();
   const navigate = useNavigate();
 
   const formatTiming = (dateStr?: string) => {
@@ -29,6 +29,7 @@ export default function Requests() {
   const [outgoingFilter, setOutgoingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
   const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
   const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected'; originalPrice?: number } | null>(null);
+  const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee', itemTitle: string, otherUserId: string, otherUserName: string } | null>(null);
   const [customPrice, setCustomPrice] = useState('');
 
   // Incoming Requests: Requests sent TO me (I am the owner)
@@ -198,18 +199,31 @@ export default function Requests() {
                             </>
                           )}
                           {(req.status === 'pending' || req.status === 'accepted') && (
-                            <button 
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (!reqItem) return;
-                                const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
-                                navigate(`/chat/${convId}`);
-                              }}
-                              style={{ flex: req.status === 'accepted' ? 1 : 'none', width: req.status === 'accepted' ? 'auto' : '44px', height: '44px', borderRadius: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
-                            >
-                              <MessageCircle size={18} />
-                              {req.status === 'accepted' && 'Message User'}
-                            </button>
+                            <>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (!reqItem) return;
+                                  const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
+                                  navigate(`/chat/${convId}`);
+                                }}
+                                style={{ flex: req.status === 'accepted' ? 1 : 'none', width: req.status === 'accepted' ? 'auto' : '44px', height: '44px', borderRadius: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                              >
+                                <MessageCircle size={18} />
+                                {req.status === 'accepted' && 'Message User'}
+                              </button>
+                              {req.status === 'accepted' && (
+                                <button 
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setCancelAction({ id: req.id, role: 'owner', itemTitle: reqItem?.title || '', otherUserId: req.requester_id, otherUserName: requesterName });
+                                  }}
+                                  style={{ flex: 1, height: '44px', borderRadius: '12px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                                >
+                                  <X size={18} /> Cancel
+                                </button>
+                              )}
+                            </>
                           )}
                         </div>
                       </div>
@@ -306,18 +320,31 @@ export default function Requests() {
                         )}
                         
                         {(req.status === 'pending' || req.status === 'accepted') && (
-                          <button 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              if (!reqItem) return;
-                              const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.owner_id, "Owner");
-                              navigate(`/chat/${convId}`);
-                            }}
-                            style={{ width: '100%', height: '44px', borderRadius: '12px', background: req.status === 'accepted' ? 'var(--surface)' : 'transparent', border: req.status === 'pending' ? '1px solid var(--primary)' : '1px solid var(--surface-border)', color: req.status === 'pending' ? 'var(--primary)' : 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
-                          >
-                            <MessageCircle size={18} />
-                            {req.status === 'accepted' ? 'Message Owner' : 'Chat with Owner'}
-                          </button>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (!reqItem) return;
+                                const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.owner_id, "Owner");
+                                navigate(`/chat/${convId}`);
+                              }}
+                              style={{ width: '100%', height: '44px', borderRadius: '12px', background: req.status === 'accepted' ? 'var(--surface)' : 'transparent', border: req.status === 'pending' ? '1px solid var(--primary)' : '1px solid var(--surface-border)', color: req.status === 'pending' ? 'var(--primary)' : 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                            >
+                              <MessageCircle size={18} />
+                              {req.status === 'accepted' ? 'Message Owner' : 'Chat with Owner'}
+                            </button>
+                            {req.status === 'accepted' && (
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCancelAction({ id: req.id, role: 'rentee', itemTitle: reqItem?.title || '', otherUserId: req.owner_id, otherUserName: 'Owner' });
+                                }}
+                                style={{ width: '100%', height: '44px', borderRadius: '12px', background: 'transparent', border: '1px solid var(--danger)', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                              >
+                                <X size={18} /> Cancel Booking
+                              </button>
+                            )}
+                          </div>
                         )}
                       </div>
                     );
@@ -380,6 +407,46 @@ export default function Requests() {
                 }} 
                 style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: confirmAction.action === 'accepted' ? 'var(--success)' : 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Yes, {confirmAction.action === 'accepted' ? 'Accept' : 'Reject'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+      {/* Cancel Action Modal */}
+      {cancelAction && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--danger)' }}>
+              Cancel Booking?
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              {cancelAction.role === 'rentee' 
+                ? "You are about to cancel this booking. Cancellations are free up to 24 hours before the rental start date. Frequent last-minute cancellations may negatively affect your profile standing. Are you sure?"
+                : "You are about to cancel this booking. Please ensure you only cancel if the item is truly unavailable. Frequent cancellations will lower your seller rating. Are you sure?"}
+            </p>
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button onClick={() => setCancelAction(null)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Go Back
+              </button>
+              <button 
+                onClick={async () => {
+                  await updateRequestStatus(cancelAction.id, 'cancelled');
+                  
+                  // Send automated message
+                  const req = requests.find(r => r.id === cancelAction.id);
+                  if (req) {
+                    const convId = getOrCreateConversation(req.item_id, cancelAction.itemTitle, "", cancelAction.otherUserId, cancelAction.otherUserName);
+                    if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                      await sendMessage(convId, session.user.id, `[System]: 🚫 Booking cancelled by ${session.user.user_metadata.full_name}.`);
+                    }
+                  }
+                  
+                  setCancelAction(null);
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Confirm Cancel
               </button>
             </div>
           </div>
