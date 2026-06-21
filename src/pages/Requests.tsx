@@ -25,8 +25,8 @@ export default function Requests() {
   };
 
   const [activeTab, setActiveTab] = useState<'incoming' | 'outgoing'>('incoming');
-  const [incomingFilter, setIncomingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
-  const [outgoingFilter, setOutgoingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected'>('all');
+  const [incomingFilter, setIncomingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected' | 'cancelled'>('all');
+  const [outgoingFilter, setOutgoingFilter] = useState<'all' | 'pending' | 'accepted' | 'rejected' | 'cancelled'>('all');
   const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
   const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected'; originalPrice?: number } | null>(null);
   const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee', itemTitle: string, otherUserId: string, otherUserName: string } | null>(null);
@@ -35,7 +35,7 @@ export default function Requests() {
   // Incoming Requests: Requests sent TO me (I am the owner)
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
   const myAcceptedRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'accepted');
-  const myRejectedRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'rejected');
+  const myRejectedRequests = requests.filter(r => r.owner_id === session?.user?.id && (r.status === 'rejected' || r.status === 'cancelled'));
 
   // Outgoing Requests: Requests I sent TO others
   const myOutgoingRequests = requests.filter(r => r.requester_id === session?.user?.id);
@@ -117,7 +117,7 @@ export default function Requests() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
               <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-                {['all', 'pending', 'accepted', 'rejected'].map(f => (
+                {['all', 'pending', 'accepted', 'rejected', 'cancelled'].map(f => (
                   <button 
                     key={f}
                     onClick={() => setIncomingFilter(f as any)}
@@ -252,7 +252,7 @@ export default function Requests() {
           {myOutgoingRequests.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
-                {['all', 'pending', 'accepted', 'rejected'].map(f => (
+                {['all', 'pending', 'accepted', 'rejected', 'cancelled'].map(f => (
                   <button 
                     key={f}
                     onClick={() => setOutgoingFilter(f as any)}
