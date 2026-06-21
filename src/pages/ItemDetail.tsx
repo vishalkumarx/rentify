@@ -51,6 +51,7 @@ export default function ItemDetail() {
 
   const [bookingSheetState, setBookingSheetState] = useState<'none' | 'confirm' | 'success'>('none');
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
 
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
   const [startDate, setStartDate] = useState('');
@@ -604,14 +605,35 @@ export default function ItemDetail() {
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
               Are you sure you want to cancel your booking request for <strong>{item.title}</strong>? The owner will no longer see it.
             </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Reason for cancellation (optional)</label>
+              <textarea
+                value={cancelReason}
+                onChange={e => setCancelReason(e.target.value)}
+                placeholder="Briefly explain why you are cancelling..."
+                style={{ width: '100%', minHeight: '80px', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px', resize: 'none', outline: 'none' }}
+              />
+            </div>
+
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button onClick={() => setShowCancelConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setShowCancelConfirm(false); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 No, Keep it
               </button>
               <button 
-                onClick={() => {
+                onClick={async () => {
                   deleteRequest(userRequest.id);
+                  
+                  // Send automated message
+                  const ownerId = item.userId || `user-${item.id}`;
+                  const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
+                  if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                    const reasonText = cancelReason.trim() ? `\nReason: ${cancelReason.trim()}` : '';
+                    await sendMessage(convId, session.user.id, `[System]: 🚫 Booking request was withdrawn by ${session.user.user_metadata.full_name}.${reasonText}`);
+                  }
+                  
                   setShowCancelConfirm(false);
+                  setCancelReason('');
                 }} 
                 style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Yes, Cancel

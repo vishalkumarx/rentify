@@ -31,6 +31,7 @@ export default function Requests() {
   const [confirmAction, setConfirmAction] = useState<{ id: number; action: 'accepted' | 'rejected'; originalPrice?: number } | null>(null);
   const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee', itemTitle: string, otherUserId: string, otherUserName: string } | null>(null);
   const [customPrice, setCustomPrice] = useState('');
+  const [cancelReason, setCancelReason] = useState('');
 
   // Incoming Requests: Requests sent TO me (I am the owner)
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
@@ -426,8 +427,18 @@ export default function Requests() {
                 : "You are about to cancel this booking. Please ensure you only cancel if the item is truly unavailable. Frequent cancellations will lower your seller rating. Are you sure?"}
             </p>
             
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Reason for cancellation (optional)</label>
+              <textarea
+                value={cancelReason}
+                onChange={e => setCancelReason(e.target.value)}
+                placeholder="Briefly explain why you are cancelling..."
+                style={{ width: '100%', minHeight: '80px', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px', resize: 'none', outline: 'none' }}
+              />
+            </div>
+
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button onClick={() => setCancelAction(null)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setCancelAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Go Back
               </button>
               <button 
@@ -439,11 +450,13 @@ export default function Requests() {
                   if (req) {
                     const convId = getOrCreateConversation(req.item_id, cancelAction.itemTitle, "", cancelAction.otherUserId, cancelAction.otherUserName);
                     if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
-                      await sendMessage(convId, session.user.id, `[System]: 🚫 Booking cancelled by ${session.user.user_metadata.full_name}.`);
+                      const reasonText = cancelReason.trim() ? `\nReason: ${cancelReason.trim()}` : '';
+                      await sendMessage(convId, session.user.id, `[System]: 🚫 Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
                     }
                   }
                   
                   setCancelAction(null);
+                  setCancelReason('');
                 }} 
                 style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Confirm Cancel
