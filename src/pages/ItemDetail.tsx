@@ -59,7 +59,7 @@ export default function ItemDetail() {
   
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
-  const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status !== 'rejected') : null;
+  const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status !== 'rejected' && r.status !== 'cancelled') : null;
   const chatExists = item && conversations.some(c => c.itemId === item.id && c.otherUserId === item.userId);
 
   useEffect(() => {
