@@ -180,13 +180,30 @@ export default function Requests() {
                           </div>
                         </div>
 
-                        {req.status === 'pending' && req.note && (
-                          <div style={{ padding: '12px', background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-                            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
-                              "{req.note}"
-                            </p>
-                          </div>
-                        )}
+                        {(() => {
+                          const noteStr = req.note || '';
+                          const noteParts = noteStr.split('Cancel Reason:');
+                          const originalNote = noteParts[0]?.trim();
+                          const cancelReasonText = noteParts[1]?.trim();
+
+                          return (
+                            <>
+                              {req.status === 'pending' && originalNote && (
+                                <div style={{ padding: '12px', background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
+                                    "{originalNote}"
+                                  </p>
+                                </div>
+                              )}
+                              {req.status === 'cancelled' && cancelReasonText && (
+                                <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                                  <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: 'var(--danger)', marginBottom: '4px' }}>Cancellation Reason:</p>
+                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>{cancelReasonText}</p>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
 
                         <div style={{ display: 'flex', gap: '8px' }}>
                           {req.status === 'pending' && (
@@ -312,13 +329,30 @@ export default function Requests() {
                           </div>
                         </div>
 
-                        {req.status === 'pending' && req.note && (
-                          <div style={{ padding: '12px', background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-                            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
-                              "{req.note}"
-                            </p>
-                          </div>
-                        )}
+                        {(() => {
+                          const noteStr = req.note || '';
+                          const noteParts = noteStr.split('Cancel Reason:');
+                          const originalNote = noteParts[0]?.trim();
+                          const cancelReasonText = noteParts[1]?.trim();
+
+                          return (
+                            <>
+                              {req.status === 'pending' && originalNote && (
+                                <div style={{ padding: '12px', background: 'var(--surface)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic' }}>
+                                    "{originalNote}"
+                                  </p>
+                                </div>
+                              )}
+                              {req.status === 'cancelled' && cancelReasonText && (
+                                <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                                  <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: 'var(--danger)', marginBottom: '4px' }}>Cancellation Reason:</p>
+                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>{cancelReasonText}</p>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
                         
                         {(req.status === 'pending' || req.status === 'accepted') && (
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -443,7 +477,7 @@ export default function Requests() {
               </button>
               <button 
                 onClick={async () => {
-                  await updateRequestStatus(cancelAction.id, 'cancelled');
+                  await updateRequestStatus(cancelAction.id, 'cancelled', undefined, cancelReason.trim());
                   
                   // Send automated message
                   const req = requests.find(r => r.id === cancelAction.id);

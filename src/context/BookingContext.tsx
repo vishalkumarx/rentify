@@ -24,7 +24,7 @@ export interface BookingRequest {
 interface BookingContextType {
   requests: BookingRequest[];
   createRequest: (booking: Omit<BookingRequest, 'id' | 'created_at' | 'status'>) => Promise<void>;
-  updateRequestStatus: (id: number, status: BookingStatus, agreedPrice?: number) => Promise<void>;
+  updateRequestStatus: (id: number, status: BookingStatus, agreedPrice?: number, cancelReason?: string) => Promise<void>;
   deleteRequest: (id: number) => Promise<void>;
   refreshRequests: () => Promise<void>;
 }
@@ -98,10 +98,17 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateRequestStatus = async (id: number, status: BookingStatus, agreedPrice?: number) => {
+  const updateRequestStatus = async (id: number, status: BookingStatus, agreedPrice?: number, cancelReason?: string) => {
     const updateData: any = { status };
     if (agreedPrice !== undefined) {
       updateData.total_price = agreedPrice;
+    }
+    
+    let updatedNote: string | undefined;
+    if (cancelReason) {
+      const existingReq = requests.find(r => r.id === id);
+      updatedNote = existingReq?.note ? `${existingReq.note}\n\nCancel Reason: ${cancelReason}` : `Cancel Reason: ${cancelReason}`;
+      updateData.note = updatedNote;
     }
 
     const { error } = await supabase
@@ -112,11 +119,11 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
     if (error) {
       console.error('Error updating status:', error);
       // Fallback mock
-      setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}) } : req));
+      setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}), ...(updatedNote !== undefined ? { note: updatedNote } : {}) } : req));
       return;
     }
 
-    setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}) } : req));
+    setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}), ...(updatedNote !== undefined ? { note: updatedNote } : {}) } : req));
 
     // If accepted, update the rental item's status to booked
     const request = requests.find(r => r.id === id);
