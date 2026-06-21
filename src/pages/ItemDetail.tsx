@@ -190,7 +190,7 @@ export default function ItemDetail() {
 
       {/* Content */}
       <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '200px' }}>
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div className="item-detail-layout" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           
           {/* Main Image Slider */}
           <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>

@@ -491,3 +491,14 @@ a:hover {
   animation: shimmer 2s infinite linear;
   border-radius: 8px;
 }
+
+@media (min-width: 768px) {
+  .item-detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+}
