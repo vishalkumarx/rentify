@@ -17,6 +17,7 @@ export default function UserProfile() {
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [newReviewText, setNewReviewText] = useState('');
+  const [newReviewRating, setNewReviewRating] = useState(5);
   const [submittingReview, setSubmittingReview] = useState(false);
 
   // Report State
@@ -35,26 +36,35 @@ export default function UserProfile() {
 
       // Fetch Profile Data
       const pData = await getStorageJson(`profiles/${id}.json`);
+
+      // Fetch Reviews from Storage
+      const { data: reviewFiles } = await supabase.storage.from('item-images').list('reviews');
+      let loadedReviews: any[] = [];
+      if (reviewFiles) {
+        // Filter reviews for this specific user ID
+        const targetFiles = reviewFiles.filter(f => f.name.startsWith(id + '-'));
+        loadedReviews = await Promise.all(
+          targetFiles.map(async f => await getStorageJson(`reviews/${f.name}`))
+        );
+        loadedReviews = loadedReviews.filter(Boolean).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setReviews(loadedReviews);
+      }
+      
+      let computedRating = '5.0';
+      if (loadedReviews.length > 0) {
+        const total = loadedReviews.reduce((sum, rev) => sum + (rev.rating || 5), 0);
+        computedRating = (total / loadedReviews.length).toFixed(1);
+      }
+
       if (pData) {
-        setProfile(pData);
+        setProfile({ ...pData, rating: computedRating });
       } else {
         setProfile({
           name: 'User ' + (id ? id.substring(0, 5) : ''),
           memberSince: new Date().getFullYear().toString(),
-          verifications: ['Email Confirmed']
+          verifications: ['Email Confirmed'],
+          rating: computedRating
         });
-      }
-
-      // Fetch Reviews from Storage
-      const { data: reviewFiles } = await supabase.storage.from('item-images').list('reviews');
-      if (reviewFiles) {
-        // Filter reviews for this specific user ID
-        const targetFiles = reviewFiles.filter(f => f.name.startsWith(id + '-'));
-        const loadedReviews = await Promise.all(
-          targetFiles.map(async f => await getStorageJson(`reviews/${f.name}`))
-        );
-        // Sort newest first
-        setReviews(loadedReviews.filter(Boolean).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
       }
       
       setLoading(false);
@@ -99,13 +109,25 @@ export default function UserProfile() {
       const reviewObj = {
         reviewerId: session.user.id,
         text: newReviewText,
+        rating: newReviewRating,
         timestamp: new Date().toISOString(),
         reviewerName: session.user.user_metadata?.full_name || 'A user'
       };
       
       await setStorageJson(`reviews/${id}-${session.user.id}-${Date.now()}.json`, reviewObj);
-      setReviews([reviewObj, ...reviews]);
+      
+      const newReviews = [reviewObj, ...reviews];
+      setReviews(newReviews);
+      
+      let computedRating = '5.0';
+      if (newReviews.length > 0) {
+        const total = newReviews.reduce((sum, rev) => sum + (rev.rating || 5), 0);
+        computedRating = (total / newReviews.length).toFixed(1);
+      }
+      setProfile((prev: any) => prev ? { ...prev, rating: computedRating } : null);
+
       setNewReviewText('');
+      setNewReviewRating(5);
       toast.success('Review posted successfully!');
     } catch (err) {
       toast.error('Failed to post review');
@@ -183,21 +205,35 @@ export default function UserProfile() {
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Reviews ({reviews.length})</h3>
           
           {session?.user?.id && session.user.id !== id && (
-            <form onSubmit={handleSubmitReview} style={{ display: 'flex', gap: '12px', marginBottom: '24px' }}>
-              <input 
-                type="text" 
-                placeholder="Write a public review..." 
-                value={newReviewText}
-                onChange={(e) => setNewReviewText(e.target.value)}
-                style={{ flex: 1, padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none' }}
-              />
-              <button 
-                type="submit" 
-                disabled={submittingReview || !newReviewText.trim()}
-                style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#000000', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
-              >
-                <Send size={20} />
-              </button>
+            <form onSubmit={handleSubmitReview} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star 
+                    key={star} 
+                    size={24} 
+                    fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
+                    color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
+                    style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                    onClick={() => setNewReviewRating(star)}
+                  />
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Write a public review..." 
+                  value={newReviewText}
+                  onChange={(e) => setNewReviewText(e.target.value)}
+                  style={{ flex: 1, padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none' }}
+                />
+                <button 
+                  type="submit" 
+                  disabled={submittingReview || !newReviewText.trim()}
+                  style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#000000', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
+                >
+                  <Send size={20} />
+                </button>
+              </div>
             </form>
           )}
 
@@ -209,8 +245,20 @@ export default function UserProfile() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {reviews.map((rev, idx) => (
                 <div key={idx} className="glass-panel" style={{ padding: '16px', borderRadius: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontWeight: 700, fontSize: '15px' }}>{rev.reviewerName}</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span style={{ fontWeight: 700, fontSize: '15px' }}>{rev.reviewerName}</span>
+                      <div style={{ display: 'flex', gap: '2px' }}>
+                        {[1, 2, 3, 4, 5].map(star => (
+                          <Star 
+                            key={star} 
+                            size={12} 
+                            fill={star <= (rev.rating || 5) ? "var(--warning)" : "transparent"} 
+                            color={star <= (rev.rating || 5) ? "var(--warning)" : "var(--surface-border)"} 
+                          />
+                        ))}
+                      </div>
+                    </div>
                     <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{new Date(rev.timestamp).toLocaleDateString()}</span>
                   </div>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.5, color: 'var(--text-main)' }}>{rev.text}</p>
