@@ -36,7 +36,7 @@ export default function ItemDetail() {
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation, conversations, sendMessage } = useChat();
   const { session, loading } = useAuth();
-  const { createRequest, deleteRequest, requests } = useBookings();
+  const { createRequest, requests, updateRequestStatus } = useBookings();
   const [zoomImageIndex, setZoomImageIndex] = useState<number | null>(null);
   const [currentMainImageIndex, setCurrentMainImageIndex] = useState(0);
   const isInitialModalRender = useRef(false);
@@ -622,7 +622,9 @@ export default function ItemDetail() {
               </button>
               <button 
                 onClick={async () => {
-                  deleteRequest(userRequest.id);
+                  const rolePrefix = `[Cancelled by rentee] `;
+                  const formattedReason = cancelReason.trim() ? `${rolePrefix}${cancelReason.trim()}` : rolePrefix;
+                  await updateRequestStatus(userRequest.id, 'cancelled', undefined, formattedReason);
                   
                   // Send automated message
                   const ownerId = item.userId || `user-${item.id}`;
