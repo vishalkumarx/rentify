@@ -435,6 +435,25 @@ export default function Chat() {
                     </span>
                   </div>
                 )}
+                {msg.text.startsWith('[System]:') ? (
+                  <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
+                    <div style={{ 
+                      background: 'rgba(0, 0, 0, 0.03)', 
+                      border: '1px solid var(--surface-border)',
+                      padding: '12px 16px', 
+                      borderRadius: '12px', 
+                      fontSize: '13px', 
+                      color: 'var(--text-main)', 
+                      textAlign: 'center',
+                      maxWidth: '85%',
+                      whiteSpace: 'pre-wrap',
+                      lineHeight: 1.4
+                    }}>
+                      <strong style={{ color: 'var(--primary)' }}>[System]: </strong>
+                      {msg.text.replace('[System]:', '').trim()}
+                    </div>
+                  </div>
+                ) : (
                 <div style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%' }}>
                   {/* Reply icon revealed on swipe */}
                   {swipeTargetId === msg.id && swipeOffset > 10 && !msg.isDeleted && (
@@ -557,9 +576,9 @@ export default function Chat() {
                       </span>
                     )}
                   </div>
-                  </div>
                 </div>
                 </div>
+                )}
               </Fragment>
             );
           })}

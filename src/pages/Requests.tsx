@@ -41,6 +41,27 @@ export default function Requests() {
   // Outgoing Requests: Requests I sent TO others
   const myOutgoingRequests = requests.filter(r => r.requester_id === session?.user?.id);
 
+  const getCancelInfo = (req: any, isIncoming: boolean) => {
+    let tagText = req.status;
+    let cleanReason = '';
+    if (req.status === 'cancelled') {
+      const noteStr = req.note || '';
+      const parts = noteStr.split('Cancel Reason:');
+      let rawReason = parts[1]?.trim() || '';
+      if (rawReason.startsWith('[Cancelled by owner]')) {
+        tagText = isIncoming ? 'CANCELLED BY YOU' : 'CANCELLED BY OWNER';
+        cleanReason = rawReason.replace('[Cancelled by owner]', '').trim();
+      } else if (rawReason.startsWith('[Cancelled by rentee]')) {
+        tagText = isIncoming ? 'CANCELLED BY REQUESTER' : 'CANCELLED BY YOU';
+        cleanReason = rawReason.replace('[Cancelled by rentee]', '').trim();
+      } else {
+        tagText = 'CANCELLED';
+        cleanReason = rawReason;
+      }
+    }
+    return { tagText, cleanReason };
+  };
+
   useEffect(() => {
     const fetchNames = async () => {
       const names: Record<string, string> = {};
@@ -158,11 +179,14 @@ export default function Requests() {
                               <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{formatTiming(req.created_at)}</p>
                             </div>
                           </div>
-                          {req.status !== 'pending' && (
-                            <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : 'var(--danger)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                              {req.status}
-                            </div>
-                          )}
+                          {req.status !== 'pending' && (() => {
+                            const { tagText } = getCancelInfo(req, true);
+                            return (
+                              <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : 'var(--danger)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                {tagText}
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -184,7 +208,7 @@ export default function Requests() {
                           const noteStr = req.note || '';
                           const noteParts = noteStr.split('Cancel Reason:');
                           const originalNote = noteParts[0]?.trim();
-                          const cancelReasonText = noteParts[1]?.trim();
+                          const { cleanReason } = getCancelInfo(req, true);
 
                           return (
                             <>
@@ -195,10 +219,10 @@ export default function Requests() {
                                   </p>
                                 </div>
                               )}
-                              {req.status === 'cancelled' && cancelReasonText && (
+                              {req.status === 'cancelled' && cleanReason && (
                                 <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                                   <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: 'var(--danger)', marginBottom: '4px' }}>Cancellation Reason:</p>
-                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>{cancelReasonText}</p>
+                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>{cleanReason}</p>
                                 </div>
                               )}
                             </>
@@ -309,9 +333,14 @@ export default function Requests() {
                               <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>{formatTiming(req.created_at)}</p>
                             </div>
                           </div>
-                          <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : req.status === 'rejected' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            {req.status}
-                          </div>
+                          {(() => {
+                            const { tagText } = getCancelInfo(req, false);
+                            return (
+                              <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : req.status === 'rejected' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                                {tagText}
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -333,7 +362,7 @@ export default function Requests() {
                           const noteStr = req.note || '';
                           const noteParts = noteStr.split('Cancel Reason:');
                           const originalNote = noteParts[0]?.trim();
-                          const cancelReasonText = noteParts[1]?.trim();
+                          const { cleanReason } = getCancelInfo(req, false);
 
                           return (
                             <>
@@ -344,10 +373,10 @@ export default function Requests() {
                                   </p>
                                 </div>
                               )}
-                              {req.status === 'cancelled' && cancelReasonText && (
+                              {req.status === 'cancelled' && cleanReason && (
                                 <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                                   <p style={{ margin: 0, fontSize: '13px', fontWeight: 600, color: 'var(--danger)', marginBottom: '4px' }}>Cancellation Reason:</p>
-                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>{cancelReasonText}</p>
+                                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>{cleanReason}</p>
                                 </div>
                               )}
                             </>
@@ -477,7 +506,9 @@ export default function Requests() {
               </button>
               <button 
                 onClick={async () => {
-                  await updateRequestStatus(cancelAction.id, 'cancelled', undefined, cancelReason.trim());
+                  const rolePrefix = `[Cancelled by ${cancelAction.role}] `;
+                  const formattedReason = cancelReason.trim() ? `${rolePrefix}${cancelReason.trim()}` : rolePrefix;
+                  await updateRequestStatus(cancelAction.id, 'cancelled', undefined, formattedReason);
                   
                   // Send automated message
                   const req = requests.find(r => r.id === cancelAction.id);
