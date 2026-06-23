@@ -453,6 +453,40 @@ export default function Chat() {
                       {msg.text.replace('[System]:', '').trim()}
                     </div>
                   </div>
+                ) : msg.text.startsWith('[Booking Request Note]:') ? (
+                  <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
+                    <div style={{ 
+                      background: 'var(--surface)', 
+                      border: '1px solid var(--surface-border)',
+                      padding: '12px 16px', 
+                      borderRadius: '12px', 
+                      color: 'var(--text-main)', 
+                      textAlign: 'center',
+                      maxWidth: '85%',
+                      whiteSpace: 'pre-wrap',
+                      lineHeight: 1.4
+                    }}>
+                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)' }}>Booking Note</p>
+                      <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.4, fontStyle: 'italic' }}>"{msg.text.replace('[Booking Request Note]:', '').trim()}"</p>
+                    </div>
+                  </div>
+                ) : msg.text.startsWith('[Booking Request]:') ? (
+                  <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
+                    <div style={{ 
+                      background: 'rgba(59, 130, 246, 0.05)', 
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                      padding: '12px 16px', 
+                      borderRadius: '12px', 
+                      color: 'var(--text-main)', 
+                      textAlign: 'center',
+                      maxWidth: '85%',
+                      whiteSpace: 'pre-wrap',
+                      lineHeight: 1.4
+                    }}>
+                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#3b82f6' }}>Booking Request</p>
+                      <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.4 }}>{msg.text.replace('[Booking Request]:', '').trim()}</p>
+                    </div>
+                  </div>
                 ) : (
                 <div style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%' }}>
                   {/* Reply icon revealed on swipe */}
@@ -505,19 +539,7 @@ export default function Chat() {
                   color: isMe ? '#111827' : 'var(--text-main)',
                   border: isEmojiOnly ? 'none' : (isMe ? 'none' : '1px solid var(--surface-border)')
                 }}>
-                  {msg.text.startsWith('[Booking Request Note]: ') ? (
-                    <>
-                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
-                      <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>"{msg.text.replace('[Booking Request Note]: ', '')}"</p>
-                    </>
-                  ) : msg.text.startsWith('[Booking Request]: ') ? (
-                    <>
-                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Request</p>
-                      <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>{msg.text.replace('[Booking Request]: ', '')}</p>
-                    </>
-                  ) : (
-                    <>
-                      {msg.isDeleted ? (
+                  {msg.isDeleted ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: isMe ? 'rgba(0,0,0,0.6)' : 'var(--text-muted)', fontStyle: 'italic', fontSize: '14px' }}>
                           <Ban size={14} />
                           <span>This message was deleted</span>
@@ -562,8 +584,6 @@ export default function Chat() {
                           )}
                         </>
                       )}
-                    </>
-                  )}
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: isMe ? 'flex-end' : 'flex-start', gap: '4px', marginTop: '4px' }}>
                     <span style={{ fontSize: '10px', opacity: 0.7, color: isEmojiOnly ? 'var(--text-muted)' : 'inherit' }}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -576,6 +596,7 @@ export default function Chat() {
                       </span>
                     )}
                   </div>
+                </div>
                 </div>
                 </div>
                 )}
