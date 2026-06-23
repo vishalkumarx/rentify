@@ -44,7 +44,7 @@ export default function Requests() {
   const getCancelInfo = (req: any, isIncoming: boolean) => {
     let tagText = req.status;
     let cleanReason = '';
-    if (req.status === 'cancelled') {
+    if (req.status?.toLowerCase() === 'cancelled') {
       const noteStr = req.note || '';
       const parts = noteStr.split('Cancel Reason:');
       let rawReason = parts[1]?.trim() || '';
@@ -55,7 +55,7 @@ export default function Requests() {
         tagText = isIncoming ? 'CANCELLED BY REQUESTER' : 'CANCELLED BY YOU';
         cleanReason = rawReason.replace('[Cancelled by rentee]', '').trim();
       } else {
-        tagText = 'CANCELLED';
+        tagText = `CANCELLED (${rawReason})`;
         cleanReason = rawReason;
       }
     }
