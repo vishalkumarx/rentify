@@ -449,27 +449,10 @@ export default function Chat() {
                       whiteSpace: 'pre-wrap',
                       lineHeight: 1.4
                     }}>
-                      <strong style={{ color: 'var(--primary)' }}>[System]: </strong>
                       {msg.text.replace('[System]:', '').trim()}
                     </div>
                   </div>
-                ) : msg.text.startsWith('[Booking Request Note]:') ? (
-                  <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
-                    <div style={{ 
-                      background: 'var(--surface)', 
-                      border: '1px solid var(--surface-border)',
-                      padding: '12px 16px', 
-                      borderRadius: '12px', 
-                      color: 'var(--text-main)', 
-                      textAlign: 'center',
-                      maxWidth: '85%',
-                      whiteSpace: 'pre-wrap',
-                      lineHeight: 1.4
-                    }}>
-                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', color: 'var(--primary)' }}>Booking Note</p>
-                      <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.4, fontStyle: 'italic' }}>"{msg.text.replace('[Booking Request Note]:', '').trim()}"</p>
-                    </div>
-                  </div>
+
                 ) : msg.text.startsWith('[Booking Request]:') ? (
                   <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
                     <div style={{ 
@@ -539,7 +522,12 @@ export default function Chat() {
                   color: isMe ? '#111827' : 'var(--text-main)',
                   border: isEmojiOnly ? 'none' : (isMe ? 'none' : '1px solid var(--surface-border)')
                 }}>
-                  {msg.isDeleted ? (
+                  {msg.text.startsWith('[Booking Request Note]:') ? (
+                    <>
+                      <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
+                      <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.4 }}>"{msg.text.replace('[Booking Request Note]:', '').trim()}"</p>
+                    </>
+                  ) : msg.isDeleted ? (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: isMe ? 'rgba(0,0,0,0.6)' : 'var(--text-muted)', fontStyle: 'italic', fontSize: '14px' }}>
                           <Ban size={14} />
                           <span>This message was deleted</span>
