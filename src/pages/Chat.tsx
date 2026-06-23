@@ -452,6 +452,11 @@ export default function Chat() {
                       {msg.text.replace('[System]:', '').trim()}
                     </div>
                   </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-12px', marginBottom: '16px' }}>
+                    <span style={{ fontSize: '10px', opacity: 0.7, color: 'var(--text-muted)' }}>
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
 
                 ) : msg.text.startsWith('[Booking Request]:') ? (
                   <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
@@ -469,6 +474,11 @@ export default function Chat() {
                       <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#3b82f6' }}>Booking Request</p>
                       <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.4 }}>{msg.text.replace('[Booking Request]:', '').trim()}</p>
                     </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-12px', marginBottom: '16px' }}>
+                    <span style={{ fontSize: '10px', opacity: 0.7, color: 'var(--text-muted)' }}>
+                      {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 ) : (
                 <div style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%' }}>
