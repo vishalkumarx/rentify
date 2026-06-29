@@ -156,7 +156,7 @@ export default function Home() {
   return (
     <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, maxWidth: '600px', margin: '0 auto', width: '100%' }}>
       {/* Top Floating Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(5, 5, 5, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--surface-border)' }}>
+      <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--surface-border)' }}>
         
         {/* Location & Notification */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -210,7 +210,7 @@ export default function Home() {
             {PROMOS.map((p, i) => (
               <div key={i} style={{ minWidth: '85%', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
                 <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(5,5,5,1), rgba(5,5,5,0.4), transparent)' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0.6), transparent)' }} />
                 <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
                   <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{p.badge}</span>
                   <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{p.title}</h3>
@@ -234,7 +234,7 @@ export default function Home() {
                 onClick={() => setActiveCategory(cat)}
                 style={{ 
                   display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', width: 'auto', height: 'auto',
-                  background: active ? 'rgba(204, 255, 0, 0.1)' : 'var(--surface)',
+                  background: active ? 'var(--primary-glow)' : 'var(--surface)',
                   border: active ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
                   color: active ? 'var(--primary)' : 'var(--text-muted)'
                 }}
@@ -300,7 +300,7 @@ export default function Home() {
                       alt={item.title} 
                       style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: item.status === 'booked' ? 0.5 : 1 }}
                     />
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(18,18,18,1), rgba(18,18,18,0) 60%)' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(255,255,255,1) 10%, rgba(255,255,255,0) 70%)' }} />
                     
                     {/* Status Overlays */}
                     {(() => {
@@ -327,7 +327,7 @@ export default function Home() {
                         e.stopPropagation(); 
                         if (!session) navigate('/login'); else toggleLike(item.id); 
                       }}
-                      style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'rgba(18,18,18,0.6)', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.liked ? 'var(--danger)' : 'var(--text-muted)' }}
+                      style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(4px)', border: '1px solid rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.liked ? 'var(--danger)' : 'var(--text-muted)' }}
                     >
                       <Heart size={16} fill={item.liked ? 'var(--danger)' : 'none'} />
                     </button>
@@ -381,7 +381,7 @@ export default function Home() {
                   <button 
                     key={c} 
                     onClick={() => setActiveCategory(c)} 
-                    style={{ width: 'auto', padding: '8px 16px', borderRadius: '24px', fontSize: '14px', background: activeCategory === c ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: activeCategory === c ? '#000' : 'var(--text-main)', border: activeCategory === c ? 'none' : '1px solid var(--surface-border)' }}
+                    style={{ width: 'auto', padding: '8px 16px', borderRadius: '24px', fontSize: '14px', background: activeCategory === c ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: activeCategory === c ? '#000' : 'var(--text-main)', border: activeCategory === c ? 'none' : '1px solid var(--surface-border)' }}
                   >
                     {c === 'All' ? 'All Categories' : c}
                   </button>
@@ -401,7 +401,7 @@ export default function Home() {
                   <button 
                     key={s.id} 
                     onClick={() => setSortOrder(s.id)} 
-                    style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderRadius: '16px', fontSize: '14px', background: sortOrder === s.id ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: sortOrder === s.id ? '#000' : 'var(--text-main)', border: sortOrder === s.id ? 'none' : '1px solid var(--surface-border)' }}
+                    style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderRadius: '16px', fontSize: '14px', background: sortOrder === s.id ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: sortOrder === s.id ? '#000' : 'var(--text-main)', border: sortOrder === s.id ? 'none' : '1px solid var(--surface-border)' }}
                   >
                     {s.label}
                   </button>

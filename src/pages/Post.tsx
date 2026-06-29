@@ -194,7 +194,7 @@ export default function Post() {
             >
               <option value="" disabled>Select a Category</option>
               {postingCategories.map(cat => (
-                <option key={cat} value={cat} style={{ color: 'var(--text-main)' }}>{cat}</option>
+                <option key={cat} value={cat} style={{ color: '#000' }}>{cat}</option>
               ))}
             </select>
           </div>
@@ -242,7 +242,7 @@ export default function Post() {
                   padding: '16px 16px 16px 48px',
                   borderRadius: '16px',
                   border: '1px solid var(--surface-border)',
-                  background: 'rgba(255, 255, 255, 0.05)',
+                  background: 'rgba(0, 0, 0, 0.05)',
                   color: 'var(--text-main)',
                   fontFamily: 'Outfit, sans-serif',
                   fontSize: '16px',

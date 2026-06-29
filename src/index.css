@@ -8,21 +8,21 @@
 }
 
 :root {
-  --bg-color: #050505;
-  --bg-gradient: #050505;
-  --text-main: #ffffff;
-  --text-muted: #a1a1aa;
-  --primary: #ccff00;
-  --primary-hover: #b3e600;
-  --primary-glow: rgba(204, 255, 0, 0.4);
+  --bg-color: #ffffff;
+  --bg-gradient: #ffffff;
+  --text-main: #000000;
+  --text-muted: #6b7280;
+  --primary: #ffcc00;
+  --primary-hover: #ffb800;
+  --primary-glow: rgba(255, 204, 0, 0.4);
   --secondary: #10b981;
   --danger: #ef4444;
   --success: #22c55e;
   --warning: #f59e0b;
-  --surface: #121212;
-  --surface-border: rgba(255, 255, 255, 0.1);
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --surface: #ffffff;
+  --surface-border: #f3f4f6;
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
 * {
@@ -154,7 +154,7 @@ input {
   padding: 16px;
   border-radius: 16px;
   border: 1px solid var(--surface-border);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text-main);
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
