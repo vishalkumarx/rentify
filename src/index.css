@@ -8,21 +8,21 @@
 }
 
 :root {
-  --bg-color: #ffffff;
-  --bg-gradient: #ffffff;
-  --text-main: #000000;
-  --text-muted: #6b7280;
-  --primary: #ffcc00;
-  --primary-hover: #ffb800;
-  --primary-glow: rgba(255, 204, 0, 0.4);
+  --bg-color: #050505;
+  --bg-gradient: #050505;
+  --text-main: #ffffff;
+  --text-muted: #a1a1aa;
+  --primary: #ccff00;
+  --primary-hover: #b3e600;
+  --primary-glow: rgba(204, 255, 0, 0.4);
   --secondary: #10b981;
   --danger: #ef4444;
   --success: #22c55e;
   --warning: #f59e0b;
-  --surface: #ffffff;
-  --surface-border: #f3f4f6;
-  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --surface: #121212;
+  --surface-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --glass-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 * {
@@ -96,6 +96,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  display: none; /* Hidden in volt redesign, moved to page level */
 }
 
 .app-title {
@@ -172,7 +173,7 @@ button {
   border-radius: 16px;
   border: none;
   background: var(--primary);
-  color: white;
+  color: #000;
   font-family: 'Outfit', sans-serif;
   font-size: 16px;
   font-weight: 600;
@@ -261,7 +262,7 @@ a:hover {
   min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 60px;
+  padding-top: 0px;
   padding-bottom: calc(100px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling: touch;
 }
@@ -502,3 +503,13 @@ a:hover {
     margin: 0 auto;
   }
 }
+
+/* Snap and additional utility classes */
+.snap-x { scroll-snap-type: x mandatory; }
+.snap-center { scroll-snap-align: center; }
+.shrink-0 { flex-shrink: 0; }
+.glow { box-shadow: 0 0 20px var(--primary-glow); }
+.glow:hover { box-shadow: 0 0 30px var(--primary-glow); }
+.text-volt { color: var(--primary); }
+.bg-volt { background: var(--primary); }
+.bg-volt-10 { background: rgba(204, 255, 0, 0.1); }

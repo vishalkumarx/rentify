@@ -1,52 +1,43 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
 
-
-import banner1 from '../assets/banners/banner1.png';
-import banner2 from '../assets/banners/banner2.png';
-import banner3 from '../assets/banners/banner3.png';
+const PROMOS = [
+  { title: "Campus Commute", subtitle: "Rent e-scooters from $5/day", badge: "Mobility", url: "https://images.unsplash.com/photo-1778735790178-f2d243a914d9?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
+  { title: "Zone out. Study in.", subtitle: "Premium noise-cancelling gear", badge: "Electronics", url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
+  { title: "Finals Week Deals", subtitle: "Up to 40% off study essentials", badge: "Hot", url: "https://images.unsplash.com/photo-1620287920810-3f5b9746380c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
+];
 
 export default function Home() {
   const [location, setLocation] = useState('Locating...');
   const [userCoords, setUserCoords] = useState<{lat: number, lng: number} | null>(null);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [carouselIndex, setCarouselIndex] = useState(0);
   const { session } = useAuth();
   const { requests } = useBookings();
+  const firstName = session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
 
-  const banners = [banner1, banner2, banner3];
-  
   const categoryIcons: Record<string, React.ReactNode> = {
-    'All': <LayoutGrid size={18} />,
-    'Electronics': <Laptop size={18} />,
-    'Textbooks': <Book size={18} />,
-    'Mobility': <Bike size={18} />,
-    'Dorm Essentials': <Bed size={18} />,
-    'Party Supplies': <PartyPopper size={18} />,
-    'Tools & Hardware': <Wrench size={18} />,
-    'Clothing & Formalwear': <Shirt size={18} />,
-    'Sports Gear': <Dumbbell size={18} />,
-    'Photography': <Camera size={18} />,
-    'Gaming': <Gamepad2 size={18} />,
-    'Music Instruments': <Music size={18} />,
-    'Others': <MoreHorizontal size={18} />
+    'All': <LayoutGrid size={16} />,
+    'Electronics': <Laptop size={16} />,
+    'Textbooks': <Book size={16} />,
+    'Mobility': <Bike size={16} />,
+    'Dorm Essentials': <Bed size={16} />,
+    'Party Supplies': <PartyPopper size={16} />,
+    'Tools & Hardware': <Wrench size={16} />,
+    'Clothing & Formalwear': <Shirt size={16} />,
+    'Sports Gear': <Dumbbell size={16} />,
+    'Photography': <Camera size={16} />,
+    'Gaming': <Gamepad2 size={16} />,
+    'Music Instruments': <Music size={16} />,
+    'Others': <MoreHorizontal size={16} />
   };
   
-  // Auto-scroll Carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCarouselIndex((prev) => (prev + 1) % banners.length);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, [banners.length]);
-
   // Animated Placeholder
   const phrases = [
     "Search for Books...",
@@ -163,340 +154,268 @@ export default function Home() {
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
 
-
   return (
-    <div className="home-layout">
-      {/* Desktop Sidebar Categories */}
-      <div className="desktop-categories hide-scrollbar">
-        <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', paddingLeft: '8px' }}>Categories</h3>
-        {CATEGORIES.map(cat => (
-          <button 
-            key={`desktop-${cat}`}
-            onClick={() => setActiveCategory(cat)}
-            style={{ 
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              width: '100%', 
-              padding: '12px 16px', 
-              borderRadius: '16px', 
-              fontSize: '15px',
-              fontWeight: activeCategory === cat ? 700 : 500,
-              boxShadow: 'none',
-              background: activeCategory === cat ? 'var(--primary-glow)' : 'transparent',
-              border: 'none',
-              color: activeCategory === cat ? 'var(--primary)' : 'var(--text-main)',
-              textAlign: 'left',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            {categoryIcons[cat]}
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Main Content Area */}
-      <div className="home-main-content">
-      
-      {/* Location Banner */}
-      <div style={{ padding: '16px 20px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: 'var(--primary-glow)', padding: '10px', borderRadius: '14px', display: 'flex' }}>
-            <MapPin size={20} color="var(--primary)" />
-          </div>
-          <div style={{ minWidth: 0, flex: 1 }}>
-            <p style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>Current Location</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', maxWidth: '100%' }}>
-              <h2 style={{ fontSize: '16px', margin: 0, color: 'var(--text-main)', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{location}</h2>
-              {(location === 'Location Unavailable' || location === 'Location Denied') ? (
-                <button 
-                  onClick={() => {
-                    if (location === 'Location Denied') {
-                      toast.error('Please enable location permissions in your browser settings to continue.');
-                    }
-                    fetchLocation();
-                  }} 
-                  style={{ marginLeft: '6px', padding: '4px', background: 'transparent', border: 'none', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', boxShadow: 'none' }}
-                >
-                  <RefreshCcw size={14} /> Retry
-                </button>
-              ) : (
-                <ChevronRight size={16} color="var(--text-muted)" />
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Advanced Search Bar */}
-      <div style={{ padding: '8px 20px 16px', display: 'flex', gap: '12px' }}>
-        <div style={{ flex: 1, position: 'relative' }}>
-          <Search size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
-          <input
-            type="text"
-            placeholder={placeholderText || "Search..."}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ 
-              paddingLeft: '44px', 
-              borderRadius: '24px', 
-              background: 'var(--surface)', 
-              boxShadow: 'var(--card-shadow)',
-              border: '1px solid var(--surface-border)'
-            }}
-          />
-        </div>
-        <button 
-          onClick={() => setShowFilters(true)}
-          style={{ 
-            width: '50px', 
-            height: '50px', 
-            padding: 0, 
-            borderRadius: '25px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            background: sortOrder !== 'newest' ? 'var(--primary-glow)' : 'var(--surface)',
-            color: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--text-main)',
-            boxShadow: 'var(--card-shadow)',
-            border: sortOrder !== 'newest' ? '1px solid var(--primary)' : 'none',
-          }}
-        >
-          <SlidersHorizontal size={20} />
-        </button>
-      </div>
-
-      {/* Carousel Banner */}
-      <div style={{ width: '100%', padding: '0 0 16px 0', overflow: 'hidden', position: 'relative' }}>
-        <div style={{ 
-          display: 'flex', 
-          transition: 'transform 0.5s ease-in-out', 
-          transform: `translateX(-${carouselIndex * 100}%)`
-        }}>
-          {banners.map((src, i) => (
-            <img 
-              key={i} 
-              src={src} 
-              alt={`Banner ${i+1}`} 
-              style={{ width: '100%', height: 'auto', flexShrink: 0, display: 'block' }} 
-            />
-          ))}
-        </div>
+    <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0 }}>
+      {/* Top Floating Header */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(5, 5, 5, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--surface-border)' }}>
         
-        {/* Carousel Indicators */}
-        <div style={{ position: 'absolute', bottom: '24px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '6px' }}>
-          {banners.map((_, i) => (
-            <div 
-              key={i}
-              onClick={() => setCarouselIndex(i)}
-              style={{ 
-                width: carouselIndex === i ? '20px' : '6px', 
-                height: '6px', 
-                borderRadius: '3px', 
-                background: carouselIndex === i ? 'var(--primary)' : 'rgba(255,255,255,0.6)', 
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-            />
-          ))}
+        {/* Location & Notification */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}>
+            <MapPin size={16} className="text-volt" />
+            <span style={{ fontSize: '14px', fontWeight: 500, maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{location}</span>
+            {(location === 'Location Unavailable' || location === 'Location Denied') && (
+              <button 
+                onClick={() => fetchLocation()} 
+                style={{ padding: '4px', background: 'transparent', color: 'var(--text-muted)', width: 'auto', border: 'none' }}
+              >
+                <RefreshCcw size={14} />
+              </button>
+            )}
+          </div>
         </div>
+
+        {/* Greeting */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>Hey {firstName} 👋</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px' }}>What do you need today?</h1>
+        </div>
+
+        {/* Search & Filter */}
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
+            <Search size={20} color="var(--text-muted)" />
+            <input
+              type="text"
+              placeholder={placeholderText || "Search..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none' }}
+            />
+          </div>
+          <button 
+            onClick={() => setShowFilters(true)}
+            style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? 'var(--primary-glow)' : 'var(--surface)', color: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--text-main)', border: sortOrder !== 'newest' ? '1px solid var(--primary)' : '1px solid var(--surface-border)' }}
+          >
+            <SlidersHorizontal size={20} />
+          </button>
+        </div>
+      </div>
+
+      {/* Main Scroll Content */}
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        
+        {/* Promo Carousel */}
+        <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px' }}>
+          <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
+            {PROMOS.map((p, i) => (
+              <div key={i} style={{ minWidth: '85%', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
+                <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(5,5,5,1), rgba(5,5,5,0.4), transparent)' }} />
+                <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                  <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{p.badge}</span>
+                  <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{p.title}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>{p.subtitle}</p>
+                    <ArrowRight size={20} className="text-volt" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Categories Pill Scroll */}
+        <div className="hide-scrollbar" style={{ padding: '12px 16px', display: 'flex', gap: '10px', overflowX: 'auto', alignItems: 'center' }}>
+          {CATEGORIES.map(cat => {
+            const active = activeCategory === cat;
+            return (
+              <button 
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', width: 'auto', height: 'auto',
+                  background: active ? 'rgba(204, 255, 0, 0.1)' : 'var(--surface)',
+                  border: active ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
+                  color: active ? 'var(--primary)' : 'var(--text-muted)'
+                }}
+              >
+                {categoryIcons[cat]}
+                {cat === 'All' ? 'All Categories' : cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Feed Header */}
+        <div style={{ padding: '8px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
+            <Flame size={20} className="text-volt" /> Near you
+          </h2>
+          <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{filteredItems.length} items</span>
+        </div>
+
+        {/* Feed Grid */}
+        <div style={{ 
+          padding: '0 16px 32px', 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(2, 1fr)', 
+          gap: '14px' 
+        }}>
+          {loading ? (
+            <>
+              <div className="skeleton" style={{ gridColumn: 'span 2', height: '240px', borderRadius: '24px' }}></div>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="skeleton" style={{ aspectRatio: '4/3', borderRadius: '24px' }}></div>
+              ))}
+            </>
+          ) : filteredItems.length === 0 ? (
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <p style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-muted)' }}>Nothing here yet</p>
+              <p style={{ margin: '4px 0 0', fontSize: '14px', color: 'var(--text-muted)' }}>Try a different category or search</p>
+            </div>
+          ) : (
+            filteredItems.slice(0, displayCount).map((item, index) => {
+              const isFeatured = index === 0;
+              return (
+                <div 
+                  key={item.id} 
+                  onClick={() => navigate(`/item/${item.id}`)}
+                  className="animate-slide-in" 
+                  style={{ 
+                    gridColumn: isFeatured ? 'span 2' : 'span 1',
+                    background: 'var(--surface)', 
+                    borderRadius: '24px', 
+                    border: '1px solid var(--surface-border)', 
+                    overflow: 'hidden', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    position: 'relative',
+                    animationDelay: `${index * 0.05}s`, 
+                    cursor: 'pointer' 
+                  }}
+                >
+                  <div style={{ position: 'relative', height: isFeatured ? '240px' : '160px' }}>
+                    <img 
+                      src={item.image} 
+                      alt={item.title} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: item.status === 'booked' ? 0.5 : 1 }}
+                    />
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(18,18,18,1), rgba(18,18,18,0) 60%)' }} />
+                    
+                    {/* Status Overlays */}
+                    {(() => {
+                      const userAcceptedReq = session ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status === 'accepted') : null;
+                      if (userAcceptedReq) {
+                        return (
+                          <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'var(--success)', color: '#fff', padding: '4px 10px', borderRadius: '12px', fontSize: '10px', fontWeight: 800, letterSpacing: '0.5px' }}>
+                            RENTED BY YOU
+                          </div>
+                        );
+                      }
+                      if (item.status === 'booked') {
+                        return (
+                          <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.1)', backdropFilter: 'blur(4px)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '12px', fontSize: '10px', fontWeight: 800, border: '1px solid var(--surface-border)' }}>
+                            UNAVAILABLE
+                          </div>
+                        );
+                      }
+                      return null;
+                    })()}
+
+                    <button 
+                      onClick={(e) => { 
+                        e.stopPropagation(); 
+                        if (!session) navigate('/login'); else toggleLike(item.id); 
+                      }}
+                      style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'rgba(18,18,18,0.6)', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.liked ? 'var(--danger)' : 'var(--text-muted)' }}
+                    >
+                      <Heart size={16} fill={item.liked ? 'var(--danger)' : 'none'} />
+                    </button>
+
+                    <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <div style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
+                        <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
+                        <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <MapPin size={12} />
+                          <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {userCoords && item.location 
+                              ? `${getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km` 
+                              : (item.location?.address || 'General')}
+                          </span>
+                        </p>
+                      </div>
+                      <div style={{ background: 'var(--primary)', color: '#000', padding: '6px 12px', borderRadius: '12px', fontWeight: 800, fontSize: '14px' }}>
+                        ₹{item.price}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* Load More */}
+        {filteredItems.length > displayCount && (
+          <div style={{ padding: '0 20px 40px', display: 'flex', justifyContent: 'center' }}>
+            <button 
+              onClick={() => setDisplayCount(prev => prev + 10)}
+              style={{ width: 'auto', padding: '12px 32px', background: 'transparent', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '24px', fontWeight: 600, fontSize: '14px' }}
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Filter Modal */}
       {showFilters && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'flex-end', animation: 'fadeIn 0.2s' }}>
-          <div className="animate-slide-up" style={{ width: '100%', background: 'var(--bg)', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '24px', paddingBottom: 'calc(24px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 700 }}>Filters</h2>
-            </div>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
+          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '360px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Filters</h2>
             
-            {/* Category Filter */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Category</label>
-              <select value={activeCategory} onChange={e => setActiveCategory(e.target.value)} style={{ padding: '14px 16px', borderRadius: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c === 'All' ? 'All Categories' : c}</option>)}
-              </select>
-            </div>
-            
-
-            {/* Sort Order */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Sort By</label>
-              <select value={sortOrder} onChange={e => setSortOrder(e.target.value)} style={{ padding: '14px 16px', borderRadius: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}>
-                <option value="newest">Newest First</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, color: 'var(--text-muted)' }}>Category</label>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {CATEGORIES.map(c => (
+                  <button 
+                    key={c} 
+                    onClick={() => setActiveCategory(c)} 
+                    style={{ width: 'auto', padding: '8px 16px', borderRadius: '24px', fontSize: '14px', background: activeCategory === c ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: activeCategory === c ? '#000' : 'var(--text-main)', border: activeCategory === c ? 'none' : '1px solid var(--surface-border)' }}
+                  >
+                    {c === 'All' ? 'All Categories' : c}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <button onClick={() => setShowFilters(false)} style={{ marginTop: '8px', padding: '16px', borderRadius: '24px', background: 'var(--primary)', color: 'var(--text-main)', border: 'none', fontWeight: 600, fontSize: '16px' }}>Apply Filters</button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, color: 'var(--text-muted)' }}>Sort By</label>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {[
+                  { id: 'newest', label: 'Newest First' },
+                  { id: 'price-asc', label: 'Price: Low to High' },
+                  { id: 'price-desc', label: 'Price: High to Low' },
+                  { id: 'distance', label: 'Distance: Nearest' }
+                ].map(s => (
+                  <button 
+                    key={s.id} 
+                    onClick={() => setSortOrder(s.id)} 
+                    style={{ width: '100%', textAlign: 'left', padding: '12px 16px', borderRadius: '16px', fontSize: '14px', background: sortOrder === s.id ? 'var(--primary)' : 'rgba(255,255,255,0.05)', color: sortOrder === s.id ? '#000' : 'var(--text-main)', border: sortOrder === s.id ? 'none' : '1px solid var(--surface-border)' }}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button onClick={() => setShowFilters(false)} className="glow" style={{ marginTop: '8px', padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px' }}>
+              Apply Filters
+            </button>
           </div>
         </div>
       )}
-
-      {/* Horizontal Categories (Mobile Only) */}
-      <div className="mobile-categories hide-scrollbar">
-        {CATEGORIES.map(cat => (
-          <button 
-            key={`mobile-${cat}`}
-            onClick={() => setActiveCategory(cat)}
-            style={{ 
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              width: 'auto', 
-              padding: '8px 16px', 
-              borderRadius: '20px', 
-              fontSize: '14px',
-              whiteSpace: 'nowrap',
-              boxShadow: 'none',
-              background: activeCategory === cat ? 'var(--primary)' : 'var(--surface)',
-              border: activeCategory === cat ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
-              color: activeCategory === cat ? '#fff' : 'var(--text-main)'
-            }}
-          >
-            {categoryIcons[cat]}
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Feed Content */}
-      <div style={{ 
-        padding: '0 20px 32px', 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', 
-        gap: '12px' 
-      }}>
-        {loading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="glass-panel" style={{ padding: '12px 8px', display: 'flex', flexDirection: 'column', gap: '12px', height: '260px' }}>
-              <div className="skeleton" style={{ width: '100%', height: '160px', borderRadius: '0' }}></div>
-              <div className="skeleton" style={{ width: '80%', height: '16px', margin: '4px 0' }}></div>
-              <div className="skeleton" style={{ width: '50%', height: '16px' }}></div>
-            </div>
-          ))
-        ) : filteredItems.length === 0 ? (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-            <Search className="animate-float" size={48} color="var(--primary-glow)" />
-            <p>No items found for this category or search.</p>
-          </div>
-        ) : (
-          filteredItems.slice(0, displayCount).map((item, index) => (
-            <div 
-              key={item.id} 
-              onClick={() => navigate(`/item/${item.id}`)}
-              className="glass-panel animate-slide-in" 
-              style={{ padding: '12px 8px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', animationDelay: `${index * 0.1}s`, cursor: 'pointer', borderRadius: '0' }}
-            >
-              <div style={{ position: 'relative' }}>
-                <img 
-                  src={item.image} 
-                  alt={item.title} 
-                  style={{ width: '100%', height: '160px', borderRadius: '0', objectFit: 'cover', opacity: item.status === 'booked' ? 0.7 : 1 }}
-                />
-                
-                {(() => {
-                  const userAcceptedReq = session ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status === 'accepted') : null;
-                  
-                  if (userAcceptedReq) {
-                    return (
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(34, 197, 94, 0.2)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)', zIndex: 10, borderRadius: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
-                        <div style={{ background: 'var(--success)', padding: '8px 16px', borderRadius: '20px', color: 'white', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: 'none' }}>
-                          RENTED BY YOU
-                        </div>
-                      </div>
-                    );
-                  }
-                  
-                  const isBookedByOther = item.status === 'booked';
-                  if (isBookedByOther) {
-                    return (
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 10, borderRadius: '0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', textAlign: 'center' }}>
-                        <div style={{ background: 'var(--surface)', padding: '8px 16px', borderRadius: '20px', color: 'var(--text-main)', fontWeight: 800, fontSize: '13px', letterSpacing: '0.5px', boxShadow: 'var(--card-shadow)', border: '1px solid var(--surface-border)' }}>
-                          ITEM NOT AVAILABLE
-                        </div>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toast.success('Notify functionality coming soon!');
-                          }}
-                          style={{ padding: '8px 20px', background: 'var(--primary)', color: '#000', border: 'none', borderRadius: '16px', fontWeight: 700, fontSize: '13px', cursor: 'pointer', boxShadow: 'var(--card-shadow)' }}
-                        >
-                          Notify Me
-                        </button>
-                      </div>
-                    );
-                  }
-                  
-                  return null;
-                })()}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                <h3 style={{ fontSize: '15px', margin: '0 0 4px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', paddingRight: '20px' }}>{item.title}</h3>
-                <p style={{ fontSize: '16px', color: '#000', fontWeight: 700, margin: '0 0 8px' }}>₹{item.price}/day</p>
-                
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', minWidth: 0 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)', maxWidth: '100%', minWidth: 0 }}>
-                    <MapPin size={12} color="var(--text-muted)" style={{ flexShrink: 0 }} />
-                    <span style={{ fontSize: '11px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {userCoords && item.location 
-                        ? `${getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km away` 
-                        : (item.location?.address || 'General')}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Heart Button */}
-              <button 
-                onClick={(e) => { 
-                  e.stopPropagation(); 
-                  if (!session) {
-                    navigate('/login');
-                  } else {
-                    toggleLike(item.id); 
-                  }
-                }}
-                style={{ 
-                  position: 'absolute', 
-                  top: '8px', 
-                  right: '8px', 
-                  width: '32px', 
-                  height: '32px', 
-                  padding: 0,
-                  borderRadius: '16px',
-                  background: 'var(--surface)',
-                  border: '1px solid var(--surface-border)',
-                  boxShadow: 'var(--card-shadow)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: item.liked ? 'var(--danger)' : 'var(--text-muted)',
-                  zIndex: 20
-                }}
-              >
-                <Heart size={16} fill={item.liked ? 'var(--danger)' : 'none'} />
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Load More Button */}
-      {filteredItems.length > displayCount && (
-        <div style={{ padding: '0 20px 40px', display: 'flex', justifyContent: 'center' }}>
-          <button 
-            onClick={() => setDisplayCount(prev => prev + 10)}
-            style={{ padding: '14px 32px', background: 'var(--text-main)', color: 'var(--surface)', borderRadius: '24px', fontWeight: 600, fontSize: '15px', border: 'none', boxShadow: 'none', cursor: 'pointer' }}
-          >
-            Load More Items
-          </button>
-        </div>
-      )}
-      
-      </div> {/* End Main Content Area */}
 
     </div>
   );

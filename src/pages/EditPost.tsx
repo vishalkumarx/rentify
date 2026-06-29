@@ -134,7 +134,7 @@ export default function EditPost() {
         <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>You are on the edit listing page. Update the details below to save your changes.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="post-grid glass-panel" style={{ padding: '32px', borderRadius: '24px' }}>
+      <form onSubmit={handleSubmit} className="post-grid" style={{ padding: '24px 0' }}>
         
         {/* Hidden File Input */}
         <input 
@@ -299,7 +299,7 @@ export default function EditPost() {
             <strong>Liability Disclaimer:</strong> Vicinity is not responsible for any lost, stolen, or damaged items resulting from rentals on this platform. Please secure collateral or take precautions when renting to others.
           </p>
 
-          <button type="submit" disabled={loading} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none' }}>
+          <button type="submit" disabled={loading} className="glow" style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--primary)', color: '#000', fontWeight: 800, borderRadius: '20px', border: 'none' }}>
             <Upload size={22} />
             {loading ? 'Publishing...' : 'Publish Listing'}
           </button>

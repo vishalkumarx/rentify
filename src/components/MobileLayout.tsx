@@ -60,12 +60,7 @@ export default function MobileLayout() {
   return (
     <div className="app-container">
       
-      {/* Top Action Bar */}
-      <header className="app-header" style={{ transform: showHeader ? 'translateY(0)' : 'translateY(-100%)', transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
-        <h1 className="app-title">
-          vicinity
-        </h1>
-      </header>
+      {/* Top Action Bar removed for volt redesign (moved to page level) */}
 
       {/* Message Banner */}
       <div 
@@ -128,7 +123,7 @@ export default function MobileLayout() {
       </nav>
 
       {/* Scrollable Content Area */}
-      <main className="app-main hide-scrollbar" onScroll={handleScroll} style={{ top: showHeader ? '60px' : '0px', transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <main className="app-main hide-scrollbar" onScroll={handleScroll} style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <div className="animate-fade-in" style={{ minHeight: '100%' }}>
           <Outlet />
         </div>
