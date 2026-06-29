@@ -92,7 +92,7 @@ export default function Post() {
   };
 
   return (
-    <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
+    <div style={{ padding: '24px', maxWidth: '600px', margin: '0 auto', width: '100%' }} className="animate-slide-in">
       
       <div style={{ textAlign: 'center', marginBottom: '24px' }}>
         <h1 style={{ fontSize: '28px', fontWeight: 800, margin: 0 }}>Create Listing</h1>

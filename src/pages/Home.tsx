@@ -1,6 +1,5 @@
-import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, ChevronRight, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -155,7 +154,7 @@ export default function Home() {
     });
 
   return (
-    <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0 }}>
+    <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, maxWidth: '600px', margin: '0 auto', width: '100%' }}>
       {/* Top Floating Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(5, 5, 5, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--surface-border)' }}>
         
