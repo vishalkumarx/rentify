@@ -210,12 +210,12 @@ export default function Home() {
             {PROMOS.map((p, i) => (
               <div key={i} style={{ minWidth: '85%', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
                 <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0.6), transparent)' }} />
-                <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
+                <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
                   <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{p.badge}</span>
                   <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{p.title}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>{p.subtitle}</p>
+                    <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{p.subtitle}</p>
                     <ArrowRight size={20} className="text-volt" />
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export default function Home() {
                       alt={item.title} 
                       style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: item.status === 'booked' ? 0.5 : 1 }}
                     />
-                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(255,255,255,1) 10%, rgba(255,255,255,0) 70%)' }} />
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 60%)' }} />
                     
                     {/* Status Overlays */}
                     {(() => {
@@ -333,9 +333,9 @@ export default function Home() {
                     </button>
 
                     <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                      <div style={{ flex: 1, minWidth: 0, paddingRight: '8px' }}>
+                      <div style={{ flex: 1, minWidth: 0, paddingRight: '8px', color: '#fff' }}>
                         <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
-                        <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <MapPin size={12} />
                           <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {userCoords && item.location 
