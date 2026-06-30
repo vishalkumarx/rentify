@@ -204,9 +204,11 @@ export default function Home() {
             </span>
           </p>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, flexShrink: 0 }}>
-            ⭐ {item.itemRating || 4.5} ({item.itemReviewCount || Math.floor(Math.random() * 50) + 10})
-          </div>
+          {item.itemRating != null && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, flexShrink: 0 }}>
+              ⭐ {item.itemRating} ({item.itemReviewCount || 0})
+            </div>
+          )}
         </div>
         
         <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3 }}>
