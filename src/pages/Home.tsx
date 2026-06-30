@@ -118,14 +118,17 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-      {/* Greeting & Search (Sticky) */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 40, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)', borderBottom: '1px solid var(--surface-border)' }}>
-        
-        {/* Department Chooser */}
-        <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', cursor: 'pointer', alignSelf: 'flex-start', background: 'var(--surface)', padding: '8px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+      {/* Department Chooser (Sticky) */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 40, background: 'var(--bg)', padding: '16px', display: 'flex' }}>
+        <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', cursor: 'pointer', background: 'var(--surface)', padding: '8px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
           <Building2 size={16} />
           <span style={{ fontSize: '14px', fontWeight: 700 }}>{userDepartment}</span>
         </div>
+      </div>
+
+      {/* Greeting & Search (Scrolls with page) */}
+      <div style={{ padding: '8px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
+        
         {/* Greeting */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>
