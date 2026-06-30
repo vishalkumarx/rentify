@@ -5,8 +5,6 @@ import { useFeed } from '../context/FeedContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CATEGORIES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
-import LocationPicker from '../components/LocationPicker';
-import type { LocationType } from '../components/LocationPicker';
 
 export default function EditPost() {
   const { id } = useParams();
@@ -18,7 +16,6 @@ export default function EditPost() {
   const [title, setTitle] = useState(item?.title || '');
   const [price, setPrice] = useState(item?.price || '');
   const [category, setCategory] = useState(item?.category || '');
-  const [location, setLocation] = useState<LocationType>(item?.location || { lat: 28.6139, lng: 77.2090, address: '' });
   const [description, setDescription] = useState(item?.description || '');
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>(item?.images || (item?.image ? [item.image] : []));
@@ -32,7 +29,6 @@ export default function EditPost() {
       setTitle(item.title || '');
       setPrice(item.price || '');
       setCategory(item.category || '');
-      setLocation(item.location || { lat: 28.6139, lng: 77.2090, address: '' });
       setDescription(item.description || '');
       setImages(item.images || (item.image ? [item.image] : []));
       setInitialized(true);
@@ -107,7 +103,6 @@ export default function EditPost() {
         price,
         category,
         description,
-        location: location,
         image: finalUrls[0], // First image is cover
         images: finalUrls,   // All images
       });
@@ -260,7 +255,7 @@ export default function EditPost() {
               />
             </div>
 
-          <LocationPicker location={location} onChange={setLocation} />
+
 
           <div style={{ position: 'relative' }}>
               <AlignLeft size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />

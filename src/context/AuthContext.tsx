@@ -6,26 +6,40 @@ import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 type AuthContextType = {
   session: Session | null;
   user: User | null;
+  profile: any | null;
   loading: boolean;
   loginAsGuest: () => void;
+  updateProfile: (updates: any) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   session: null,
   user: null,
+  profile: null,
   loading: true,
   loginAsGuest: () => {},
+  updateProfile: async () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
 
   const loginAsGuest = () => {
     // Mock user for development
     setUser({ email: 'guest@vicinity.app', id: 'guest-123' } as User);
     setSession({ user: { email: 'guest@vicinity.app' } } as Session);
+    setProfile({ name: 'Guest User', department: 'Guest' });
+  };
+
+  const updateProfile = async (updates: any) => {
+    if (!user) return;
+    const profilePath = `profiles/${user.id}.json`;
+    const updatedProfile = { ...profile, ...updates };
+    await setStorageJson(profilePath, updatedProfile);
+    setProfile(updatedProfile);
   };
 
   useEffect(() => {
@@ -41,18 +55,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profilePath = `profiles/${currentSession.user.id}.json`;
         const existingProfile = await getStorageJson(profilePath);
         if (!existingProfile) {
-          const fallbackName = currentSession.user.user_metadata?.full_name || 'User ' + currentSession.user.id.substring(0, 5);
-          await setStorageJson(profilePath, {
+          const fallbackName = currentSession.user.user_metadata?.full_name || '';
+          const newProfile = {
             name: fallbackName,
+            department: '',
             memberSince: new Date().getFullYear().toString(),
             verifications: ['Email Confirmed'],
             avatar_url: currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture
-          });
-        } else if (!existingProfile.avatar_url && (currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture)) {
-          await setStorageJson(profilePath, {
-            ...existingProfile,
-            avatar_url: currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture
-          });
+          };
+          await setStorageJson(profilePath, newProfile);
+          setProfile(newProfile);
+        } else {
+          let updatedProfile = { ...existingProfile };
+          let changed = false;
+          
+          if (!existingProfile.avatar_url && (currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture)) {
+            updatedProfile.avatar_url = currentSession.user.user_metadata?.avatar_url || currentSession.user.user_metadata?.picture;
+            changed = true;
+          }
+          
+          // Ensure department field exists
+          if (updatedProfile.department === undefined) {
+            updatedProfile.department = '';
+            changed = true;
+          }
+
+          if (changed) {
+            await setStorageJson(profilePath, updatedProfile);
+          }
+          setProfile(updatedProfile);
         }
         
         setSession(currentSession);
@@ -74,6 +105,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } else {
         setSession(null);
         setUser(null);
+        setProfile(null);
       }
     });
 
@@ -81,7 +113,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, loginAsGuest }}>
+    <AuthContext.Provider value={{ session, user, profile, loading, loginAsGuest, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

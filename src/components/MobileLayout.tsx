@@ -4,6 +4,7 @@ import { Home, User, MessageCircle, Package, CalendarCheck } from 'lucide-react'
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
+import CompleteProfileModal from './CompleteProfileModal';
 
 export default function MobileLayout() {
   const location = useLocation();
@@ -59,6 +60,7 @@ export default function MobileLayout() {
 
   return (
     <div className="app-container">
+      <CompleteProfileModal />
       
       {/* Top Action Bar removed for volt redesign (moved to page level) */}
 

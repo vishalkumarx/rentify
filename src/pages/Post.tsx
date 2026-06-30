@@ -5,15 +5,12 @@ import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { CATEGORIES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
-import LocationPicker from '../components/LocationPicker';
-import type { LocationType } from '../components/LocationPicker';
 
 export default function Post() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
-  const [location, setLocation] = useState<LocationType>({ lat: 28.6139, lng: 77.2090, address: '' });
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -77,7 +74,6 @@ export default function Post() {
         price,
         category: category || 'Other',
         description,
-        location: location,
         image: uploadedUrls[0], // First image is cover
         images: uploadedUrls,   // All images
       });
@@ -227,7 +223,7 @@ export default function Post() {
 
           </div>
 
-          <LocationPicker location={location} onChange={setLocation} />
+
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ position: 'relative' }}>

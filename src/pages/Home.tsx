@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight } from 'lucide-react';
+import { Search, MapPin, SlidersHorizontal, RefreshCcw, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight, Building2 } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -13,13 +13,10 @@ const PROMOS = [
 ];
 
 export default function Home() {
-  const [location, setLocation] = useState('Locating...');
-  const [userCoords, setUserCoords] = useState<{lat: number, lng: number} | null>(null);
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const { requests } = useBookings();
-  const firstName = session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
+  const firstName = profile?.name?.split(" ")[0] || session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
+  const userDepartment = profile?.department || "Choose your department";
 
   const categoryIcons: Record<string, React.ReactNode> = {
     'All': <LayoutGrid size={16} />,
@@ -76,59 +73,12 @@ export default function Home() {
   
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
-  const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc', 'distance'
+  const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
   const [displayCount, setDisplayCount] = useState(10);
 
   const { items, toggleLike, loading } = useFeed();
   const navigate = useNavigate();
-  
-  const fetchLocation = () => {
-    setLocation('Fetching Location...');
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const { latitude, longitude } = position.coords;
-            setUserCoords({ lat: latitude, lng: longitude });
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
-            const data = await res.json();
-            
-            // Try to extract a sensible city/town name
-            const city = data.address.city || data.address.town || data.address.village || data.address.county || 'Unknown Area';
-            const state = data.address.state || '';
-            setLocation(`${city}${state ? `, ${state}` : ''}`);
-          } catch (error) {
-            console.error('Reverse geocoding failed', error);
-            setLocation('Location Unavailable');
-          }
-        },
-        (error) => {
-          console.error('Geolocation error', error);
-          setLocation('Location Denied');
-        }
-      );
-    } else {
-      setLocation('Geolocation Unsupported');
-    }
-  };
 
-  useEffect(() => {
-    fetchLocation();
-  }, []);
-
-  // Haversine formula
-  const getDistance = (lat1?: number, lon1?: number, lat2?: number, lon2?: number) => {
-    if (!lat1 || !lon1 || !lat2 || !lon2) return null;
-    const R = 6371; // Radius of the earth in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;  
-    const dLon = (lon2 - lon1) * Math.PI / 180; 
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2); 
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    return R * c; // Distance in km
-  }
 
   // Filter items based on active category, search
   const filteredItems = items
@@ -143,66 +93,81 @@ export default function Home() {
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
-      if (sortOrder === 'distance' && userCoords) {
-        const distA = getDistance(userCoords.lat, userCoords.lng, a.location?.lat, a.location?.lng) ?? Infinity;
-        const distB = getDistance(userCoords.lat, userCoords.lng, b.location?.lat, b.location?.lng) ?? Infinity;
-        return distA - distB;
-      }
       if (sortOrder === 'price-asc') return Number(a.price) - Number(b.price);
       if (sortOrder === 'price-desc') return Number(b.price) - Number(a.price);
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
 
   return (
-    <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, width: '100%' }}>
-      {/* Top Floating Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--surface-border)' }}>
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      {/* Top Header */}
+      <div style={{ position: 'relative', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--primary)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
         
-        {/* Location & Notification */}
+        {/* Department & Notification */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}>
-            <MapPin size={16} className="text-volt" />
-            <span style={{ fontSize: '14px', fontWeight: 500, maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{location}</span>
-            {(location === 'Location Unavailable' || location === 'Location Denied') && (
-              <button 
-                onClick={() => fetchLocation()} 
-                style={{ padding: '4px', background: 'transparent', color: 'var(--text-muted)', width: 'auto', border: 'none' }}
-              >
-                <RefreshCcw size={14} />
-              </button>
-            )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(0,0,0,0.7)' }}>
+            <Building2 size={16} color="#000000" />
+            <span style={{ fontSize: '14px', fontWeight: 600, maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#000000' }}>{userDepartment}</span>
           </div>
         </div>
 
         {/* Greeting */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500, margin: 0 }}>Hey {firstName} 👋</p>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px' }}>What do you need today?</h1>
+          <p style={{ fontSize: '14px', color: 'rgba(0,0,0,0.7)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px', color: '#000000' }}>What do you need today?</h1>
         </div>
 
         {/* Search & Filter */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
+          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: '#ffffff', border: 'none', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
             <Search size={20} color="var(--text-muted)" />
             <input
               type="text"
               placeholder={placeholderText || "Search..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none' }}
+              style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: '#000000' }}
             />
           </div>
           <button 
             onClick={() => setShowFilters(true)}
-            style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? 'var(--primary-glow)' : 'var(--surface)', color: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--text-main)', border: sortOrder !== 'newest' ? '1px solid var(--primary)' : '1px solid var(--surface-border)' }}
+            style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? '#000000' : '#ffffff', color: sortOrder !== 'newest' ? 'var(--primary)' : '#000000', border: 'none' }}
           >
             <SlidersHorizontal size={20} />
           </button>
         </div>
       </div>
 
-      {/* Main Scroll Content */}
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      {/* Content Layout */}
+      <div className="home-layout">
+        
+        {/* Desktop Sidebar */}
+        <div className="desktop-categories">
+          <h3 style={{ padding: '0 8px 12px', margin: 0, fontSize: '18px', fontWeight: 800 }}>Categories</h3>
+          {CATEGORIES.map(cat => {
+            const active = activeCategory === cat;
+            return (
+              <button 
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                style={{ 
+                  display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', borderRadius: '16px', fontSize: '15px', fontWeight: 600, width: '100%',
+                  background: active ? '#000000' : 'transparent',
+                  color: active ? '#ffffff' : '#000000',
+                  border: 'none',
+                  justifyContent: 'flex-start'
+                }}
+              >
+                {categoryIcons[cat]}
+                {cat === 'All' ? 'All Categories' : cat}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Main Scroll Content */}
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         
         {/* Promo Carousel */}
         <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px' }}>
@@ -225,7 +190,7 @@ export default function Home() {
         </div>
 
         {/* Categories Pill Scroll */}
-        <div className="hide-scrollbar" style={{ padding: '12px 16px', display: 'flex', gap: '10px', overflowX: 'auto', alignItems: 'center' }}>
+        <div className="mobile-categories hide-scrollbar" style={{ padding: '12px 16px', gap: '10px', alignItems: 'center' }}>
           {CATEGORIES.map(cat => {
             const active = activeCategory === cat;
             return (
@@ -331,11 +296,9 @@ export default function Home() {
                       <div style={{ flex: 1, minWidth: 0, paddingRight: '8px', color: '#fff' }}>
                         <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
                         <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MapPin size={12} />
+                          <Building2 size={12} />
                           <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {userCoords && item.location 
-                              ? `${getDistance(userCoords.lat, userCoords.lng, item.location.lat, item.location.lng)?.toFixed(1)} km` 
-                              : (item.location?.address || 'General')}
+                            {item.department}
                           </span>
                         </p>
                       </div>
@@ -390,8 +353,7 @@ export default function Home() {
                 {[
                   { id: 'newest', label: 'Newest First' },
                   { id: 'price-asc', label: 'Price: Low to High' },
-                  { id: 'price-desc', label: 'Price: High to Low' },
-                  { id: 'distance', label: 'Distance: Nearest' }
+                  { id: 'price-desc', label: 'Price: High to Low' }
                 ].map(s => (
                   <button 
                     key={s.id} 
@@ -410,7 +372,8 @@ export default function Home() {
           </div>
         </div>
       )}
-
+      </div>
+      </div>
     </div>
   );
 }
