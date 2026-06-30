@@ -12,9 +12,9 @@
   --bg-gradient: #ffffff;
   --text-main: #000000;
   --text-muted: #6b7280;
-  --primary: #ffcc00;
-  --primary-hover: #ffb800;
-  --primary-glow: rgba(255, 204, 0, 0.4);
+  --primary: #F4C430;
+  --primary-hover: #e0b020;
+  --primary-glow: rgba(244, 196, 48, 0.4);
   --secondary: #10b981;
   --danger: #ef4444;
   --success: #22c55e;
@@ -522,7 +522,7 @@ a:hover {
   gap: 12px;
 }
 .cat-text {
-  font-size: 16px;
+  font-size: 12px;
 }
 @media (min-width: 768px) {
   .categories-grid {
