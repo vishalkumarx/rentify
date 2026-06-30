@@ -193,7 +193,7 @@ export default function Home() {
 
         {/* Visual Categories Grid */}
         <div style={{ padding: '16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+          <div className="categories-grid">
             {visualCategories.map(cat => (
               <button
                 key={cat.id}
@@ -220,7 +220,7 @@ export default function Home() {
                 }}>
                   <img src={cat.img} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: activeCategory === cat.id ? 'var(--primary)' : 'var(--text-main)', textAlign: 'center', lineHeight: 1.2 }}>
+                <span className="cat-text" style={{ fontWeight: 700, color: activeCategory === cat.id ? 'var(--primary)' : 'var(--text-main)', textAlign: 'center', lineHeight: 1.2 }}>
                   {cat.title}
                 </span>
               </button>

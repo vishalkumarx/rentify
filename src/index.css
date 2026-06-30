@@ -514,3 +514,24 @@ a:hover {
 .text-volt { color: var(--primary); }
 .bg-volt { background: var(--primary); }
 .bg-volt-10 { background: rgba(204, 255, 0, 0.1); }
+
+/* Visual Categories Grid Responsive */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.cat-text {
+  font-size: 12px;
+}
+@media (min-width: 768px) {
+  .categories-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .cat-text {
+    font-size: 16px;
+  }
+}
