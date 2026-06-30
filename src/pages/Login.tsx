@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-// @ts-ignore
-import loginBg from '../assets/login bg.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -41,23 +39,16 @@ export default function Login() {
   };
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: '#ffffff', position: 'relative' }}>
+    <div className="login-container animate-fade-in">
       {/* Top Header */}
-      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%', height: '40dvh', minHeight: '300px', background: `url("${loginBg}") center bottom/cover no-repeat` }}>
+      <div className="login-header">
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <Link to="/signup" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '12px' }}>Register</Link>
         </div>
       </div>
 
       {/* Bottom Form Area */}
-      <div style={{ 
-        flexGrow: 1,
-        background: '#ffffff', 
-        padding: '32px 24px calc(48px + env(safe-area-inset-bottom))',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      }}>
+      <div className="login-form-area">
         <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0', color: '#000000' }}>Sign In</h1>
         
