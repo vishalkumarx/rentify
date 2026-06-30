@@ -558,7 +558,10 @@ a:hover {
   width: 100%;
   height: 40dvh;
   min-height: 300px;
-  background: url('./assets/login bg.png') center bottom/cover no-repeat;
+  background-image: url("./assets/login bg.png");
+  background-position: center bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
   padding: calc(24px + env(safe-area-inset-top)) 24px 48px;
 }
 
@@ -578,6 +581,9 @@ a:hover {
   .login-header {
     height: 400px;
     min-height: 400px;
-    background: url('./assets/cover.png') center bottom/cover no-repeat;
+    background-image: url("./assets/cover.png");
+    background-position: center bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 }
