@@ -13,7 +13,9 @@ const PROMOS = [
 ];
 
 export default function Home() {
-  const { session, profile } = useAuth();
+  const { session, profile, updateProfile } = useAuth();
+  const [showDepartmentModal, setShowDepartmentModal] = useState(false);
+  const DEPARTMENTS = ['Computer Science', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Business', 'Arts & Design', 'Medicine', 'Law', 'Other'];
   const { requests } = useBookings();
   const firstName = profile?.name?.split(" ")[0] || session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
   const userDepartment = profile?.department || "Choose your department";
@@ -102,38 +104,37 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-      {/* Top Header */}
-      <div style={{ position: 'relative', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--primary)', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
-        
-        {/* Department & Notification */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(0,0,0,0.7)' }}>
-            <Building2 size={16} color="#000000" />
-            <span style={{ fontSize: '14px', fontWeight: 600, maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#000000' }}>{userDepartment}</span>
-          </div>
+      {/* Sticky Yellow Topbar */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 100, padding: '16px', background: 'var(--primary)', borderBottom: '1px solid rgba(0,0,0,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#000000', cursor: 'pointer' }}>
+          <Building2 size={20} color="#000000" />
+          <span style={{ fontSize: '15px', fontWeight: 700, maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#000000' }}>{userDepartment}</span>
         </div>
+      </div>
 
+      {/* Greeting & Search (Scrolls with page) */}
+      <div style={{ padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
         {/* Greeting */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <p style={{ fontSize: '14px', color: 'rgba(0,0,0,0.7)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>
-          <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px', color: '#000000' }}>What do you need today?</h1>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>What do you need today?</h1>
         </div>
 
         {/* Search & Filter */}
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: '#ffffff', border: 'none', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
+          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
             <Search size={20} color="var(--text-muted)" />
             <input
               type="text"
               placeholder={placeholderText || "Search..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: '#000000' }}
+              style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: 'var(--text-main)' }}
             />
           </div>
           <button 
             onClick={() => setShowFilters(true)}
-            style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? '#000000' : '#ffffff', color: sortOrder !== 'newest' ? 'var(--primary)' : '#000000', border: 'none' }}
+            style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--surface)', color: sortOrder !== 'newest' ? '#000' : 'var(--text-main)', border: sortOrder !== 'newest' ? 'none' : '1px solid var(--surface-border)' }}
           >
             <SlidersHorizontal size={20} />
           </button>
@@ -340,9 +341,9 @@ export default function Home() {
                   <button 
                     key={c} 
                     onClick={() => setActiveCategory(c)} 
-                    style={{ width: 'auto', padding: '8px 16px', borderRadius: '24px', fontSize: '14px', background: activeCategory === c ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: activeCategory === c ? '#000' : 'var(--text-main)', border: activeCategory === c ? 'none' : '1px solid var(--surface-border)' }}
+                    style={{ padding: '8px 16px', borderRadius: '16px', fontSize: '14px', background: activeCategory === c ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: activeCategory === c ? '#000' : 'var(--text-main)', border: activeCategory === c ? 'none' : '1px solid var(--surface-border)' }}
                   >
-                    {c === 'All' ? 'All Categories' : c}
+                    {c}
                   </button>
                 ))}
               </div>
@@ -369,6 +370,41 @@ export default function Home() {
 
             <button onClick={() => setShowFilters(false)} className="glow" style={{ marginTop: '8px', padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px' }}>
               Apply Filters
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Department Picker Modal */}
+      {showDepartmentModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
+          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '360px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Choose Department</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '300px', overflowY: 'auto' }}>
+              {DEPARTMENTS.map(dept => (
+                <button
+                  key={dept}
+                  onClick={() => {
+                    updateProfile({ department: dept });
+                    setShowDepartmentModal(false);
+                  }}
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '16px',
+                    textAlign: 'left',
+                    background: userDepartment === dept ? 'var(--primary)' : 'var(--surface)',
+                    color: userDepartment === dept ? '#000' : 'var(--text-main)',
+                    border: userDepartment === dept ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
+                    fontWeight: userDepartment === dept ? 700 : 500,
+                    fontSize: '15px'
+                  }}
+                >
+                  {dept}
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setShowDepartmentModal(false)} style={{ padding: '14px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 700, fontSize: '15px', border: 'none' }}>
+              Close
             </button>
           </div>
         </div>
