@@ -1,10 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, SlidersHorizontal, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight, Building2 } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, Building2 } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
+
+// @ts-ignore
+import imgBooks from '../assets/books and stationary.PNG';
+// @ts-ignore
+import imgClothing from '../assets/clothings and lab wears.PNG';
+// @ts-ignore
+import imgElectronics from '../assets/electronics.PNG';
+// @ts-ignore
+import imgMobility from '../assets/mobility.PNG';
+// @ts-ignore
+import imgSports from '../assets/sports.PNG';
+// @ts-ignore
+import imgTools from '../assets/tools and hardware.PNG';
+
+const visualCategories = [
+  { id: 'Books and Stationary', title: 'Books', img: imgBooks },
+  { id: 'Clothing & Formalwear', title: 'Clothing', img: imgClothing },
+  { id: 'Electronics', title: 'Electronics', img: imgElectronics },
+  { id: 'Mobility', title: 'Mobility', img: imgMobility },
+  { id: 'Sports Gear', title: 'Sports', img: imgSports },
+  { id: 'Tools & Hardware', title: 'Tools', img: imgTools }
+];
 
 const PROMOS = [
   { title: "Campus Commute", subtitle: "Rent e-scooters from $5/day", badge: "Mobility", url: "https://images.unsplash.com/photo-1778735790178-f2d243a914d9?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
@@ -19,22 +41,6 @@ export default function Home() {
   const firstName = profile?.name?.split(" ")[0] || session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
   const userDepartment = profile?.department || "Choose your department";
 
-  const categoryIcons: Record<string, React.ReactNode> = {
-    'All': <LayoutGrid size={16} />,
-    'Electronics': <Laptop size={16} />,
-    'Books and Stationary': <Book size={16} />,
-    'Mobility': <Bike size={16} />,
-    'Dorm Essentials': <Bed size={16} />,
-    'Party Supplies': <PartyPopper size={16} />,
-    'Tools & Hardware': <Wrench size={16} />,
-    'Clothing & Formalwear': <Shirt size={16} />,
-    'Sports Gear': <Dumbbell size={16} />,
-    'Photography': <Camera size={16} />,
-    'Gaming': <Gamepad2 size={16} />,
-    'Music Instruments': <Music size={16} />,
-    'Others': <MoreHorizontal size={16} />
-  };
-  
   // Animated Placeholder
   const phrases = [
     "Search for Books...",
@@ -159,29 +165,8 @@ export default function Home() {
       {/* Content Layout */}
       <div className="home-layout">
         
-        {/* Desktop Sidebar */}
-        <div className="desktop-categories">
-          <h3 style={{ padding: '0 8px 12px', margin: 0, fontSize: '18px', fontWeight: 800 }}>Categories</h3>
-          {CATEGORIES.map(cat => {
-            const active = activeCategory === cat;
-            return (
-              <button 
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                style={{ 
-                  display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', borderRadius: '16px', fontSize: '15px', fontWeight: 600, width: '100%',
-                  background: active ? '#000000' : 'transparent',
-                  color: active ? '#ffffff' : '#000000',
-                  border: 'none',
-                  justifyContent: 'flex-start'
-                }}
-              >
-                {categoryIcons[cat]}
-                {cat === 'All' ? 'All Categories' : cat}
-              </button>
-            );
-          })}
-        </div>
+        {/* Desktop Sidebar (Removed to favor visual grid) */}
+        <div className="desktop-categories" style={{ display: 'none' }}></div>
 
         {/* Main Scroll Content */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
@@ -206,26 +191,41 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Categories Pill Scroll */}
-        <div className="mobile-categories hide-scrollbar" style={{ padding: '12px 16px', gap: '10px', alignItems: 'center' }}>
-          {CATEGORIES.map(cat => {
-            const active = activeCategory === cat;
-            return (
-              <button 
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                style={{ 
-                  display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', width: 'auto', height: 'auto',
-                  background: active ? 'var(--primary-glow)' : 'var(--surface)',
-                  border: active ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
-                  color: active ? 'var(--primary)' : 'var(--text-muted)'
+        {/* Visual Categories Grid */}
+        <div style={{ padding: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+            {visualCategories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(activeCategory === cat.id ? 'All' : cat.id)}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'transparent',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer'
                 }}
               >
-                {categoryIcons[cat]}
-                {cat === 'All' ? 'All Categories' : cat}
+                <div style={{ 
+                  width: '100%', 
+                  aspectRatio: '1', 
+                  borderRadius: '16px', 
+                  overflow: 'hidden',
+                  border: activeCategory === cat.id ? '2px solid var(--primary)' : '1px solid var(--surface-border)',
+                  boxShadow: activeCategory === cat.id ? '0 4px 12px rgba(255, 204, 0, 0.3)' : '0 2px 8px rgba(0,0,0,0.05)',
+                  transition: 'all 0.2s ease'
+                }}>
+                  <img src={cat.img} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: activeCategory === cat.id ? 'var(--primary)' : 'var(--text-main)', textAlign: 'center', lineHeight: 1.2 }}>
+                  {cat.title}
+                </span>
               </button>
-            );
-          })}
+            ))}
+          </div>
         </div>
 
         {/* Feed Header */}
