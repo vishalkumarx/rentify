@@ -528,7 +528,7 @@ a:hover {
   .categories-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 24px;
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
   }
   .cat-text {
