@@ -1,7 +1,7 @@
 export const CATEGORIES = [
   'All',
   'Electronics',
-  'Textbooks',
+  'Books and Stationary',
   'Mobility',
   'Dorm Essentials',
   'Party Supplies',

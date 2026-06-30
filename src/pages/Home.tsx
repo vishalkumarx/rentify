@@ -22,7 +22,7 @@ export default function Home() {
   const categoryIcons: Record<string, React.ReactNode> = {
     'All': <LayoutGrid size={16} />,
     'Electronics': <Laptop size={16} />,
-    'Textbooks': <Book size={16} />,
+    'Books and Stationary': <Book size={16} />,
     'Mobility': <Bike size={16} />,
     'Dorm Essentials': <Bed size={16} />,
     'Party Supplies': <PartyPopper size={16} />,
