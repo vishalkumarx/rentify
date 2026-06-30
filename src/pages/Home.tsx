@@ -268,9 +268,10 @@ export default function Home() {
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         
         {/* Promo Carousel */}
-        <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px' }}>
-          <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
-            {PROMOS.map((p, i) => (
+        <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ width: '100%', maxWidth: '1400px' }}>
+            <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
+              {PROMOS.map((p, i) => (
               <div key={i} className="promo-card" style={{ height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
                 <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
@@ -284,6 +285,7 @@ export default function Home() {
                 </div>
               </div>
             ))}
+            </div>
           </div>
         </div>
 
