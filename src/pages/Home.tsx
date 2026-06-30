@@ -15,7 +15,14 @@ const PROMOS = [
 export default function Home() {
   const { session, profile, updateProfile } = useAuth();
   const [showDepartmentModal, setShowDepartmentModal] = useState(false);
-  const DEPARTMENTS = ['Computer Science', 'Electrical Engineering', 'Mechanical Engineering', 'Civil Engineering', 'Business', 'Arts & Design', 'Medicine', 'Law', 'Other'];
+  const DEPARTMENTS = [
+    'Computer Science', 'Information Technology', 'Electrical Engineering', 'Electronics & Communication', 
+    'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering', 'Aerospace Engineering',
+    'Biomedical Engineering', 'Business Administration', 'Accounting', 'Finance', 'Marketing',
+    'Economics', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Environmental Science',
+    'Nursing', 'Medicine', 'Pharmacy', 'Psychology', 'Sociology', 'Political Science', 
+    'History', 'English Literature', 'Arts & Design', 'Architecture', 'Education', 'Law', 'Other'
+  ];
   const { requests } = useBookings();
   const firstName = profile?.name?.split(" ")[0] || session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
   const userDepartment = profile?.department || "Choose your department";
@@ -76,7 +83,7 @@ export default function Home() {
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
-  const [displayCount, setDisplayCount] = useState(3);
+  const [displayCount, setDisplayCount] = useState(window.innerWidth < 768 ? 1 : 3);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -104,16 +111,14 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-      {/* Sticky Yellow Topbar */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 100, padding: '16px', background: 'var(--primary)', borderBottom: '1px solid rgba(0,0,0,0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#000000', cursor: 'pointer' }}>
-          <Building2 size={20} color="#000000" />
-          <span style={{ fontSize: '15px', fontWeight: 700, maxWidth: '220px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#000000' }}>{userDepartment}</span>
-        </div>
-      </div>
-
       {/* Greeting & Search (Scrolls with page) */}
       <div style={{ padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
+        
+        {/* Department Chooser */}
+        <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', cursor: 'pointer', alignSelf: 'flex-start', background: 'var(--surface)', padding: '8px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+          <Building2 size={16} />
+          <span style={{ fontSize: '14px', fontWeight: 700 }}>{userDepartment}</span>
+        </div>
         {/* Greeting */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>

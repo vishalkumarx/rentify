@@ -62,8 +62,19 @@ export default function MobileLayout() {
     <div className="app-container">
       <CompleteProfileModal />
       
-      {/* Top Action Bar removed for volt redesign (moved to page level) */}
-
+      {/* Yellow Top Bar */}
+      <div style={{
+        position: 'absolute',
+        top: 0, left: 0, right: 0, height: '60px',
+        background: 'var(--primary)',
+        zIndex: 60,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottom: '1px solid rgba(0,0,0,0.1)',
+      }}>
+        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px' }}>campusrent</h1>
+      </div>
       {/* Message Banner */}
       <div 
         onClick={() => { setShowBanner(false); navigate('/messages'); }}

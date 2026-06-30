@@ -262,7 +262,7 @@ a:hover {
   min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-top: 0px;
+  padding-top: 60px;
   padding-bottom: calc(100px + env(safe-area-inset-bottom));
   -webkit-overflow-scrolling: touch;
 }
