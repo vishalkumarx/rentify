@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { supabase, setStorageJson } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+// @ts-ignore
+import loginBg from '../assets/login bg.png';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -50,17 +52,10 @@ export default function Signup() {
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: '#000000', position: 'relative' }}>
       
-      {/* Top Yellow Section */}
-      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', marginBottom: '32px' }}>
-          <Link to="/login" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none', fontSize: '15px' }}>Sign In</Link>
-        </div>
-        
-        <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-          <div style={{ fontFamily: 'Holiday, sans-serif', fontSize: '72px', color: 'var(--primary)', marginBottom: '16px', lineHeight: 0.9 }}>vicinity</div>
-          <p style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '16px', lineHeight: 1.5, margin: 0, maxWidth: '280px', fontWeight: 500 }}>
-            everything you need,<br />in your vicinity.
-          </p>
+      {/* Top Background Section */}
+      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%', background: `url("${loginBg}") center/cover no-repeat`, height: '40dvh', minHeight: '300px' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+          <Link to="/login" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '12px' }}>Sign In</Link>
         </div>
       </div>
 
