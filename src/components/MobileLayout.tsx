@@ -67,7 +67,7 @@ export default function MobileLayout() {
         position: 'absolute',
         top: 0, left: 0, right: 0, height: '60px',
         background: 'var(--primary)',
-        zIndex: 60,
+        zIndex: 40,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
