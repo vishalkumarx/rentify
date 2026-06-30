@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, Building2 } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, Building2, Clock } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -361,7 +361,7 @@ export default function Home() {
                   <>
                     <div style={{ padding: '8px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                       <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
-                        Recently Added
+                        <Clock size={20} className="text-volt" /> Recently Added
                       </h2>
                       <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>
                         {Math.min(filteredItems.length - featuredCount, displayCount - featuredCount)} items
