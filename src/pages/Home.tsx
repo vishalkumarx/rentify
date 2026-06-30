@@ -20,12 +20,12 @@ import imgSports from '../assets/sports.PNG';
 import imgTools from '../assets/tools and hardware.PNG';
 
 const visualCategories = [
-  { id: 'Books and Stationary', title: 'Books', img: imgBooks },
-  { id: 'Clothing & Formalwear', title: 'Clothing', img: imgClothing },
+  { id: 'Books and Stationary', title: 'Books & Stationary', img: imgBooks },
+  { id: 'Clothing & Formalwear', title: 'Clothing & Formalwear', img: imgClothing },
   { id: 'Electronics', title: 'Electronics', img: imgElectronics },
   { id: 'Mobility', title: 'Mobility', img: imgMobility },
-  { id: 'Sports Gear', title: 'Sports', img: imgSports },
-  { id: 'Tools & Hardware', title: 'Tools', img: imgTools }
+  { id: 'Sports Gear', title: 'Sports Gear', img: imgSports },
+  { id: 'Tools & Hardware', title: 'Tools & Hardware', img: imgTools }
 ];
 
 const PROMOS = [
