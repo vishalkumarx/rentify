@@ -50,10 +50,10 @@ export default function Signup() {
   };
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: `#000 url("${loginBg}") center/cover no-repeat`, position: 'relative' }}>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: '#ffffff', position: 'relative' }}>
       
       {/* Top Header */}
-      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%', height: '40dvh', minHeight: '300px' }}>
+      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%', height: '40dvh', minHeight: '300px', background: `url("${loginBg}") center bottom/cover no-repeat` }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <Link to="/login" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '12px' }}>Sign In</Link>
         </div>
@@ -62,7 +62,7 @@ export default function Signup() {
       {/* Bottom Form Area */}
       <div style={{ 
         flexGrow: 1,
-        background: 'transparent', 
+        background: '#ffffff', 
         padding: '32px 24px calc(48px + env(safe-area-inset-bottom))',
         display: 'flex',
         flexDirection: 'column',
