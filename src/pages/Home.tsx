@@ -118,8 +118,8 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-      {/* Greeting & Search (Scrolls with page) */}
-      <div style={{ padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
+      {/* Greeting & Search (Sticky) */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 40, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)', borderBottom: '1px solid var(--surface-border)' }}>
         
         {/* Department Chooser */}
         <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', cursor: 'pointer', alignSelf: 'flex-start', background: 'var(--surface)', padding: '8px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
@@ -307,7 +307,7 @@ export default function Home() {
 
                     <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                       <div style={{ flex: 1, minWidth: 0, paddingRight: '8px', color: '#fff' }}>
-                        <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
+                        <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
                         <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'rgba(255,255,255,0.8)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Building2 size={12} />
                           <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
