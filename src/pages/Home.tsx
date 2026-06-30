@@ -154,7 +154,7 @@ export default function Home() {
     });
 
   return (
-    <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, maxWidth: '600px', margin: '0 auto', width: '100%' }}>
+    <div className="home-layout" style={{ display: 'flex', flexDirection: 'column', gap: 0, padding: 0, width: '100%' }}>
       {/* Top Floating Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 50, padding: '24px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'rgba(255, 255, 255, 0.8)', backdropFilter: 'blur(16px)', borderBottom: '1px solid var(--surface-border)' }}>
         
@@ -208,7 +208,7 @@ export default function Home() {
         <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px' }}>
           <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
             {PROMOS.map((p, i) => (
-              <div key={i} style={{ minWidth: '85%', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
+              <div key={i} className="promo-card" style={{ height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
                 <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
                 <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
@@ -255,12 +255,7 @@ export default function Home() {
         </div>
 
         {/* Feed Grid */}
-        <div style={{ 
-          padding: '0 16px 32px', 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(2, 1fr)', 
-          gap: '14px' 
-        }}>
+        <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
           {loading ? (
             <>
               <div className="skeleton" style={{ gridColumn: 'span 2', height: '240px', borderRadius: '24px' }}></div>
@@ -282,7 +277,7 @@ export default function Home() {
                   onClick={() => navigate(`/item/${item.id}`)}
                   className="animate-slide-in" 
                   style={{ 
-                    gridColumn: isFeatured ? 'span 2' : 'span 1',
+                    gridColumn: isFeatured ? '1 / -1' : 'span 1',
                     background: 'var(--surface)', 
                     borderRadius: '24px', 
                     border: '1px solid var(--surface-border)', 
@@ -294,7 +289,7 @@ export default function Home() {
                     cursor: 'pointer' 
                   }}
                 >
-                  <div style={{ position: 'relative', height: isFeatured ? '240px' : '160px' }}>
+                  <div style={{ position: 'relative', height: isFeatured ? '280px' : '160px' }}>
                     <img 
                       src={item.image} 
                       alt={item.title} 
