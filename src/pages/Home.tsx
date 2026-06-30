@@ -32,7 +32,7 @@ const PROMOS = [
   { title: "Campus Commute", subtitle: "Rent e-scooters from ₹50/day", badge: "Mobility", url: "https://images.unsplash.com/photo-1778735790178-f2d243a914d9?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
   { title: "Zone out. Study in.", subtitle: "Premium noise-cancelling gear", badge: "Electronics", url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
   { title: "Finals Week Deals", subtitle: "Up to 40% off study essentials", badge: "Hot", url: "https://images.unsplash.com/photo-1620287920810-3f5b9746380c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
-  { title: "Weekend Trip?", subtitle: "Tents & outdoor gear for rent", badge: "Sports", url: "https://images.unsplash.com/photo-1504280390224-bba914445831?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
+  { title: "Weekend Trip?", subtitle: "Tents & outdoor gear for rent", badge: "Sports", url: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?crop=entropy&cs=srgb&fm=jpg&q=85&w=800" },
 ];
 
 export default function Home() {
