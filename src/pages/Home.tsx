@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, SlidersHorizontal, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight, Building2 } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
-import { CATEGORIES } from '../lib/constants';
+import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -15,14 +15,6 @@ const PROMOS = [
 export default function Home() {
   const { session, profile, updateProfile } = useAuth();
   const [showDepartmentModal, setShowDepartmentModal] = useState(false);
-  const DEPARTMENTS = [
-    'Computer Science', 'Information Technology', 'Electrical Engineering', 'Electronics & Communication', 
-    'Mechanical Engineering', 'Civil Engineering', 'Chemical Engineering', 'Aerospace Engineering',
-    'Biomedical Engineering', 'Business Administration', 'Accounting', 'Finance', 'Marketing',
-    'Economics', 'Mathematics', 'Physics', 'Chemistry', 'Biology', 'Environmental Science',
-    'Nursing', 'Medicine', 'Pharmacy', 'Psychology', 'Sociology', 'Political Science', 
-    'History', 'English Literature', 'Arts & Design', 'Architecture', 'Education', 'Law', 'Other'
-  ];
   const { requests } = useBookings();
   const firstName = profile?.name?.split(" ")[0] || session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
   const userDepartment = profile?.department || "Choose your department";
