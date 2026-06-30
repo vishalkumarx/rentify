@@ -122,6 +122,100 @@ export default function Home() {
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
 
+  const renderItemCard = (item: any, index: number, isFeatured: boolean) => (
+    <div 
+      key={item.id} 
+      onClick={() => navigate(`/item/${item.id}`)}
+      className="animate-slide-in" 
+      style={{ 
+        gridColumn: 'span 1',
+        background: 'var(--surface)', 
+        borderRadius: '0', 
+        border: isFeatured ? '2px solid var(--success)' : '1px solid var(--surface-border)', 
+        overflow: 'hidden', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        position: 'relative',
+        animationDelay: `${index * 0.05}s`, 
+        cursor: 'pointer',
+        boxShadow: isFeatured ? '0 8px 30px rgba(34, 197, 94, 0.15)' : 'none'
+      }}
+    >
+      <div style={{ position: 'relative', height: '200px' }}>
+        {isFeatured && (
+          <div style={{ position: 'absolute', top: '-1px', right: '16px', background: 'var(--success)', color: '#fff', padding: '6px 12px', borderRadius: '0 0 12px 12px', fontSize: '11px', fontWeight: 800, letterSpacing: '1px', zIndex: 10, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)' }}>
+            FEATURED
+          </div>
+        )}
+        <img 
+          src={item.image} 
+          alt={item.title} 
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: item.status === 'booked' ? 0.5 : 1 }}
+        />
+        
+        {/* Status Overlays */}
+        {(() => {
+          const userAcceptedReq = session ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status === 'accepted') : null;
+          if (userAcceptedReq) {
+            return (
+              <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'var(--success)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, letterSpacing: '0.5px' }}>
+                RENTED BY YOU
+              </div>
+            );
+          }
+          if (item.status === 'booked') {
+            return (
+              <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, border: '1px solid var(--surface-border)' }}>
+                UNAVAILABLE
+              </div>
+            );
+          }
+          return null;
+        })()}
+
+        <button 
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            if (!session) navigate('/login'); else toggleLike(item.id); 
+          }}
+          style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(4px)', border: '1px solid rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.liked ? 'var(--danger)' : 'var(--text-muted)' }}
+        >
+          <Heart size={16} fill={item.liked ? 'var(--danger)' : 'none'} />
+        </button>
+      </div>
+
+      {/* Text Container Below Image */}
+      <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--surface-border)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px' }}>
+            {item.category}
+          </span>
+          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
+          <div style={{ fontWeight: 800, fontSize: '16px', color: 'var(--success)' }}>
+            ₹{item.price}
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 500, minWidth: 0, flex: 1 }}>
+            <Building2 size={14} style={{ flexShrink: 0 }} />
+            <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {item.department?.startsWith('lat:') ? DEPARTMENTS[(item.id % (DEPARTMENTS.length - 1)) + 1] : item.department}
+            </span>
+          </p>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, flexShrink: 0 }}>
+            ⭐ {item.itemRating || 4.5} ({item.itemReviewCount || Math.floor(Math.random() * 50) + 10})
+          </div>
+        </div>
+        
+        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3 }}>
+          {item.description || 'No description available for this item. Contact the seller for more details.'}
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {/* Department Chooser (Sticky) */}
@@ -228,127 +322,58 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Feed Header */}
-        <div style={{ padding: '8px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
-            <Flame size={20} className="text-volt" /> Featured
-          </h2>
-          <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{Math.min(filteredItems.length, displayCount)} items</span>
-        </div>
+        {loading ? (
+          <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
+            <div className="skeleton" style={{ gridColumn: 'span 2', height: '240px', borderRadius: '24px' }}></div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="skeleton" style={{ aspectRatio: '4/3', borderRadius: '24px' }}></div>
+            ))}
+          </div>
+        ) : filteredItems.length === 0 ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <p style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-muted)' }}>Nothing here yet</p>
+            <p style={{ margin: '4px 0 0', fontSize: '14px', color: 'var(--text-muted)' }}>Try a different category or search</p>
+          </div>
+        ) : (
+          (() => {
+            const featuredCount = window.innerWidth < 768 ? 1 : 3;
+            const featuredItems = filteredItems.slice(0, featuredCount);
+            const normalItems = filteredItems.slice(featuredCount, displayCount);
+            
+            return (
+              <>
+                {featuredItems.length > 0 && (
+                  <>
+                    <div style={{ padding: '8px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
+                        <Flame size={20} className="text-volt" /> Featured
+                      </h2>
+                    </div>
+                    <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
+                      {featuredItems.map((item, index) => renderItemCard(item, index, true))}
+                    </div>
+                  </>
+                )}
 
-        {/* Feed Grid */}
-        <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
-          {loading ? (
-            <>
-              <div className="skeleton" style={{ gridColumn: 'span 2', height: '240px', borderRadius: '24px' }}></div>
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="skeleton" style={{ aspectRatio: '4/3', borderRadius: '24px' }}></div>
-              ))}
-            </>
-          ) : filteredItems.length === 0 ? (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <p style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: 'var(--text-muted)' }}>Nothing here yet</p>
-              <p style={{ margin: '4px 0 0', fontSize: '14px', color: 'var(--text-muted)' }}>Try a different category or search</p>
-            </div>
-          ) : (
-            filteredItems.slice(0, displayCount).map((item, index) => {
-              const isFeatured = index < (window.innerWidth < 768 ? 1 : 3);
-              return (
-                <div 
-                  key={item.id} 
-                  onClick={() => navigate(`/item/${item.id}`)}
-                  className="animate-slide-in" 
-                  style={{ 
-                    gridColumn: 'span 1',
-                    background: 'var(--surface)', 
-                    borderRadius: '0', 
-                    border: isFeatured ? '2px solid var(--success)' : '1px solid var(--surface-border)', 
-                    overflow: 'hidden', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    position: 'relative',
-                    animationDelay: `${index * 0.05}s`, 
-                    cursor: 'pointer',
-                    boxShadow: isFeatured ? '0 8px 30px rgba(34, 197, 94, 0.15)' : 'none'
-                  }}
-                >
-                  <div style={{ position: 'relative', height: '200px' }}>
-                    {isFeatured && (
-                      <div style={{ position: 'absolute', top: '-1px', right: '16px', background: 'var(--success)', color: '#fff', padding: '6px 12px', borderRadius: '0 0 12px 12px', fontSize: '11px', fontWeight: 800, letterSpacing: '1px', zIndex: 10, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)' }}>
-                        FEATURED
-                      </div>
-                    )}
-                    <img 
-                      src={item.image} 
-                      alt={item.title} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: item.status === 'booked' ? 0.5 : 1 }}
-                    />
-                    
-                    {/* Status Overlays */}
-                    {(() => {
-                      const userAcceptedReq = session ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status === 'accepted') : null;
-                      if (userAcceptedReq) {
-                        return (
-                          <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'var(--success)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, letterSpacing: '0.5px' }}>
-                            RENTED BY YOU
-                          </div>
-                        );
-                      }
-                      if (item.status === 'booked') {
-                        return (
-                          <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, border: '1px solid var(--surface-border)' }}>
-                            UNAVAILABLE
-                          </div>
-                        );
-                      }
-                      return null;
-                    })()}
-
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        if (!session) navigate('/login'); else toggleLike(item.id); 
-                      }}
-                      style={{ position: 'absolute', top: '12px', right: '12px', width: '32px', height: '32px', padding: 0, borderRadius: '16px', background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(4px)', border: '1px solid rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: item.liked ? 'var(--danger)' : 'var(--text-muted)' }}
-                    >
-                      <Heart size={16} fill={item.liked ? 'var(--danger)' : 'none'} />
-                    </button>
-                  </div>
-
-                  {/* Text Container Below Image */}
-                  <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
-                      <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--surface-border)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px' }}>
-                        {item.category}
+                {normalItems.length > 0 && (
+                  <>
+                    <div style={{ padding: '8px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
+                        Recently Added
+                      </h2>
+                      <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                        {Math.min(filteredItems.length - featuredCount, displayCount - featuredCount)} items
                       </span>
-                      <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
-                      <div style={{ fontWeight: 800, fontSize: '16px', color: 'var(--success)' }}>
-                        ₹{item.price}
-                      </div>
                     </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 500, minWidth: 0, flex: 1 }}>
-                        <Building2 size={14} style={{ flexShrink: 0 }} />
-                        <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {item.department?.startsWith('lat:') ? DEPARTMENTS[(item.id % (DEPARTMENTS.length - 1)) + 1] : item.department}
-                        </span>
-                      </p>
-                      
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, flexShrink: 0 }}>
-                        ⭐ {item.itemRating || 4.5} ({item.itemReviewCount || Math.floor(Math.random() * 50) + 10})
-                      </div>
+                    <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
+                      {normalItems.map((item, index) => renderItemCard(item, index, false))}
                     </div>
-                    
-                    <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3 }}>
-                      {item.description || 'No description available for this item. Contact the seller for more details.'}
-                    </p>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+                  </>
+                )}
+              </>
+            );
+          })()
+        )}
 
         {/* Load More Trigger */}
         {filteredItems.length > displayCount && (
