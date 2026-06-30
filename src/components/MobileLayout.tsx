@@ -5,6 +5,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
 import CompleteProfileModal from './CompleteProfileModal';
+import logoImg from '../assets/logo campus rent.png';
 
 export default function MobileLayout() {
   const location = useLocation();
@@ -70,9 +71,12 @@ export default function MobileLayout() {
         zIndex: 40,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
+        paddingLeft: '20px',
+        gap: '8px',
         borderBottom: '1px solid rgba(0,0,0,0.1)',
       }}>
+        <img src={logoImg} alt="CampusRent Logo" style={{ height: '32px', width: 'auto' }} />
         <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px' }}>campusrent</h1>
       </div>
       {/* Message Banner */}
