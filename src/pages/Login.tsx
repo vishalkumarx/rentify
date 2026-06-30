@@ -41,19 +41,18 @@ export default function Login() {
   };
 
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: '#000000', position: 'relative' }}>
-      {/* Top Background Section */}
-      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%', background: `url("${loginBg}") center/cover no-repeat`, height: '40dvh', minHeight: '300px' }}>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', height: '100dvh', overflowY: 'auto', background: `url("${loginBg}") center/cover no-repeat`, position: 'relative' }}>
+      {/* Top Header */}
+      <div style={{ padding: 'calc(24px + env(safe-area-inset-top)) 24px 48px', display: 'flex', flexDirection: 'column', maxWidth: '480px', margin: '0 auto', width: '100%', height: '40dvh', minHeight: '300px' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           <Link to="/signup" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '12px' }}>Register</Link>
         </div>
       </div>
 
-      {/* Bottom White Sheet */}
+      {/* Bottom Form Area */}
       <div style={{ 
         flexGrow: 1,
-        background: '#ffffff', 
-        borderRadius: '32px 32px 0 0', 
+        background: 'transparent', 
         padding: '32px 24px calc(48px + env(safe-area-inset-bottom))',
         display: 'flex',
         flexDirection: 'column',
