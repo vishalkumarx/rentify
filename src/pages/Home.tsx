@@ -74,7 +74,7 @@ export default function Home() {
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
-  const [displayCount, setDisplayCount] = useState(10);
+  const [displayCount, setDisplayCount] = useState(3);
 
   const { items, toggleLike, loading } = useFeed();
   const navigate = useNavigate();
@@ -214,9 +214,9 @@ export default function Home() {
         {/* Feed Header */}
         <div style={{ padding: '8px 16px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
-            <Flame size={20} className="text-volt" /> Near you
+            <Flame size={20} className="text-volt" /> Featured
           </h2>
-          <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{filteredItems.length} items</span>
+          <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>{Math.min(filteredItems.length, displayCount)} items</span>
         </div>
 
         {/* Feed Grid */}
