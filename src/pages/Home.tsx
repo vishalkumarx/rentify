@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, SlidersHorizontal, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight, Building2 } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
@@ -83,9 +83,24 @@ export default function Home() {
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
-  const [displayCount, setDisplayCount] = useState(window.innerWidth < 768 ? 1 : 3);
+  const [displayCount, setDisplayCount] = useState(12);
   const [activeCategory, setActiveCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting) {
+          setDisplayCount(prev => prev + 12);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const { items, toggleLike, loading } = useFeed();
   const navigate = useNavigate();
@@ -242,14 +257,13 @@ export default function Home() {
             </div>
           ) : (
             filteredItems.slice(0, displayCount).map((item, index) => {
-              const isFeatured = index === 0;
               return (
                 <div 
                   key={item.id} 
                   onClick={() => navigate(`/item/${item.id}`)}
                   className="animate-slide-in" 
                   style={{ 
-                    gridColumn: isFeatured ? '1 / -1' : 'span 1',
+                    gridColumn: 'span 1',
                     background: 'var(--surface)', 
                     borderRadius: '24px', 
                     border: '1px solid var(--surface-border)', 
@@ -261,7 +275,7 @@ export default function Home() {
                     cursor: 'pointer' 
                   }}
                 >
-                  <div style={{ position: 'relative', height: isFeatured ? '280px' : '160px' }}>
+                  <div style={{ position: 'relative', height: '240px' }}>
                     <img 
                       src={item.image} 
                       alt={item.title} 
@@ -320,16 +334,9 @@ export default function Home() {
           )}
         </div>
 
-        {/* Load More */}
+        {/* Load More Trigger */}
         {filteredItems.length > displayCount && (
-          <div style={{ padding: '0 20px 40px', display: 'flex', justifyContent: 'center' }}>
-            <button 
-              onClick={() => setDisplayCount(prev => prev + 10)}
-              style={{ width: 'auto', padding: '12px 32px', background: 'transparent', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '24px', fontWeight: 600, fontSize: '14px' }}
-            >
-              Load More
-            </button>
-          </div>
+          <div ref={loadMoreRef} style={{ height: '40px', width: '100%' }} />
         )}
       </div>
 
