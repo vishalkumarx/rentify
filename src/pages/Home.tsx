@@ -281,7 +281,7 @@ export default function Home() {
                     <img 
                       src={item.image} 
                       alt={item.title} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: item.status === 'booked' ? 0.5 : 1 }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: item.status === 'booked' ? 0.5 : 1 }}
                     />
                     
                     {/* Status Overlays */}

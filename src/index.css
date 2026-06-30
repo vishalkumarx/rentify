@@ -454,9 +454,14 @@ a:hover {
     gap: 20px;
   }
 }
+@media (min-width: 992px) {
+  .responsive-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
 @media (min-width: 1200px) {
   .responsive-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 
