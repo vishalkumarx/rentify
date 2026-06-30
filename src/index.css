@@ -239,6 +239,13 @@ a:hover {
   height: 100%;
   overflow: hidden;
   position: relative;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  background: var(--surface);
+  border-left: 1px solid var(--surface-border);
+  border-right: 1px solid var(--surface-border);
+  box-shadow: var(--card-shadow);
 }
 
 .app-header {
@@ -339,124 +346,7 @@ a:hover {
 }
 
 /* Desktop Breakpoint */
-@media (min-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
-  
-  .app-header {
-    left: 0;
-    padding: 0 40px;
-    justify-content: flex-start;
-  }
-  
-  .app-title {
-    text-align: left;
-    position: static;
-    transform: none;
-    left: auto;
-  }
-  
-  .app-nav {
-    top: 0;
-    bottom: auto;
-    left: auto;
-    right: 40px;
-    width: auto;
-    height: 60px;
-    flex-shrink: 0;
-    flex-direction: row;
-    justify-content: flex-end;
-    padding: 0;
-    border: none;
-    background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-  
-  .app-nav.nav-hidden {
-    transform: translateY(-100%) !important;
-    opacity: 0;
-    pointer-events: none;
-  }
-  
-  .app-main {
-    padding-left: 0;
-    padding-top: 60px;
-    padding-bottom: 0;
-  }
 
-  .nav-item {
-    flex-direction: row;
-    width: auto;
-    justify-content: center;
-    padding: 8px 20px;
-    margin: 0 4px;
-    gap: 8px;
-    border-radius: 24px;
-    color: var(--text-main);
-    transition: all 0.2s ease;
-  }
-  
-  .nav-item:hover {
-    background: rgba(255, 255, 255, 0.4);
-  }
-
-  .nav-item.active {
-    background: var(--text-main);
-    color: var(--primary);
-    transform: scale(1.02);
-    border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-  
-  .nav-item-label {
-    font-size: 16px;
-  }
-
-  .home-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 32px;
-    align-items: start;
-    padding: 20px;
-  }
-  
-  .home-main-content {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .desktop-categories {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    position: sticky;
-    top: 80px;
-    height: calc(100vh - 100px);
-    overflow-y: auto;
-    padding-right: 8px;
-  }
-
-  .mobile-categories {
-    display: none;
-  }
-
-  .profile-grid {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 32px;
-    align-items: start;
-  }
-
-  .post-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 40px;
-    align-items: start;
-  }
-}
 
 @keyframes slideUp {
   from {
@@ -491,17 +381,6 @@ a:hover {
   background-size: 1000px 100%;
   animation: shimmer 2s infinite linear;
   border-radius: 8px;
-}
-
-@media (min-width: 768px) {
-  .item-detail-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    align-items: start;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
 }
 
 /* Snap and additional utility classes */
