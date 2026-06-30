@@ -249,6 +249,7 @@ export default function Home() {
             </div>
           ) : (
             filteredItems.slice(0, displayCount).map((item, index) => {
+              const isFeatured = index < (window.innerWidth < 768 ? 1 : 3);
               return (
                 <div 
                   key={item.id} 
@@ -258,16 +259,22 @@ export default function Home() {
                     gridColumn: 'span 1',
                     background: 'var(--surface)', 
                     borderRadius: '24px', 
-                    border: '1px solid var(--surface-border)', 
+                    border: isFeatured ? '2px solid var(--primary)' : '1px solid var(--surface-border)', 
                     overflow: 'hidden', 
                     display: 'flex', 
                     flexDirection: 'column', 
                     position: 'relative',
                     animationDelay: `${index * 0.05}s`, 
-                    cursor: 'pointer' 
+                    cursor: 'pointer',
+                    boxShadow: isFeatured ? '0 8px 30px rgba(255, 204, 0, 0.15)' : 'none'
                   }}
                 >
                   <div style={{ position: 'relative', height: '240px' }}>
+                    {isFeatured && (
+                      <div style={{ position: 'absolute', top: '-1px', right: '16px', background: 'var(--primary)', color: '#000', padding: '6px 12px', borderRadius: '0 0 12px 12px', fontSize: '11px', fontWeight: 800, letterSpacing: '1px', zIndex: 10, boxShadow: '0 4px 12px rgba(255, 204, 0, 0.3)' }}>
+                        FEATURED
+                      </div>
+                    )}
                     <img 
                       src={item.image} 
                       alt={item.title} 
