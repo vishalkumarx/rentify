@@ -46,18 +46,7 @@ export default function MobileLayout() {
     prevRequests.current = myIncomingRequests.length;
   }, [myIncomingRequests.length, location.pathname]);
 
-  const [showHeader, setShowHeader] = useState(true);
-  const lastScrollY = useRef(0);
 
-  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
-    const currentScrollY = e.currentTarget.scrollTop;
-    if (currentScrollY > 60 && currentScrollY > lastScrollY.current + 10) {
-      setShowHeader(false); // scrolling down
-    } else if (currentScrollY < lastScrollY.current - 10 || currentScrollY <= 60) {
-      setShowHeader(true); // scrolling up or at top
-    }
-    lastScrollY.current = currentScrollY;
-  };
 
   return (
     <div className="app-container">
@@ -140,7 +129,7 @@ export default function MobileLayout() {
       </nav>
 
       {/* Scrollable Content Area */}
-      <main className="app-main hide-scrollbar" onScroll={handleScroll} style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <main className="app-main hide-scrollbar" style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <div className="animate-fade-in" style={{ minHeight: '100%' }}>
           <Outlet />
         </div>
