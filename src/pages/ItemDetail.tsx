@@ -268,7 +268,7 @@ export default function ItemDetail() {
                 <Tag size={14} /> {item.category}
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <MapPin size={14} /> {item.location?.address || 'Unknown Location'}
+                <MapPin size={14} /> {item.department || 'Unknown Department'}
               </span>
             </div>
 

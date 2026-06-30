@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, MapPin, SlidersHorizontal, RefreshCcw, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight, Building2 } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, LayoutGrid, Laptop, Book, Bike, Bed, PartyPopper, Wrench, Shirt, Dumbbell, Camera, Gamepad2, Music, MoreHorizontal, Flame, ArrowRight, Building2 } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -75,6 +75,8 @@ export default function Home() {
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
   const [displayCount, setDisplayCount] = useState(3);
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { items, toggleLike, loading } = useFeed();
   const navigate = useNavigate();
@@ -98,7 +100,6 @@ export default function Home() {
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
 
-  return (
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {/* Top Header */}
@@ -372,8 +373,7 @@ export default function Home() {
           </div>
         </div>
       )}
-      </div>
-      </div>
+    </div>
     </div>
   );
 }

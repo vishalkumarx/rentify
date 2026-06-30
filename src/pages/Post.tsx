@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { CATEGORIES } from '../lib/constants';
 import { supabase } from '../lib/supabase';
 
@@ -17,6 +18,7 @@ export default function Post() {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addPost } = useFeed();
+  const { profile } = useAuth();
   const navigate = useNavigate();
 
   // Exclude 'All' from posting categories
@@ -73,6 +75,7 @@ export default function Post() {
         title,
         price,
         category: category || 'Other',
+        department: profile?.department || '',
         description,
         image: uploadedUrls[0], // First image is cover
         images: uploadedUrls,   // All images
