@@ -79,11 +79,13 @@ export default function MobileLayout() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <img src={logoImg} alt="CampusRent Logo" style={{ height: '32px', width: 'auto' }} />
-          <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px' }}>campusrent</h1>
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px', lineHeight: '1.1' }}>campusrent</h1>
+            <span style={{ fontSize: '10px', fontWeight: 300, color: '#000', letterSpacing: '0px' }}>
+              Made with <span style={{ color: '#e25555' }}>♥</span> for GNDU
+            </span>
+          </div>
         </div>
-      </div>
-      <div className="made-with-love">
-        Made with <span style={{ color: '#e25555' }}>♥</span> for GNDU
       </div>
       {/* Message Banner */}
       <div 

@@ -647,27 +647,7 @@ a:hover {
   }
 }
 
-/* Made With Love Text */
-.made-with-love {
-  position: absolute;
-  top: 64px;
-  right: 16px;
-  z-index: 30;
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--text-muted);
-  text-align: right;
-  pointer-events: none;
-}
-
 @media (max-width: 768px) {
-  .made-with-love {
-    top: 14px;
-    right: 20px;
-    z-index: 50;
-    font-size: 11px;
-    color: rgba(0,0,0,0.6);
-  }
   .app-top-bar.hide {
     transform: translateY(-100%);
   }
