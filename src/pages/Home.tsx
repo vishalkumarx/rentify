@@ -342,7 +342,7 @@ export default function Home() {
             <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Popular Categories</h2>
             <button 
               onClick={() => navigate('/categories')}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0 }}
+              style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0 }}
             >
               View All <ChevronRight size={14} />
             </button>
