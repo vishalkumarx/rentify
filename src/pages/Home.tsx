@@ -338,11 +338,11 @@ export default function Home() {
 
         {/* Visual Categories Grid */}
         <div style={{ padding: '16px' }}>
-          <div style={{ position: 'relative', display: 'flex', alignItems: 'center', marginBottom: '16px', width: '100%', height: '24px' }}>
-            <h2 style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Popular Categories</h2>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ flex: 1, margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Popular Categories</h2>
             <button 
               onClick={() => navigate('/categories')}
-              style={{ position: 'absolute', right: 0, display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0 }}
+              style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0 }}
             >
               View All <ChevronRight size={14} />
             </button>
