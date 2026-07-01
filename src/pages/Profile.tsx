@@ -11,7 +11,10 @@ export default function Profile() {
 
 
 
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
   const handleSignOut = () => {
+    setShowLogoutConfirm(false);
     supabase.auth.signOut();
   };
 
@@ -119,7 +122,7 @@ export default function Profile() {
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
           <button 
-            onClick={handleSignOut}
+            onClick={() => setShowLogoutConfirm(true)}
             style={{ background: 'transparent', color: 'var(--danger)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, display: 'flex', alignItems: 'center', gap: '12px', boxShadow: 'none' }}
           >
             <LogOut size={20} />
@@ -127,6 +130,36 @@ export default function Profile() {
           </button>
         </div>
       </div>
+
+
+      {/* Logout Confirm Modal */}
+      {showLogoutConfirm && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s' }}>
+          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '320px', background: 'var(--surface)', borderRadius: '24px', padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px', border: '1px solid var(--surface-border)', boxShadow: '0 10px 40px rgba(0,0,0,0.1)' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+              <LogOut size={24} />
+            </div>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>Log Out?</h3>
+            <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              Are you sure you want to log out of your account? You will need to sign in again to access your rentals.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%', marginTop: '8px' }}>
+              <button 
+                onClick={handleSignOut}
+                style={{ width: '100%', padding: '14px', borderRadius: '16px', background: 'var(--danger)', color: 'white', border: 'none', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Yes, Log Out
+              </button>
+              <button 
+                onClick={() => setShowLogoutConfirm(false)}
+                style={{ width: '100%', padding: '14px', borderRadius: '16px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
