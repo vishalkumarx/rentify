@@ -583,7 +583,7 @@ a:hover {
     min-height: 400px;
     background-image: url("./assets/cover.png");
     background-position: center;
-    background-size: cover;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
   }
   .login-form-area {
