@@ -113,22 +113,24 @@ export default function Home() {
       // Hide posts made by the logged-in user
       if (session?.user?.id && item.userId === session.user.id) {
         return false;
-      }
-
       const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
-      const searchLower = searchQuery.toLowerCase().trim();
-      const matchesSearch = !searchLower || 
-        (item.title && item.title.toLowerCase().includes(searchLower)) ||
-        (item.description && item.description.toLowerCase().includes(searchLower)) ||
-        (item.category && item.category.toLowerCase().includes(searchLower));
-        
-      return matchesCategory && matchesSearch;
+      return matchesCategory;
     })
     .sort((a, b) => {
       if (sortOrder === 'price-asc') return Number(a.price) - Number(b.price);
       if (sortOrder === 'price-desc') return Number(b.price) - Number(a.price);
       return b.id - a.id; // 'newest' (assuming higher ID is newer)
     });
+
+  // Separate search logic for dropdown
+  const searchLower = searchQuery.toLowerCase().trim();
+  const searchResults = searchLower ? items.filter(item => {
+    // Hide posts made by the logged-in user
+    if (session?.user?.id && item.userId === session.user.id) return false;
+    return (item.title && item.title.toLowerCase().includes(searchLower)) ||
+           (item.description && item.description.toLowerCase().includes(searchLower)) ||
+           (item.category && item.category.toLowerCase().includes(searchLower));
+  }) : [];
 
   const renderItemCard = (item: any, index: number, isFeatured: boolean) => (
     <div 
@@ -246,23 +248,45 @@ export default function Home() {
         </div>
 
         {/* Search & Filter */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
-            <Search size={20} color="var(--text-muted)" />
-            <input
-              type="text"
-              placeholder={placeholderText || "Search..."}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: 'var(--text-main)' }}
-            />
+        <div style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
+              <Search size={20} color="var(--text-muted)" />
+              <input
+                type="text"
+                placeholder={placeholderText || "Search..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: 'var(--text-main)' }}
+              />
+            </div>
+            <button 
+              onClick={() => setShowFilters(true)}
+              style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--surface)', color: sortOrder !== 'newest' ? '#000' : 'var(--text-main)', border: sortOrder !== 'newest' ? 'none' : '1px solid var(--surface-border)' }}
+            >
+              <SlidersHorizontal size={20} />
+            </button>
           </div>
-          <button 
-            onClick={() => setShowFilters(true)}
-            style={{ width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--surface)', color: sortOrder !== 'newest' ? '#000' : 'var(--text-main)', border: sortOrder !== 'newest' ? 'none' : '1px solid var(--surface-border)' }}
-          >
-            <SlidersHorizontal size={20} />
-          </button>
+          
+          {searchQuery && (
+            <div style={{ position: 'absolute', top: '100%', left: 0, right: '56px', marginTop: '8px', background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', boxShadow: '0 8px 32px rgba(0,0,0,0.1)', zIndex: 100, maxHeight: '300px', overflowY: 'auto' }}>
+              {searchResults.length > 0 ? (
+                searchResults.map((item, idx) => (
+                  <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} style={{ padding: '12px 16px', borderBottom: idx < searchResults.length - 1 ? '1px solid var(--surface-border)' : 'none', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                    <img src={item.images?.[0] || 'https://via.placeholder.com/40'} alt={item.title} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} />
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{item.title}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>${item.price}/day</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div style={{ padding: '16px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500 }}>
+                  No results found
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
