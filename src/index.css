@@ -576,7 +576,7 @@ a:hover {
 
 @media (min-width: 768px) {
   .login-container {
-    background: #F5F5DC;
+    background: #ffffff;
   }
   .login-header {
     height: 400px;
@@ -587,7 +587,7 @@ a:hover {
     background-repeat: no-repeat;
   }
   .login-form-area {
-    background-color: #F5F5DC;
+    background-color: #ffffff;
     border-radius: 0;
     margin-top: 0;
   }
