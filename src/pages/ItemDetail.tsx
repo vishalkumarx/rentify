@@ -194,7 +194,7 @@ export default function ItemDetail() {
         <div className="item-detail-layout" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           
           {/* Main Image Slider */}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3' }}>
+          <div className="item-detail-images" style={{ position: 'relative', aspectRatio: '4/3' }}>
             <div 
               style={{ 
                 width: '100%', 
@@ -241,7 +241,7 @@ export default function ItemDetail() {
             )}
           </div>
 
-          <div style={{ padding: '24px' }}>
+          <div className="item-detail-info" style={{ padding: '24px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {userRequest?.status === 'accepted' ? (

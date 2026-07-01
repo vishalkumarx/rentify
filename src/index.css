@@ -600,3 +600,36 @@ a:hover {
     justify-content: center;
   }
 }
+
+/* Item Detail Responsive Layout */
+.item-detail-layout {
+  display: flex;
+  flex-direction: column;
+}
+.item-detail-images {
+  width: 100%;
+}
+.item-detail-info {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .item-detail-layout {
+    flex-direction: row;
+    gap: 32px;
+    padding: 32px;
+    align-items: flex-start;
+  }
+  .item-detail-images {
+    flex: 1;
+    position: sticky;
+    top: 32px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  }
+  .item-detail-info {
+    flex: 1;
+    padding: 0 !important;
+  }
+}
