@@ -70,7 +70,7 @@ export default function MobileLayout() {
         </div>
       </div>
       <div style={{ position: 'absolute', top: '64px', right: '16px', zIndex: 30, fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textAlign: 'right', pointerEvents: 'none' }}>
-        Made with ❤️ for GNDU
+        Made with <span style={{ color: '#e25555' }}>♥</span> for GNDU
       </div>
       {/* Message Banner */}
       <div 
