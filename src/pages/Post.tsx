@@ -263,7 +263,7 @@ export default function Post() {
           </div>
 
           <p style={{ margin: '8px 0 0 0', fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.4 }}>
-            <strong>Liability Disclaimer:</strong> Vicinity is not responsible for any lost, stolen, or damaged items resulting from rentals on this platform. Please secure collateral or take precautions when renting to others.
+            <strong>Liability Disclaimer:</strong> CampusRent is not responsible for any lost, stolen, or damaged items resulting from rentals on this platform. Please secure collateral or take precautions when renting to others.
           </p>
 
           <button type="submit" disabled={loading} className="glow" style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--primary)', color: '#000', fontWeight: 800, borderRadius: '20px', border: 'none' }}>

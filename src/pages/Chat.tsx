@@ -301,7 +301,7 @@ export default function Chat() {
           </div>
           <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
             <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <li>Vicinity does not mediate transactions and is not liable for items.</li>
+              <li>CampusRent does not mediate transactions and is not liable for items.</li>
               <li>Verify the item's condition and exchange in public locations.</li>
               <li>Never pay in advance or share personal banking details.</li>
               <li>Keep all communication inside the app for protection.</li>
