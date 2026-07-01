@@ -203,7 +203,7 @@ export default function Home() {
           </span>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
           <div style={{ fontWeight: 800, fontSize: '16px', color: 'var(--success)' }}>
-            ₹{item.price}
+            ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
           </div>
         </div>
         
@@ -277,7 +277,7 @@ export default function Home() {
                     <img src={item.image || 'https://via.placeholder.com/40'} alt={item.title} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{item.title}</span>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>${item.price}/day</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>₹{item.price}/day</span>
                     </div>
                   </div>
                 ))

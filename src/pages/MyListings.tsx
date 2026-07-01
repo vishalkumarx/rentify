@@ -22,11 +22,8 @@ export default function MyListings() {
                 <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                   <img src={item.image} alt={item.title} style={{ width: '96px', height: '96px', borderRadius: '16px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: '0 0 6px', fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h4>
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px' }}>
-                      <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}</span>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600 }}>/day</span>
-                    </div>
+                    <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{item.title}</h3>
+                    <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}<span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/day</span></span>
                   </div>
                 </div>
                 
