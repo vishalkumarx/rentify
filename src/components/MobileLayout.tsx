@@ -24,6 +24,19 @@ export default function MobileLayout() {
   const [showBookingBanner, setShowBookingBanner] = useState(false);
   const prevRequests = useRef(myIncomingRequests.length);
 
+  const [isScrollingDown, setIsScrollingDown] = useState(false);
+  const lastScrollY = useRef(0);
+
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    const currentScrollY = (e.target as HTMLElement).scrollTop;
+    if (currentScrollY > lastScrollY.current + 10) {
+      setIsScrollingDown(true);
+    } else if (currentScrollY < lastScrollY.current - 10) {
+      setIsScrollingDown(false);
+    }
+    lastScrollY.current = currentScrollY;
+  };
+
   useEffect(() => {
     if (totalUnread > prevUnread.current) {
       const latestConv = conversations.find(c => c.unreadCount > 0);
@@ -53,7 +66,7 @@ export default function MobileLayout() {
       <CompleteProfileModal />
       
       {/* Yellow Top Bar */}
-      <div style={{
+      <div className={`app-top-bar ${isScrollingDown ? 'hide' : ''}`} style={{
         position: 'absolute',
         top: 0, left: 0, right: 0, height: '60px',
         background: 'var(--primary)',
@@ -133,7 +146,7 @@ export default function MobileLayout() {
       </nav>
 
       {/* Scrollable Content Area */}
-      <main className="app-main hide-scrollbar" style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <main className="app-main hide-scrollbar" onScroll={handleScroll} style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <div className="animate-fade-in" style={{ minHeight: '100%' }}>
           <Outlet />
         </div>
