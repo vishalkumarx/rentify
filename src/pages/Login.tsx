@@ -42,9 +42,6 @@ export default function Login() {
     <div className="login-container animate-fade-in">
       {/* Top Header */}
       <div className="login-header">
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <Link to="/signup" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '12px' }}>Register</Link>
-        </div>
       </div>
 
       {/* Bottom Form Area */}
@@ -154,6 +151,10 @@ export default function Login() {
             Continue with Google
           </button>
         </form>
+        
+        <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '15px', color: '#6b7280' }}>
+          Don't have an account? <Link to="/signup" style={{ color: '#000000', fontWeight: 700, textDecoration: 'none' }}>Register</Link>
+        </p>
         </div>
       </div>
     </div>

@@ -52,9 +52,6 @@ export default function Signup() {
       
       {/* Top Header */}
       <div className="login-header">
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          <Link to="/login" style={{ color: '#fff', fontWeight: 600, textDecoration: 'none', fontSize: '15px', background: 'rgba(0,0,0,0.5)', padding: '6px 12px', borderRadius: '12px' }}>Sign In</Link>
-        </div>
       </div>
 
       {/* Bottom Form Area */}
@@ -190,6 +187,10 @@ export default function Signup() {
             Continue with Google
           </button>
         </form>
+        
+        <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '15px', color: '#6b7280' }}>
+          Already have an account? <Link to="/login" style={{ color: '#000000', fontWeight: 700, textDecoration: 'none' }}>Sign In</Link>
+        </p>
         </div>
       </div>
     </div>
