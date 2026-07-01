@@ -274,7 +274,7 @@ export default function Home() {
               {searchResults.length > 0 ? (
                 searchResults.map((item, idx) => (
                   <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} style={{ padding: '12px 16px', borderBottom: idx < searchResults.length - 1 ? '1px solid var(--surface-border)' : 'none', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-                    <img src={item.images?.[0] || 'https://via.placeholder.com/40'} alt={item.title} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} />
+                    <img src={item.image || 'https://via.placeholder.com/40'} alt={item.title} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{item.title}</span>
                       <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>${item.price}/day</span>
