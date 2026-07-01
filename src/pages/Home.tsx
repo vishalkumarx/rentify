@@ -379,8 +379,8 @@ export default function Home() {
             ))}
           </div>
         ) : filteredItems.length === 0 ? (
-          <div style={{ padding: '32px 16px', display: 'flex', justifyContent: 'center' }}>
-            <div style={{ background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '24px', padding: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '340px', width: '100%', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}>
+          <div style={{ padding: '32px 16px' }}>
+            <div style={{ background: 'rgba(244, 196, 48, 0.1)', border: '2px dashed var(--primary)', borderRadius: '24px', padding: '24px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>🌱 Our community is growing!</h3>
               <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500, lineHeight: 1.5 }}>
                 Even if you don't find what you are looking for today, consider listing your unused items so others don't go empty handed.
@@ -430,7 +430,7 @@ export default function Home() {
 
 
         {/* Community Message (Always at bottom) */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '24px', padding: '24px', margin: '16px auto 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '340px', width: 'calc(100% - 32px)', boxShadow: '0 8px 32px rgba(0,0,0,0.05)' }}>
+        <div style={{ background: 'rgba(244, 196, 48, 0.1)', border: '2px dashed var(--primary)', borderRadius: '24px', padding: '24px', margin: '16px 16px 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>🌱 Our community is growing!</h3>
           <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500, lineHeight: 1.5 }}>
             Even if you don't find what you are looking for today, consider listing your unused items so others don't go empty handed.
