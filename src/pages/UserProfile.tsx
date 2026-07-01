@@ -143,14 +143,16 @@ export default function UserProfile() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: 'var(--bg-color)', overflowY: 'auto' }} className="animate-slide-in">
       
       {/* Header */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', alignItems: 'center', padding: '16px 20px', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <div onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px', boxShadow: 'none' }}>
-          <ChevronLeft size={28} />
+      <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '600px' }}>
+          <div onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px', boxShadow: 'none' }}>
+            <ChevronLeft size={28} />
+          </div>
+          <h1 style={{ flex: 1, textAlign: 'center', margin: 0, fontSize: '18px', fontWeight: 700, marginRight: '32px' }}>Profile</h1>
         </div>
-        <h1 style={{ flex: 1, textAlign: 'center', margin: 0, fontSize: '18px', fontWeight: 700, marginRight: '32px' }}>Profile</h1>
       </div>
 
-      <div style={{ padding: '24px' }}>
+      <div style={{ padding: '24px', maxWidth: '600px', width: '100%', margin: '0 auto' }}>
         
         {/* User Card */}
         <div className="glass-panel" style={{ padding: '32px 24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '24px' }}>
