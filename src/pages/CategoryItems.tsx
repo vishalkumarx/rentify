@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Building2, Heart } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
