@@ -582,7 +582,7 @@ a:hover {
     height: 400px;
     min-height: 400px;
     background-image: url("./assets/cover.png");
-    background-position: center bottom;
+    background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
   }
