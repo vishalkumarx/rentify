@@ -385,7 +385,7 @@ export default function Home() {
         )}
 
         {/* Bottom Banners */}
-        <div style={{ width: '100%', marginTop: '32px', marginBottom: '16px' }}>
+        <div className="banner-container">
           <img src={mobileBanner} className="mobile-banner-img" alt="Promo Banner" />
           <img src={webBanner} className="desktop-banner-img" alt="Promo Banner" />
         </div>

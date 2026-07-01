@@ -614,6 +614,11 @@ a:hover {
 }
 
 /* Banner Styles */
+.banner-container {
+  width: 100%;
+  margin-top: 32px;
+  margin-bottom: -20px; /* Offset the 20px extra padding from .app-main to sit flush on nav */
+}
 .mobile-banner-img {
   width: 100%;
   height: auto;
@@ -625,6 +630,9 @@ a:hover {
 }
 
 @media (min-width: 768px) {
+  .banner-container {
+    margin-bottom: 16px; /* Restore normal margin for desktop */
+  }
   .item-detail-layout {
     flex-direction: row;
     gap: 32px;
