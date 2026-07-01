@@ -625,9 +625,6 @@ a:hover {
   display: block;
   border-radius: 0;
 }
-.desktop-banner-img {
-  display: none;
-}
 
 @media (min-width: 768px) {
   .banner-container {
@@ -647,16 +644,5 @@ a:hover {
   .item-detail-info {
     flex: 1;
     padding: 0 !important;
-  }
-  
-  .desktop-banner-img {
-    display: block !important;
-    width: 100%;
-    height: 150px;
-    object-fit: fill;
-    border-radius: 24px;
-  }
-  .mobile-banner-img {
-    display: none !important;
   }
 }
