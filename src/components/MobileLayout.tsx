@@ -60,13 +60,17 @@ export default function MobileLayout() {
         zIndex: 40,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingLeft: '20px',
-        gap: '8px',
+        justifyContent: 'space-between',
+        padding: '0 20px',
         borderBottom: '1px solid rgba(0,0,0,0.1)',
       }}>
-        <img src={logoImg} alt="CampusRent Logo" style={{ height: '32px', width: 'auto' }} />
-        <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px' }}>campusrent</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img src={logoImg} alt="CampusRent Logo" style={{ height: '32px', width: 'auto' }} />
+          <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px' }}>campusrent</h1>
+        </div>
+        <span style={{ fontSize: '11px', fontWeight: 800, color: 'rgba(0,0,0,0.6)', textAlign: 'right', marginTop: '4px' }}>
+          Made with ❤️<br/>for GNDU
+        </span>
       </div>
       {/* Message Banner */}
       <div 
