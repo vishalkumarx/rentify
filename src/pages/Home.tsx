@@ -87,6 +87,7 @@ export default function Home() {
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
   const [displayCount, setDisplayCount] = useState(12);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [activeDepartment, setActiveDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -116,7 +117,8 @@ export default function Home() {
         return false;
       }
       const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
-      return matchesCategory;
+      const matchesDepartment = activeDepartment === 'All' || item.department === activeDepartment;
+      return matchesCategory && matchesDepartment;
     })
     .sort((a, b) => {
       if (sortOrder === 'price-asc') return Number(a.price) - Number(b.price);
@@ -275,7 +277,7 @@ export default function Home() {
               style={{ position: 'relative', width: '48px', height: '48px', padding: 0, borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: sortOrder !== 'newest' ? 'var(--primary)' : 'var(--surface)', color: sortOrder !== 'newest' ? '#000' : 'var(--text-main)', border: sortOrder !== 'newest' ? 'none' : '1px solid var(--surface-border)' }}
             >
               <SlidersHorizontal size={20} />
-              {sortOrder !== 'newest' && (
+              {(sortOrder !== 'newest' || activeCategory !== 'All' || activeDepartment !== 'All') && (
                 <span style={{ position: 'absolute', top: '10px', right: '10px', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--danger)', border: '2px solid var(--primary)' }}></span>
               )}
             </button>
@@ -456,17 +458,29 @@ export default function Home() {
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, color: 'var(--text-muted)' }}>Category</label>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+              <select 
+                value={activeCategory} 
+                onChange={(e) => setActiveCategory(e.target.value)}
+                style={{ padding: '12px 16px', borderRadius: '16px', fontSize: '15px', background: 'var(--surface)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', outline: 'none', appearance: 'auto' }}
+              >
                 {CATEGORIES.map(c => (
-                  <button 
-                    key={c} 
-                    onClick={() => setActiveCategory(c)} 
-                    style={{ padding: '8px 16px', borderRadius: '16px', fontSize: '14px', background: activeCategory === c ? 'var(--primary)' : 'rgba(0,0,0,0.05)', color: activeCategory === c ? '#000' : 'var(--text-main)', border: activeCategory === c ? 'none' : '1px solid var(--surface-border)' }}
-                  >
-                    {c}
-                  </button>
+                  <option key={c} value={c}>{c}</option>
                 ))}
-              </div>
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, color: 'var(--text-muted)' }}>Department</label>
+              <select 
+                value={activeDepartment} 
+                onChange={(e) => setActiveDepartment(e.target.value)}
+                style={{ padding: '12px 16px', borderRadius: '16px', fontSize: '15px', background: 'var(--surface)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', outline: 'none', appearance: 'auto' }}
+              >
+                <option value="All">All</option>
+                {DEPARTMENTS.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
