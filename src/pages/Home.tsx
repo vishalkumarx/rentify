@@ -243,7 +243,7 @@ export default function Home() {
       </div>
 
       {/* Greeting & Search (Scrolls with page) */}
-      <div style={{ padding: '8px 16px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
+      <div style={{ padding: '8px 24px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
         
         {/* Greeting */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -337,12 +337,21 @@ export default function Home() {
         </div>
 
         {/* Visual Categories Grid */}
-        <div style={{ padding: '16px' }}>
+        <div style={{ padding: '16px 24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>Popular Categories</h2>
+            <button 
+              onClick={() => navigate('/categories')}
+              style={{ background: 'transparent', border: 'none', color: 'var(--primary)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', padding: 0 }}
+            >
+              View All
+            </button>
+          </div>
           <div className="categories-grid">
-            {visualCategories.map(cat => (
+            {visualCategories.map((cat, idx) => (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(activeCategory === cat.id ? 'All' : cat.id)}
+                onClick={() => navigate(`/category/${encodeURIComponent(cat.title)}`)}
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
@@ -359,13 +368,13 @@ export default function Home() {
                   aspectRatio: '1', 
                   borderRadius: '16px', 
                   overflow: 'hidden',
-                  border: activeCategory === cat.id ? '2px solid var(--primary)' : '1px solid var(--surface-border)',
-                  boxShadow: activeCategory === cat.id ? '0 4px 12px rgba(255, 204, 0, 0.3)' : '0 2px 8px rgba(0,0,0,0.05)',
+                  border: '1px solid var(--surface-border)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
                   transition: 'all 0.2s ease'
                 }}>
                   <img src={cat.img} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                <span className="cat-text" style={{ fontWeight: 700, color: activeCategory === cat.id ? 'var(--primary)' : 'var(--text-main)', textAlign: 'center', lineHeight: 1.2 }}>
+                <span className="cat-text animate-reveal" style={{ fontWeight: 700, color: 'var(--text-main)', textAlign: 'center', lineHeight: 1.2, animationDelay: `${idx * 0.1}s` }}>
                   {cat.title}
                 </span>
               </button>

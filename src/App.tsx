@@ -18,6 +18,8 @@ import MyListings from './pages/MyListings';
 import Requests from './pages/Requests';
 import AdminPanel from './pages/AdminPanel';
 import UserProfile from './pages/UserProfile';
+import AllCategories from './pages/AllCategories';
+import CategoryItems from './pages/CategoryItems';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -62,6 +64,8 @@ function AppRoutes() {
       <Route element={<MobileLayout />}>
         {/* Public Feed */}
         <Route path="/" element={<Home />} />
+        <Route path="/categories" element={<AllCategories />} />
+        <Route path="/category/:categoryId" element={<CategoryItems />} />
         
         {/* Protected Navigation Tabs */}
         <Route path="/post" element={<ProtectedRoute message="Login to post a new rental listing."><Post /></ProtectedRoute>} />
