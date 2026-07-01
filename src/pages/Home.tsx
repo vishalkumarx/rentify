@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, Building2, Clock, X } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -339,12 +339,12 @@ export default function Home() {
         {/* Visual Categories Grid */}
         <div style={{ padding: '16px 24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>Popular Categories</h2>
+            <h2 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Popular Categories</h2>
             <button 
               onClick={() => navigate('/categories')}
-              style={{ background: 'transparent', border: 'none', color: 'var(--primary)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', padding: 0 }}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0 }}
             >
-              View All
+              View All <ChevronRight size={14} />
             </button>
           </div>
           <div className="categories-grid">
