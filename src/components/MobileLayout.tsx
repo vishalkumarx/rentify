@@ -69,7 +69,7 @@ export default function MobileLayout() {
           <h1 style={{ margin: 0, fontSize: '22px', fontWeight: 900, color: '#000', letterSpacing: '-0.5px' }}>campusrent</h1>
         </div>
       </div>
-      <div style={{ position: 'absolute', top: '64px', right: '16px', zIndex: 30, fontSize: '11px', fontWeight: 800, color: 'var(--text-muted)', textAlign: 'right', pointerEvents: 'none' }}>
+      <div className="made-with-love">
         Made with <span style={{ color: '#e25555' }}>♥</span> for GNDU
       </div>
       {/* Message Banner */}
