@@ -458,7 +458,7 @@ export default function Home() {
               <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Filters</h2>
               <button 
                 onClick={() => setShowFilters(false)}
-                style={{ padding: '8px', background: 'rgba(0,0,0,0.05)', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', cursor: 'pointer' }}
+                style={{ width: '36px', height: '36px', padding: 0, background: 'rgba(0,0,0,0.05)', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', cursor: 'pointer' }}
               >
                 <X size={20} />
               </button>
