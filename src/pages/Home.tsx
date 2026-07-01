@@ -116,7 +116,12 @@ export default function Home() {
       }
 
       const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
-      const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const searchLower = searchQuery.toLowerCase().trim();
+      const matchesSearch = !searchLower || 
+        (item.title && item.title.toLowerCase().includes(searchLower)) ||
+        (item.description && item.description.toLowerCase().includes(searchLower)) ||
+        (item.category && item.category.toLowerCase().includes(searchLower));
+        
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
