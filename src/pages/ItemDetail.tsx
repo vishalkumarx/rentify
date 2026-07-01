@@ -30,6 +30,16 @@ const ZoomableImage = ({ img, i }: { img: string, i: number }) => {
   );
 };
 
+const DUMMY_REVIEWS = [
+  { id: 1, initial: 'A', name: 'Alex M.', date: '2 weeks ago', rating: 5, text: 'Item was in perfect condition! Exactly what I needed for my weekend trip. The host was very responsive and accommodating with pickup times. Highly recommend!' },
+  { id: 2, initial: 'S', name: 'Sarah J.', date: '1 month ago', rating: 4, text: 'Great quality, but pickup was a bit far from my dorm. Overall good experience though.' },
+  { id: 3, initial: 'D', name: 'David L.', date: '2 months ago', rating: 5, text: 'Super smooth rental. Saved me a lot of money instead of buying one new!' },
+  { id: 4, initial: 'M', name: 'Michael T.', date: '3 months ago', rating: 5, text: 'Fantastic experience. The equipment was fully charged and ready to go.' },
+  { id: 5, initial: 'E', name: 'Emma R.', date: '4 months ago', rating: 4, text: 'Very useful for my class project. Handover was quick.' },
+  { id: 6, initial: 'J', name: 'James K.', date: '5 months ago', rating: 5, text: 'Exactly as described. Would definitely rent again!' },
+  { id: 7, initial: 'L', name: 'Lisa P.', date: '6 months ago', rating: 4, text: 'Good item, reasonable price. No issues at all.' }
+];
+
 export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -41,6 +51,8 @@ export default function ItemDetail() {
   const [currentMainImageIndex, setCurrentMainImageIndex] = useState(0);
   const isInitialModalRender = useRef(false);
   const modalScrollRef = useRef<HTMLDivElement>(null);
+  
+  const [displayReviewsCount, setDisplayReviewsCount] = useState(5);
 
   useEffect(() => {
     if (zoomImageIndex !== null && isInitialModalRender.current && modalScrollRef.current) {
@@ -244,84 +256,42 @@ export default function ItemDetail() {
             
             {/* Dummy Reviews Section */}
             <div style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews (3)</h3>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({DUMMY_REVIEWS.length})</h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* Review 1 */}
-                <div style={{ paddingBottom: '20px', borderBottom: '1px solid var(--surface-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
-                        A
+                {DUMMY_REVIEWS.slice(0, displayReviewsCount).map((review, index) => (
+                  <div key={review.id} style={{ paddingBottom: '20px', borderBottom: index < Math.min(DUMMY_REVIEWS.length, displayReviewsCount) - 1 ? '1px solid var(--surface-border)' : 'none' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+                          {review.initial}
+                        </div>
+                        <div>
+                          <div style={{ fontWeight: 600, fontSize: '15px' }}>{review.name}</div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{review.date}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '15px' }}>Alex M.</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>2 weeks ago</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} size={14} fill={star <= review.rating ? "var(--warning)" : "transparent"} color={star <= review.rating ? "var(--warning)" : "var(--surface-border)"} />
+                        ))}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                    </div>
+                    <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+                      {review.text}
+                    </p>
                   </div>
-                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
-                    Item was in perfect condition! Exactly what I needed for my weekend trip. The host was very responsive and accommodating with pickup times. Highly recommend!
-                  </p>
-                </div>
-
-                {/* Review 2 */}
-                <div style={{ paddingBottom: '20px', borderBottom: '1px solid var(--surface-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: '#e5e7eb', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
-                        S
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '15px' }}>Sarah J.</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>1 month ago</div>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} color="var(--surface-border)" />
-                    </div>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
-                    Great quality, but pickup was a bit far from my dorm. Overall good experience though.
-                  </p>
-                </div>
-
-                {/* Review 3 */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
-                        D
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600, fontSize: '15px' }}>David L.</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>2 months ago</div>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
-                    </div>
-                  </div>
-                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
-                    Super smooth rental. Saved me a lot of money instead of buying one new!
-                  </p>
-                </div>
+                ))}
               </div>
+              
+              {displayReviewsCount < DUMMY_REVIEWS.length && (
+                <button 
+                  onClick={() => setDisplayReviewsCount(prev => prev + 5)}
+                  style={{ width: '100%', marginTop: '16px', padding: '14px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}
+                >
+                  Load More Reviews
+                </button>
+              )}
             </div>
           </div>
 
