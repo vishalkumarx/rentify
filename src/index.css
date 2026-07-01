@@ -548,7 +548,7 @@ a:hover {
   flex-direction: column;
   height: 100dvh;
   overflow-y: auto;
-  background-color: #ffffff;
+  background: #000 url("./assets/login bg.png") center/cover no-repeat;
   position: relative;
 }
 
@@ -558,18 +558,14 @@ a:hover {
   width: 100%;
   height: 40dvh;
   min-height: 300px;
-  background-image: url("./assets/login bg.png");
-  background-position: center bottom;
-  background-size: cover;
-  background-repeat: no-repeat;
   padding: calc(24px + env(safe-area-inset-top)) 24px 48px;
 }
 
 .login-form-area {
   flex-grow: 1;
-  background-color: #ffffff;
-  border-radius: 32px 32px 0 0;
-  margin-top: -32px;
+  background-color: transparent;
+  border-radius: 0;
+  margin-top: 0;
   position: relative;
   z-index: 10;
   padding: 32px 24px calc(48px + env(safe-area-inset-bottom));
@@ -580,7 +576,7 @@ a:hover {
 
 @media (min-width: 768px) {
   .login-container {
-    background-color: #F5F5DC; /* Fallback beige color */
+    background: #F5F5DC;
   }
   .login-header {
     height: 400px;
