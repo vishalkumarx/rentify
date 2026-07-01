@@ -453,8 +453,16 @@ export default function Home() {
       {/* Filter Modal */}
       {showFilters && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
-          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '360px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Filters</h2>
+          <div className="animate-slide-up" style={{ position: 'relative', width: '100%', maxWidth: '360px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Filters</h2>
+              <button 
+                onClick={() => setShowFilters(false)}
+                style={{ padding: '8px', background: 'rgba(0,0,0,0.05)', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', cursor: 'pointer' }}
+              >
+                <X size={20} />
+              </button>
+            </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <label style={{ fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600, color: 'var(--text-muted)' }}>Category</label>
@@ -502,9 +510,21 @@ export default function Home() {
               </div>
             </div>
 
-            <button onClick={() => setShowFilters(false)} className="glow" style={{ marginTop: '8px', padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px' }}>
-              Apply Filters
-            </button>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => { setActiveCategory('All'); setActiveDepartment('All'); setSortOrder('newest'); }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'rgba(0,0,0,0.05)', color: 'var(--text-main)', fontWeight: 700, fontSize: '15px', border: 'none' }}
+              >
+                Clear
+              </button>
+              <button 
+                onClick={() => setShowFilters(false)} 
+                className="glow" 
+                style={{ flex: 2, padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none' }}
+              >
+                Apply
+              </button>
+            </div>
           </div>
         </div>,
         document.body
