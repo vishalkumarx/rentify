@@ -2,10 +2,6 @@ import { useState } from 'react';
 import { supabase, setStorageJson } from '../lib/supabase';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-// @ts-ignore
-import loginBg from '../assets/login bg.png';
-// @ts-ignore
-import coverBg from '../assets/cover.png';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -52,7 +48,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="login-container animate-fade-in" style={{ '--mobile-bg': `url("${loginBg}")`, '--desktop-bg': `url("${coverBg}")` } as React.CSSProperties}>
+    <div className="login-container animate-fade-in">
       
       {/* Top Header */}
       <div className="login-header">
