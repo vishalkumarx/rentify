@@ -18,6 +18,10 @@ import imgMobility from '../assets/mobility.PNG';
 import imgSports from '../assets/sports.PNG';
 // @ts-ignore
 import imgTools from '../assets/tools and hardware.PNG';
+// @ts-ignore
+import mobileBanner from '../assets/mobile banner.PNG';
+// @ts-ignore
+import webBanner from '../assets/web banner.PNG';
 
 const visualCategories = [
   { id: 'Books and Stationary', title: 'Books & Stationary', img: imgBooks },
@@ -379,6 +383,12 @@ export default function Home() {
             );
           })()
         )}
+
+        {/* Bottom Banners */}
+        <div style={{ width: '100%', marginTop: '32px', marginBottom: '16px', borderRadius: '24px', overflow: 'hidden' }}>
+          <img src={mobileBanner} className="mobile-banner-img" alt="Promo Banner" style={{ width: '100%', height: 'auto', display: 'block' }} />
+          <img src={webBanner} className="desktop-banner-img" alt="Promo Banner" style={{ width: '100%', height: 'auto', display: 'none' }} />
+        </div>
 
         {/* Load More Trigger */}
         {filteredItems.length > displayCount && (
