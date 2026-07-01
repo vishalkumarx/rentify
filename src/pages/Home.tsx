@@ -249,7 +249,7 @@ export default function Home() {
         </div>
 
         {/* Search & Filter */}
-        <div style={{ position: 'relative', maxWidth: '340px' }}>
+        <div style={{ position: 'relative', width: '50%', minWidth: '280px' }}>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
               <Search size={20} color="var(--text-muted)" style={{ flexShrink: 0 }} />
