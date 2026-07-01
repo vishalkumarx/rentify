@@ -175,8 +175,7 @@ export default function ItemDetail() {
         padding: '0 20px', 
         background: 'var(--surface)', 
         borderBottom: '1px solid var(--surface-border)',
-        position: 'sticky',
-        top: 0,
+        flexShrink: 0,
         zIndex: 50
       }}>
         <button 
