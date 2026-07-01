@@ -234,8 +234,8 @@ export default function Home() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-      {/* Department Chooser (Sticky) */}
-      <div style={{ position: 'sticky', top: 0, zIndex: 40, background: 'var(--bg)', padding: '16px', display: 'flex' }}>
+      {/* Department Chooser */}
+      <div style={{ background: 'var(--bg)', padding: '16px', display: 'flex' }}>
         <div onClick={() => setShowDepartmentModal(true)} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-main)', cursor: 'pointer', background: 'var(--surface)', padding: '8px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
           <Building2 size={16} />
           <span style={{ fontSize: '14px', fontWeight: 700 }}>{userDepartment}</span>
