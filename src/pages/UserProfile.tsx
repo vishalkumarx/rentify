@@ -16,6 +16,7 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
 
   const [reviews, setReviews] = useState<any[]>([]);
+  const [displayReviewsCount, setDisplayReviewsCount] = useState(5);
   const [newReviewText, setNewReviewText] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -245,7 +246,7 @@ export default function UserProfile() {
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {reviews.map((rev, idx) => (
+              {reviews.slice(0, displayReviewsCount).map((rev, idx) => (
                 <div key={idx} className="glass-panel" style={{ padding: '16px', borderRadius: '16px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -266,6 +267,14 @@ export default function UserProfile() {
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.5, color: 'var(--text-main)' }}>{rev.text}</p>
                 </div>
               ))}
+              {reviews.length > displayReviewsCount && (
+                <button 
+                  onClick={() => setDisplayReviewsCount(prev => prev + 5)}
+                  style={{ padding: '12px', marginTop: '8px', background: 'var(--surface)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', borderRadius: '16px', fontWeight: 600, fontSize: '14px', cursor: 'pointer' }}
+                >
+                  Load more reviews
+                </button>
+              )}
             </div>
           )}
         </div>
