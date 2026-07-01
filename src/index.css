@@ -656,3 +656,47 @@ a:hover {
 .app-top-bar {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Mobile Tabs for ItemDetail */
+.mobile-tabs-container {
+  display: flex;
+  margin: 16px 0 0;
+  gap: 8px;
+  background: var(--surface);
+  padding: 6px;
+  border-radius: 20px;
+  border: 1px solid var(--surface-border);
+}
+
+.mobile-tab-btn {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.mobile-tab-btn.active {
+  background: var(--primary);
+  color: #000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+@media (min-width: 768px) {
+  .mobile-tabs-container {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .mobile-tab-content-reviews.hidden,
+  .mobile-tab-content-details.hidden {
+    display: none !important;
+  }
+}

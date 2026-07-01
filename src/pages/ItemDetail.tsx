@@ -53,6 +53,7 @@ export default function ItemDetail() {
   const modalScrollRef = useRef<HTMLDivElement>(null);
   
   const [displayReviewsCount, setDisplayReviewsCount] = useState(5);
+  const [mobileTab, setMobileTab] = useState<'details' | 'reviews'>('details');
 
   useEffect(() => {
     if (zoomImageIndex !== null && isInitialModalRender.current && modalScrollRef.current) {
@@ -254,8 +255,13 @@ export default function ItemDetail() {
             )}
             </div>
             
+            <div className="mobile-tabs-container">
+              <button className={`mobile-tab-btn ${mobileTab === 'details' ? 'active' : ''}`} onClick={() => setMobileTab('details')}>Details</button>
+              <button className={`mobile-tab-btn ${mobileTab === 'reviews' ? 'active' : ''}`} onClick={() => setMobileTab('reviews')}>Reviews ({DUMMY_REVIEWS.length})</button>
+            </div>
+
             {/* Dummy Reviews Section */}
-            <div style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+            <div className={`mobile-tab-content-reviews ${mobileTab !== 'reviews' ? 'hidden' : ''}`} style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({DUMMY_REVIEWS.length})</h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -295,7 +301,7 @@ export default function ItemDetail() {
             </div>
           </div>
 
-          <div className="item-detail-info" style={{ padding: '24px' }}>
+          <div className={`item-detail-info mobile-tab-content-details ${mobileTab !== 'details' ? 'hidden' : ''}`} style={{ padding: '24px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 {userRequest?.status === 'accepted' ? (
