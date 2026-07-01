@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, Building2, Clock } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, Building2, Clock, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -249,10 +249,10 @@ export default function Home() {
         </div>
 
         {/* Search & Filter */}
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', maxWidth: '340px' }}>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
-              <Search size={20} color="var(--text-muted)" />
+              <Search size={20} color="var(--text-muted)" style={{ flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder={placeholderText || "Search..."}
@@ -260,6 +260,14 @@ export default function Home() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: 'var(--text-main)' }}
               />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  style={{ padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', width: 'auto', flexShrink: 0 }}
+                >
+                  <X size={16} />
+                </button>
+              )}
             </div>
             <button 
               onClick={() => setShowFilters(true)}
