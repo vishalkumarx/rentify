@@ -193,8 +193,9 @@ export default function ItemDetail() {
       <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '200px' }}>
         <div className="item-detail-layout" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           
-          {/* Main Image Slider */}
-          <div className="item-detail-images" style={{ position: 'relative', aspectRatio: '4/3' }}>
+          {/* Left Column: Images & Reviews */}
+          <div className="item-detail-images">
+            <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 10px 30px rgba(0,0,0,0.08)' }}>
             <div 
               style={{ 
                 width: '100%', 
@@ -239,6 +240,89 @@ export default function ItemDetail() {
                 ))}
               </div>
             )}
+            </div>
+            
+            {/* Dummy Reviews Section */}
+            <div style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews (3)</h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* Review 1 */}
+                <div style={{ paddingBottom: '20px', borderBottom: '1px solid var(--surface-border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+                        A
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '15px' }}>Alex M.</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>2 weeks ago</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                    </div>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+                    Item was in perfect condition! Exactly what I needed for my weekend trip. The host was very responsive and accommodating with pickup times. Highly recommend!
+                  </p>
+                </div>
+
+                {/* Review 2 */}
+                <div style={{ paddingBottom: '20px', borderBottom: '1px solid var(--surface-border)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: '#e5e7eb', color: '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+                        S
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '15px' }}>Sarah J.</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>1 month ago</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} color="var(--surface-border)" />
+                    </div>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+                    Great quality, but pickup was a bit far from my dorm. Overall good experience though.
+                  </p>
+                </div>
+
+                {/* Review 3 */}
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+                        D
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '15px' }}>David L.</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>2 months ago</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                      <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                    </div>
+                  </div>
+                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+                    Super smooth rental. Saved me a lot of money instead of buying one new!
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="item-detail-info" style={{ padding: '24px' }}>
