@@ -113,6 +113,7 @@ export default function Home() {
       // Hide posts made by the logged-in user
       if (session?.user?.id && item.userId === session.user.id) {
         return false;
+      }
       const matchesCategory = activeCategory === 'All' || item.category === activeCategory;
       return matchesCategory;
     })
