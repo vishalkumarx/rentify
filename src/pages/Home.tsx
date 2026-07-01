@@ -385,9 +385,9 @@ export default function Home() {
         )}
 
         {/* Bottom Banners */}
-        <div style={{ width: '100%', marginTop: '32px', marginBottom: '16px', borderRadius: '24px', overflow: 'hidden' }}>
-          <img src={mobileBanner} className="mobile-banner-img" alt="Promo Banner" style={{ width: '100%', height: 'auto', display: 'block' }} />
-          <img src={webBanner} className="desktop-banner-img" alt="Promo Banner" style={{ width: '100%', height: 'auto', display: 'none' }} />
+        <div style={{ width: '100%', marginTop: '32px', marginBottom: '16px' }}>
+          <img src={mobileBanner} className="mobile-banner-img" alt="Promo Banner" />
+          <img src={webBanner} className="desktop-banner-img" alt="Promo Banner" />
         </div>
 
         {/* Load More Trigger */}

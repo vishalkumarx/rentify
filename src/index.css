@@ -613,6 +613,17 @@ a:hover {
   width: 100%;
 }
 
+/* Banner Styles */
+.mobile-banner-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0;
+}
+.desktop-banner-img {
+  display: none;
+}
+
 @media (min-width: 768px) {
   .item-detail-layout {
     flex-direction: row;
@@ -632,6 +643,10 @@ a:hover {
   
   .desktop-banner-img {
     display: block !important;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 24px;
   }
   .mobile-banner-img {
     display: none !important;
