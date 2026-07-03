@@ -338,13 +338,13 @@ export default function Home() {
 
         {/* Visual Categories Grid */}
         <div style={{ padding: '16px', width: '100%', display: 'block' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', width: '100%' }}>
-            <h2 style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Popular Categories</h2>
+          <div style={{ display: 'block', marginBottom: '16px', width: '100%', overflow: 'hidden' }}>
+            <h2 style={{ float: 'left', margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap', lineHeight: '24px' }}>Popular Categories</h2>
             <button 
               onClick={() => navigate('/categories')}
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0 }}
+              style={{ float: 'right', display: 'flex', alignItems: 'center', gap: '4px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', padding: 0, lineHeight: '24px' }}
             >
-              View All <ChevronRight size={14} />
+              See All <ChevronRight size={14} />
             </button>
           </div>
           <div className="categories-grid">
