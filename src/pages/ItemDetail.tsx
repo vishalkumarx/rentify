@@ -84,7 +84,7 @@ export default function ItemDetail() {
         if (profile) setOwnerProfile(profile);
       });
       getStorageJson('admin/verifications.json').then(verificationsData => {
-        if (verificationsData && verificationsData[item.userId]) {
+        if (verificationsData && item.userId && verificationsData[item.userId]) {
           setVerificationStatus(verificationsData[item.userId].status);
         }
       });
