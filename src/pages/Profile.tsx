@@ -169,9 +169,21 @@ export default function Profile() {
             ) : (
               <button 
                 onClick={() => setShowVerificationModal(true)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'var(--primary)', color: 'white', border: 'none', padding: '14px', borderRadius: '16px', fontWeight: 600, cursor: 'pointer', boxShadow: 'var(--primary-glow)' }}>
-                <ShieldCheck size={20} />
-                Get Verified Badge
+                style={{ 
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
+                  background: 'linear-gradient(135deg, #1877F2 0%, #000000 100%)', 
+                  color: 'white', border: 'none', padding: '16px 20px', borderRadius: '16px', 
+                  cursor: 'pointer', boxShadow: '0 8px 20px rgba(24, 119, 242, 0.25)',
+                  width: '100%', marginTop: '4px'
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <BadgeCheck size={28} fill="#1877F2" color="white" />
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
+                    <span style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '0.3px' }}>Rentify Verified</span>
+                    <span style={{ fontSize: '13px', opacity: 0.8, fontWeight: 500 }}>Build trust in the community</span>
+                  </div>
+                </div>
+                <ChevronRight size={20} opacity={0.8} />
               </button>
             )}
           </div>
@@ -263,7 +275,7 @@ export default function Profile() {
             <button 
               type="button"
               onClick={() => setShowVerificationModal(false)}
-              style={{ position: 'absolute', top: '16px', right: '16px', background: 'var(--surface-border)', border: 'none', width: '32px', height: '32px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', cursor: 'pointer' }}
+              style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.1)', border: 'none', width: '32px', height: '32px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', cursor: 'pointer', zIndex: 10 }}
             >
               <X size={18} />
             </button>
