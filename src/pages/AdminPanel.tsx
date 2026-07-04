@@ -16,7 +16,11 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'verifications' | 'reports'>('verifications');
   
   // Modal State
-  const [selectedImage, setSelectedImage] = useState<{ url: string, userId: string, status: string } | null>(null);
+  const [selectedImage, setSelectedImage] = useState<{ url: string, url2?: string, userId: string, status: string } | null>(null);
+  
+  // Rejection Modal State
+  const [rejectingUserId, setRejectingUserId] = useState<string | null>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   useEffect(() => {
     if (!session) {
@@ -29,30 +33,22 @@ export default function AdminPanel() {
       const apps = await getStorageJson('admin/approvals.json') || [];
       setApprovals(apps);
       
-      // 2. Fetch verifications from storage bucket
-      const { data: verifFiles } = await supabase.storage.from('item-images').list('verifications');
-      if (verifFiles) {
-        const parsedUsers = verifFiles
-          .filter(f => f.name !== '.emptyFolderPlaceholder' && f.name.includes('-'))
-          .map(f => {
-            const userId = f.name.split('-')[0];
-            const { data } = supabase.storage.from('item-images').getPublicUrl(`verifications/${f.name}`);
-            return {
-              id: userId,
-              email: 'ID: ' + userId,
-              name: 'User ' + userId.substring(0, 5),
-              submittedAt: f.created_at || new Date().toISOString(),
-              idImageUrl: data.publicUrl,
-              status: apps.includes(userId) ? 'approved' : 'pending'
-            };
-          });
-        // Group by user, keeping the latest upload if there are duplicates
-        const uniqueUsersMap = new Map();
-        for (const u of parsedUsers) {
-          uniqueUsersMap.set(u.id, u);
-        }
-        setUsers(Array.from(uniqueUsersMap.values()));
-      }
+      // 2. Fetch verifications from JSON
+      const verificationsData = await getStorageJson('admin/verifications.json') || {};
+      const parsedUsers = Object.keys(verificationsData).map(userId => {
+        const v = verificationsData[userId];
+        return {
+          id: userId,
+          email: 'ID: ' + userId,
+          name: 'User ' + userId.substring(0, 5),
+          submittedAt: v.submittedAt || new Date().toISOString(),
+          idImageUrl: v.collegeIdUrl, // College ID
+          aadharUrl: v.aadharUrl, // Aadhar Card
+          status: v.status || 'pending',
+          rejectionReason: v.rejectionReason || ''
+        };
+      });
+      setUsers(parsedUsers);
 
       // 3. Fetch Reports
       const { data: reportFiles } = await supabase.storage.from('item-images').list('reports');
@@ -75,23 +71,31 @@ export default function AdminPanel() {
   }, [session, navigate]);
 
   const handleApprove = async (userId: string) => {
-    if (!approvals.includes(userId)) {
-      const newApps = [...approvals, userId];
-      await setStorageJson('admin/approvals.json', newApps);
-      setApprovals(newApps);
+    const verificationsData = await getStorageJson('admin/verifications.json') || {};
+    if (verificationsData[userId]) {
+      verificationsData[userId].status = 'approved';
+      await setStorageJson('admin/verifications.json', verificationsData);
     }
     setUsers(users.map(u => u.id === userId ? { ...u, status: 'approved' } : u));
     if (selectedImage) setSelectedImage({ ...selectedImage, status: 'approved' });
     toast.success(`User approved successfully!`);
   };
 
-  const handleReject = async (userId: string) => {
-    const newApps = approvals.filter(id => id !== userId);
-    await setStorageJson('admin/approvals.json', newApps);
-    setApprovals(newApps);
-    setUsers(users.map(u => u.id === userId ? { ...u, status: 'rejected' } : u));
-    if (selectedImage) setSelectedImage({ ...selectedImage, status: 'rejected' });
-    toast.error(approvals.includes(userId) ? 'Approval revoked.' : 'Verification rejected.');
+  const confirmReject = async () => {
+    if (!rejectingUserId) return;
+    const verificationsData = await getStorageJson('admin/verifications.json') || {};
+    if (verificationsData[rejectingUserId]) {
+      verificationsData[rejectingUserId].status = 'rejected';
+      verificationsData[rejectingUserId].rejectionReason = rejectionReason;
+      await setStorageJson('admin/verifications.json', verificationsData);
+    }
+    setUsers(users.map(u => u.id === rejectingUserId ? { ...u, status: 'rejected', rejectionReason } : u));
+    if (selectedImage && selectedImage.userId === rejectingUserId) {
+      setSelectedImage({ ...selectedImage, status: 'rejected' });
+    }
+    setRejectingUserId(null);
+    setRejectionReason('');
+    toast.error('Verification rejected.');
   };
 
   const handleTerminate = async (userId: string) => {
@@ -180,19 +184,33 @@ export default function AdminPanel() {
                     {filteredUsers.map(user => (
                       <div key={user.id} className="glass-panel" style={{ padding: '20px', borderRadius: '20px', display: 'flex', gap: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
                         
-                        {/* ID Image (Click to Expand) */}
-                        <div 
-                          onClick={() => setSelectedImage({ url: user.idImageUrl, userId: user.id, status: user.status })}
-                          style={{ width: '200px', height: '140px', borderRadius: '12px', overflow: 'hidden', background: '#000', flexShrink: 0, border: '1px solid var(--surface-border)', cursor: 'zoom-in', position: 'relative' }}
-                        >
-                          <img src={user.idImageUrl} alt="University ID" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: user.status === 'approved' ? 0.6 : 1 }} />
+                        {/* ID Images (Click to Expand) */}
+                        <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
+                          <div 
+                            onClick={() => setSelectedImage({ url: user.idImageUrl, url2: user.aadharUrl, userId: user.id, status: user.status })}
+                            style={{ width: '120px', height: '100px', borderRadius: '12px', overflow: 'hidden', background: '#000', border: '1px solid var(--surface-border)', cursor: 'zoom-in', position: 'relative' }}
+                          >
+                            <img src={user.idImageUrl} alt="College ID" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: user.status === 'approved' ? 0.6 : 1 }} />
+                            <div style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>College ID</div>
+                          </div>
+                          
+                          {user.aadharUrl && (
+                            <div 
+                              onClick={() => setSelectedImage({ url: user.aadharUrl, url2: user.idImageUrl, userId: user.id, status: user.status })}
+                              style={{ width: '120px', height: '100px', borderRadius: '12px', overflow: 'hidden', background: '#000', border: '1px solid var(--surface-border)', cursor: 'zoom-in', position: 'relative' }}
+                            >
+                              <img src={user.aadharUrl} alt="Aadhar Card" style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: user.status === 'approved' ? 0.6 : 1 }} />
+                              <div style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>Aadhar</div>
+                            </div>
+                          )}
+
                           {user.status === 'approved' && (
-                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'var(--success)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 700 }}>
+                            <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'var(--success)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, zIndex: 1 }}>
                               APPROVED
                             </div>
                           )}
                           {user.status === 'rejected' && (
-                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', background: 'var(--danger)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 700 }}>
+                            <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'var(--danger)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, zIndex: 1 }}>
                               REJECTED
                             </div>
                           )}
@@ -208,7 +226,7 @@ export default function AdminPanel() {
                         {/* Action Buttons (Desktop Inline) */}
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', minWidth: '160px' }}>
                            {user.status === 'approved' ? (
-                             <button onClick={() => handleReject(user.id)} style={{ padding: '12px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}>
+                             <button onClick={() => setRejectingUserId(user.id)} style={{ padding: '12px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}>
                                Revoke Approval
                              </button>
                            ) : (
@@ -216,7 +234,7 @@ export default function AdminPanel() {
                               <button onClick={() => handleApprove(user.id)} style={{ padding: '12px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                                 <CheckCircle size={16} /> Approve
                               </button>
-                              <button onClick={() => handleReject(user.id)} style={{ padding: '12px', background: 'var(--surface-border)', color: 'var(--danger)', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}>
+                              <button onClick={() => setRejectingUserId(user.id)} style={{ padding: '12px', background: 'var(--surface-border)', color: 'var(--danger)', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}>
                                 Reject
                               </button>
                              </>
@@ -287,15 +305,18 @@ export default function AdminPanel() {
           </div>
           
           {/* Image */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflow: 'hidden' }}>
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', padding: '20px', overflowX: 'auto' }}>
             <img src={selectedImage.url} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Large Verification" />
+            {selectedImage.url2 && (
+              <img src={selectedImage.url2} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Large Verification 2" />
+            )}
           </div>
 
           {/* Action Bar */}
           <div style={{ padding: '24px', background: '#111', display: 'flex', justifyContent: 'center', gap: '16px' }}>
             {selectedImage.status === 'approved' ? (
               <button 
-                onClick={() => { handleReject(selectedImage.userId); setSelectedImage(null); }}
+                onClick={() => { setRejectingUserId(selectedImage.userId); setSelectedImage(null); }}
                 style={{ padding: '16px 32px', background: '#333', color: 'white', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
               >
                 Revoke Approval
@@ -309,13 +330,48 @@ export default function AdminPanel() {
                   <CheckCircle size={20} /> Approve & Verify
                 </button>
                 <button 
-                  onClick={() => { handleReject(selectedImage.userId); setSelectedImage(null); }}
+                  onClick={() => { setRejectingUserId(selectedImage.userId); setSelectedImage(null); }}
                   style={{ padding: '16px 32px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
                 >
                   Reject Verification
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Rejection Modal */}
+      {rejectingUserId && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Reject Verification</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              Please provide a reason for rejecting this ID verification. This will be shown to the user.
+            </p>
+            
+            <textarea
+              placeholder="e.g. Aadhar card is too blurry, please upload a clearer picture."
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+              style={{ width: '100%', minHeight: '100px', padding: '16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', resize: 'vertical', outline: 'none', fontFamily: 'inherit' }}
+            />
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => { setRejectingUserId(null); setRejectionReason(''); }} 
+                style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmReject} 
+                disabled={!rejectionReason.trim()}
+                style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer', opacity: rejectionReason.trim() ? 1 : 0.5 }}
+              >
+                Reject
+              </button>
+            </div>
           </div>
         </div>
       )}
