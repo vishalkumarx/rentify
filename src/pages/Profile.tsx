@@ -130,8 +130,7 @@ export default function Profile() {
           <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', margin: '4px 0' }}></div>
 
           {/* Verification Section */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>Trust & Verification</h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             
             {verificationInfo?.status === 'approved' ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '16px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
@@ -172,14 +171,14 @@ export default function Profile() {
                 style={{ 
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', 
                   background: 'linear-gradient(135deg, #1877F2 0%, #000000 100%)', 
-                  color: 'white', border: 'none', padding: '16px 20px', borderRadius: '16px', 
+                  color: 'white', border: 'none', padding: '12px 16px', borderRadius: '16px', 
                   cursor: 'pointer', boxShadow: '0 8px 20px rgba(24, 119, 242, 0.25)',
                   width: '100%', marginTop: '4px'
                 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <BadgeCheck size={28} fill="#1877F2" color="white" />
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
-                    <span style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '0.3px' }}>Rentify Verified</span>
+                    <span style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '0.3px' }}>Get Verified Badge</span>
                     <span style={{ fontSize: '13px', opacity: 0.8, fontWeight: 500 }}>Build trust in the community</span>
                   </div>
                 </div>
