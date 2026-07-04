@@ -318,8 +318,14 @@ export default function Profile() {
             <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-muted)' }}>
               Your documents are securely encrypted and only used for identity verification by our admin team.
             </p>
-            </div>
-          </div>
+            <button 
+              type="submit" 
+              disabled={uploading}
+              style={{ width: '100%', padding: '16px', borderRadius: '16px', background: 'var(--primary)', color: 'white', border: 'none', fontWeight: 700, fontSize: '16px', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.7 : 1 }}
+            >
+              {uploading ? 'Uploading securely...' : 'Submit Verification'}
+            </button>
+          </form>
         </div>
       )}
 
