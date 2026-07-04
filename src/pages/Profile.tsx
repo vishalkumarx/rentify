@@ -130,7 +130,7 @@ export default function Profile() {
           <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', margin: '4px 0' }}></div>
 
           {/* Verification Section */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', maxWidth: '320px', margin: '0 auto' }}>
             
             {verificationInfo?.status === 'approved' ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '16px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
