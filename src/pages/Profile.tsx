@@ -130,7 +130,7 @@ export default function Profile() {
           <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', margin: '4px 0' }}></div>
 
           {/* Verification Section */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', maxWidth: '320px', margin: '0 auto' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', maxWidth: '320px', margin: '0' }}>
             
             {verificationInfo?.status === 'approved' ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '16px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
@@ -269,16 +269,17 @@ export default function Profile() {
       {/* Verification Modal */}
       {showVerificationModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          
+          <button 
+            type="button"
+            onClick={() => setShowVerificationModal(false)}
+            style={{ position: 'absolute', top: '24px', right: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer', zIndex: 101 }}
+          >
+            <X size={24} />
+          </button>
+
           <form onSubmit={handleVerificationSubmit} className="glass-panel animate-slide-in" style={{ width: '100%', maxWidth: '500px', padding: '24px', borderRadius: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '90vh', overflowY: 'auto' }}>
             
-            <button 
-              type="button"
-              onClick={() => setShowVerificationModal(false)}
-              style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(255,255,255,0.1)', border: 'none', width: '32px', height: '32px', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', cursor: 'pointer', zIndex: 10 }}
-            >
-              <X size={18} />
-            </button>
-
             <div>
               <h3 style={{ margin: '0 0 8px 0', fontSize: '22px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <ShieldCheck size={24} color="var(--primary)" /> Get Verified

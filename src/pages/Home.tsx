@@ -89,6 +89,14 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeDepartment, setActiveDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const [featuredOffset, setFeaturedOffset] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFeaturedOffset(prev => prev + 1);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
@@ -201,7 +209,7 @@ export default function Home() {
       {/* Text Container Below Image */}
       <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--surface-border)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: 'var(--primary)', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px' }}>
             {item.category}
           </span>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
@@ -402,8 +410,14 @@ export default function Home() {
         ) : (
           (() => {
             const featuredCount = window.innerWidth < 768 ? 1 : 3;
-            const featuredItems = filteredItems.slice(0, featuredCount);
-            const normalItems = filteredItems.slice(featuredCount, displayCount);
+            const safeOffset = filteredItems.length > 0 ? featuredOffset % filteredItems.length : 0;
+            const featuredItems = [];
+            for (let i = 0; i < featuredCount; i++) {
+              if (filteredItems.length > 0) {
+                featuredItems.push(filteredItems[(safeOffset + i) % filteredItems.length]);
+              }
+            }
+            const normalItems = filteredItems.filter(item => !featuredItems.includes(item)).slice(0, displayCount);
             
             return (
               <>
