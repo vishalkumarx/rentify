@@ -562,10 +562,18 @@ export default function ItemDetail() {
               Edit Your Item
             </button>
           ) : userRequest?.status === 'accepted' || (chatExists && userRequest) ? (
-            <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
-              <MessageCircle size={22} />
-              Chat with Owner
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+              <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
+                <MessageCircle size={22} />
+                Chat with Owner
+              </button>
+              <button 
+                onClick={() => setShowCancelConfirm(true)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px', fontSize: '16px', borderRadius: '24px', background: 'transparent', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
+                <X size={20} />
+                Cancel Booking
+              </button>
+            </div>
           ) : item.status === 'booked' ? (
             <button onClick={() => toast.success("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
               <Bell size={22} />
