@@ -5,7 +5,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -72,6 +72,8 @@ export default function ItemDetail() {
   const [startDate, setStartDate] = useState(location.state?.startDate || '');
   const [endDate, setEndDate] = useState(location.state?.endDate || '');
   const [bookingNote, setBookingNote] = useState(location.state?.bookingNote || '');
+  const [showConfirmSheet, setShowConfirmSheet] = useState(false);
+  const [showSuccessSheet, setShowSuccessSheet] = useState(false);
   
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
@@ -126,8 +128,7 @@ export default function ItemDetail() {
     const days = differenceInDays(parseISO(endDate), parseISO(startDate));
     if (days < 0) return toast.error('End date must be after start date');
     
-    // Instead of opening confirm sheet, just submit directly
-    handleConfirmBookRequest();
+    setShowConfirmSheet(true);
   };
 
   const handleConfirmBookRequest = async () => {
@@ -155,7 +156,8 @@ export default function ItemDetail() {
     } else {
       await sendMessage(convId, session!.user.id, `[Booking Request]: User has requested to book this item from ${format(parseISO(startDate), 'MMM d, yyyy')} to ${format(parseISO(endDate), 'MMM d, yyyy')} for ₹${totalPrice}.`);
     }
-    toast.success('Booking Request Sent successfully!');
+    setShowConfirmSheet(false);
+    setShowSuccessSheet(true);
   };
 
   const calculateDays = () => {
@@ -669,6 +671,70 @@ export default function ItemDetail() {
           </div>
         </div>
       )}
+
+      {/* Confirm Bottom Sheet */}
+      <div className={`bottom-sheet-overlay ${showConfirmSheet ? 'visible' : ''}`} onClick={() => setShowConfirmSheet(false)}></div>
+      <div className={`bottom-sheet ${showConfirmSheet ? 'visible' : ''}`}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h2 style={{ fontSize: '24px', margin: 0, fontWeight: 800 }}>Confirm Request</h2>
+          <button onClick={() => setShowConfirmSheet(false)} style={{ background: 'var(--surface)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+            <X size={24} />
+          </button>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+          <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+          <div>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>{item.title}</h3>
+            <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--primary)' }}>₹{item.price} / day</p>
+          </div>
+        </div>
+
+        <div style={{ background: 'var(--surface)', padding: '20px', borderRadius: '16px', marginBottom: '24px', border: '1px solid var(--surface-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Duration</span>
+            <span style={{ fontWeight: 600 }}>{calculateDays()} Days</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Dates</span>
+            <span style={{ fontWeight: 600 }}>
+              {startDate ? format(parseISO(startDate), 'MMM d') : ''} - {endDate ? format(parseISO(endDate), 'MMM d') : ''}
+            </span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: 700 }}>Total Amount</span>
+            <span style={{ color: 'var(--primary)', fontSize: '24px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
+          </div>
+        </div>
+
+        <button 
+          onClick={handleConfirmBookRequest}
+          style={{ width: '100%', padding: '18px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '16px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', boxShadow: 'var(--primary-glow)' }}
+        >
+          Confirm & Send Request
+        </button>
+      </div>
+
+      {/* Success Bottom Sheet */}
+      <div className={`bottom-sheet-overlay ${showSuccessSheet ? 'visible' : ''}`} onClick={() => {}}></div>
+      <div className={`bottom-sheet ${showSuccessSheet ? 'visible' : ''}`} style={{ textAlign: 'center', padding: '40px 24px' }}>
+        <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+          <CheckCircle2 size={40} />
+        </div>
+        <h2 style={{ fontSize: '28px', margin: '0 0 12px 0', fontWeight: 800 }}>Request Sent!</h2>
+        <p style={{ fontSize: '16px', color: 'var(--text-muted)', margin: '0 0 32px 0', lineHeight: 1.5 }}>
+          The owner will review your request. We'll notify you as soon as they accept.
+        </p>
+        <button 
+          onClick={() => {
+            setShowSuccessSheet(false);
+            navigate('/chat');
+          }}
+          style={{ width: '100%', padding: '18px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '16px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', boxShadow: 'var(--primary-glow)' }}
+        >
+          View in Messages
+        </button>
+      </div>
 
     </>
   );
