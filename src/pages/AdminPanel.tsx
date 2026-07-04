@@ -9,7 +9,6 @@ export default function AdminPanel() {
   const { session } = useAuth();
   const navigate = useNavigate();
   const [users, setUsers] = useState<any[]>([]);
-  const [approvals, setApprovals] = useState<string[]>([]);
   const [reports, setReports] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -29,10 +28,6 @@ export default function AdminPanel() {
     }
 
     const fetchAdminData = async () => {
-      // 1. Fetch approvals
-      const apps = await getStorageJson('admin/approvals.json') || [];
-      setApprovals(apps);
-      
       // 2. Fetch verifications from JSON
       const verificationsData = await getStorageJson('admin/verifications.json') || {};
       const parsedUsers = Object.keys(verificationsData).map(userId => {
