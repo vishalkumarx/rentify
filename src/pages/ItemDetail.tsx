@@ -571,7 +571,7 @@ export default function ItemDetail() {
                 onClick={() => setShowCancelConfirm(true)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px', fontSize: '16px', borderRadius: '24px', background: 'transparent', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
                 <X size={20} />
-                Withdraw Request
+                Cancel Booking
               </button>
             </div>
           ) : item.status === 'booked' ? (
