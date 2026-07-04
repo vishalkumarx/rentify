@@ -404,8 +404,8 @@ export default function ItemDetail() {
                   </p>
                 )}
                 {userRequest.note && (
-                  <div style={{ margin: '16px 0 0', padding: '16px', borderRadius: '16px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--surface-border)' }}>
-                    <p style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)' }}>Your Message / Offer:</p>
+                  <div style={{ margin: '16px 0 0', padding: '16px', borderRadius: '16px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)' }}>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 700, color: 'var(--success)' }}>Your Message / Offer:</p>
                     <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>"{userRequest.note}"</p>
                   </div>
                 )}
@@ -441,7 +441,7 @@ export default function ItemDetail() {
                 )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Message / Offer to Owner (Optional)</label>
+                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--success)' }}>Message / Offer to Owner (Optional)</label>
                   <textarea
                     value={bookingNote}
                     onChange={(e) => setBookingNote(e.target.value)}
@@ -451,8 +451,8 @@ export default function ItemDetail() {
                       minHeight: '80px',
                       padding: '16px',
                       borderRadius: '16px',
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid var(--surface-border)',
+                      background: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid var(--success)',
                       color: 'var(--text-main)',
                       fontSize: '15px',
                       resize: 'none',
