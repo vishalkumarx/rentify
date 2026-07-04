@@ -457,6 +457,12 @@ export default function Requests() {
                 <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
                   Original requested price: ₹{confirmAction.originalPrice}
                 </p>
+                
+                <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--danger)', lineHeight: 1.5, fontWeight: 500 }}>
+                    <strong style={{ fontWeight: 800 }}>Disclaimer:</strong> Campus Rent is not responsible for any items or transactions. Always make sure to rent your items to verified users only and exercise proper caution.
+                  </p>
+                </div>
               </div>
             )}
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
