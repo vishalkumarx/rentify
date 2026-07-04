@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X, Star } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -447,6 +447,44 @@ export default function Home() {
           <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', fontWeight: 500, lineHeight: 1.5 }}>
             Even if you don't find what you are looking for today, consider listing your unused items so others don't go empty handed.
           </p>
+        </div>
+
+        {/* Testimonial Section */}
+        <div style={{ margin: '0 auto 32px', maxWidth: '400px', width: 'calc(100% - 32px)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', paddingLeft: '8px' }}>What Students Say</h3>
+          <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }} className="hide-scrollbar">
+            <div className="glass-panel" style={{ minWidth: '280px', padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="var(--warning)" color="var(--warning)" />)}
+              </div>
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', fontStyle: 'italic', lineHeight: 1.5 }}>
+                "Rentify saved me so much money on my engineering books and lab coat. Highly recommend!"
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>A</div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>Aarav S.</h4>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Computer Science, 2nd Year</span>
+                </div>
+              </div>
+            </div>
+            
+            <div className="glass-panel" style={{ minWidth: '280px', padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="var(--warning)" color="var(--warning)" />)}
+              </div>
+              <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', fontStyle: 'italic', lineHeight: 1.5 }}>
+                "Rented a scientific calculator for my finals. The process was super smooth and trustworthy."
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>P</div>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>Priya M.</h4>
+                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Mechanical Eng, 4th Year</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Bottom Banners */}
