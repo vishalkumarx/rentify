@@ -22,6 +22,7 @@ export type RentalItem = {
   image: string; // Cover image
   images?: string[]; // Additional images
   description?: string;
+  securityDeposit?: string; // Optional security money
   userId?: string;
   itemRating?: number;
   itemReviewCount?: number;

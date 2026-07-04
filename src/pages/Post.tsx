@@ -10,6 +10,7 @@ import { supabase } from '../lib/supabase';
 export default function Post() {
   const [title, setTitle] = useState('');
   const [price, setPrice] = useState('');
+  const [securityDeposit, setSecurityDeposit] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(false);
@@ -77,6 +78,7 @@ export default function Post() {
         category: category || 'Other',
         department: profile?.department || '',
         description,
+        securityDeposit: securityDeposit || undefined,
         image: uploadedUrls[0], // First image is cover
         images: uploadedUrls,   // All images
       });
@@ -220,6 +222,17 @@ export default function Post() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
+                style={{ paddingLeft: '48px' }}
+              />
+            </div>
+
+            <div style={{ position: 'relative' }}>
+              <IndianRupee size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
+              <input
+                type="number"
+                placeholder="Security Money (Optional)"
+                value={securityDeposit}
+                onChange={(e) => setSecurityDeposit(e.target.value)}
                 style={{ paddingLeft: '48px' }}
               />
             </div>
