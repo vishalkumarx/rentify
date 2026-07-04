@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import { Home, User, MessageCircle, Package, CalendarCheck } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -27,8 +27,13 @@ export default function MobileLayout() {
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const lastScrollY = useRef(0);
 
+  const scrollPositions = useRef<Record<string, number>>({});
+  const mainRef = useRef<HTMLElement>(null);
+
   const handleScroll = (e: React.UIEvent<HTMLElement>) => {
     const currentScrollY = (e.target as HTMLElement).scrollTop;
+    scrollPositions.current[location.pathname] = currentScrollY;
+    
     if (currentScrollY > lastScrollY.current + 10) {
       setIsScrollingDown(true);
     } else if (currentScrollY < lastScrollY.current - 10) {
@@ -36,6 +41,18 @@ export default function MobileLayout() {
     }
     lastScrollY.current = currentScrollY;
   };
+
+  useLayoutEffect(() => {
+    if (mainRef.current) {
+      const savedPosition = scrollPositions.current[location.pathname] || 0;
+      // Slight delay to allow new page DOM (especially dynamically loaded feeds) to expand before restoring scroll
+      setTimeout(() => {
+        if (mainRef.current) {
+          mainRef.current.scrollTo(0, savedPosition);
+        }
+      }, 50);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     if (totalUnread > prevUnread.current) {
@@ -148,7 +165,7 @@ export default function MobileLayout() {
       </nav>
 
       {/* Scrollable Content Area */}
-      <main className="app-main hide-scrollbar" onScroll={handleScroll} style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+      <main ref={mainRef} className="app-main hide-scrollbar" onScroll={handleScroll} style={{ transition: 'top 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
         <div className="animate-fade-in" style={{ minHeight: '100%' }}>
           <Outlet />
         </div>

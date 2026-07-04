@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { supabase, setStorageJson } from '../lib/supabase';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 
 export default function Signup() {
@@ -10,23 +10,33 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.returnTo || '/';
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password,
+      options: { data: { full_name: fullName } }
+    });
     
     if (error) {
       setError(error.message);
-    } else if (data.user) {
-      await setStorageJson(`profiles/${data.user.id}.json`, {
-        name: fullName || 'User ' + data.user.id.substring(0, 5),
-        memberSince: new Date().getFullYear().toString(),
-        verifications: ['Email Confirmed']
-      });
-      navigate('/');
+    } else if (data.session) {
+      if (data.user) {
+        await setStorageJson(`profiles/${data.user.id}.json`, {
+          name: fullName || 'User ' + data.user.id.substring(0, 5),
+          memberSince: new Date().getFullYear().toString(),
+          verifications: ['Email Confirmed']
+        });
+      }
+      navigate(returnTo, { state: location.state });
+    } else {
+      navigate('/login', { state: location.state }); // If email verification needed
     }
     setLoading(false);
   };
@@ -37,7 +47,7 @@ export default function Signup() {
     const { error } = await supabase.auth.signInWithOAuth({ 
       provider: 'google',
       options: {
-        redirectTo: window.location.origin + window.location.pathname,
+        redirectTo: window.location.origin + window.location.pathname + (returnTo !== '/' ? `?returnTo=${encodeURIComponent(returnTo)}` : ''),
         queryParams: {
           prompt: 'select_account'
         }

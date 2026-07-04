@@ -312,21 +312,26 @@ export default function Chat() {
         {/* Pending Booking Banner for Owner */}
         {isOwner && bookingReq?.status === 'pending' && (
           <div style={{
-            background: 'rgba(34, 197, 94, 0.1)',
+            position: 'sticky',
+            top: '0',
+            zIndex: 20,
+            background: 'rgba(34, 197, 94, 0.9)',
+            backdropFilter: 'blur(10px)',
             border: '1px solid var(--success)',
             borderRadius: '12px',
             padding: '16px',
             display: 'flex',
             flexDirection: 'column',
             gap: '12px',
-            marginBottom: '16px'
+            marginBottom: '16px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
           }}>
-            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)' }}>
+            <p style={{ margin: 0, fontSize: '14px', color: '#fff' }}>
               <strong>Pending Request:</strong> The user wants to book this item. Original requested price: ₹{bookingReq.total_price}.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>
                 Final Accepting Price (₹)
               </label>
               <input
@@ -344,7 +349,7 @@ export default function Chat() {
                   const finalPrice = customPrice ? Number(customPrice) : bookingReq.total_price;
                   updateRequestStatus(bookingReq.id, 'accepted', finalPrice);
                 }}
-                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: 'var(--success)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: '#fff', color: 'var(--success)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
               >
                 Accept Booking
               </button>
@@ -354,7 +359,7 @@ export default function Chat() {
                     updateRequestStatus(bookingReq.id, 'rejected');
                   }
                 }}
-                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)', border: 'none', fontWeight: 600, cursor: 'pointer' }}
+                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.4)', fontWeight: 600, cursor: 'pointer' }}
               >
                 Decline
               </button>

@@ -1,7 +1,8 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import { createContext, useState, useContext, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './AuthContext';
+import toast from 'react-hot-toast';
 
 export type BookingStatus = 'pending' | 'accepted' | 'rejected' | 'cancelled';
 
@@ -40,6 +41,7 @@ const BookingContext = createContext<BookingContextType>({
 export const BookingProvider = ({ children }: { children: ReactNode }) => {
   const [requests, setRequests] = useState<BookingRequest[]>([]);
   const { session } = useAuth();
+  const prevRequestsRef = useRef<BookingRequest[]>([]);
 
   const refreshRequests = async () => {
     if (!session?.user?.id) return;
@@ -56,6 +58,19 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
       console.log('Error fetching bookings (Table might not exist yet in DB):', error);
       // Fallback if table doesn't exist to prevent crash in demo
     } else if (data) {
+      if (prevRequestsRef.current.length > 0) {
+        data.forEach((req: BookingRequest) => {
+          if (req.requester_id === session.user.id) {
+            const prev = prevRequestsRef.current.find(r => r.id === req.id);
+            if (prev && prev.status === 'pending' && req.status === 'accepted') {
+              toast.success(`Your booking request was accepted!`);
+            } else if (prev && prev.status === 'pending' && req.status === 'rejected') {
+              toast.error(`Your booking request was declined.`);
+            }
+          }
+        });
+      }
+      prevRequestsRef.current = data;
       setRequests(data);
     }
   };

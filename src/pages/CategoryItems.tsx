@@ -46,7 +46,7 @@ export default function CategoryItems() {
             </p>
             <button 
               onClick={() => navigate('/post')}
-              style={{ marginTop: '32px', background: 'var(--text-main)', color: 'white', padding: '16px 32px', borderRadius: '24px', fontSize: '16px', fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}
+              style={{ marginTop: '32px', background: 'var(--text-main)', color: 'white', padding: '10px 20px', width: 'fit-content', borderRadius: '20px', fontSize: '14px', fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.15)' }}
             >
               List an Item
             </button>

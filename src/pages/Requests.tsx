@@ -168,7 +168,7 @@ export default function Requests() {
                     const reqItem = items.find(i => i.id === req.item_id);
                     const requesterName = requesterNames[req.requester_id] || 'Loading...';
                     return (
-                      <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                      <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : (req.status === 'rejected' || req.status === 'cancelled') ? 'var(--danger)' : 'var(--warning)'}` }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                             {reqItem?.image && (
@@ -322,7 +322,7 @@ export default function Requests() {
                   myOutgoingRequests.filter(req => outgoingFilter === 'all' || req.status === outgoingFilter).map(req => {
                     const reqItem = items.find(i => i.id === req.item_id);
                     return (
-                      <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)'}` }}>
+                      <div key={req.id} onClick={() => navigate(`/item/${req.item_id}`)} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '12px', borderLeft: `4px solid ${req.status === 'accepted' ? 'var(--success)' : (req.status === 'rejected' || req.status === 'cancelled') ? 'var(--danger)' : 'var(--warning)'}` }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                             {reqItem?.image && (

@@ -1,11 +1,11 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { getStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Check, Wallet } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -43,6 +43,7 @@ const DUMMY_REVIEWS = [
 export default function ItemDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { items, toggleLike } = useFeed();
   const { getOrCreateConversation, conversations, sendMessage } = useChat();
   const { session, loading } = useAuth();
@@ -62,14 +63,14 @@ export default function ItemDetail() {
     }
   }, [zoomImageIndex]);
 
-  const [bookingSheetState, setBookingSheetState] = useState<'none' | 'confirm' | 'success'>('none');
+  // Booking state has been refactored inline
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
 
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [bookingNote, setBookingNote] = useState('');
+  const [startDate, setStartDate] = useState(location.state?.startDate || '');
+  const [endDate, setEndDate] = useState(location.state?.endDate || '');
+  const [bookingNote, setBookingNote] = useState(location.state?.bookingNote || '');
   
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
@@ -113,13 +114,15 @@ export default function ItemDetail() {
 
   const handleRequestClick = () => {
     if (!session) {
-      navigate('/login');
+      navigate('/login', { state: { returnTo: location.pathname, startDate, endDate, bookingNote } });
       return;
     }
     if (!startDate || !endDate) return toast.error('Select dates');
     const days = differenceInDays(parseISO(endDate), parseISO(startDate));
     if (days < 0) return toast.error('End date must be after start date');
-    setBookingSheetState('confirm');
+    
+    // Instead of opening confirm sheet, just submit directly
+    handleConfirmBookRequest();
   };
 
   const handleConfirmBookRequest = async () => {
@@ -147,10 +150,7 @@ export default function ItemDetail() {
     } else {
       await sendMessage(convId, session!.user.id, `[Booking Request]: User has requested to book this item from ${format(parseISO(startDate), 'MMM d, yyyy')} to ${format(parseISO(endDate), 'MMM d, yyyy')} for ₹${totalPrice}.`);
     }
-    setBookingSheetState('success');
-    setTimeout(() => {
-      setBookingSheetState('none');
-    }, 3000);
+    toast.success('Booking Request Sent successfully!');
   };
 
   const calculateDays = () => {
@@ -403,6 +403,12 @@ export default function ItemDetail() {
                     Your booking is confirmed! Reach out to the owner to coordinate.
                   </p>
                 )}
+                {userRequest.note && (
+                  <div style={{ margin: '16px 0 0', padding: '16px', borderRadius: '16px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--surface-border)' }}>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 700, color: 'var(--text-muted)' }}>Your Message / Offer:</p>
+                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>"{userRequest.note}"</p>
+                  </div>
+                )}
               </div>
             )}
 
@@ -433,6 +439,27 @@ export default function ItemDetail() {
                     </span>
                   </div>
                 )}
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Message / Offer to Owner (Optional)</label>
+                  <textarea
+                    value={bookingNote}
+                    onChange={(e) => setBookingNote(e.target.value)}
+                    placeholder="e.g. Hi, I'm a student too, would you be willing to do ₹500 total?"
+                    style={{
+                      width: '100%',
+                      minHeight: '80px',
+                      padding: '16px',
+                      borderRadius: '16px',
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid var(--surface-border)',
+                      color: 'var(--text-main)',
+                      fontSize: '15px',
+                      resize: 'none',
+                      fontFamily: 'inherit'
+                    }}
+                  />
+                </div>
               </div>
             )}
 
@@ -529,7 +556,7 @@ export default function ItemDetail() {
         display: 'flex',
         justifyContent: 'center'
       }}>
-        <div style={{ maxWidth: '800px', width: '100%' }}>
+        <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
           {isOwner ? (
             <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer' }}>
               Edit Your Item
@@ -581,81 +608,6 @@ export default function ItemDetail() {
           </p>
         </div>
       </div>
-
-      {bookingSheetState !== 'none' && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setBookingSheetState('none')}>
-          <div 
-            className="animate-slide-up" 
-            onClick={e => e.stopPropagation()}
-            style={{ width: '100%', maxWidth: '600px', background: 'var(--surface)', borderTopLeftRadius: '24px', borderTopRightRadius: '24px', padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '20px', boxShadow: '0 -10px 40px rgba(0,0,0,0.2)' }}
-          >
-            {bookingSheetState === 'confirm' ? (
-              <>
-                <div style={{ width: '40px', height: '6px', background: 'var(--surface-border)', borderRadius: '3px', margin: '0 auto', marginBottom: '8px' }} />
-                <h3 style={{ margin: 0, fontSize: '22px', fontWeight: 800 }}>Confirm Booking</h3>
-                <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
-                  You are requesting to book <strong>{item.title}</strong>.
-                </p>
-                <div style={{ padding: '20px', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--surface-border)', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>From</span>
-                    <span style={{ fontWeight: 700 }}>{format(parseISO(startDate), 'MMM dd, yyyy')}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>To</span>
-                    <span style={{ fontWeight: 700 }}>{format(parseISO(endDate), 'MMM dd, yyyy')}</span>
-                  </div>
-                  <div style={{ height: '1px', background: 'var(--surface-border)', margin: '8px 0' }} />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '18px', alignItems: 'center' }}>
-                    <span style={{ color: 'var(--text-muted)', fontWeight: 600 }}>Total</span>
-                    <span style={{ fontWeight: 800, color: '#000', fontSize: '24px' }}>₹{calculateDays() * Number(item.price)}</span>
-                  </div>
-                </div>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>Message / Offer to Owner (Optional)</label>
-                  <textarea
-                    value={bookingNote}
-                    onChange={(e) => setBookingNote(e.target.value)}
-                    placeholder="e.g. Hi, I'm a student too, would you be willing to do ₹500 total?"
-                    style={{
-                      width: '100%',
-                      minHeight: '80px',
-                      padding: '16px',
-                      borderRadius: '16px',
-                      background: 'var(--surface-border)',
-                      border: '1px solid var(--surface-border)',
-                      color: 'var(--text-main)',
-                      fontSize: '15px',
-                      resize: 'none',
-                      fontFamily: 'inherit'
-                    }}
-                  />
-                </div>
-
-                <button onClick={handleConfirmBookRequest} style={{ width: '100%', padding: '18px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#fff', fontSize: '18px', fontWeight: 700, cursor: 'pointer', marginTop: '8px', boxShadow: 'var(--primary-glow)' }}>
-                  Confirm Request
-                </button>
-              </>
-            ) : (
-              <div style={{ padding: '32px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '16px' }}>
-                <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'rgba(34, 197, 94, 0.15)', color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Check size={32} strokeWidth={3} />
-                </div>
-                <div>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '24px', fontWeight: 800 }}>Request Sent!</h3>
-                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.5 }}>
-                    The owner has been notified. You can check the status in your <strong>Requests</strong> tab.
-                  </p>
-                </div>
-                <button onClick={() => setBookingSheetState('none')} style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 700, cursor: 'pointer', marginTop: '16px' }}>
-                  Done
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
 
       {showCancelConfirm && userRequest && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
