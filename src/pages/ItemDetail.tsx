@@ -68,6 +68,7 @@ export default function ItemDetail() {
   const [cancelReason, setCancelReason] = useState('');
 
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
+  const [verificationStatus, setVerificationStatus] = useState<string>('none');
   const [startDate, setStartDate] = useState(location.state?.startDate || '');
   const [endDate, setEndDate] = useState(location.state?.endDate || '');
   const [bookingNote, setBookingNote] = useState(location.state?.bookingNote || '');
@@ -79,9 +80,13 @@ export default function ItemDetail() {
 
   useEffect(() => {
     if (item?.userId) {
-
       getStorageJson(`profiles/${item.userId}.json`).then(profile => {
         if (profile) setOwnerProfile(profile);
+      });
+      getStorageJson('admin/verifications.json').then(verificationsData => {
+        if (verificationsData && verificationsData[item.userId]) {
+          setVerificationStatus(verificationsData[item.userId].status);
+        }
       });
     }
   }, [item?.userId]);
@@ -489,7 +494,9 @@ export default function ItemDetail() {
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                       <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>{ownerName}</h4>
-                      <BadgeCheck size={20} fill="#1877F2" color="white" />
+                      {verificationStatus === 'approved' && (
+                        <BadgeCheck size={20} fill="#1877F2" color="white" />
+                      )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                       <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Joined {item.seller.memberSince}</span>

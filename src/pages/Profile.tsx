@@ -112,7 +112,9 @@ export default function Profile() {
                 <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                   {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
                 </h2>
-                <BadgeCheck size={24} fill="#1877F2" color="white" />
+                {verificationInfo?.status === 'approved' && (
+                  <BadgeCheck size={24} fill="#1877F2" color="white" />
+                )}
               </div>
               <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {session?.user?.email}

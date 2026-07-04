@@ -28,6 +28,7 @@ export default function UserProfile() {
   const [reporting, setReporting] = useState(false);
 
   const [profile, setProfile] = useState<any>(null);
+  const [verificationStatus, setVerificationStatus] = useState<string>('none');
 
   useEffect(() => {
     if (!id) return;
@@ -55,6 +56,12 @@ export default function UserProfile() {
       if (loadedReviews.length > 0) {
         const total = loadedReviews.reduce((sum, rev) => sum + (rev.rating || 5), 0);
         computedRating = (total / loadedReviews.length).toFixed(1);
+      }
+
+      // Fetch Verifications
+      const verificationsData = await getStorageJson('admin/verifications.json');
+      if (verificationsData && verificationsData[id]) {
+        setVerificationStatus(verificationsData[id].status);
       }
 
       if (pData) {
@@ -165,9 +172,11 @@ export default function UserProfile() {
               }
               return profile?.name?.charAt(0)?.toUpperCase() || 'U';
             })()}
+            {verificationStatus === 'approved' && (
               <div style={{ position: 'absolute', bottom: '0', right: '0', background: 'var(--surface)', borderRadius: '50%', padding: '2px' }}>
                 <BadgeCheck size={28} fill="#1877F2" color="white" />
               </div>
+            )}
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', marginBottom: '4px', width: '100%' }}>
