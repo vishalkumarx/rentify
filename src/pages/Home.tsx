@@ -379,7 +379,7 @@ export default function Home() {
             </button>
           </div>
           <div className="categories-grid">
-            {visualCategories.map((cat, idx) => (
+            {visualCategories.slice(0, 6).map((cat, idx) => (
               <button
                 key={cat.id}
                 onClick={() => navigate(`/category/${encodeURIComponent(cat.title)}`)}
