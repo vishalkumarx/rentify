@@ -11,8 +11,10 @@ export default function MobileLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { conversations } = useChat();
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const { requests } = useBookings();
+
+  const avatarUrl = profile?.avatar_url || session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture;
   
   const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
@@ -161,7 +163,12 @@ export default function MobileLayout() {
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} onClick={() => navigate('/my-listings')} />
-        <NavItem icon={<User size={24} />} label="Profile" isActive={location.pathname === '/profile'} onClick={() => navigate('/profile')} />
+        <NavItem 
+          icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
+          label="Profile" 
+          isActive={location.pathname === '/profile'} 
+          onClick={() => navigate('/profile')} 
+        />
       </nav>
 
       {/* Scrollable Content Area */}
