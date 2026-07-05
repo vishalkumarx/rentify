@@ -710,6 +710,9 @@ a:hover {
   .mobile-tab-content-details.hidden {
     display: none !important;
   }
+  .desktop-only {
+    display: none !important;
+  }
 }
 
 /* Reveal Text Animation */

@@ -538,7 +538,7 @@ export default function Home() {
         
         {/* Footer Links */}
         <footer className="desktop-footer-row" style={{ padding: '32px 16px', marginTop: 'auto', borderTop: '1px solid var(--surface-border)', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div className="desktop-only" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
             <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>About the App</button>
             <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>How it Works</button>
             <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Safety Guidelines</button>
