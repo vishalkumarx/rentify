@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { ShieldCheck, XCircle, CheckCircle, Search, AlertTriangle, Ban } from 'lucide-react';
+import { ShieldCheck, XCircle, CheckCircle, Search, AlertTriangle, Ban, Users as UsersIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
@@ -10,9 +10,10 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const [users, setUsers] = useState<any[]>([]);
   const [reports, setReports] = useState<any[]>([]);
+  const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'verifications' | 'reports'>('verifications');
+  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users'>('verifications');
   
   // Modal State
   const [selectedImage, setSelectedImage] = useState<{ url: string, url2?: string, userId: string, status: string } | null>(null);
@@ -59,6 +60,21 @@ export default function AdminPanel() {
         setReports(loadedReports.filter(Boolean));
       }
       
+      // 4. Fetch All Users
+      const { data: profileFiles } = await supabase.storage.from('item-images').list('profiles');
+      if (profileFiles) {
+        const blockedUsers = await getStorageJson('admin/blocked_users.json') || [];
+        const loadedUsers = await Promise.all(
+          profileFiles
+            .filter(f => f.name.endsWith('.json'))
+            .map(async f => {
+              const uData = await getStorageJson(`profiles/${f.name}`);
+              return { id: f.name.replace('.json', ''), isBlocked: blockedUsers.includes(f.name.replace('.json', '')), ...uData };
+            })
+        );
+        setAllUsers(loadedUsers);
+      }
+      
       setLoading(false);
     };
 
@@ -99,8 +115,26 @@ export default function AdminPanel() {
     if (!blocked.includes(userId)) {
       await setStorageJson('admin/blocked_users.json', [...blocked, userId]);
     }
+    setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: true } : u));
     toast.error(`Account ${userId} has been terminated.`);
   };
+
+  const handleToggleBlock = async (userId: string, currentlyBlocked: boolean) => {
+    const action = currentlyBlocked ? 'unblock' : 'block';
+    if (!confirm(`Are you sure you want to ${action} this account?`)) return;
+    
+    let blocked = await getStorageJson('admin/blocked_users.json') || [];
+    if (currentlyBlocked) {
+      blocked = blocked.filter((id: string) => id !== userId);
+      toast.success(`Account unblocked.`);
+    } else {
+      if (!blocked.includes(userId)) blocked.push(userId);
+      toast.error(`Account blocked.`);
+    }
+    await setStorageJson('admin/blocked_users.json', blocked);
+    setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: !currentlyBlocked } : u));
+  };
+
 
   const filteredUsers = users.filter(u => u.id.toLowerCase().includes(search.toLowerCase()));
 
@@ -145,6 +179,12 @@ export default function AdminPanel() {
               style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'reports' ? 'var(--text-main)' : 'transparent', color: activeTab === 'reports' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
             >
               <AlertTriangle size={20} /> Reports ({reports.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('users')}
+              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'users' ? 'var(--text-main)' : 'transparent', color: activeTab === 'users' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
+            >
+              <UsersIcon size={20} /> Users ({allUsers.length})
             </button>
           </div>
 
@@ -279,6 +319,56 @@ export default function AdminPanel() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {activeTab === 'users' && (
+              <div>
+                <h2 style={{ fontSize: '20px', margin: '0 0 20px 0', fontWeight: 700 }}>User Management</h2>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  {allUsers.filter(u => u.id.toLowerCase().includes(search.toLowerCase()) || (u.name && u.name.toLowerCase().includes(search.toLowerCase()))).map(user => (
+                    <div key={user.id} className="glass-panel" style={{ padding: '20px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                      <div style={{ width: '60px', height: '60px', borderRadius: '30px', overflow: 'hidden', background: 'var(--surface-border)', flexShrink: 0 }}>
+                        {user.avatar_url ? (
+                          <img src={user.avatar_url} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 700, color: 'var(--text-muted)' }}>
+                            {user.name ? user.name.charAt(0).toUpperCase() : '?'}
+                          </div>
+                        )}
+                      </div>
+                      
+                      <div style={{ flex: 1, minWidth: '200px' }}>
+                        <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          {user.name || 'Unknown User'}
+                          {user.isBlocked && <span style={{ padding: '2px 8px', borderRadius: '12px', background: 'var(--danger)', color: 'white', fontSize: '10px', textTransform: 'uppercase' }}>Blocked</span>}
+                        </h3>
+                        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>ID: {user.id}</p>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <button 
+                          onClick={() => navigate(`/user/${user.id}`)}
+                          style={{ padding: '12px 20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}
+                        >
+                          View Profile
+                        </button>
+                        <button 
+                          onClick={() => handleToggleBlock(user.id, user.isBlocked)}
+                          style={{ padding: '12px 20px', background: user.isBlocked ? 'var(--surface-border)' : 'var(--danger)', color: user.isBlocked ? 'var(--text-main)' : 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                        >
+                          <Ban size={16} /> {user.isBlocked ? 'Unblock' : 'Block'}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {allUsers.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: '64px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
+                      <p style={{ color: 'var(--text-muted)', margin: 0 }}>No users found.</p>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
