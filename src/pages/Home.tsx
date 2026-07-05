@@ -6,6 +6,7 @@ import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
+import { useSEO } from '../hooks/useSEO';
 
 // @ts-ignore
 import imgBooks from '../assets/books and stationary.PNG';
@@ -57,6 +58,7 @@ const PROMOS = [
 ];
 
 export default function Home() {
+  useSEO('Home');
   const { session, profile, updateProfile } = useAuth();
   const [showDepartmentModal, setShowDepartmentModal] = useState(false);
   const { requests } = useBookings();
@@ -526,25 +528,27 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bottom Banners */}
-        <div className="banner-container">
-          <img src={mobileBanner} className="mobile-banner-img" alt="Promo Banner" />
-        </div>
-
         {/* Load More Trigger */}
         {filteredItems.length > displayCount && (
           <div ref={loadMoreRef} style={{ height: '40px', width: '100%' }} />
         )}
         
-        {/* Footer Links */}
-        <footer className="desktop-footer-row" style={{ padding: '32px 16px', marginTop: 'auto', borderTop: '1px solid var(--surface-border)', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
-          <div className="desktop-only" style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>About the App</button>
-            <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>How it Works</button>
-            <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Safety Guidelines</button>
-          </div>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            &copy; {new Date().getFullYear()} CampusRent. All rights reserved.
+        {/* Yellow Footer */}
+        <footer style={{ padding: '40px 24px', marginTop: 'auto', background: 'var(--primary)', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', borderTopLeftRadius: '32px', borderTopRightRadius: '32px' }}>
+          <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
+            <div style={{ width: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }}>
+              <img src={mobileBanner} alt="Promo Banner" style={{ width: '100%', height: 'auto', display: 'block' }} />
+            </div>
+            
+            <div className="desktop-only" style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>About the App</button>
+              <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>How it Works</button>
+              <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>Safety Guidelines</button>
+            </div>
+            
+            <div style={{ fontSize: '13px', color: 'rgba(0,0,0,0.6)', fontWeight: 600 }}>
+              &copy; {new Date().getFullYear()} CampusRent. All rights reserved.
+            </div>
           </div>
         </footer>
       </div>

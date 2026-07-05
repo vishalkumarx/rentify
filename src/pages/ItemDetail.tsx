@@ -4,6 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../hooks/useSEO';
 import { getStorageJson } from '../lib/supabase';
 import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Calendar } from '../components/Calendar';

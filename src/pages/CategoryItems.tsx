@@ -4,10 +4,12 @@ import { ChevronLeft, Building2, Heart, Search, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
+import { useSEO } from '../hooks/useSEO';
 import { DEPARTMENTS } from '../lib/constants';
 
 export default function CategoryItems() {
   const { categoryId } = useParams();
+  useSEO(categoryId ? `Category: ${categoryId}` : 'Category Items', `Browse the best items in ${categoryId} on CampusRent`);
   const navigate = useNavigate();
   const { items, toggleLike } = useFeed();
   const { session } = useAuth();
