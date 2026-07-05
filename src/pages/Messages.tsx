@@ -10,7 +10,7 @@ export default function Messages() {
   const navigate = useNavigate();
   
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
-  const pressTimer = useRef<NodeJS.Timeout | null>(null);
+  const pressTimer = useRef<any>(null);
   const isLongPress = useRef(false);
 
   const handlePressStart = (convId: string) => {

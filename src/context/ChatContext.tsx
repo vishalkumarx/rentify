@@ -104,7 +104,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         })
       );
 
-      const validChats = loadedChats.filter(Boolean).sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
+      const validChats = (loadedChats.filter(c => c !== null) as Conversation[]).sort((a, b) => (b.lastMessageTime || 0) - (a.lastMessageTime || 0));
       console.log('[DEBUG] validChats count:', validChats.length);
 
       // Convert to UI Conversations
