@@ -69,7 +69,9 @@ export default function Profile() {
         status: 'pending',
         collegeIdUrl: colData.publicUrl,
         aadharUrl: aadData.publicUrl,
-        submittedAt: new Date().toISOString()
+        submittedAt: new Date().toISOString(),
+        email: session?.user?.email || '',
+        department: profile?.department || session?.user?.user_metadata?.department || ''
       };
       
       verifications[session.user.id] = newSubmission;

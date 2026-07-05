@@ -39,8 +39,9 @@ export default function AdminPanel() {
         const v = verificationsData[userId];
         return {
           id: userId,
-          email: 'ID: ' + userId,
+          email: v.email || ('ID: ' + userId),
           name: 'User ' + userId.substring(0, 5),
+          department: v.department || '',
           submittedAt: v.submittedAt || new Date().toISOString(),
           idImageUrl: v.collegeIdUrl, // College ID
           aadharUrl: v.aadharUrl, // Aadhar Card
@@ -282,6 +283,8 @@ export default function AdminPanel() {
                         <div style={{ flex: 1, minWidth: '250px' }}>
                           <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>{user.name}</h3>
                           <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-muted)' }}><strong>User ID:</strong> {user.id}</p>
+                          {user.email && <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-muted)' }}><strong>Email:</strong> {user.email}</p>}
+                          {user.department && <p style={{ margin: '0 0 4px 0', fontSize: '13px', color: 'var(--text-muted)' }}><strong>Department:</strong> {user.department}</p>}
                           <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}><strong>Uploaded:</strong> {new Date(user.submittedAt).toLocaleString()}</p>
                         </div>
                         
