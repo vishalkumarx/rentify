@@ -698,6 +698,11 @@ a:hover {
   .desktop-right {
     justify-content: flex-end !important;
   }
+  .desktop-footer-row {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    padding: 24px 32px !important;
+  }
 }
 
 @media (max-width: 767px) {
