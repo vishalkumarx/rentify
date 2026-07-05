@@ -45,8 +45,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const checkBlocked = async (currentSession: Session) => {
       const blockedUsers = await getStorageJson('admin/blocked_users.json') || [];
-      if (blockedUsers.includes(currentSession.user.id)) {
-        toast.error('Your account has been terminated due to policy violations.');
+      
+      const isBlocked = blockedUsers.some((u: any) => {
+        if (typeof u === 'string') return u === currentSession.user.id;
+        if (u && u.userId === currentSession.user.id) {
+          if (u.suspendedUntil) {
+            return new Date().getTime() < u.suspendedUntil;
+          }
+          return true;
+        }
+        return false;
+      });
+
+      if (isBlocked) {
+        toast.error('Your account has been suspended or terminated due to policy violations.');
         await supabase.auth.signOut();
         setSession(null);
         setUser(null);

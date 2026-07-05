@@ -22,6 +22,10 @@ export default function AdminPanel() {
   const [rejectingUserId, setRejectingUserId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
 
+  // Block Modal State
+  const [showBlockModal, setShowBlockModal] = useState<string | null>(null);
+  const [blockDuration, setBlockDuration] = useState<number | null>(null);
+
   useEffect(() => {
     if (!session) {
       navigate('/login');
@@ -69,7 +73,16 @@ export default function AdminPanel() {
             .filter(f => f.name.endsWith('.json'))
             .map(async f => {
               const uData = await getStorageJson(`profiles/${f.name}`);
-              return { id: f.name.replace('.json', ''), isBlocked: blockedUsers.includes(f.name.replace('.json', '')), ...uData };
+              const userId = f.name.replace('.json', '');
+              const isBlocked = blockedUsers.some((u: any) => {
+                if (typeof u === 'string') return u === userId;
+                if (u && u.userId === userId) {
+                  if (u.suspendedUntil) return new Date().getTime() < u.suspendedUntil;
+                  return true;
+                }
+                return false;
+              });
+              return { id: userId, isBlocked, ...uData };
             })
         );
         setAllUsers(loadedUsers);
@@ -119,20 +132,34 @@ export default function AdminPanel() {
     toast.error(`Account ${userId} has been terminated.`);
   };
 
-  const handleToggleBlock = async (userId: string, currentlyBlocked: boolean) => {
-    const action = currentlyBlocked ? 'unblock' : 'block';
-    if (!confirm(`Are you sure you want to ${action} this account?`)) return;
+  const submitBlock = async () => {
+    if (!showBlockModal) return;
     
     let blocked = await getStorageJson('admin/blocked_users.json') || [];
-    if (currentlyBlocked) {
-      blocked = blocked.filter((id: string) => id !== userId);
-      toast.success(`Account unblocked.`);
-    } else {
-      if (!blocked.includes(userId)) blocked.push(userId);
-      toast.error(`Account blocked.`);
-    }
+    blocked = blocked.filter((u: any) => typeof u === 'string' ? u !== showBlockModal : u.userId !== showBlockModal);
+    
+    const suspendedUntil = blockDuration ? new Date().getTime() + blockDuration * 60 * 60 * 1000 : null;
+    blocked.push({ userId: showBlockModal, suspendedUntil });
+    
     await setStorageJson('admin/blocked_users.json', blocked);
-    setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: !currentlyBlocked } : u));
+    setAllUsers(allUsers.map(u => u.id === showBlockModal ? { ...u, isBlocked: true } : u));
+    
+    toast.error(blockDuration ? `Account suspended for ${blockDuration} hours.` : `Account permanently blocked.`);
+    setShowBlockModal(null);
+    setBlockDuration(null);
+  };
+
+  const handleToggleBlock = async (userId: string, currentlyBlocked: boolean) => {
+    if (!currentlyBlocked) {
+      setShowBlockModal(userId);
+    } else {
+      if (!confirm(`Are you sure you want to unblock this account?`)) return;
+      let blocked = await getStorageJson('admin/blocked_users.json') || [];
+      blocked = blocked.filter((u: any) => typeof u === 'string' ? u !== userId : u.userId !== userId);
+      await setStorageJson('admin/blocked_users.json', blocked);
+      toast.success(`Account unblocked.`);
+      setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: false } : u));
+    }
   };
 
 
@@ -461,6 +488,44 @@ export default function AdminPanel() {
         </div>
       )}
 
+      {/* Block User Modal */}
+      {showBlockModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-slide-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger)' }}>
+              <Ban size={24} /> Block User
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>Select the duration of the suspension. The user will be unable to log in during this time.</p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {[
+                { label: 'Permanent Block', value: null },
+                { label: 'Suspend for 24 Hours', value: 24 },
+                { label: 'Suspend for 36 Hours', value: 36 },
+                { label: 'Suspend for 7 Days', value: 168 }
+              ].map(option => (
+                <button
+                  key={option.label}
+                  onClick={() => setBlockDuration(option.value)}
+                  style={{
+                    padding: '16px', borderRadius: '12px', border: blockDuration === option.value ? '2px solid var(--danger)' : '1px solid var(--surface-border)',
+                    background: blockDuration === option.value ? 'rgba(239, 68, 68, 0.1)' : 'var(--surface)',
+                    color: 'var(--text-main)', fontWeight: 600, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                  }}
+                >
+                  {option.label}
+                  {blockDuration === option.value && <CheckCircle size={18} color="var(--danger)" />}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+              <button onClick={() => { setShowBlockModal(null); setBlockDuration(null); }} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={submitBlock} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Confirm Block</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
