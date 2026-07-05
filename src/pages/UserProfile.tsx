@@ -2,6 +2,7 @@ import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSEO } from '../hooks/useSEO';
 
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
@@ -14,6 +15,9 @@ export default function UserProfile() {
   const { session } = useAuth();
 
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState<any>(null);
+
+  useSEO(profile?.name || 'User Profile', `View ${profile?.name || 'user'}'s profile and items on CampusRent`);
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [displayReviewsCount, setDisplayReviewsCount] = useState(5);

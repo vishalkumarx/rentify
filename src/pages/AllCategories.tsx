@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { CATEGORIES } from '../lib/constants';
+import { useSEO } from '../hooks/useSEO';
 
 // @ts-ignore
 import imgBooks from '../assets/books and stationary.PNG';
@@ -44,6 +45,7 @@ const visualCategories = [
 ];
 
 export default function AllCategories() {
+  useSEO('All Categories', 'Browse all available categories on CampusRent');
   const navigate = useNavigate();
   const [columns, setColumns] = useState(window.innerWidth > 768 ? 4 : 2);
 

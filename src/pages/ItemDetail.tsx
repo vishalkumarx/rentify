@@ -43,9 +43,12 @@ const DUMMY_REVIEWS = [
 
 export default function ItemDetail() {
   const { id } = useParams();
+  const { items, toggleLike } = useFeed();
+  const item = items.find(i => i.id === Number(id));
+  useSEO(item?.title || 'Item Detail', item?.description || 'View item details on CampusRent');
+
   const navigate = useNavigate();
   const location = useLocation();
-  const { items, toggleLike } = useFeed();
   const { getOrCreateConversation, conversations, sendMessage } = useChat();
   const { session, loading } = useAuth();
   const { createRequest, requests, updateRequestStatus } = useBookings();
@@ -76,7 +79,6 @@ export default function ItemDetail() {
   const [showConfirmSheet, setShowConfirmSheet] = useState(false);
   const [showSuccessSheet, setShowSuccessSheet] = useState(false);
   
-  const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
   const userRequest = session && item ? requests.find(r => 
     r.item_id === item.id && 
