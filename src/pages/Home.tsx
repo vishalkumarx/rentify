@@ -411,7 +411,7 @@ export default function Home() {
           (() => {
             const featuredCount = window.innerWidth < 768 ? 1 : 3;
             const safeOffset = filteredItems.length > 0 ? featuredOffset % filteredItems.length : 0;
-            const featuredItems = [];
+            const featuredItems: typeof filteredItems = [];
             for (let i = 0; i < featuredCount; i++) {
               if (filteredItems.length > 0) {
                 featuredItems.push(filteredItems[(safeOffset + i) % filteredItems.length]);
