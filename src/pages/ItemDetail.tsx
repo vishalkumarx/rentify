@@ -77,7 +77,13 @@ export default function ItemDetail() {
   
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
-  const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status !== 'rejected' && r.status !== 'cancelled') : null;
+  const userRequest = session && item ? requests.find(r => 
+    r.item_id === item.id && 
+    r.requester_id === session.user.id && 
+    r.status !== 'rejected' && 
+    r.status !== 'cancelled' &&
+    !(r.status === 'accepted' && r.end_date && new Date(r.end_date).setHours(23, 59, 59, 999) < new Date().getTime())
+  ) : null;
   const isBookingCompleted = userRequest?.status === 'accepted' && userRequest.end_date && new Date(userRequest.end_date).setHours(23, 59, 59, 999) < new Date().getTime();
   const chatExists = item && conversations.some(c => c.itemId === item.id && c.otherUserId === item.userId);
 

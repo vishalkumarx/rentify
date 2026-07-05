@@ -92,9 +92,13 @@ export default function Home() {
   const [featuredOffset, setFeaturedOffset] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setFeaturedOffset(prev => prev + 1);
-    }, 5000);
+    const updateFeaturedOffset = () => {
+      const msPerDay = 24 * 60 * 60 * 1000;
+      const dayIndex = Math.floor(Date.now() / msPerDay);
+      setFeaturedOffset(dayIndex * 3);
+    };
+    updateFeaturedOffset();
+    const interval = setInterval(updateFeaturedOffset, 60 * 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -409,7 +413,7 @@ export default function Home() {
           </div>
         ) : (
           (() => {
-            const featuredCount = window.innerWidth < 768 ? 1 : 3;
+            const featuredCount = 3;
             const safeOffset = filteredItems.length > 0 ? featuredOffset % filteredItems.length : 0;
             const featuredItems: typeof filteredItems = [];
             for (let i = 0; i < featuredCount; i++) {
