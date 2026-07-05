@@ -1,6 +1,6 @@
-
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Building2, Heart } from 'lucide-react';
+import { ChevronLeft, Building2, Heart, Search } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -15,14 +15,29 @@ export default function CategoryItems() {
   
   const decodedCategory = decodeURIComponent(categoryId || '');
 
-  // Filter items. Simple fuzzy match for 'Books & Stationary' vs 'Books and Stationary'
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter items by category and search query
   const categoryItems = items.filter(item => {
     const itemCat = item.category?.toLowerCase() || '';
     const paramCat = decodedCategory.toLowerCase();
-    if (paramCat.includes('books') && itemCat.includes('books')) return true;
-    if (paramCat.includes('cloth') && itemCat.includes('cloth')) return true;
-    if (paramCat.includes('tool') && itemCat.includes('tool')) return true;
-    return itemCat === paramCat;
+    
+    let matchesCategory = false;
+    if (paramCat.includes('books') && itemCat.includes('books')) matchesCategory = true;
+    else if (paramCat.includes('cloth') && itemCat.includes('cloth')) matchesCategory = true;
+    else if (paramCat.includes('tool') && itemCat.includes('tool')) matchesCategory = true;
+    else matchesCategory = itemCat === paramCat;
+
+    if (!matchesCategory) return false;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      if (!item.title?.toLowerCase().includes(q) && !item.description?.toLowerCase().includes(q)) {
+        return false;
+      }
+    }
+    
+    return true;
   });
 
   return (
@@ -35,6 +50,17 @@ export default function CategoryItems() {
       </header>
 
       <div style={{ padding: '24px 16px', flex: 1, overflowY: 'auto' }}>
+        <div style={{ position: 'relative', marginBottom: '24px' }}>
+          <Search size={20} style={{ position: 'absolute', left: '16px', top: '16px', color: 'var(--text-muted)' }} />
+          <input 
+            type="text" 
+            placeholder={`Search in ${decodedCategory}...`} 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', fontSize: '16px', color: 'var(--text-main)' }}
+          />
+        </div>
+
         {categoryItems.length === 0 ? (
           <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', textAlign: 'center', minHeight: '50vh' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
