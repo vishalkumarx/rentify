@@ -1,5 +1,5 @@
-
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { CATEGORIES } from '../lib/constants';
 
@@ -27,6 +27,13 @@ const visualCategories = [
 
 export default function AllCategories() {
   const navigate = useNavigate();
+  const [columns, setColumns] = useState(window.innerWidth > 768 ? 4 : 2);
+
+  useEffect(() => {
+    const handleResize = () => setColumns(window.innerWidth > 768 ? 4 : 2);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)' }}>
@@ -38,7 +45,7 @@ export default function AllCategories() {
       </header>
 
       <div style={{ padding: '24px 16px', flex: 1, overflowY: 'auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, 1fr)`, gap: '16px' }}>
           {visualCategories.map(cat => (
             <div 
               key={cat.id} 
