@@ -78,6 +78,7 @@ export default function ItemDetail() {
   const item = items.find(i => i.id === Number(id));
   const isOwner = session?.user?.id === item?.userId;
   const userRequest = session && item ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status !== 'rejected' && r.status !== 'cancelled') : null;
+  const isBookingCompleted = userRequest?.status === 'accepted' && userRequest.end_date && new Date(userRequest.end_date).setHours(23, 59, 59, 999) < new Date().getTime();
   const chatExists = item && conversations.some(c => c.itemId === item.id && c.otherUserId === item.userId);
 
   useEffect(() => {
@@ -363,11 +364,11 @@ export default function ItemDetail() {
 
                   <span style={{
                     padding: '6px 14px', borderRadius: '20px', fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px',
-                    background: userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)',
+                    background: isBookingCompleted ? 'var(--primary)' : (userRequest.status === 'accepted' ? 'var(--success)' : 'var(--warning)'),
                     color: '#fff',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                   }}>
-                    {userRequest.status}
+                    {isBookingCompleted ? 'Completed' : userRequest.status}
                   </span>
                 </div>
                 
@@ -408,9 +409,14 @@ export default function ItemDetail() {
                     Waiting for owner approval. They will review your request soon.
                   </p>
                 )}
-                {userRequest.status === 'accepted' && (
+                {userRequest.status === 'accepted' && !isBookingCompleted && (
                   <p style={{ margin: '16px 0 0', fontSize: '14px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
                     Your booking is confirmed! Reach out to the owner to coordinate.
+                  </p>
+                )}
+                {isBookingCompleted && (
+                  <p style={{ margin: '16px 0 0', fontSize: '14px', color: 'var(--text-muted)', textAlign: 'center', fontStyle: 'italic' }}>
+                    This booking has been completed.
                   </p>
                 )}
                 {userRequest.note && (
@@ -573,6 +579,11 @@ export default function ItemDetail() {
             <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer' }}>
               Edit Your Item
             </button>
+          ) : isBookingCompleted ? (
+            <div style={{ padding: '18px', background: 'var(--surface)', color: 'var(--text-main)', borderRadius: '24px', textAlign: 'center', border: '1px solid var(--surface-border)' }}>
+              <p style={{ margin: 0, fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><BadgeCheck size={18} color="var(--primary)" /> Booking Completed</p>
+              <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>You booked this from {userRequest?.start_date ? format(parseISO(userRequest.start_date), 'dd MMM') : ''} to {userRequest?.end_date ? format(parseISO(userRequest.end_date), 'dd MMM') : ''}</p>
+            </div>
           ) : userRequest?.status === 'accepted' || (chatExists && userRequest) ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
               <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
