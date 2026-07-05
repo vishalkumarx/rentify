@@ -20,6 +20,7 @@ import AdminPanel from './pages/AdminPanel';
 import UserProfile from './pages/UserProfile';
 import AllCategories from './pages/AllCategories';
 import CategoryItems from './pages/CategoryItems';
+import ComingSoon from './pages/ComingSoon';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -81,6 +82,7 @@ function AppRoutes() {
       <Route path="/user/:id" element={<UserProfile />} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+      <Route path="/coming-soon" element={<ComingSoon />} />
     </Routes>
   );
 }

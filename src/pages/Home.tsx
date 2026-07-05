@@ -349,7 +349,7 @@ export default function Home() {
           <div style={{ width: '100%', maxWidth: '1400px' }}>
             <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
               {PROMOS.slice(0, 4).map((p, i) => (
-              <div key={i} className="promo-card" style={{ height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
+              <div onClick={() => navigate('/coming-soon')} key={i} className="promo-card" style={{ cursor: 'pointer', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
                 <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                 <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
                 <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
@@ -489,9 +489,9 @@ export default function Home() {
         </div>
 
         {/* Testimonial Section */}
-        <div style={{ margin: '0 auto 32px', maxWidth: '400px', width: 'calc(100% - 32px)', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', paddingLeft: '8px' }}>What Students Say</h3>
-          <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }} className="hide-scrollbar">
+        <div style={{ margin: '0 auto 32px', width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', paddingLeft: '24px' }}>What Students Say</h3>
+          <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '0 24px 8px 24px' }} className="hide-scrollbar">
             <div className="glass-panel" style={{ minWidth: '280px', padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div style={{ display: 'flex', gap: '4px' }}>
                 {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="var(--warning)" color="var(--warning)" />)}
