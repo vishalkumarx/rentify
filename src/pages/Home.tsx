@@ -417,7 +417,8 @@ export default function Home() {
                 featuredItems.push(filteredItems[(safeOffset + i) % filteredItems.length]);
               }
             }
-            const normalItems = filteredItems.filter(item => !featuredItems.includes(item)).slice(0, displayCount);
+            // Keep recently added items stable by using a static slice
+            const normalItems = filteredItems.slice(featuredCount, displayCount);
             
             return (
               <>
