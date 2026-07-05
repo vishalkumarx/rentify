@@ -405,10 +405,10 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', width: '100%' }}>
+          <div className="desktop-right" style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', width: '100%' }}>
             <button 
               onClick={() => navigate('/categories')}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', padding: '12px 20px', borderRadius: '24px', width: 'calc(100% - 32px)', maxWidth: '300px', margin: '0 auto' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', padding: '12px 20px', borderRadius: '24px', width: 'calc(100% - 32px)', maxWidth: '300px', margin: '0 16px' }}
             >
               See All Categories <ChevronRight size={16} />
             </button>
@@ -535,6 +535,18 @@ export default function Home() {
         {filteredItems.length > displayCount && (
           <div ref={loadMoreRef} style={{ height: '40px', width: '100%' }} />
         )}
+        
+        {/* Footer Links */}
+        <footer style={{ padding: '32px 16px', marginTop: 'auto', borderTop: '1px solid var(--surface-border)', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>About the App</button>
+            <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>How it Works</button>
+            <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Safety Guidelines</button>
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            &copy; {new Date().getFullYear()} CampusRent. All rights reserved.
+          </div>
+        </footer>
       </div>
 
       {/* Filter Modal */}

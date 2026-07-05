@@ -692,6 +692,12 @@ a:hover {
   .mobile-tabs-container {
     display: none !important;
   }
+  .mobile-only {
+    display: none !important;
+  }
+  .desktop-right {
+    justify-content: flex-end !important;
+  }
 }
 
 @media (max-width: 767px) {

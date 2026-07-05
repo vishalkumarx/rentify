@@ -109,7 +109,7 @@ export default function MobileLayout() {
         </div>
 
         {/* Hamburger Menu */}
-        <div style={{ position: 'relative' }}>
+        <div className="mobile-only" style={{ position: 'relative' }}>
           <button 
             onClick={() => setShowTopMenu(!showTopMenu)}
             style={{ width: '40px', height: '40px', padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer' }}
