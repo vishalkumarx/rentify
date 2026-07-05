@@ -123,11 +123,11 @@ export default function MobileLayout() {
                 <Info size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
               </div>
-              <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+              <div onClick={() => { setShowTopMenu(false); navigate('/how-it-works'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
                 <HelpCircle size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>How it Works</span>
               </div>
-              <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+              <div onClick={() => { setShowTopMenu(false); navigate('/safety-guidelines'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
                 <ShieldCheck size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>Safety Guidelines</span>
               </div>
