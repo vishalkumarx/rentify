@@ -41,7 +41,7 @@ export default function SafetyGuidelines() {
         <h1 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Safety Guidelines</h1>
       </header>
 
-      <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'rgba(239, 68, 68, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto', color: 'var(--danger)' }}>
             <ShieldCheck size={40} />

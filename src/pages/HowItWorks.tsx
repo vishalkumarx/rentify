@@ -36,7 +36,7 @@ export default function HowItWorks() {
         <h1 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>How It Works</h1>
       </header>
 
-      <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      <div style={{ padding: '32px 24px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ fontSize: '28px', fontWeight: 900, color: 'var(--text-main)', margin: '0 0 12px 0', letterSpacing: '-0.5px' }}>Simple. Fast. Local.</h2>
           <p style={{ fontSize: '16px', color: 'var(--text-muted)', lineHeight: 1.6, margin: 0 }}>

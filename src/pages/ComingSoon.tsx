@@ -13,7 +13,7 @@ export default function ComingSoon() {
         <h1 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Coming Soon</h1>
       </header>
 
-      <div className="animate-fade-in" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', textAlign: 'center' }}>
+      <div className="animate-fade-in" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 24px', textAlign: 'center', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
         <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px', color: 'var(--primary)' }}>
           <Sparkles size={40} />
         </div>
