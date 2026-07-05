@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Building2, Heart, Search } from 'lucide-react';
+import { ChevronLeft, Building2, Heart, Search, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -50,15 +50,27 @@ export default function CategoryItems() {
       </header>
 
       <div style={{ padding: '24px 16px', flex: 1, overflowY: 'auto' }}>
-        <div style={{ position: 'relative', marginBottom: '24px' }}>
-          <Search size={20} style={{ position: 'absolute', left: '16px', top: '16px', color: 'var(--text-muted)' }} />
-          <input 
-            type="text" 
-            placeholder={`Search in ${decodedCategory}...`} 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', padding: '16px 16px 16px 48px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', fontSize: '16px', color: 'var(--text-main)' }}
-          />
+        <div style={{ position: 'relative', width: '50%', minWidth: '280px', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
+              <Search size={20} color="var(--text-muted)" style={{ flexShrink: 0 }} />
+              <input 
+                type="text" 
+                placeholder={`Search in ${decodedCategory}...`} 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ padding: 0, border: 'none', background: 'transparent', boxShadow: 'none', width: '100%', outline: 'none', color: 'var(--text-main)', fontSize: '16px' }}
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  style={{ padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)', width: 'auto', flexShrink: 0 }}
+                >
+                  <X size={16} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {categoryItems.length === 0 ? (
