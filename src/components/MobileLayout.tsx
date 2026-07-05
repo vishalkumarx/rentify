@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, Package, CalendarCheck } from 'lucide-react';
+import { Home, User, MessageCircle, Package, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -31,6 +31,8 @@ export default function MobileLayout() {
 
   const scrollPositions = useRef<Record<string, number>>({});
   const mainRef = useRef<HTMLElement>(null);
+  
+  const [showTopMenu, setShowTopMenu] = useState(false);
 
   const handleScroll = (e: React.UIEvent<HTMLElement>) => {
     const currentScrollY = (e.target as HTMLElement).scrollTop;
@@ -92,8 +94,8 @@ export default function MobileLayout() {
         zIndex: 40,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'flex-start',
-        paddingLeft: '20px',
+        justifyContent: 'space-between',
+        padding: '0 20px',
         borderBottom: '1px solid rgba(0,0,0,0.1)',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -104,6 +106,33 @@ export default function MobileLayout() {
               Made with <span style={{ color: '#e25555' }}>♥</span> for GNDU
             </span>
           </div>
+        </div>
+
+        {/* Hamburger Menu */}
+        <div style={{ position: 'relative' }}>
+          <button 
+            onClick={() => setShowTopMenu(!showTopMenu)}
+            style={{ width: '40px', height: '40px', padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer' }}
+          >
+            {showTopMenu ? <X size={28} /> : <Menu size={28} />}
+          </button>
+          
+          {showTopMenu && (
+            <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+              <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                <Info size={18} className="text-volt" />
+                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
+              </div>
+              <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                <HelpCircle size={18} className="text-volt" />
+                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>How it Works</span>
+              </div>
+              <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+                <ShieldCheck size={18} className="text-volt" />
+                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>Safety Guidelines</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       {/* Message Banner */}
