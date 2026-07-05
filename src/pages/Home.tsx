@@ -371,12 +371,6 @@ export default function Home() {
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
             <h2 style={{ margin: 0, fontSize: '12px', fontWeight: 800, color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.5px', whiteSpace: 'nowrap' }}>Popular Categories</h2>
             <div style={{ flex: 1 }}></div>
-            <button 
-              onClick={() => navigate('/categories')}
-              style={{ display: 'flex', alignItems: 'center', gap: '2px', background: 'transparent', border: 'none', color: 'var(--text-muted)', fontWeight: 700, fontSize: '12px', cursor: 'pointer', padding: 0 }}
-            >
-              See All <ChevronRight size={14} />
-            </button>
           </div>
           <div className="categories-grid">
             {visualCategories.slice(0, 6).map((cat, idx) => (
@@ -410,6 +404,14 @@ export default function Home() {
                 </span>
               </button>
             ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+            <button 
+              onClick={() => navigate('/categories')}
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', padding: '10px 20px', borderRadius: '20px' }}
+            >
+              See All Categories <ChevronRight size={16} />
+            </button>
           </div>
         </div>
 
