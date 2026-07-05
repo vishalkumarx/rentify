@@ -15,14 +15,32 @@ import imgMobility from '../assets/mobility.PNG';
 import imgSports from '../assets/sports.PNG';
 // @ts-ignore
 import imgTools from '../assets/tools and hardware.PNG';
+// @ts-ignore
+import imgDorm from '../assets/dorm essentials.PNG';
+// @ts-ignore
+import imgParty from '../assets/party supplies.PNG';
+// @ts-ignore
+import imgPhotography from '../assets/photography.PNG';
+// @ts-ignore
+import imgGaming from '../assets/gaming.PNG';
+// @ts-ignore
+import imgMusic from '../assets/usical instruments.PNG';
+// @ts-ignore
+import imgOthers from '../assets/others.PNG';
 
 const visualCategories = [
-  { id: 'Books and Stationary', title: 'Books & Stationary', img: imgBooks },
+  { id: 'Books and Stationary', title: 'Books and Stationary', img: imgBooks },
   { id: 'Clothing & Formalwear', title: 'Clothing & Formalwear', img: imgClothing },
   { id: 'Electronics', title: 'Electronics', img: imgElectronics },
   { id: 'Mobility', title: 'Mobility', img: imgMobility },
   { id: 'Sports Gear', title: 'Sports Gear', img: imgSports },
-  { id: 'Tools & Hardware', title: 'Tools & Hardware', img: imgTools }
+  { id: 'Tools & Hardware', title: 'Tools & Hardware', img: imgTools },
+  { id: 'Dorm Essentials', title: 'Dorm Essentials', img: imgDorm },
+  { id: 'Party Supplies', title: 'Party Supplies', img: imgParty },
+  { id: 'Photography', title: 'Photography', img: imgPhotography },
+  { id: 'Gaming', title: 'Gaming', img: imgGaming },
+  { id: 'Music Instruments', title: 'Music Instruments', img: imgMusic },
+  { id: 'Others', title: 'Others', img: imgOthers }
 ];
 
 export default function AllCategories() {
