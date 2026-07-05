@@ -273,9 +273,9 @@ export default function Profile() {
           <button 
             type="button"
             onClick={() => setShowVerificationModal(false)}
-            style={{ position: 'absolute', top: '24px', right: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer', zIndex: 101 }}
+            style={{ position: 'absolute', top: '24px', right: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', width: '48px', height: '48px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', cursor: 'pointer', zIndex: 101, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}
           >
-            <X size={24} />
+            <X size={28} />
           </button>
 
           <form onSubmit={handleVerificationSubmit} className="glass-panel animate-slide-in" style={{ width: '100%', maxWidth: '500px', padding: '24px', borderRadius: '24px', position: 'relative', display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '90vh', overflowY: 'auto' }}>
