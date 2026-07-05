@@ -26,6 +26,7 @@ export type Conversation = {
   lastMessageTime?: number;
   messages: Message[];
   unreadCounts: Record<string, number>; // { userId: 0 }
+  deletedBy?: string[];
 };
 
 // UI Representation
@@ -49,6 +50,7 @@ type ChatContextType = {
   unsendMessage: (conversationId: string, messageId: string) => Promise<void>;
   markAsRead: (conversationId: string) => void;
   getOrCreateConversation: (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
+  deleteConversation: (conversationId: string) => Promise<void>;
 };
 
 const ChatContext = createContext<ChatContextType>({
@@ -58,6 +60,7 @@ const ChatContext = createContext<ChatContextType>({
   unsendMessage: async () => {},
   markAsRead: () => {},
   getOrCreateConversation: () => '',
+  deleteConversation: async () => {},
 });
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -82,6 +85,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const loadedChats = await Promise.all(
         myChatFiles.map(async f => {
           const chatData = await getStorageJson(`reviews/${f.name}`);
+          if (chatData && chatData.deletedBy && chatData.deletedBy.includes(myId)) return null;
           if (chatData && chatData.messages) {
             let needsSave = false;
             chatData.messages.forEach((m: Message) => {
@@ -260,6 +264,35 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [session?.user?.id, fetchChats]);
 
+  const deleteConversation = useCallback(async (conversationId: string) => {
+    if (!session?.user?.id) return;
+    const myId = session.user.id;
+
+    // Optimistically remove from UI
+    setConversations(prev => prev.filter(c => c.id !== conversationId));
+    setMessages(prev => prev.filter(m => m.conversationId !== conversationId));
+
+    try {
+      const chatPath = `reviews/${conversationId}.json`;
+      const chatData = await getStorageJson(chatPath) as Conversation;
+      if (!chatData) return;
+
+      if (!chatData.deletedBy) chatData.deletedBy = [];
+      if (!chatData.deletedBy.includes(myId)) {
+        chatData.deletedBy.push(myId);
+      }
+      
+      const participants = Object.keys(chatData.participants || {});
+      if (chatData.deletedBy.length >= participants.length) {
+        await supabase.storage.from('item-images').remove([chatPath]);
+      } else {
+        await setStorageJson(chatPath, chatData);
+      }
+    } catch (err) {
+      console.error("Failed to delete chat", err);
+    }
+  }, [session?.user?.id]);
+
   const unsendMessage = useCallback(async (conversationId: string, messageId: string) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
@@ -361,7 +394,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       sendMessage,
       unsendMessage,
       markAsRead,
-      getOrCreateConversation
+      getOrCreateConversation,
+      deleteConversation
     }}>
       {children}
     </ChatContext.Provider>
