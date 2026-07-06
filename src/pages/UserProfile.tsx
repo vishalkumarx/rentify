@@ -31,7 +31,7 @@ export default function UserProfile() {
   const [reportDesc, setReportDesc] = useState('');
   const [reporting, setReporting] = useState(false);
 
-  const [profile, setProfile] = useState<any>(null);
+
   const [verificationStatus, setVerificationStatus] = useState<string>('none');
 
   useEffect(() => {
