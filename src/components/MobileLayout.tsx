@@ -224,8 +224,8 @@ export default function MobileLayout() {
           position: 'fixed',
           bottom: '80px',
           right: '20px',
-          width: '56px',
           height: '56px',
+          padding: '0 24px',
           borderRadius: '28px',
           background: 'var(--primary)',
           color: '#000',
@@ -234,11 +234,15 @@ export default function MobileLayout() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: '8px',
           cursor: 'pointer',
-          zIndex: 90
+          zIndex: 90,
+          fontWeight: 800,
+          fontSize: '16px'
         }}
       >
-        <Plus size={28} />
+        <Plus size={24} />
+        List an item
       </button>
 
     </div>
