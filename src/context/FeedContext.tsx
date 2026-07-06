@@ -28,6 +28,7 @@ export type RentalItem = {
   itemReviewCount?: number;
   seller?: SellerProfile;
   status?: 'available' | 'booked';
+  createdAt?: string;
 };
 
 type FeedContextType = {
@@ -71,6 +72,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
           ...item,
           department: item.department || 'Unknown',
           userId: item.user_id,
+          createdAt: item.created_at,
           liked: false, // Default local like state
         seller: {
           id: item.user_id,
