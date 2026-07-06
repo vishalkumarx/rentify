@@ -269,24 +269,24 @@ export default function Profile() {
             {myItems.length > 0 ? (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
                 {myItems.map(item => (
-                  <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', borderRadius: '20px', border: '1px solid var(--surface-border)' }}>
-                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                      <img src={item.image} alt={item.title} style={{ width: '96px', height: '96px', borderRadius: '16px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                  <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', cursor: 'pointer', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <img src={item.image} alt={item.title} style={{ width: '72px', height: '72px', borderRadius: '12px', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
                       <div style={{ flex: 1 }}>
-                        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{item.title}</h3>
-                        <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}<span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/day</span></span>
+                        <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
+                        <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}<span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>/day</span></span>
                       </div>
                     </div>
                     
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--surface-border)', paddingTop: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--surface-border)', paddingTop: '12px' }}>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/edit/${item.id}`);
                         }}
-                        style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                        style={{ flex: 1, padding: '8px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                       >
-                        <Edit2 size={16} /> Edit
+                        <Edit2 size={14} /> Edit
                       </button>
                       <button
                         onClick={async (e) => {
@@ -295,9 +295,9 @@ export default function Profile() {
                             await deletePost(item.id);
                           }
                         }}
-                        style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                        style={{ flex: 1, padding: '8px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
                       >
-                        <Trash2 size={16} /> Delete
+                        <Trash2 size={14} /> Delete
                       </button>
                     </div>
                   </div>
