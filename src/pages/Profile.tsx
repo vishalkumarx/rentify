@@ -3,12 +3,17 @@ import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useFeed } from '../context/FeedContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { session } = useAuth();
-  const [activeTab, setActiveTab] = useState('Saved');
+  const [activeTab, setActiveTab] = useState('Favourites');
+  const navigate = useNavigate();
+  const { items } = useFeed();
+  const favouriteItems = items.filter(item => item.liked);
 
-  const tabs = ['Saved', 'Reviews'];
+  const tabs = ['Favourites', 'Reviews'];
 
 
 
@@ -217,10 +222,35 @@ export default function Profile() {
           ))}
         </div>
 
-        {activeTab === 'Saved' && (
-          <div style={{ padding: '24px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <Heart size={48} opacity={0.5} style={{ marginBottom: '16px' }} />
-            <p>You have no saved items yet.</p>
+        {activeTab === 'Favourites' && (
+          <div style={{ padding: '24px 0' }}>
+            {favouriteItems.length === 0 ? (
+              <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                <Heart size={48} opacity={0.5} style={{ marginBottom: '16px' }} />
+                <p>You have no favourite items yet.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '16px' }}>
+                {favouriteItems.map(item => (
+                  <div 
+                    key={item.id} 
+                    onClick={() => navigate(`/item/${item.id}`)}
+                    style={{ background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', overflow: 'hidden', cursor: 'pointer' }}
+                  >
+                    <div style={{ width: '100%', aspectRatio: '1', position: 'relative' }}>
+                      <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ position: 'absolute', top: '8px', right: '8px', background: 'rgba(255,255,255,0.8)', padding: '4px', borderRadius: '50%', color: 'var(--danger)' }}>
+                        <Heart size={16} fill="var(--danger)" />
+                      </div>
+                    </div>
+                    <div style={{ padding: '12px' }}>
+                      <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h4>
+                      <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>₹{item.price}/day</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
         

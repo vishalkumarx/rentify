@@ -452,6 +452,7 @@ export default function AdminPanel() {
 
           {/* Action Bar */}
           <div style={{ padding: '24px', background: '#111', display: 'flex', justifyContent: 'center', gap: '16px' }}>
+            {selectedImage.status === 'approved' ? (
               <button 
                 onClick={() => { setRejectingUserId(selectedImage.userId); setSelectedImage(null); }}
                 style={{ padding: '16px 32px', background: '#333', color: 'white', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
