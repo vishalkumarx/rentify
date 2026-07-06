@@ -13,7 +13,7 @@ export default function Profile() {
   const { items } = useFeed();
   const favouriteItems = items.filter(item => item.liked);
 
-  const tabs = ['Favourites', 'Reviews'];
+  const tabs = ['Favourites', 'Reviews', 'My Requests'];
 
 
 
@@ -25,6 +25,7 @@ export default function Profile() {
   };
 
   const [profile, setProfile] = useState<any>(null);
+  const [myRequests, setMyRequests] = useState<any[]>([]);
   
   useEffect(() => {
     if (session?.user?.id) {
@@ -32,8 +33,16 @@ export default function Profile() {
         if (data) setProfile(data);
       });
       fetchVerificationStatus();
+      fetchMyRequests();
     }
   }, [session?.user?.id]);
+
+  const fetchMyRequests = async () => {
+    if (!session?.user?.id) return;
+    const data = await getStorageJson('feed/item_requests.json') || [];
+    const userReqs = data.filter((req: any) => req.userId === session.user.id);
+    setMyRequests(userReqs.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+  };
 
   const [verificationInfo, setVerificationInfo] = useState<any>(null);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
@@ -258,6 +267,32 @@ export default function Profile() {
           <div style={{ padding: '24px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
             <Star size={48} opacity={0.5} style={{ marginBottom: '16px' }} />
             <p>No reviews yet.</p>
+          </div>
+        )}
+
+        {activeTab === 'My Requests' && (
+          <div style={{ padding: '24px 0' }}>
+            {myRequests.length === 0 ? (
+              <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
+                <p>You haven't posted any item requests yet.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {myRequests.map((req: any) => (
+                  <div key={req.id} className="glass-panel" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px', border: '1px solid var(--surface-border)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{req.title}</h4>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        {new Date(req.createdAt).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                      {req.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

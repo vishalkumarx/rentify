@@ -15,6 +15,7 @@ interface ItemRequest {
   title: string;
   description: string;
   createdAt: string;
+  profilePic?: string;
 }
 
 export default function ItemRequestsFeed() {
@@ -60,7 +61,8 @@ export default function ItemRequestsFeed() {
       year: profile?.memberSince || new Date().getFullYear().toString(),
       title: title.trim(),
       description: description.trim(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      profilePic: profile?.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture
     };
 
     const currentRequests = await getStorageJson('feed/item_requests.json') || [];
@@ -161,9 +163,13 @@ export default function ItemRequestsFeed() {
             {requests.map(req => (
               <div key={req.id} className="glass-panel" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '16px', textTransform: 'uppercase' }}>
-                    {req.name.charAt(0)}
-                  </div>
+                  {req.profilePic ? (
+                    <img src={req.profilePic} alt={req.name} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0 }} />
+                  ) : (
+                    <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', flexShrink: 0 }}>
+                      {req.name.charAt(0)}
+                    </div>
+                  )}
                   <div style={{ flex: 1 }}>
                     <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>{req.name}</h4>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{req.department} • {req.year}</span>
