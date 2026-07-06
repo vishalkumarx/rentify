@@ -238,7 +238,8 @@ export default function MobileLayout() {
           cursor: 'pointer',
           zIndex: 90,
           fontWeight: 800,
-          fontSize: '16px'
+          fontSize: '16px',
+          width: 'fit-content'
         }}
       >
         <Plus size={24} />
