@@ -603,7 +603,7 @@ export default function ItemDetail() {
                 onClick={() => setShowCancelConfirm(true)}
                 style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px', fontSize: '16px', borderRadius: '24px', background: 'transparent', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
                 <X size={20} />
-                Cancel Booking
+                Withdraw Request
               </button>
             </div>
           ) : item.status === 'booked' ? (
@@ -638,9 +638,9 @@ export default function ItemDetail() {
       {showCancelConfirm && userRequest && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Cancel Request?</h3>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Withdraw Request?</h3>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
-              Are you sure you want to cancel your booking request for <strong>{item.title}</strong>? The owner will no longer see it.
+              Are you sure you want to withdraw your request for <strong>{item.title}</strong>? The owner will no longer see it.
             </p>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

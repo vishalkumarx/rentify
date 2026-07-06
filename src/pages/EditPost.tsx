@@ -15,6 +15,7 @@ export default function EditPost() {
 
   const [title, setTitle] = useState(item?.title || '');
   const [price, setPrice] = useState(item?.price || '');
+  const [securityDeposit, setSecurityDeposit] = useState(item?.securityDeposit || '');
   const [category, setCategory] = useState(item?.category || '');
   const [description, setDescription] = useState(item?.description || '');
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,7 @@ export default function EditPost() {
     if (item && !initialized) {
       setTitle(item.title || '');
       setPrice(item.price || '');
+      setSecurityDeposit(item.securityDeposit || '');
       setCategory(item.category || '');
       setDescription(item.description || '');
       setImages(item.images || (item.image ? [item.image] : []));
@@ -101,6 +103,7 @@ export default function EditPost() {
       await updatePost(Number(id), {
         title,
         price,
+        securityDeposit: securityDeposit || undefined,
         category,
         description,
         image: finalUrls[0], // First image is cover
@@ -251,6 +254,17 @@ export default function EditPost() {
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
                 required
+                style={{ paddingLeft: '48px' }}
+              />
+            </div>
+
+            <div style={{ position: 'relative' }}>
+              <IndianRupee size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
+              <input
+                type="number"
+                placeholder="Security Deposit (Optional)"
+                value={securityDeposit}
+                onChange={(e) => setSecurityDeposit(e.target.value)}
                 style={{ paddingLeft: '48px' }}
               />
             </div>
