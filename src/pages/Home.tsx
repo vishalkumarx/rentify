@@ -453,7 +453,7 @@ export default function Home() {
                   <img src={cat.img} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <span className="cat-text animate-reveal" style={{ fontWeight: 700, color: 'var(--text-main)', textAlign: 'center', lineHeight: 1.2, animationDelay: `${idx * 0.1}s` }}>
-                  <span className="animate-loop-bounce">{cat.title}</span>
+                  <span className="animate-typewriter" style={{ animationDelay: `${idx * 0.6}s` }}>{cat.title}</span>
                 </span>
               </button>
             ))}

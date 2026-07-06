@@ -727,12 +727,13 @@ a:hover {
 }
 
 /* Looping Animation for Category Text */
-@keyframes loopTextBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+@keyframes loopTypewriter {
+  0%, 10% { clip-path: inset(0 100% 0 0); }
+  40%, 60% { clip-path: inset(0 0 0 0); }
+  90%, 100% { clip-path: inset(0 100% 0 0); }
 }
 
-.animate-loop-bounce {
+.animate-typewriter {
   display: inline-block;
-  animation: loopTextBounce 3s ease-in-out infinite;
+  animation: loopTypewriter 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
