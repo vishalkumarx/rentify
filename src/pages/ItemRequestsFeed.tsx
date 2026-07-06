@@ -128,7 +128,7 @@ export default function ItemRequestsFeed() {
           }}
           style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '8px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
         >
-          <Plus size={16} /> Post
+          <Plus size={16} /> Post a Need
         </button>
       </header>
 
