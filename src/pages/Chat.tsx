@@ -63,14 +63,15 @@ export default function Chat() {
     (bookingReq && bookingReq.owner_id === session.user.id)
   );
 
-  const isItemDeleted = conversation && !item && !bookingReq;
+  const isItemDeleted = conversation && !item && !bookingReq && !conversation?.itemId?.toString().startsWith('req-');
 
   const hasAcceptedBooking = bookingReq?.status === 'accepted';
+  const isRequestChat = conversation?.itemId?.toString().startsWith('req-');
 
   const ownerId = item?.userId || bookingReq?.owner_id;
   const hasOwnerMessage = allConversationMessages.some(m => m.senderId === ownerId);
 
-  const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage;
+  const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage || isRequestChat;
   const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked);
 
   const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;

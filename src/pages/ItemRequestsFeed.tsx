@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, MessageSquare, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar } from 'lucide-react';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
+import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { createPortal } from 'react-dom';
@@ -22,6 +23,7 @@ interface ItemRequest {
 }
 
 export default function ItemRequestsFeed() {
+  const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
   const { session, profile } = useAuth();
   const [requests, setRequests] = useState<ItemRequest[]>([]);
@@ -105,7 +107,7 @@ export default function ItemRequestsFeed() {
     });
   };
 
-  const handleMessage = (request: ItemRequest) => {
+  const handleMessage = async (request: ItemRequest) => {
     if (!session) {
       toast.error('Please log in to send a message');
       navigate('/login', { state: { returnTo: '/item-requests' } });
@@ -115,8 +117,8 @@ export default function ItemRequestsFeed() {
       toast.error('You cannot message yourself');
       return;
     }
-    // Navigate to chat
-    navigate(`/chat/${request.userId}`, { state: { itemName: `Request: ${request.title}` } });
+    const convId = getOrCreateConversation(`req-${request.id}`, `Need: ${request.title}`, '', request.userId, request.userName);
+    navigate(`/chat/${convId}`);
   };
 
   const timeAgo = (dateStr: string) => {

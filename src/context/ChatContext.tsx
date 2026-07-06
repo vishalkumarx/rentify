@@ -49,7 +49,7 @@ type ChatContextType = {
   sendMessage: (conversationId: string, senderId: string, text: string, options?: { imageUrl?: string; location?: { lat: number; lng: number; address: string }; replyToId?: string }) => Promise<void>;
   unsendMessage: (conversationId: string, messageId: string) => Promise<void>;
   markAsRead: (conversationId: string) => void;
-  getOrCreateConversation: (itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
+  getOrCreateConversation: (itemId: number | string, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
   deleteConversation: (conversationId: string) => Promise<void>;
 };
 
@@ -334,7 +334,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [session?.user?.id, fetchChats]);
 
-  const getOrCreateConversation = useCallback((itemId: number, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => {
+  const getOrCreateConversation = useCallback((itemId: number | string, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => {
     if (!session?.user?.id) return '';
     const myId = session.user.id;
     const myName = session.user.user_metadata?.full_name || 'Me';
