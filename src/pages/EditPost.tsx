@@ -241,6 +241,7 @@ export default function EditPost() {
             <select
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
+              required
               style={{
                 width: '100%',
                 padding: '16px 16px 16px 48px',
@@ -255,7 +256,7 @@ export default function EditPost() {
                 cursor: 'pointer'
               }}
             >
-              <option value="" disabled>Select a Department (Optional)</option>
+              <option value="" disabled>Select a Department</option>
               {DEPARTMENTS.map(dept => (
                 <option key={dept} value={dept} style={{ color: '#000' }}>{dept}</option>
               ))}
