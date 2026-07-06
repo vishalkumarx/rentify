@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X, Star } from 'lucide-react';
+import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X, Star, Coffee } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
@@ -629,6 +629,13 @@ export default function Home() {
               <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>How it Works</button>
               <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>Safety Guidelines</button>
             </div>
+            
+            <button 
+              onClick={() => window.open('https://www.buymeacoffee.com/', '_blank')} 
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 221, 0, 0.1)', border: '1px solid #FFDD00', color: '#FFDD00', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '12px 24px', borderRadius: '24px' }}
+            >
+              <Coffee size={20} /> Buy Me a Coffee
+            </button>
             
             <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
               &copy; {new Date().getFullYear()} CampusRent. All rights reserved.

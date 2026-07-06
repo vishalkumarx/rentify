@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus } from 'lucide-react';
+import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -127,9 +127,13 @@ export default function MobileLayout() {
                 <HelpCircle size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>How it Works</span>
               </div>
-              <div onClick={() => { setShowTopMenu(false); navigate('/safety-guidelines'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
+              <div onClick={() => { setShowTopMenu(false); navigate('/safety-guidelines'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
                 <ShieldCheck size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>Safety Guidelines</span>
+              </div>
+              <div onClick={() => { setShowTopMenu(false); window.open('https://www.buymeacoffee.com/', '_blank'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: 'rgba(255, 221, 0, 0.1)' }}>
+                <Coffee size={18} color="#FFDD00" />
+                <span style={{ fontSize: '15px', fontWeight: 700, color: '#FFDD00' }}>Buy Me a Coffee</span>
               </div>
             </div>
           )}
