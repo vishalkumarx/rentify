@@ -124,7 +124,7 @@ export default function ItemRequestsFeed() {
             }
             setShowModal(true);
           }}
-          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '8px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '8px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
         >
           <Plus size={16} /> Post
         </button>
@@ -184,7 +184,7 @@ export default function ItemRequestsFeed() {
                   {req.userId !== session?.user?.id && (
                     <button 
                       onClick={() => handleMessage(req)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
                     >
                       <MessageSquare size={16} /> I can help
                     </button>
