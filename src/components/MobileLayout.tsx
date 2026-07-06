@@ -201,6 +201,14 @@ export default function MobileLayout() {
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
+          className="mobile-only"
+          icon={<Plus size={24} color="#000" />} 
+          label="Post" 
+          isActive={location.pathname === '/post'} 
+          onClick={() => navigate('/post')} 
+          style={{ background: 'var(--primary)', color: '#000', borderRadius: '20px', margin: '10px 4px', padding: '6px' }}
+        />
+        <NavItem 
           className="desktop-only"
           icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
           label="Profile" 
@@ -219,7 +227,7 @@ export default function MobileLayout() {
       {/* Floating Action Button for Posting */}
       <button 
         onClick={() => navigate('/post')}
-        className="animate-slide-up"
+        className="animate-slide-up desktop-only"
         style={{
           position: 'fixed',
           bottom: '80px',
@@ -250,11 +258,12 @@ export default function MobileLayout() {
   );
 }
 
-function NavItem({ icon, label, isActive, badgeCount, onClick, className }: { icon: React.ReactNode, label: string, isActive: boolean, badgeCount?: number, onClick: () => void, className?: string }) {
+function NavItem({ icon, label, isActive, badgeCount, onClick, className, style }: { icon: React.ReactNode, label: string, isActive: boolean, badgeCount?: number, onClick: () => void, className?: string, style?: React.CSSProperties }) {
   return (
     <button 
       onClick={onClick}
       className={`nav-item ${isActive ? 'active' : ''} ${className || ''}`}
+      style={style}
     >
       <div style={{ position: 'relative' }}>
         {icon}
