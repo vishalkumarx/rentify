@@ -113,9 +113,9 @@ export default function MobileLayout() {
           <div className="mobile-only">
             <button 
               onClick={() => navigate('/messages')}
-              style={{ position: 'relative', width: '40px', height: '40px', padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer' }}
+              style={{ position: 'relative', width: '40px', height: '40px', padding: 0, background: (location.pathname === '/messages' || location.pathname.startsWith('/chat')) ? 'rgba(0,0,0,0.06)' : 'transparent', borderRadius: '50%', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer', transition: 'background 0.2s' }}
             >
-              <MessageCircle size={24} />
+              <MessageCircle size={24} fill={(location.pathname === '/messages' || location.pathname.startsWith('/chat')) ? '#000' : 'none'} />
               {totalUnread > 0 && (
                 <div style={{ position: 'absolute', top: '6px', right: '6px', width: '10px', height: '10px', background: 'var(--danger)', borderRadius: '50%', border: '2px solid var(--primary)' }} />
               )}
