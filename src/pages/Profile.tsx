@@ -284,9 +284,9 @@ export default function Profile() {
                           e.stopPropagation();
                           navigate(`/edit/${item.id}`);
                         }}
-                        style={{ flex: 1, padding: '8px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        <Edit2 size={14} /> Edit
+                        <Edit2 size={16} />
                       </button>
                       <button
                         onClick={async (e) => {
@@ -295,9 +295,9 @@ export default function Profile() {
                             await deletePost(item.id);
                           }
                         }}
-                        style={{ flex: 1, padding: '8px', borderRadius: '10px', fontSize: '13px', fontWeight: 600, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                        style={{ flex: 1, padding: '10px', borderRadius: '10px', border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
-                        <Trash2 size={14} /> Delete
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
