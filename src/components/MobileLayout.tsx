@@ -119,6 +119,10 @@ export default function MobileLayout() {
           
           {showTopMenu && (
             <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+              <div onClick={() => { setShowTopMenu(false); navigate('/profile'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                <User size={18} className="text-volt" />
+                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>My Profile</span>
+              </div>
               <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
                 <Info size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
@@ -197,6 +201,7 @@ export default function MobileLayout() {
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
+          className="desktop-only"
           icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
           label="Profile" 
           isActive={location.pathname === '/profile'} 
@@ -240,11 +245,11 @@ export default function MobileLayout() {
   );
 }
 
-function NavItem({ icon, label, isActive, badgeCount, onClick }: { icon: React.ReactNode, label: string, isActive: boolean, badgeCount?: number, onClick: () => void }) {
+function NavItem({ icon, label, isActive, badgeCount, onClick, className }: { icon: React.ReactNode, label: string, isActive: boolean, badgeCount?: number, onClick: () => void, className?: string }) {
   return (
     <button 
       onClick={onClick}
-      className={`nav-item ${isActive ? 'active' : ''}`}
+      className={`nav-item ${isActive ? 'active' : ''} ${className || ''}`}
     >
       <div style={{ position: 'relative' }}>
         {icon}
