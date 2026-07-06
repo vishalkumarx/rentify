@@ -631,8 +631,9 @@ export default function Home() {
             </div>
             
             <button 
+              className="desktop-only"
               onClick={() => window.open('https://www.buymeacoffee.com/', '_blank')} 
-              style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255, 221, 0, 0.1)', border: '1px solid #FFDD00', color: '#FFDD00', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '12px 24px', borderRadius: '24px' }}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', background: 'transparent', border: 'none', color: '#FFDD00', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}
             >
               <Coffee size={20} /> Buy Me a Coffee
             </button>
