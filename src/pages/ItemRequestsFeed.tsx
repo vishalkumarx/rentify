@@ -34,6 +34,7 @@ export default function ItemRequestsFeed() {
   const [dateRequired, setDateRequired] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
 
   useEffect(() => {
     fetchRequests();
@@ -91,13 +92,17 @@ export default function ItemRequestsFeed() {
     toast.success('Request posted successfully!');
   };
 
-  const deleteRequest = async (id: string) => {
-    if (!window.confirm('Are you sure you want to delete this need?')) return;
-    const currentRequests = await getStorageJson('feed/item_requests.json') || [];
-    const updated = currentRequests.filter((r: any) => r.id !== id);
-    await setStorageJson('feed/item_requests.json', updated);
-    setRequests(updated);
-    toast.success('Need deleted successfully');
+  const deleteRequest = (id: string) => {
+    setConfirmDialog({
+      message: 'Are you sure you want to delete this need?',
+      onConfirm: async () => {
+        const currentRequests = await getStorageJson('feed/item_requests.json') || [];
+        const updated = currentRequests.filter((r: any) => r.id !== id);
+        await setStorageJson('feed/item_requests.json', updated);
+        setRequests(updated);
+        toast.success('Need deleted successfully');
+      }
+    });
   };
 
   const handleMessage = (request: ItemRequest) => {
@@ -338,6 +343,22 @@ export default function ItemRequestsFeed() {
         </div>,
         document.body
       )}
+
+      {/* Custom Confirm Dialog */}
+      {confirmDialog && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 800 }}>Confirm Action</h3>
+            <p style={{ margin: '0 0 24px 0', color: 'var(--text-muted)', fontSize: '15px' }}>{confirmDialog.message}</p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={() => setConfirmDialog(null)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Delete</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 }
