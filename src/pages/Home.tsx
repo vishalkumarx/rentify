@@ -401,7 +401,7 @@ export default function Home() {
                 }}>
                   <img src={cat.img} alt={cat.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                <span className="cat-text animate-reveal" style={{ fontWeight: 700, color: 'var(--text-main)', textAlign: 'center', lineHeight: 1.2, animationDelay: `${idx * 0.1}s` }}>
+                <span className="cat-text animate-reveal animate-loop-bounce" style={{ fontWeight: 700, color: 'var(--text-main)', textAlign: 'center', lineHeight: 1.2, animationDelay: `${idx * 0.1}s` }}>
                   {cat.title}
                 </span>
               </button>

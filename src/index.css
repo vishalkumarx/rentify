@@ -725,3 +725,14 @@ a:hover {
   animation: revealText 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
 }
+
+/* Looping Animation for Category Text */
+@keyframes loopTextBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-loop-bounce {
+  display: inline-block;
+  animation: loopTextBounce 3s ease-in-out infinite;
+}
