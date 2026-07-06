@@ -407,7 +407,7 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <div className="desktop-right" style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', width: '100%' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px', width: '100%' }}>
             <button 
               onClick={() => navigate('/categories')}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', padding: '12px 20px', borderRadius: '24px', width: 'calc(100% - 32px)', maxWidth: '300px', margin: '0 16px' }}
