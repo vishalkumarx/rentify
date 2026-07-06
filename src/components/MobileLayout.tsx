@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, Package, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone } from 'lucide-react';
+import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -192,7 +192,6 @@ export default function MobileLayout() {
         <NavItem icon={<Megaphone size={24} />} label="Community" isActive={location.pathname === '/item-requests'} onClick={() => navigate('/item-requests')} />
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
-        <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} onClick={() => navigate('/my-listings')} />
         <NavItem 
           icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
           label="Profile" 

@@ -14,7 +14,6 @@ import Messages from './pages/Messages';
 import Chat from './pages/Chat';
 import ItemDetail from './pages/ItemDetail';
 import EditPost from './pages/EditPost';
-import MyListings from './pages/MyListings';
 import Requests from './pages/Requests';
 import AdminPanel from './pages/AdminPanel';
 import UserProfile from './pages/UserProfile';
@@ -75,7 +74,6 @@ function AppRoutes() {
         {/* Protected Navigation Tabs */}
         <Route path="/post" element={<ProtectedRoute message="Login to post a new rental listing."><Post /></ProtectedRoute>} />
         <Route path="/requests" element={<ProtectedRoute message="Login to view your booking requests."><Requests /></ProtectedRoute>} />
-        <Route path="/my-listings" element={<ProtectedRoute message="Login to view your listings."><MyListings /></ProtectedRoute>} />
         <Route path="/messages" element={<ProtectedRoute message="Login to view your messages and chat with owners."><Messages /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute message="Login to view your profile and manage your active listings."><Profile /></ProtectedRoute>} />
         <Route path="/edit/:id" element={<ProtectedRoute message="Login to edit your listing."><EditPost /></ProtectedRoute>} />

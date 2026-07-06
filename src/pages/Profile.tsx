@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { session } = useAuth();
-  const [activeTab, setActiveTab] = useState('Favourites');
+  const [activeTab, setActiveTab] = useState('My Listings');
   const navigate = useNavigate();
-  const { items } = useFeed();
+  const { items, deletePost } = useFeed();
   const favouriteItems = items.filter(item => item.liked);
+  const myItems = items.filter(item => item.userId === session?.user?.id);
 
-  const tabs = ['Favourites', 'Reviews', 'My Requests'];
+  const tabs = ['My Listings', 'Favourites', 'My Requests'];
 
 
 
@@ -263,10 +264,74 @@ export default function Profile() {
           </div>
         )}
         
-        {activeTab === 'Reviews' && (
-          <div style={{ padding: '24px 0', textAlign: 'center', color: 'var(--text-muted)' }}>
-            <Star size={48} opacity={0.5} style={{ marginBottom: '16px' }} />
-            <p>No reviews yet.</p>
+        {activeTab === 'My Listings' && (
+          <div style={{ padding: '24px 0' }}>
+            {myItems.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {myItems.map(item => (
+                  <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', borderRadius: '20px', border: '1px solid var(--surface-border)' }}>
+                    <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                      <img src={item.image} alt={item.title} style={{ width: '96px', height: '96px', borderRadius: '16px', objectFit: 'cover', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>{item.title}</h3>
+                        <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}<span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/day</span></span>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid var(--surface-border)', paddingTop: '16px' }}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/edit/${item.id}`);
+                        }}
+                        style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                      >
+                        <Edit2 size={16} /> Edit
+                      </button>
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          if (window.confirm('Are you sure you want to delete this listing?')) {
+                            await deletePost(item.id);
+                          }
+                        }}
+                        style={{ flex: 1, padding: '12px', borderRadius: '12px', fontSize: '14px', fontWeight: 700, border: 'none', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                      >
+                        <Trash2 size={16} /> Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                <Package size={64} opacity={0.5} style={{ marginBottom: '16px' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px', color: 'var(--text-main)' }}>No listings yet</h3>
+                <p style={{ margin: 0 }}>You haven't posted any items for rent.</p>
+              </div>
+            )}
+            <button 
+              onClick={() => navigate('/post')}
+              style={{
+                marginTop: '16px',
+                width: '100%',
+                padding: '16px',
+                borderRadius: '16px',
+                background: 'var(--primary)',
+                color: '#000',
+                fontWeight: 800,
+                fontSize: '16px',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                boxShadow: 'var(--primary-glow)'
+              }}
+            >
+              <Plus size={20} /> Post New Item
+            </button>
           </div>
         )}
 
