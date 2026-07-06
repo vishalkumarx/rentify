@@ -626,17 +626,7 @@ export default function ItemDetail() {
             </div>
           ) : (
             <button 
-              onClick={() => {
-                if (!startDate || !endDate || calculateDays() === 0) {
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-                  // If they are already near the bottom, just trigger the alert via handleRequestClick
-                  if (window.innerHeight + window.scrollY >= document.body.scrollHeight - 100) {
-                    handleRequestClick();
-                  }
-                } else {
-                  handleRequestClick();
-                }
-              }} 
+              onClick={handleRequestClick} 
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
               <CalendarIcon size={22} />
               Request Booking

@@ -192,7 +192,15 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleLike = (id: number) => {
-    setItems((prev) => prev.map(item => item.id === id ? { ...item, liked: !item.liked } : item));
+    setItems((prev) => {
+      const isLiking = !prev.find(i => i.id === id)?.liked;
+      if (isLiking) {
+        toast.success('Added to favourites');
+      } else {
+        toast.success('Removed from favourites');
+      }
+      return prev.map(item => item.id === id ? { ...item, liked: !item.liked } : item);
+    });
   };
 
   const toggleBookingStatus = async (id: number) => {
