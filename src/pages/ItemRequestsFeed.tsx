@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Plus, MessageSquare, Megaphone, X } from 'lucide-react';
+import { ChevronLeft, Plus, MessageSquare, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar } from 'lucide-react';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
@@ -16,6 +16,9 @@ interface ItemRequest {
   description: string;
   createdAt: string;
   profilePic?: string;
+  budget?: string;
+  location?: string;
+  dateRequired?: string;
 }
 
 export default function ItemRequestsFeed() {
@@ -26,7 +29,11 @@ export default function ItemRequestsFeed() {
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [budget, setBudget] = useState('');
+  const [locationStr, setLocationStr] = useState('');
+  const [dateRequired, setDateRequired] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchRequests();
@@ -61,6 +68,9 @@ export default function ItemRequestsFeed() {
       year: profile?.memberSince || new Date().getFullYear().toString(),
       title: title.trim(),
       description: description.trim(),
+      budget: budget.trim() || undefined,
+      location: locationStr.trim() || undefined,
+      dateRequired: dateRequired.trim() || undefined,
       createdAt: new Date().toISOString(),
       profilePic: profile?.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture
     };
@@ -75,7 +85,19 @@ export default function ItemRequestsFeed() {
     setShowModal(false);
     setTitle('');
     setDescription('');
+    setBudget('');
+    setLocationStr('');
+    setDateRequired('');
     toast.success('Request posted successfully!');
+  };
+
+  const deleteRequest = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this need?')) return;
+    const currentRequests = await getStorageJson('feed/item_requests.json') || [];
+    const updated = currentRequests.filter((r: any) => r.id !== id);
+    await setStorageJson('feed/item_requests.json', updated);
+    setRequests(updated);
+    toast.success('Need deleted successfully');
   };
 
   const handleMessage = (request: ItemRequest) => {
@@ -170,12 +192,33 @@ export default function ItemRequestsFeed() {
                       {req.name.charAt(0)}
                     </div>
                   )}
-                  <div style={{ flex: 1 }}>
-                    <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>{req.name}</h4>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{req.department} • {req.year}</span>
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    {timeAgo(req.createdAt)}
+                  <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <div style={{ fontWeight: 700, fontSize: '15px' }}>{req.name}</div>
+                      {req.userId === session?.user?.id && (
+                        <div style={{ position: 'relative' }}>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === req.id ? null : req.id); }}
+                            style={{ background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)' }}
+                          >
+                            <MoreVertical size={20} />
+                          </button>
+                          {openMenuId === req.id && (
+                            <div style={{ position: 'absolute', top: '100%', right: '0', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, minWidth: '120px', overflow: 'hidden' }}>
+                              <button onClick={(e) => { e.stopPropagation(); deleteRequest(req.id); setOpenMenuId(null); }} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
+                                <Trash2 size={16} /> Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+                      {req.department} • {req.year}
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 600, marginTop: '2px' }}>
+                      {timeAgo(req.createdAt)}
+                    </div>
                   </div>
                 </div>
                 
@@ -184,6 +227,23 @@ export default function ItemRequestsFeed() {
                   <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, opacity: 0.9 }}>
                     {req.description}
                   </p>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '12px' }}>
+                    {req.budget && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                        <IndianRupee size={14} color="var(--primary)" /> {req.budget}
+                      </div>
+                    )}
+                    {req.location && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                        <MapPin size={14} color="var(--primary)" /> {req.location}
+                      </div>
+                    )}
+                    {req.dateRequired && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                        <Calendar size={14} color="var(--primary)" /> Need by: {req.dateRequired}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '8px', borderTop: '1px solid var(--surface-border)' }}>
@@ -218,6 +278,39 @@ export default function ItemRequestsFeed() {
                   placeholder="e.g. Scientific Calculator Casio fx-991" 
                   value={title} 
                   onChange={e => setTitle(e.target.value)} 
+                  style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 700 }}>Budget (Optional)</label>
+                  <input 
+                    type="text" 
+                    placeholder="e.g. ₹50/day" 
+                    value={budget} 
+                    onChange={e => setBudget(e.target.value)} 
+                    style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
+                  />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: 700 }}>Need By (Optional)</label>
+                  <input 
+                    type="date" 
+                    value={dateRequired} 
+                    onChange={e => setDateRequired(e.target.value)} 
+                    style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 700 }}>Location (Optional)</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. North Campus, Block C" 
+                  value={locationStr} 
+                  onChange={e => setLocationStr(e.target.value)} 
                   style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
                 />
               </div>

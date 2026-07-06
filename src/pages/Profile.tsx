@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,7 @@ export default function Profile() {
   const { session } = useAuth();
   const [activeTab, setActiveTab] = useState('My Listings');
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [openNeedMenuId, setOpenNeedMenuId] = useState<string | null>(null);
   const navigate = useNavigate();
   const { items, deletePost } = useFeed();
   const favouriteItems = items.filter(item => item.liked);
@@ -28,6 +29,15 @@ export default function Profile() {
 
   const [profile, setProfile] = useState<any>(null);
   const [myRequests, setMyRequests] = useState<any[]>([]);
+
+  const deleteMyRequest = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this need?')) return;
+    const currentRequests = await getStorageJson('feed/item_requests.json') || [];
+    const updated = currentRequests.filter((r: any) => r.id !== id);
+    await setStorageJson('feed/item_requests.json', updated);
+    setMyRequests(myRequests.filter((r: any) => r.id !== id));
+    toast.success('Need deleted successfully');
+  };
   
   useEffect(() => {
     if (session?.user?.id) {
@@ -322,13 +332,47 @@ export default function Profile() {
                   <div key={req.id} className="glass-panel" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px', border: '1px solid var(--surface-border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{req.title}</h4>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {new Date(req.createdAt).toLocaleDateString()}
-                      </span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                          {new Date(req.createdAt).toLocaleDateString()}
+                        </span>
+                        <div style={{ position: 'relative' }}>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setOpenNeedMenuId(openNeedMenuId === req.id ? null : req.id); }}
+                            style={{ background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)' }}
+                          >
+                            <MoreVertical size={20} />
+                          </button>
+                          {openNeedMenuId === req.id && (
+                            <div style={{ position: 'absolute', top: '100%', right: '0', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, minWidth: '120px', overflow: 'hidden' }}>
+                              <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); setOpenNeedMenuId(null); }} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
+                                <Trash2 size={16} /> Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
                     <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                       {req.description}
                     </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '4px' }}>
+                      {req.budget && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                          <IndianRupee size={14} color="var(--primary)" /> {req.budget}
+                        </div>
+                      )}
+                      {req.location && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                          <MapPin size={14} color="var(--primary)" /> {req.location}
+                        </div>
+                      )}
+                      {req.dateRequired && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)' }}>
+                          <Calendar size={14} color="var(--primary)" /> Need by: {req.dateRequired}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
