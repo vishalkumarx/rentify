@@ -536,10 +536,11 @@ export default function Home() {
         {/* Yellow Footer */}
         <footer style={{ padding: '40px 24px', marginTop: 'auto', background: 'var(--primary)', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', borderTopLeftRadius: '32px', borderTopRightRadius: '32px' }}>
           <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
-            <div style={{ width: '100%', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.1)' }}>
-              <img src={mobileBanner} alt="Promo Banner" style={{ width: '100%', height: 'auto', display: 'block' }} />
-            </div>
             
+            <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: '#000', textAlign: 'center' }}>
+              Join thousands of students on CampusRent!
+            </h3>
+
             <div className="desktop-only" style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
               <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>About the App</button>
               <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>How it Works</button>
