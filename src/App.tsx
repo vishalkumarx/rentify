@@ -23,6 +23,7 @@ import CategoryItems from './pages/CategoryItems';
 import ComingSoon from './pages/ComingSoon';
 import HowItWorks from './pages/HowItWorks';
 import SafetyGuidelines from './pages/SafetyGuidelines';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -87,6 +88,7 @@ function AppRoutes() {
       <Route path="/coming-soon" element={<ComingSoon />} />
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/safety-guidelines" element={<SafetyGuidelines />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
     </Routes>
   );
 }

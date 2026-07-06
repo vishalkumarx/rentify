@@ -73,6 +73,21 @@ export default function SafetyGuidelines() {
             <span style={{ color: 'var(--primary)', fontWeight: 800, marginTop: '8px', display: 'inline-block' }}>Contact campus security or our admin team.</span>
           </p>
         </div>
+
+        <div style={{ padding: '24px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '20px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '18px', fontWeight: 800, color: 'var(--danger)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <AlertTriangle size={20} /> Legal Disclaimer & Terms
+          </h3>
+          <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: 'var(--text-main)', lineHeight: 1.6 }}>
+            <strong>CampusRent is a peer-to-peer facilitation platform.</strong> By using this platform, you explicitly agree that CampusRent, its developers, and its administrators act solely as an intermediary to connect students.
+          </p>
+          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', color: 'var(--text-main)', lineHeight: 1.6, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <li><strong>No Liability:</strong> CampusRent is not responsible or liable for any lost, stolen, damaged, or unreturned items.</li>
+            <li><strong>User Responsibility:</strong> Any disputes, financial agreements, or interactions are strictly between the renter and the owner.</li>
+            <li><strong>No Guarantees:</strong> We do not guarantee the quality, safety, or legality of items listed, nor the truth or accuracy of users' content or listings.</li>
+            <li><strong>Risk Acceptance:</strong> You assume all risks associated with dealing with other users on the platform.</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

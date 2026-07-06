@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase, setStorageJson } from '../lib/supabase';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Signup() {
   const [email, setEmail] = useState('');
@@ -13,47 +14,64 @@ export default function Signup() {
   const location = useLocation();
   const returnTo = location.state?.returnTo || '/';
 
-  const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    const { data, error } = await supabase.auth.signUp({ 
-      email, 
-      password,
-      options: { data: { full_name: fullName } }
-    });
-    
-    if (error) {
-      setError(error.message);
-    } else if (data.session) {
-      if (data.user) {
-        await setStorageJson(`profiles/${data.user.id}.json`, {
-          name: fullName || 'User ' + data.user.id.substring(0, 5),
-          memberSince: new Date().getFullYear().toString(),
-          verifications: ['Email Confirmed']
-        });
-      }
-      navigate(returnTo, { state: location.state });
-    } else {
-      navigate('/login', { state: location.state }); // If email verification needed
+  const [showConsentModal, setShowConsentModal] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'email' | 'google' | null>(null);
+
+  const initiateSignup = (e?: React.FormEvent, type: 'email' | 'google' = 'email') => {
+    if (e) e.preventDefault();
+    if (type === 'email' && (!email || !password || !fullName)) {
+      setError('Please fill in all fields');
+      return;
     }
-    setLoading(false);
+    setPendingAction(type);
+    setShowConsentModal(true);
   };
 
-  const handleGoogleSignIn = async () => {
+  const executeSignup = async () => {
+    if (!agreedToTerms || !agreedToPrivacy) {
+      toast.error('You must agree to all terms before continuing.');
+      return;
+    }
+    
+    setShowConsentModal(false);
     setLoading(true);
     setError('');
-    const { error } = await supabase.auth.signInWithOAuth({ 
-      provider: 'google',
-      options: {
-        redirectTo: window.location.origin + window.location.pathname + (returnTo !== '/' ? `?returnTo=${encodeURIComponent(returnTo)}` : ''),
-        queryParams: {
-          prompt: 'select_account'
+    
+    if (pendingAction === 'email') {
+      const { data, error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: { data: { full_name: fullName } }
+      });
+      
+      if (error) {
+        setError(error.message);
+      } else if (data.session) {
+        if (data.user) {
+          await setStorageJson(`profiles/${data.user.id}.json`, {
+            name: fullName || 'User ' + data.user.id.substring(0, 5),
+            memberSince: new Date().getFullYear().toString(),
+            verifications: ['Email Confirmed']
+          });
         }
+        navigate(returnTo, { state: location.state });
+      } else {
+        navigate('/login', { state: location.state });
       }
-    });
-    if (error) setError(error.message);
+    } else if (pendingAction === 'google') {
+      const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin + window.location.pathname + (returnTo !== '/' ? `?returnTo=${encodeURIComponent(returnTo)}` : ''),
+          queryParams: {
+            prompt: 'select_account'
+          }
+        }
+      });
+      if (error) setError(error.message);
+    }
     setLoading(false);
   };
 
@@ -69,7 +87,7 @@ export default function Signup() {
         <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, margin: '0', color: '#000000' }}>Register</h1>
         
-        <form onSubmit={handleSignup} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <form onSubmit={(e) => initiateSignup(e, 'email')} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {error && <div style={{ color: 'var(--danger)', fontSize: '14px', background: 'rgba(239, 68, 68, 0.1)', padding: '12px', borderRadius: '16px' }}>{error}</div>}
           
           <input
@@ -167,7 +185,7 @@ export default function Signup() {
           <button 
             type="button" 
             className="google-auth-btn"
-            onClick={handleGoogleSignIn}
+            onClick={() => initiateSignup(undefined, 'google')}
             disabled={loading}
             style={{
               width: '100%',
@@ -203,6 +221,61 @@ export default function Signup() {
         </p>
         </div>
       </div>
+
+      {/* Consent Modal */}
+      {showConsentModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Terms & Conditions</h3>
+            <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>
+              Before creating your account, please review and accept our policies.
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={agreedToTerms} 
+                  onChange={(e) => setAgreedToTerms(e.target.checked)}
+                  style={{ marginTop: '4px', width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                />
+                <span style={{ fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>
+                  I agree to the <Link to="/safety-guidelines" target="_blank" style={{ color: '#1877F2', fontWeight: 600 }}>Security Guidelines & Terms</Link> and understand that CampusRent is not responsible for any disputes, damages, or losses.
+                </span>
+              </label>
+              
+              <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
+                <input 
+                  type="checkbox" 
+                  checked={agreedToPrivacy} 
+                  onChange={(e) => setAgreedToPrivacy(e.target.checked)}
+                  style={{ marginTop: '4px', width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                />
+                <span style={{ fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>
+                  I have read and agree to the <Link to="/privacy-policy" target="_blank" style={{ color: '#1877F2', fontWeight: 600 }}>Privacy Policy</Link>.
+                </span>
+              </label>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => setShowConsentModal(false)}
+                style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={executeSignup}
+                disabled={!agreedToTerms || !agreedToPrivacy}
+                style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#000', fontWeight: 700, cursor: (!agreedToTerms || !agreedToPrivacy) ? 'not-allowed' : 'pointer', opacity: (!agreedToTerms || !agreedToPrivacy) ? 0.5 : 1 }}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
