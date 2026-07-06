@@ -14,7 +14,7 @@ export default function Profile() {
   const favouriteItems = items.filter(item => item.liked);
   const myItems = items.filter(item => item.userId === session?.user?.id);
 
-  const tabs = ['My Listings', 'Favourites', 'My Requests'];
+  const tabs = ['My Listings', 'Favourites', 'My Needs'];
 
 
 
@@ -335,7 +335,7 @@ export default function Profile() {
           </div>
         )}
 
-        {activeTab === 'My Requests' && (
+        {activeTab === 'My Needs' && (
           <div style={{ padding: '24px 0' }}>
             {myRequests.length === 0 ? (
               <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
