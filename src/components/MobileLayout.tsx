@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone } from 'lucide-react';
+import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -206,6 +206,31 @@ export default function MobileLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Floating Action Button for Posting */}
+      <button 
+        onClick={() => navigate('/post')}
+        className="animate-slide-up"
+        style={{
+          position: 'fixed',
+          bottom: '80px',
+          right: '20px',
+          width: '56px',
+          height: '56px',
+          borderRadius: '28px',
+          background: 'var(--primary)',
+          color: '#000',
+          border: 'none',
+          boxShadow: 'var(--primary-glow)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 90
+        }}
+      >
+        <Plus size={28} />
+      </button>
 
     </div>
   );

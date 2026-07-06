@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, Plus } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -310,28 +310,6 @@ export default function Profile() {
                 <p style={{ margin: 0 }}>You haven't posted any items for rent.</p>
               </div>
             )}
-            <button 
-              onClick={() => navigate('/post')}
-              style={{
-                marginTop: '16px',
-                width: '100%',
-                padding: '16px',
-                borderRadius: '16px',
-                background: 'var(--primary)',
-                color: '#000',
-                fontWeight: 800,
-                fontSize: '16px',
-                border: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                cursor: 'pointer',
-                boxShadow: 'var(--primary-glow)'
-              }}
-            >
-              <Plus size={20} /> Post New Item
-            </button>
           </div>
         )}
 
