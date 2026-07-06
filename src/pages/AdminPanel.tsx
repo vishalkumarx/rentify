@@ -1,9 +1,10 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { ShieldCheck, XCircle, CheckCircle, Search, AlertTriangle, Ban, Users as UsersIcon } from 'lucide-react';
+import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 
 export default function AdminPanel() {
   const { session } = useAuth();
@@ -39,7 +40,7 @@ export default function AdminPanel() {
         const v = verificationsData[userId];
         return {
           id: userId,
-          email: v.email || ('ID: ' + userId),
+          email: v.email || '',
           name: 'User ' + userId.substring(0, 5),
           department: v.department || '',
           submittedAt: v.submittedAt || new Date().toISOString(),
@@ -294,6 +295,10 @@ export default function AdminPanel() {
                              <button onClick={() => setRejectingUserId(user.id)} style={{ padding: '12px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer' }}>
                                Revoke Approval
                              </button>
+                           ) : user.status === 'rejected' ? (
+                             <button onClick={() => handleApprove(user.id)} style={{ padding: '12px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                               <CheckCircle size={16} /> Re-Approve
+                             </button>
                            ) : (
                              <>
                               <button onClick={() => handleApprove(user.id)} style={{ padding: '12px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
@@ -420,21 +425,45 @@ export default function AdminPanel() {
           </div>
           
           {/* Image */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px', padding: '20px', overflowX: 'auto' }}>
-            <img src={selectedImage.url} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Large Verification" />
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px', padding: '20px', overflowX: 'auto', overflowY: 'hidden' }}>
+            <div style={{ height: '100%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <span style={{ color: 'white', marginBottom: '8px', fontWeight: 600 }}>College ID</span>
+              <div style={{ flex: 1, overflow: 'hidden', background: '#000', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <TransformWrapper initialScale={1} minScale={0.5} maxScale={4} centerOnInit>
+                  <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={selectedImage.url} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="College ID" />
+                  </TransformComponent>
+                </TransformWrapper>
+              </div>
+            </div>
             {selectedImage.url2 && (
-              <img src={selectedImage.url2} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Large Verification 2" />
+              <div style={{ height: '100%', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <span style={{ color: 'white', marginBottom: '8px', fontWeight: 600 }}>Aadhar Card</span>
+                <div style={{ flex: 1, overflow: 'hidden', background: '#000', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <TransformWrapper initialScale={1} minScale={0.5} maxScale={4} centerOnInit>
+                    <TransformComponent wrapperStyle={{ width: '100%', height: '100%' }} contentStyle={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={selectedImage.url2} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} alt="Aadhar Card" />
+                    </TransformComponent>
+                  </TransformWrapper>
+                </div>
+              </div>
             )}
           </div>
 
           {/* Action Bar */}
           <div style={{ padding: '24px', background: '#111', display: 'flex', justifyContent: 'center', gap: '16px' }}>
-            {selectedImage.status === 'approved' ? (
               <button 
                 onClick={() => { setRejectingUserId(selectedImage.userId); setSelectedImage(null); }}
                 style={{ padding: '16px 32px', background: '#333', color: 'white', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
               >
                 Revoke Approval
+              </button>
+            ) : selectedImage.status === 'rejected' ? (
+              <button 
+                onClick={() => { handleApprove(selectedImage.userId); setSelectedImage(null); }}
+                style={{ padding: '16px 32px', background: '#1877F2', color: 'white', border: 'none', borderRadius: '16px', fontSize: '16px', fontWeight: 700, cursor: 'pointer' }}
+              >
+                Re-Approve
               </button>
             ) : (
               <>
