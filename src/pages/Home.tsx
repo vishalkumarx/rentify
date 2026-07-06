@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
 import { useSEO } from '../hooks/useSEO';
+import { getStorageJson, setStorageJson } from '../lib/supabase';
+import toast from 'react-hot-toast';
 
 // @ts-ignore
 import imgBooks from '../assets/books and stationary.PNG';
@@ -60,8 +62,57 @@ const PROMOS = [
 export default function Home() {
   useSEO('Home');
   const { session, profile, updateProfile } = useAuth();
-  const [showDepartmentModal, setShowDepartmentModal] = useState(false);
   const { requests } = useBookings();
+  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [showTestimonialModal, setShowTestimonialModal] = useState(false);
+  const [tRating, setTRating] = useState(5);
+  const [tReview, setTReview] = useState('');
+  const [tName, setTName] = useState('');
+  const [tYear, setTYear] = useState('1st Year');
+  const [tDept, setTDept] = useState(DEPARTMENTS[0]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDepartmentModal, setShowDepartmentModal] = useState(false);
+
+  useEffect(() => {
+    getStorageJson('admin/testimonials.json').then(data => {
+      if (data && Array.isArray(data)) {
+        setTestimonials(data.filter(t => t.status === 'approved'));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (profile) {
+      setTName(profile.name || '');
+      if (profile.department) setTDept(profile.department);
+    }
+  }, [profile]);
+
+  const handleSubmitTestimonial = async () => {
+    if (!tName || !tReview) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+    setIsSubmitting(true);
+    const data = await getStorageJson('admin/testimonials.json') || [];
+    data.push({
+      id: Date.now().toString(),
+      userId: session?.user?.id || 'anonymous',
+      name: tName,
+      year: tYear,
+      department: tDept,
+      rating: tRating,
+      review: tReview,
+      status: 'pending',
+      date: new Date().toISOString()
+    });
+    await setStorageJson('admin/testimonials.json', data);
+    setIsSubmitting(false);
+    setShowTestimonialModal(false);
+    toast.success('Testimonial submitted for review!');
+    setTReview('');
+  };
+
   const firstName = profile?.name?.split(" ")[0] || session?.user?.user_metadata?.full_name?.split(" ")[0] || "there";
   const userDepartment = profile?.department || "Choose your department";
 
@@ -492,39 +543,43 @@ export default function Home() {
 
         {/* Testimonial Section */}
         <div style={{ margin: '0 auto 32px', width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)', paddingLeft: '24px' }}>What Students Say</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 24px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>What Students Say</h3>
+            <button 
+              onClick={() => setShowTestimonialModal(true)}
+              style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}
+            >
+              Write a Review
+            </button>
+          </div>
           <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '0 24px 8px 24px' }} className="hide-scrollbar">
-            <div className="glass-panel" style={{ minWidth: '280px', padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="var(--warning)" color="var(--warning)" />)}
+            {testimonials.length === 0 ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', width: '100%', background: 'var(--surface)', borderRadius: '24px' }}>
+                No testimonials yet. Be the first to share your experience!
               </div>
-              <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', fontStyle: 'italic', lineHeight: 1.5 }}>
-                "Rentify saved me so much money on my engineering books and lab coat. Highly recommend!"
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>A</div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>Aarav S.</h4>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Computer Science, 2nd Year</span>
+            ) : (
+              testimonials.map((t, i) => (
+                <div key={i} className="glass-panel" style={{ minWidth: '280px', maxWidth: '300px', padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    {Array.from({ length: 5 }).map((_, idx) => (
+                      <Star key={idx} size={16} fill={idx < t.rating ? "var(--warning)" : "transparent"} color={idx < t.rating ? "var(--warning)" : "var(--surface-border)"} />
+                    ))}
+                  </div>
+                  <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', fontStyle: 'italic', lineHeight: 1.5, flex: 1 }}>
+                    "{t.review}"
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, textTransform: 'uppercase' }}>
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>{t.name}</h4>
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{t.department}, {t.year}</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            
-            <div className="glass-panel" style={{ minWidth: '280px', padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {[1,2,3,4,5].map(i => <Star key={i} size={16} fill="var(--warning)" color="var(--warning)" />)}
-              </div>
-              <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', fontStyle: 'italic', lineHeight: 1.5 }}>
-                "Rented a scientific calculator for my finals. The process was super smooth and trustworthy."
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '4px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>P</div>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>Priya M.</h4>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Mechanical Eng, 4th Year</span>
-                </div>
-              </div>
-            </div>
+              ))
+            )}
           </div>
         </div>
 
@@ -665,6 +720,55 @@ export default function Home() {
             <button onClick={() => setShowDepartmentModal(false)} style={{ padding: '14px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 700, fontSize: '15px', border: 'none' }}>
               Close
             </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Testimonial Modal */}
+      {showTestimonialModal && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
+          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Write a Review</h2>
+              <button onClick={() => setShowTestimonialModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+                {[1,2,3,4,5].map(i => (
+                  <Star 
+                    key={i} 
+                    size={32} 
+                    fill={i <= tRating ? "var(--warning)" : "transparent"} 
+                    color={i <= tRating ? "var(--warning)" : "var(--surface-border)"} 
+                    onClick={() => setTRating(i)}
+                    style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                  />
+                ))}
+              </div>
+              
+              <input type="text" placeholder="Your Name" value={tName} onChange={e => setTName(e.target.value)} style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} />
+              
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <select value={tYear} onChange={e => setTYear(e.target.value)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', appearance: 'auto' }}>
+                  {['1st Year', '2nd Year', '3rd Year', '4th Year', 'Masters', 'PhD'].map(y => <option key={y} value={y}>{y}</option>)}
+                </select>
+                <select value={tDept} onChange={e => setTDept(e.target.value)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', appearance: 'auto' }}>
+                  {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                </select>
+              </div>
+              
+              <textarea placeholder="Tell us about your experience..." value={tReview} onChange={e => setTReview(e.target.value)} rows={4} style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', resize: 'none', fontFamily: 'inherit' }} />
+              
+              <button 
+                onClick={handleSubmitTestimonial}
+                disabled={isSubmitting}
+                style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Review'}
+              </button>
+            </div>
           </div>
         </div>,
         document.body

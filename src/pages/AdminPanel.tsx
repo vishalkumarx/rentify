@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle } from 'lucide-react';
+import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle, Star, MessageSquare } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
@@ -14,7 +14,8 @@ export default function AdminPanel() {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users'>('verifications');
+  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials'>('verifications');
+  const [testimonials, setTestimonials] = useState<any[]>([]);
   
   // Modal State
   const [selectedImage, setSelectedImage] = useState<{ url: string, url2?: string, userId: string, status: string } | null>(null);
@@ -90,6 +91,9 @@ export default function AdminPanel() {
         setAllUsers(loadedUsers);
       }
       
+      const tData = await getStorageJson('admin/testimonials.json') || [];
+      setTestimonials(tData);
+
       setLoading(false);
     };
 
@@ -164,6 +168,21 @@ export default function AdminPanel() {
     }
   };
 
+  const handleUpdateTestimonial = async (id: string, status: 'approved' | 'rejected') => {
+    const updated = testimonials.map(t => t.id === id ? { ...t, status } : t);
+    setTestimonials(updated);
+    await setStorageJson('admin/testimonials.json', updated);
+    toast.success(`Testimonial ${status}!`);
+  };
+
+  const handleDeleteTestimonial = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this testimonial?')) return;
+    const updated = testimonials.filter(t => t.id !== id);
+    setTestimonials(updated);
+    await setStorageJson('admin/testimonials.json', updated);
+    toast.success('Testimonial deleted.');
+  };
+
 
   const filteredUsers = users.filter(u => u.id.toLowerCase().includes(search.toLowerCase()));
 
@@ -214,6 +233,12 @@ export default function AdminPanel() {
               style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'users' ? 'var(--text-main)' : 'transparent', color: activeTab === 'users' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
             >
               <UsersIcon size={20} /> Users ({allUsers.length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('testimonials')}
+              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'testimonials' ? 'var(--text-main)' : 'transparent', color: activeTab === 'testimonials' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
+            >
+              <MessageSquare size={20} /> Testimonials ({testimonials.filter(t => t.status === 'pending').length})
             </button>
           </div>
 
@@ -393,6 +418,58 @@ export default function AdminPanel() {
                     </div>
                   )}
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'testimonials' && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                  <h2 style={{ fontSize: '20px', margin: 0, fontWeight: 700 }}>Testimonials Moderation</h2>
+                </div>
+                {testimonials.length === 0 ? (
+                  <div style={{ padding: '32px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--surface)', borderRadius: '24px' }}>
+                    No testimonials submitted yet.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    {testimonials.map(t => (
+                      <div key={t.id} className="glass-panel" style={{ padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: t.status === 'pending' ? '4px solid var(--warning)' : t.status === 'approved' ? '4px solid var(--success)' : '4px solid var(--danger)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{t.name}</h3>
+                              <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{t.department}, {t.year}</span>
+                            </div>
+                            <div style={{ display: 'flex', gap: '4px', marginBottom: '12px' }}>
+                              {Array.from({ length: 5 }).map((_, idx) => (
+                                <Star key={idx} size={16} fill={idx < t.rating ? "var(--warning)" : "transparent"} color={idx < t.rating ? "var(--warning)" : "var(--surface-border)"} />
+                              ))}
+                            </div>
+                            <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', fontStyle: 'italic', lineHeight: 1.5 }}>
+                              "{t.review}"
+                            </p>
+                          </div>
+                          <span style={{ padding: '6px 12px', borderRadius: '16px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', background: t.status === 'pending' ? 'rgba(245,158,11,0.1)' : t.status === 'approved' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: t.status === 'pending' ? 'var(--warning)' : t.status === 'approved' ? 'var(--success)' : 'var(--danger)' }}>
+                            {t.status}
+                          </span>
+                        </div>
+                        
+                        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                          {t.status === 'pending' && (
+                            <>
+                              <button onClick={() => handleUpdateTestimonial(t.id, 'approved')} style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--success)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Approve</button>
+                              <button onClick={() => handleUpdateTestimonial(t.id, 'rejected')} style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--danger)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Reject</button>
+                            </>
+                          )}
+                          {t.status === 'approved' && (
+                            <button onClick={() => handleUpdateTestimonial(t.id, 'rejected')} style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Revoke Approval</button>
+                          )}
+                          <button onClick={() => handleDeleteTestimonial(t.id)} style={{ padding: '8px 16px', borderRadius: '8px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto' }}>Delete</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
