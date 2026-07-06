@@ -135,9 +135,9 @@ export default function MobileLayout() {
                 <ShieldCheck size={18} className="text-volt" />
                 <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>Safety Guidelines</span>
               </div>
-              <div onClick={() => { setShowTopMenu(false); window.open('https://www.buymeacoffee.com/', '_blank'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: 'rgba(255, 221, 0, 0.1)' }}>
-                <Coffee size={18} color="#FFDD00" />
-                <span style={{ fontSize: '15px', fontWeight: 700, color: '#FFDD00' }}>Buy Me a Coffee</span>
+              <div onClick={() => { setShowTopMenu(false); window.open('https://www.buymeacoffee.com/', '_blank'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: '#FFDD00' }}>
+                <Coffee size={18} color="#000" />
+                <span style={{ fontSize: '15px', fontWeight: 800, color: '#000' }}>Buy Me a Coffee</span>
               </div>
             </div>
           )}
