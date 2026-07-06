@@ -1,0 +1,242 @@
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, Plus, MessageSquare, Megaphone, X } from 'lucide-react';
+import { getStorageJson, setStorageJson } from '../lib/supabase';
+import { useAuth } from '../context/AuthContext';
+import toast from 'react-hot-toast';
+import { createPortal } from 'react-dom';
+
+interface ItemRequest {
+  id: string;
+  userId: string;
+  name: string;
+  department: string;
+  year: string;
+  title: string;
+  description: string;
+  createdAt: string;
+}
+
+export default function ItemRequestsFeed() {
+  const navigate = useNavigate();
+  const { session, profile } = useAuth();
+  const [requests, setRequests] = useState<ItemRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    const data = await getStorageJson('feed/item_requests.json') || [];
+    // Sort by newest first
+    setRequests(data.sort((a: ItemRequest, b: ItemRequest) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+    setLoading(false);
+  };
+
+  const handleSubmit = async () => {
+    if (!title.trim() || !description.trim()) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+    
+    if (!session) {
+      toast.error('You must be logged in to post a request');
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    const newRequest: ItemRequest = {
+      id: Date.now().toString(),
+      userId: session.user.id,
+      name: profile?.name || session.user.user_metadata?.full_name || 'Anonymous Student',
+      department: profile?.department || 'Unknown Department',
+      year: profile?.memberSince || new Date().getFullYear().toString(),
+      title: title.trim(),
+      description: description.trim(),
+      createdAt: new Date().toISOString()
+    };
+
+    const currentRequests = await getStorageJson('feed/item_requests.json') || [];
+    const updatedRequests = [newRequest, ...currentRequests];
+    
+    await setStorageJson('feed/item_requests.json', updatedRequests);
+    
+    setRequests(updatedRequests);
+    setIsSubmitting(false);
+    setShowModal(false);
+    setTitle('');
+    setDescription('');
+    toast.success('Request posted successfully!');
+  };
+
+  const handleMessage = (request: ItemRequest) => {
+    if (!session) {
+      toast.error('Please log in to send a message');
+      navigate('/login', { state: { returnTo: '/item-requests' } });
+      return;
+    }
+    if (request.userId === session.user.id) {
+      toast.error('You cannot message yourself');
+      return;
+    }
+    // Navigate to chat
+    navigate(`/chat/${request.userId}`, { state: { itemName: `Request: ${request.title}` } });
+  };
+
+  const timeAgo = (dateStr: string) => {
+    const seconds = Math.floor((new Date().getTime() - new Date(dateStr).getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + "y ago";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + "mo ago";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + "d ago";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + "h ago";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + "m ago";
+    return Math.floor(seconds) + "s ago";
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg)', overflowY: 'auto' }} className="hide-scrollbar">
+      <header style={{ height: '60px', padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--surface-border)', background: 'var(--surface)', flexShrink: 0, position: 'sticky', top: 0, zIndex: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button onClick={() => navigate(-1)} style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', cursor: 'pointer' }}>
+            <ChevronLeft size={20} />
+          </button>
+          <h1 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Community Requests</h1>
+        </div>
+        
+        <button 
+          onClick={() => {
+            if (!session) {
+              toast.error('Please log in to post a request');
+              navigate('/login', { state: { returnTo: '/item-requests' } });
+              return;
+            }
+            setShowModal(true);
+          }}
+          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '8px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)' }}
+        >
+          <Plus size={16} /> Post
+        </button>
+      </header>
+
+      <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
+        
+        <div style={{ background: 'rgba(244, 196, 48, 0.1)', border: '1px dashed var(--primary)', borderRadius: '24px', padding: '20px', display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Megaphone size={24} />
+          </div>
+          <div>
+            <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 800 }}>Can't find what you need?</h3>
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              Post a request to the community feed. If someone has what you're looking for, they can message you directly!
+            </p>
+          </div>
+        </div>
+
+        {loading ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {[1,2,3].map(i => (
+              <div key={i} className="skeleton" style={{ height: '140px', borderRadius: '24px' }}></div>
+            ))}
+          </div>
+        ) : requests.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
+            <Megaphone size={40} color="var(--primary)" style={{ opacity: 0.5, marginBottom: '16px' }} />
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>No requests yet</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>Be the first to post what you need!</p>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {requests.map(req => (
+              <div key={req.id} className="glass-panel" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '16px', textTransform: 'uppercase' }}>
+                    {req.name.charAt(0)}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>{req.name}</h4>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{req.department} • {req.year}</span>
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                    {timeAgo(req.createdAt)}
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>Need: {req.title}</h3>
+                  <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, opacity: 0.9 }}>
+                    {req.description}
+                  </p>
+                </div>
+                
+                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '8px', borderTop: '1px solid var(--surface-border)' }}>
+                  <button 
+                    onClick={() => handleMessage(req)}
+                    style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                  >
+                    <MessageSquare size={16} /> I can help
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {showModal && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
+          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Request an Item</h2>
+              <button onClick={() => setShowModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 700 }}>What do you need?</label>
+                <input 
+                  type="text" 
+                  placeholder="e.g. Scientific Calculator Casio fx-991" 
+                  value={title} 
+                  onChange={e => setTitle(e.target.value)} 
+                  style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
+                />
+              </div>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 700 }}>More Details</label>
+                <textarea 
+                  placeholder="When do you need it by? Any specific requirements?" 
+                  value={description} 
+                  onChange={e => setDescription(e.target.value)} 
+                  rows={4} 
+                  style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', resize: 'none', fontFamily: 'inherit' }} 
+                />
+              </div>
+              
+              <button 
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1, marginTop: '8px' }}
+              >
+                {isSubmitting ? 'Posting...' : 'Post Request'}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}

@@ -468,6 +468,34 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Item Requests Banner */}
+        <div style={{ padding: '0 16px 24px', margin: '0 auto', width: '100%' }}>
+          <button
+            onClick={() => navigate('/item-requests')}
+            style={{ 
+              width: '100%', 
+              background: 'linear-gradient(135deg, var(--surface) 0%, rgba(244,196,48,0.1) 100%)', 
+              border: '1px solid var(--surface-border)', 
+              borderRadius: '24px', 
+              padding: '20px', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'space-between',
+              cursor: 'pointer',
+              textAlign: 'left'
+            }}
+          >
+            <div>
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 800, color: 'var(--text-main)' }}>Can't find what you need?</h3>
+              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Request an item from the community feed!</p>
+            </div>
+            <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary)', color: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <ChevronRight size={20} />
+            </div>
+          </button>
+        </div>
+
+
         {loading ? (
           <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
             <div className="skeleton" style={{ gridColumn: 'span 2', height: '240px', borderRadius: '24px' }}></div>

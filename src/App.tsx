@@ -24,6 +24,7 @@ import ComingSoon from './pages/ComingSoon';
 import HowItWorks from './pages/HowItWorks';
 import SafetyGuidelines from './pages/SafetyGuidelines';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import ItemRequestsFeed from './pages/ItemRequestsFeed';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -78,6 +79,7 @@ function AppRoutes() {
         <Route path="/messages" element={<ProtectedRoute message="Login to view your messages and chat with owners."><Messages /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute message="Login to view your profile and manage your active listings."><Profile /></ProtectedRoute>} />
         <Route path="/edit/:id" element={<ProtectedRoute message="Login to edit your listing."><EditPost /></ProtectedRoute>} />
+        <Route path="/item-requests" element={<ItemRequestsFeed />} />
       </Route>
       
       {/* Full Screen Modals/Pages */}
