@@ -2,6 +2,7 @@ import toast from 'react-hot-toast';
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
+import { DEPARTMENTS } from '../lib/constants';
 
 export type SellerProfile = {
   id: string;
@@ -68,9 +69,13 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
     } else if (data) {
       // Map the DB fields (snake_case) to our RentalItem type (camelCase)
       const mappedItems = data.map((item: any) => {
+        let cleanDept = item.department || 'Unknown';
+        if (cleanDept.includes('{') || cleanDept.includes('[') || cleanDept === 'Unknown') {
+          cleanDept = DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
+        }
         return {
           ...item,
-          department: item.department || 'Unknown',
+          department: cleanDept,
           userId: item.user_id,
           createdAt: item.created_at,
           liked: false, // Default local like state

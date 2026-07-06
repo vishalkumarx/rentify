@@ -3,8 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CATEGORIES } from '../lib/constants';
+import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { supabase } from '../lib/supabase';
+import { Building2 } from 'lucide-react';
 
 export default function EditPost() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function EditPost() {
   const [price, setPrice] = useState(item?.price || '');
   const [securityDeposit, setSecurityDeposit] = useState(item?.securityDeposit || '');
   const [category, setCategory] = useState(item?.category || '');
+  const [department, setDepartment] = useState(item?.department || '');
   const [description, setDescription] = useState(item?.description || '');
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>(item?.images || (item?.image ? [item.image] : []));
@@ -31,6 +33,7 @@ export default function EditPost() {
       setPrice(item.price || '');
       setSecurityDeposit(item.securityDeposit || '');
       setCategory(item.category || '');
+      setDepartment(item.department || '');
       setDescription(item.description || '');
       setImages(item.images || (item.image ? [item.image] : []));
       setInitialized(true);
@@ -105,6 +108,7 @@ export default function EditPost() {
         price,
         securityDeposit: securityDeposit || undefined,
         category,
+        department,
         description,
         image: finalUrls[0], // First image is cover
         images: finalUrls,   // All images
@@ -228,6 +232,32 @@ export default function EditPost() {
               <option value="" disabled>Select a Category</option>
               {postingCategories.map(cat => (
                 <option key={cat} value={cat} style={{ color: '#000' }}>{cat}</option>
+              ))}
+            </select>
+          </div>
+
+          <div style={{ position: 'relative', marginTop: '-8px' }}>
+            <Building2 size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
+            <select
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '16px 16px 16px 48px',
+                borderRadius: '16px',
+                border: '1px solid var(--surface-border)',
+                background: 'var(--surface)',
+                color: department ? 'var(--text-main)' : 'var(--text-muted)',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '16px',
+                outline: 'none',
+                appearance: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="" disabled>Select a Department (Optional)</option>
+              {DEPARTMENTS.map(dept => (
+                <option key={dept} value={dept} style={{ color: '#000' }}>{dept}</option>
               ))}
             </select>
           </div>

@@ -4,8 +4,9 @@ import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-rea
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { CATEGORIES } from '../lib/constants';
+import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { supabase } from '../lib/supabase';
+import { Building2 } from 'lucide-react';
 
 export default function Post() {
   const [title, setTitle] = useState('');
@@ -13,6 +14,7 @@ export default function Post() {
   const [securityDeposit, setSecurityDeposit] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [department, setDepartment] = useState('');
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
@@ -76,7 +78,7 @@ export default function Post() {
         title,
         price,
         category: category || 'Other',
-        department: profile?.department || '',
+        department: department || profile?.department || 'Unknown',
         description,
         securityDeposit: securityDeposit || undefined,
         image: uploadedUrls[0], // First image is cover
@@ -196,6 +198,32 @@ export default function Post() {
               <option value="" disabled>Select a Category</option>
               {postingCategories.map(cat => (
                 <option key={cat} value={cat} style={{ color: '#000' }}>{cat}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div style={{ position: 'relative', marginTop: '-8px' }}>
+            <Building2 size={20} color="var(--text-muted)" style={{ position: 'absolute', top: '16px', left: '16px' }} />
+            <select
+              value={department}
+              onChange={(e) => setDepartment(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '16px 16px 16px 48px',
+                borderRadius: '16px',
+                border: '1px solid var(--surface-border)',
+                background: 'var(--surface)',
+                color: department ? 'var(--text-main)' : 'var(--text-muted)',
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '16px',
+                outline: 'none',
+                appearance: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="" disabled>Select a Department (Optional)</option>
+              {DEPARTMENTS.map(dept => (
+                <option key={dept} value={dept} style={{ color: '#000' }}>{dept}</option>
               ))}
             </select>
           </div>
