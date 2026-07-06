@@ -627,7 +627,7 @@ export default function ItemDetail() {
           ) : (
             <button 
               onClick={handleRequestClick} 
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#fff', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#000', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
               <CalendarIcon size={22} />
               Request Booking
             </button>

@@ -274,7 +274,7 @@ export default function ItemRequestsFeed() {
           <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Request an Item</h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setShowModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
