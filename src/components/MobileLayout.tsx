@@ -108,39 +108,54 @@ export default function MobileLayout() {
           </div>
         </div>
 
-        {/* Hamburger Menu */}
-        <div className="mobile-only" style={{ position: 'relative' }}>
-          <button 
-            onClick={() => setShowTopMenu(!showTopMenu)}
-            style={{ width: '40px', height: '40px', padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer' }}
-          >
-            {showTopMenu ? <X size={28} /> : <Menu size={28} />}
-          </button>
-          
-          {showTopMenu && (
-            <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
-              <div onClick={() => { setShowTopMenu(false); navigate('/profile'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
-                <User size={18} className="text-volt" />
-                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>My Profile</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Message Icon (Mobile Only) */}
+          <div className="mobile-only">
+            <button 
+              onClick={() => navigate('/messages')}
+              style={{ position: 'relative', width: '40px', height: '40px', padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer' }}
+            >
+              <MessageCircle size={24} />
+              {totalUnread > 0 && (
+                <div style={{ position: 'absolute', top: '6px', right: '6px', width: '10px', height: '10px', background: 'var(--danger)', borderRadius: '50%', border: '2px solid var(--primary)' }} />
+              )}
+            </button>
+          </div>
+
+          {/* Hamburger Menu */}
+          <div className="mobile-only" style={{ position: 'relative' }}>
+            <button 
+              onClick={() => setShowTopMenu(!showTopMenu)}
+              style={{ width: '40px', height: '40px', padding: 0, background: 'transparent', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000', cursor: 'pointer' }}
+            >
+              {showTopMenu ? <X size={28} /> : <Menu size={28} />}
+            </button>
+            
+            {showTopMenu && (
+              <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+                <div onClick={() => { setShowTopMenu(false); navigate('/profile'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                  <User size={18} className="text-volt" />
+                  <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>My Profile</span>
+                </div>
+                <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                  <Info size={18} className="text-volt" />
+                  <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
+                </div>
+                <div onClick={() => { setShowTopMenu(false); navigate('/how-it-works'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                  <HelpCircle size={18} className="text-volt" />
+                  <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>How it Works</span>
+                </div>
+                <div onClick={() => { setShowTopMenu(false); navigate('/safety-guidelines'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
+                  <ShieldCheck size={18} className="text-volt" />
+                  <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>Safety Guidelines</span>
+                </div>
+                <div onClick={() => { setShowTopMenu(false); window.open('https://www.buymeacoffee.com/', '_blank'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: '#FFDD00' }}>
+                  <Coffee size={18} color="#000" />
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#000' }}>Buy Me a Coffee</span>
+                </div>
               </div>
-              <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
-                <Info size={18} className="text-volt" />
-                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
-              </div>
-              <div onClick={() => { setShowTopMenu(false); navigate('/how-it-works'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
-                <HelpCircle size={18} className="text-volt" />
-                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>How it Works</span>
-              </div>
-              <div onClick={() => { setShowTopMenu(false); navigate('/safety-guidelines'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
-                <ShieldCheck size={18} className="text-volt" />
-                <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>Safety Guidelines</span>
-              </div>
-              <div onClick={() => { setShowTopMenu(false); window.open('https://www.buymeacoffee.com/', '_blank'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', background: '#FFDD00' }}>
-                <Coffee size={18} color="#000" />
-                <span style={{ fontSize: '15px', fontWeight: 800, color: '#000' }}>Buy Me a Coffee</span>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
       {/* Message Banner */}
@@ -206,10 +221,9 @@ export default function MobileLayout() {
           onClick={() => navigate('/post')} 
           style={{ background: 'var(--primary)', color: '#000', borderRadius: '20px', margin: '10px 4px', padding: '6px' }}
         />
-        <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
+        <NavItem className="desktop-only" icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
-          className="desktop-only"
           icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
           label="Profile" 
           isActive={location.pathname === '/profile'} 
