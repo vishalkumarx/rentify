@@ -575,7 +575,7 @@ export default function Home() {
             <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>What Students Say</h3>
             <button 
               onClick={() => setShowTestimonialModal(true)}
-              style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer' }}
+              style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0, width: 'fit-content' }}
             >
               Write a Review
             </button>
@@ -756,10 +756,10 @@ export default function Home() {
       {/* Testimonial Modal */}
       {showTestimonialModal && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
-          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Write a Review</h2>
-              <button onClick={() => setShowTestimonialModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setShowTestimonialModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex' }}><X size={20} /></button>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

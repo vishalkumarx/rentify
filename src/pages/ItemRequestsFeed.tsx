@@ -181,12 +181,14 @@ export default function ItemRequestsFeed() {
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '8px', borderTop: '1px solid var(--surface-border)' }}>
-                  <button 
-                    onClick={() => handleMessage(req)}
-                    style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
-                  >
-                    <MessageSquare size={16} /> I can help
-                  </button>
+                  {req.userId !== session?.user?.id && (
+                    <button 
+                      onClick={() => handleMessage(req)}
+                      style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+                    >
+                      <MessageSquare size={16} /> I can help
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
