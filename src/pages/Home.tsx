@@ -767,7 +767,7 @@ export default function Home() {
           <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Write a Review</h2>
-              <button onClick={() => setShowTestimonialModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex' }}><X size={20} /></button>
+              <button onClick={() => setShowTestimonialModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex', width: 'auto' }}><X size={20} /></button>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -786,11 +786,11 @@ export default function Home() {
               
               <input type="text" placeholder="Your Name" value={tName} onChange={e => setTName(e.target.value)} style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} />
               
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <select value={tYear} onChange={e => setTYear(e.target.value)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', appearance: 'auto' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <select value={tYear} onChange={e => setTYear(e.target.value)} style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', appearance: 'auto' }}>
                   {['1st Year', '2nd Year', '3rd Year', '4th Year', 'Masters', 'PhD'].map(y => <option key={y} value={y}>{y}</option>)}
                 </select>
-                <select value={tDept} onChange={e => setTDept(e.target.value)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', appearance: 'auto' }}>
+                <select value={tDept} onChange={e => setTDept(e.target.value)} style={{ width: '100%', padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', appearance: 'auto' }}>
                   {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
