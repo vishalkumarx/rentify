@@ -533,21 +533,21 @@ export default function Home() {
           <div ref={loadMoreRef} style={{ height: '40px', width: '100%' }} />
         )}
         
-        {/* Yellow Footer */}
-        <footer style={{ padding: '40px 24px', marginTop: 'auto', background: 'var(--primary)', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center', borderTopLeftRadius: '32px', borderTopRightRadius: '32px' }}>
+        {/* Black Footer */}
+        <footer style={{ padding: '40px 24px', marginTop: 'auto', background: '#000', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
           <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
             
-            <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: '#000', textAlign: 'center' }}>
-              Join thousands of students on CampusRent!
+            <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: '#fff', textAlign: 'center' }}>
+              Join thousands of students saving more together!
             </h3>
 
             <div className="desktop-only" style={{ display: 'flex', gap: '32px', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>About the App</button>
-              <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>How it Works</button>
-              <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: '#000', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>Safety Guidelines</button>
+              <button onClick={() => navigate('/coming-soon')} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>About the App</button>
+              <button onClick={() => navigate('/how-it-works')} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>How it Works</button>
+              <button onClick={() => navigate('/safety-guidelines')} style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', padding: '8px' }}>Safety Guidelines</button>
             </div>
             
-            <div style={{ fontSize: '13px', color: 'rgba(0,0,0,0.6)', fontWeight: 600 }}>
+            <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
               &copy; {new Date().getFullYear()} CampusRent. All rights reserved.
             </div>
           </div>
