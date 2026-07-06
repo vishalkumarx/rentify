@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -40,6 +41,23 @@ export default function Login() {
     setLoading(false);
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast.error('Please enter your email address first');
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/login',
+    });
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success('Password reset email sent! Check your inbox.');
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="login-container animate-fade-in">
       {/* Top Header */}
@@ -74,25 +92,37 @@ export default function Login() {
             }}
           />
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ 
-              width: '100%', 
-              padding: '16px', 
-              borderRadius: '16px', 
-              border: '1px solid #e5e7eb', 
-              background: '#f9fafb', 
-              color: '#000000', 
-              fontSize: '15px', 
-              outline: 'none',
-              transition: 'border-color 0.2s',
-              fontFamily: 'inherit'
-            }}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ 
+                width: '100%', 
+                padding: '16px', 
+                borderRadius: '16px', 
+                border: '1px solid #e5e7eb', 
+                background: '#f9fafb', 
+                color: '#000000', 
+                fontSize: '15px', 
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                fontFamily: 'inherit'
+              }}
+            />
+            <button 
+              type="button" 
+              onClick={handleForgotPassword}
+              disabled={loading}
+              style={{ background: 'transparent', border: 'none', padding: '4px 8px', alignSelf: 'flex-end', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer', transition: 'color 0.2s' }}
+              onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-main)'}
+              onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+            >
+              Forgot password?
+            </button>
+          </div>
 
           <button type="submit" disabled={loading} style={{ 
             background: 'var(--primary)', 
