@@ -267,17 +267,6 @@ export default function AdminPanel() {
                               <div style={{ position: 'absolute', bottom: '4px', left: '4px', background: 'rgba(0,0,0,0.6)', color: 'white', padding: '2px 6px', borderRadius: '4px', fontSize: '10px' }}>Aadhar</div>
                             </div>
                           )}
-
-                          {user.status === 'approved' && (
-                            <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'var(--success)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, zIndex: 1 }}>
-                              APPROVED
-                            </div>
-                          )}
-                          {user.status === 'rejected' && (
-                            <div style={{ position: 'absolute', top: '20px', left: '20px', background: 'var(--danger)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 700, zIndex: 1 }}>
-                              REJECTED
-                            </div>
-                          )}
                         </div>
 
                         {/* User Details */}
