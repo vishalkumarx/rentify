@@ -133,10 +133,6 @@ export default function MobileLayout() {
             
             {showTopMenu && (
               <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
-                <div onClick={() => { setShowTopMenu(false); navigate('/profile'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
-                  <User size={18} className="text-volt" />
-                  <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>My Profile</span>
-                </div>
                 <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
                   <Info size={18} className="text-volt" />
                   <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
