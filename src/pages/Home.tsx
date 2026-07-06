@@ -469,7 +469,7 @@ export default function Home() {
         </div>
 
         {/* Item Requests Banner */}
-        <div style={{ padding: '0 16px 24px', margin: '0 auto', width: '100%' }}>
+        <div style={{ padding: '0 16px 24px', margin: '0 auto', width: '100%', maxWidth: '800px' }}>
           <button
             onClick={() => navigate('/item-requests')}
             style={{ 
