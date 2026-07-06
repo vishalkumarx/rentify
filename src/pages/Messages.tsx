@@ -1,11 +1,10 @@
-import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { MessageCircle } from 'lucide-react';
 
 export default function Messages() {
-  const { conversations, deleteConversation } = useChat();
+  const { conversations } = useChat();
   const { session } = useAuth();
   const navigate = useNavigate();
 

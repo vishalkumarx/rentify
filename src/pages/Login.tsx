@@ -116,7 +116,7 @@ export default function Login() {
               type="button" 
               onClick={handleForgotPassword}
               disabled={loading}
-              style={{ background: 'transparent', border: 'none', padding: '4px 8px', alignSelf: 'flex-end', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer', transition: 'color 0.2s' }}
+              style={{ background: 'transparent', border: 'none', padding: '4px 8px', marginLeft: 'auto', textAlign: 'right', fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)', cursor: 'pointer', transition: 'color 0.2s' }}
               onMouseOver={(e) => e.currentTarget.style.color = 'var(--text-main)'}
               onMouseOut={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
             >
