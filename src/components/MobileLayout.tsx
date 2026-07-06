@@ -198,8 +198,6 @@ export default function MobileLayout() {
         {/* Added App Logo/Brand for Sidebar context (hidden on mobile via CSS optionally, but let's just show it or keep simple) */}
         <NavItem icon={<Home size={24} />} label="Explore" isActive={location.pathname === '/'} onClick={() => navigate('/')} />
         <NavItem icon={<Megaphone size={24} />} label="Community" isActive={location.pathname === '/item-requests'} onClick={() => navigate('/item-requests')} />
-        <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
-        <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
           className="mobile-only"
           icon={<Plus size={24} color="#000" />} 
@@ -208,6 +206,8 @@ export default function MobileLayout() {
           onClick={() => navigate('/post')} 
           style={{ background: 'var(--primary)', color: '#000', borderRadius: '20px', margin: '10px 4px', padding: '6px' }}
         />
+        <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
+        <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
           className="desktop-only"
           icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
