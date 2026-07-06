@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, Package, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck } from 'lucide-react';
+import { Home, User, MessageCircle, Package, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone } from 'lucide-react';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -189,6 +189,7 @@ export default function MobileLayout() {
       <nav className="app-nav">
         {/* Added App Logo/Brand for Sidebar context (hidden on mobile via CSS optionally, but let's just show it or keep simple) */}
         <NavItem icon={<Home size={24} />} label="Explore" isActive={location.pathname === '/'} onClick={() => navigate('/')} />
+        <NavItem icon={<Megaphone size={24} />} label="Community" isActive={location.pathname === '/item-requests'} onClick={() => navigate('/item-requests')} />
         <NavItem icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem icon={<Package size={24} />} label="My Listings" isActive={location.pathname === '/my-listings'} onClick={() => navigate('/my-listings')} />
