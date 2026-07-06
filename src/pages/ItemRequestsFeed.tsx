@@ -174,7 +174,7 @@ export default function ItemRequestsFeed() {
                 </div>
                 
                 <div>
-                  <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>Need: {req.title}</h3>
+                  <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>{req.title}</h3>
                   <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, opacity: 0.9 }}>
                     {req.description}
                   </p>
