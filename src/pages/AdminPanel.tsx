@@ -23,6 +23,7 @@ export default function AdminPanel() {
   // Rejection Modal State
   const [rejectingUserId, setRejectingUserId] = useState<string | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
 
   // Block Modal State
   const [showBlockModal, setShowBlockModal] = useState<string | null>(null);
@@ -128,14 +129,18 @@ export default function AdminPanel() {
     toast.error('Verification rejected.');
   };
 
-  const handleTerminate = async (userId: string) => {
-    if (!confirm('Are you sure you want to terminate this account? This action is permanent and will block their login instantly.')) return;
-    const blocked = await getStorageJson('admin/blocked_users.json') || [];
-    if (!blocked.includes(userId)) {
-      await setStorageJson('admin/blocked_users.json', [...blocked, userId]);
-    }
-    setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: true } : u));
-    toast.error(`Account ${userId} has been terminated.`);
+  const handleTerminate = (userId: string) => {
+    setConfirmDialog({
+      message: 'Are you sure you want to terminate this account? This action is permanent and will block their login instantly.',
+      onConfirm: async () => {
+        const blocked = await getStorageJson('admin/blocked_users.json') || [];
+        if (!blocked.includes(userId)) {
+          await setStorageJson('admin/blocked_users.json', [...blocked, userId]);
+        }
+        setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: true } : u));
+        toast.error(`Account ${userId} has been terminated.`);
+      }
+    });
   };
 
   const submitBlock = async () => {
@@ -155,16 +160,20 @@ export default function AdminPanel() {
     setBlockDuration(null);
   };
 
-  const handleToggleBlock = async (userId: string, currentlyBlocked: boolean) => {
+  const handleToggleBlock = (userId: string, currentlyBlocked: boolean) => {
     if (!currentlyBlocked) {
       setShowBlockModal(userId);
     } else {
-      if (!confirm(`Are you sure you want to unblock this account?`)) return;
-      let blocked = await getStorageJson('admin/blocked_users.json') || [];
-      blocked = blocked.filter((u: any) => typeof u === 'string' ? u !== userId : u.userId !== userId);
-      await setStorageJson('admin/blocked_users.json', blocked);
-      toast.success(`Account unblocked.`);
-      setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: false } : u));
+      setConfirmDialog({
+        message: 'Are you sure you want to unblock this account?',
+        onConfirm: async () => {
+          let blocked = await getStorageJson('admin/blocked_users.json') || [];
+          blocked = blocked.filter((u: any) => typeof u === 'string' ? u !== userId : u.userId !== userId);
+          await setStorageJson('admin/blocked_users.json', blocked);
+          toast.success(`Account unblocked.`);
+          setAllUsers(allUsers.map(u => u.id === userId ? { ...u, isBlocked: false } : u));
+        }
+      });
     }
   };
 
@@ -175,12 +184,16 @@ export default function AdminPanel() {
     toast.success(`Testimonial ${status}!`);
   };
 
-  const handleDeleteTestimonial = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this testimonial?')) return;
-    const updated = testimonials.filter(t => t.id !== id);
-    setTestimonials(updated);
-    await setStorageJson('admin/testimonials.json', updated);
-    toast.success('Testimonial deleted.');
+  const handleDeleteTestimonial = (id: string) => {
+    setConfirmDialog({
+      message: 'Are you sure you want to delete this testimonial?',
+      onConfirm: async () => {
+        const updated = testimonials.filter(t => t.id !== id);
+        setTestimonials(updated);
+        await setStorageJson('admin/testimonials.json', updated);
+        toast.success('Testimonial deleted.');
+      }
+    });
   };
 
 
@@ -461,10 +474,14 @@ export default function AdminPanel() {
                               <button onClick={() => handleUpdateTestimonial(t.id, 'rejected')} style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--danger)', color: 'white', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Reject</button>
                             </>
                           )}
-                          {t.status === 'approved' && (
-                            <button onClick={() => handleUpdateTestimonial(t.id, 'rejected')} style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Revoke Approval</button>
+                          {t.status !== 'pending' && (
+                            <>
+                              {t.status === 'approved' && (
+                                <button onClick={() => handleUpdateTestimonial(t.id, 'rejected')} style={{ padding: '8px 16px', borderRadius: '8px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, cursor: 'pointer' }}>Revoke Approval</button>
+                              )}
+                              <button onClick={() => handleDeleteTestimonial(t.id)} style={{ padding: '8px 16px', borderRadius: '8px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto' }}>Delete</button>
+                            </>
                           )}
-                          <button onClick={() => handleDeleteTestimonial(t.id)} style={{ padding: '8px 16px', borderRadius: '8px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto' }}>Delete</button>
                         </div>
                       </div>
                     ))}
@@ -621,6 +638,19 @@ export default function AdminPanel() {
             <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
               <button onClick={() => { setShowBlockModal(null); setBlockDuration(null); }} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
               <button onClick={submitBlock} style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Confirm Block</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmDialog && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', textAlign: 'center' }}>
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 800 }}>Confirm Action</h3>
+            <p style={{ margin: '0 0 24px 0', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>{confirmDialog.message}</p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={() => setConfirmDialog(null)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
+              <button onClick={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Confirm</button>
             </div>
           </div>
         </div>
