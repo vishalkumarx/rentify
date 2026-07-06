@@ -267,7 +267,7 @@ export default function Profile() {
         {activeTab === 'My Listings' && (
           <div style={{ padding: '24px 0' }}>
             {myItems.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
                 {myItems.map(item => (
                   <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '16px', cursor: 'pointer', borderRadius: '20px', border: '1px solid var(--surface-border)' }}>
                     <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
