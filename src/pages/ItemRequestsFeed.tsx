@@ -117,7 +117,7 @@ export default function ItemRequestsFeed() {
       toast.error('You cannot message yourself');
       return;
     }
-    const convId = getOrCreateConversation(`req-${request.id}`, `Need: ${request.title}`, '', request.userId, request.userName);
+    const convId = getOrCreateConversation(`req-${request.id}`, `Need: ${request.title}`, '', request.userId, request.name);
     navigate(`/chat/${convId}`);
   };
 

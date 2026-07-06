@@ -18,7 +18,7 @@ export type Message = {
 
 export type Conversation = {
   id: string;
-  itemId: number;
+  itemId: number | string;
   itemTitle: string;
   itemImage: string;
   participants: Record<string, string>; // { userId: "User Name" }
@@ -32,7 +32,7 @@ export type Conversation = {
 // UI Representation
 export type UIConversation = {
   id: string;
-  itemId: number;
+  itemId: number | string;
   itemTitle: string;
   itemImage: string;
   otherUserId: string;
