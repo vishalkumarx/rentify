@@ -286,7 +286,7 @@ export default function Chat() {
             onClick={() => !isRequestChat && navigate(`/item/${conversation.itemId}`)}
             style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', cursor: isRequestChat ? 'default' : 'pointer' }}
           >
-            {conversation.itemTitle.replace('Need: ', '').charAt(0)}
+            {isRequestChat ? conversation.otherUserName.charAt(0) : conversation.itemTitle.charAt(0)}
           </div>
         )}
         
@@ -295,13 +295,13 @@ export default function Chat() {
             onClick={() => !isRequestChat && navigate(`/item/${conversation.itemId}`)}
             style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px', cursor: isRequestChat ? 'default' : 'pointer' }}
           >
-            {conversation.itemTitle}
+            {isRequestChat ? conversation.otherUserName : conversation.itemTitle}
           </h2>
           <p 
             onClick={() => navigate(`/user/${conversation.otherUserId}`)}
             style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer' }}
           >
-            {isRequestChat ? `Posted by ${conversation.otherUserName}` : (isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`)}
+            {isRequestChat ? 'Need Request' : (isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`)}
           </p>
         </div>
       </header>
