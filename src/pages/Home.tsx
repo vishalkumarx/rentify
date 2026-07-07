@@ -621,7 +621,7 @@ export default function Home() {
         <footer style={{ padding: '40px 24px', marginTop: 'auto', background: '#000', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
           <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
             
-            <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: '#fff', textAlign: 'center' }}>
+            <h3 className="desktop-large-text" style={{ margin: 0, fontSize: '24px', fontWeight: 900, color: '#fff', textAlign: 'center' }}>
               Join thousands of students saving more together!
             </h3>
 

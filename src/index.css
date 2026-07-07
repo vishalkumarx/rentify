@@ -695,6 +695,10 @@ a:hover {
   .mobile-only {
     display: none !important;
   }
+  .desktop-large-text {
+    font-size: 40px !important;
+    line-height: 1.2 !important;
+  }
   .desktop-right {
     justify-content: flex-end !important;
   }
