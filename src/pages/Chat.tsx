@@ -79,6 +79,15 @@ export default function Chat() {
   const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;
 
   const [needRequest, setNeedRequest] = useState<any>(null);
+  const [otherUserProfile, setOtherUserProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (conversation?.otherUserId) {
+      getStorageJson(`profiles/${conversation.otherUserId}.json`).then((data) => {
+        if (data) setOtherUserProfile(data);
+      });
+    }
+  }, [conversation?.otherUserId]);
 
   useEffect(() => {
     if (isRequestChat && conversation) {
@@ -309,10 +318,11 @@ export default function Chat() {
             style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
           >
             {isRequestChat ? (
-              <>
-                <span>Need Request</span>
-                {needRequest && <span style={{ opacity: 0.8, fontSize: '12px', marginTop: '2px' }}>{needRequest.department}</span>}
-              </>
+              <span style={{ opacity: 0.8, fontSize: '12px' }}>
+                {needRequest && session?.user?.id === needRequest.userId 
+                  ? `Response from ${otherUserProfile?.department || 'User'}` 
+                  : `Need request from ${needRequest?.department || 'Department'}`}
+              </span>
             ) : (
               <span>{isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`}</span>
             )}
