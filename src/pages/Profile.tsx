@@ -23,6 +23,15 @@ export default function Profile() {
 
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenMenuId(null);
+      setOpenNeedMenuId(null);
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
   const handleSignOut = () => {
     setShowLogoutConfirm(false);
     supabase.auth.signOut();

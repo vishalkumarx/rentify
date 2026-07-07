@@ -40,6 +40,14 @@ export default function ItemRequestsFeed() {
   const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
 
   useEffect(() => {
+    const handleClickOutside = () => {
+      setOpenMenuId(null);
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+  
+  useEffect(() => {
     fetchRequests();
   }, []);
 
