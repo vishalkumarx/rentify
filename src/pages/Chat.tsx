@@ -297,12 +297,19 @@ export default function Chat() {
           >
             {isRequestChat ? conversation.otherUserName : conversation.itemTitle}
           </h2>
-          <p 
+          <div 
             onClick={() => navigate(`/user/${conversation.otherUserId}`)}
-            style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer' }}
+            style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
           >
-            {isRequestChat ? 'Need Request' : (isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`)}
-          </p>
+            {isRequestChat ? (
+              <>
+                <span>Need Request</span>
+                {needRequest && <span style={{ opacity: 0.8, fontSize: '12px', marginTop: '2px' }}>{needRequest.department}</span>}
+              </>
+            ) : (
+              <span>{isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`}</span>
+            )}
+          </div>
         </div>
       </header>
 
