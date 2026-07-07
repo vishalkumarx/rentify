@@ -326,7 +326,7 @@ export default function Profile() {
         )}
 
         {activeTab === 'My Needs' && (
-          <div style={{ padding: '24px 0' }}>
+          <div style={{ padding: '24px 0', maxWidth: '800px', margin: '0 auto' }}>
             {myRequests.length === 0 ? (
               <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
                 <p>You haven't posted any item requests yet.</p>
