@@ -202,7 +202,7 @@ export default function ItemRequestsFeed() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {requests.map(req => (
-              <div key={req.id} onClick={() => navigate(`/chat/req-${req.id}`)} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: 'pointer', position: 'relative' }}>
+              <div key={req.id} onClick={() => { if (req.userId !== session?.user?.id) navigate(`/chat/req-${req.id}`); }} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: req.userId === session?.user?.id ? 'default' : 'pointer', position: 'relative', userSelect: 'none' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {req.profilePic ? (
                     <img src={req.profilePic} alt={req.name} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0 }} />
