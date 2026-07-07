@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Plus, MessageSquare, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar } from 'lucide-react';
+import { ChevronLeft, Plus, MessageSquare, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon } from 'lucide-react';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -20,6 +20,7 @@ interface ItemRequest {
   budget?: string;
   location?: string;
   dateRequired?: string;
+  imageUrl?: string;
 }
 
 export default function ItemRequestsFeed() {
@@ -34,6 +35,7 @@ export default function ItemRequestsFeed() {
   const [budget, setBudget] = useState('');
   const [locationStr, setLocationStr] = useState('');
   const [dateRequired, setDateRequired] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
@@ -63,6 +65,17 @@ export default function ItemRequestsFeed() {
 
     setIsSubmitting(true);
     
+    let uploadedImageUrl = undefined;
+    if (imageFile) {
+      const fileExt = imageFile.name.split('.').pop();
+      const fileName = `need-${Date.now()}-${Math.random()}.${fileExt}`;
+      const { error } = await supabase.storage.from('item-images').upload(fileName, imageFile);
+      if (!error) {
+        const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
+        uploadedImageUrl = data.publicUrl;
+      }
+    }
+    
     const newRequest: ItemRequest = {
       id: Date.now().toString(),
       userId: session.user.id,
@@ -75,7 +88,8 @@ export default function ItemRequestsFeed() {
       location: locationStr.trim() || undefined,
       dateRequired: dateRequired.trim() || undefined,
       createdAt: new Date().toISOString(),
-      profilePic: profile?.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture
+      profilePic: profile?.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
+      imageUrl: uploadedImageUrl
     };
 
     const currentRequests = await getStorageJson('feed/item_requests.json') || [];
@@ -91,6 +105,7 @@ export default function ItemRequestsFeed() {
     setBudget('');
     setLocationStr('');
     setDateRequired('');
+    setImageFile(null);
     toast.success('Request posted successfully!');
   };
 
@@ -231,6 +246,9 @@ export default function ItemRequestsFeed() {
                 
                 <div>
                   <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>{req.title}</h3>
+                  {req.imageUrl && (
+                    <img src={req.imageUrl} alt="Need Attachment" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '12px', border: '1px solid var(--surface-border)' }} />
+                  )}
                   <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, opacity: 0.9 }}>
                     {req.description}
                   </p>
@@ -274,7 +292,7 @@ export default function ItemRequestsFeed() {
           <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Request an Item</h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
+              <button onClick={() => setShowModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, marginRight: '-12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -331,6 +349,24 @@ export default function ItemRequestsFeed() {
                   rows={4} 
                   style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', resize: 'none', fontFamily: 'inherit' }} 
                 />
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 700 }}>Attach Image (Optional)</label>
+                {imageFile ? (
+                  <div style={{ position: 'relative', width: 'fit-content' }}>
+                    <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--surface-border)' }} />
+                    <button onClick={() => setImageFile(null)} style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--danger)', color: '#fff', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                      <X size={12} />
+                    </button>
+                  </div>
+                ) : (
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: 'var(--bg)', border: '1px dashed var(--primary)', borderRadius: '16px', color: 'var(--primary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', width: 'fit-content' }}>
+                    <ImageIcon size={18} />
+                    <span>Upload Image</span>
+                    <input type="file" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files[0]) setImageFile(e.target.files[0]); }} style={{ display: 'none' }} />
+                  </label>
+                )}
               </div>
               
               <button 
