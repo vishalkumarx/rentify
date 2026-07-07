@@ -216,9 +216,14 @@ export default function ItemRequestsFeed() {
                   )}
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div style={{ fontWeight: 700, fontSize: '15px' }}>{req.name}</div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.2 }}>{req.name}</div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                          {req.department} • {req.year}
+                        </div>
+                      </div>
                       {req.userId === session?.user?.id && (
-                        <div style={{ position: 'relative' }}>
+                        <div style={{ position: 'relative', marginTop: '-4px', marginRight: '-8px' }}>
                           <button 
                             onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === req.id ? null : req.id); }}
                             style={{ background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)' }}
@@ -234,9 +239,6 @@ export default function ItemRequestsFeed() {
                           )}
                         </div>
                       )}
-                    </div>
-                    <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-                      {req.department} • {req.year}
                     </div>
                     <div style={{ fontSize: '12px', color: 'var(--primary)', fontWeight: 600, marginTop: '2px' }}>
                       {timeAgo(req.createdAt)}
