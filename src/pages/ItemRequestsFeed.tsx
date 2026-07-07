@@ -412,14 +412,6 @@ export default function ItemRequestsFeed() {
         document.body
       )}
 
-      <button 
-        onClick={() => setShowModal(true)} 
-        style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 90, display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 24px', borderRadius: '32px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 32px var(--primary-glow)', width: 'fit-content' }}
-      >
-        <Plus size={24} strokeWidth={3} />
-        Post a Need
-      </button>
-
       {confirmDialog && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
