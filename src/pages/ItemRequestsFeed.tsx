@@ -414,7 +414,7 @@ export default function ItemRequestsFeed() {
 
       <button 
         onClick={() => setShowModal(true)} 
-        style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 90, display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 24px', borderRadius: '32px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 32px var(--primary-glow)' }}
+        style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 90, display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 24px', borderRadius: '32px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 32px var(--primary-glow)', width: 'fit-content' }}
       >
         <Plus size={24} strokeWidth={3} />
         Post a Need
