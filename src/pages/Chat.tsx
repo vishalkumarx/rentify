@@ -72,7 +72,9 @@ export default function Chat() {
   const hasOwnerMessage = allConversationMessages.some(m => m.senderId === ownerId);
 
   const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage || isRequestChat;
-  const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked);
+  const [isNeedDeleted, setIsNeedDeleted] = useState(false);
+
+  const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked) || isNeedDeleted;
 
   const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;
 
@@ -84,7 +86,12 @@ export default function Chat() {
       getStorageJson('feed/item_requests.json').then((reqs: any[]) => {
         if (reqs) {
           const req = reqs.find(r => r.id === requestId);
-          if (req) setNeedRequest(req);
+          if (req) {
+            setNeedRequest(req);
+            setIsNeedDeleted(false);
+          } else {
+            setIsNeedDeleted(true);
+          }
         }
       });
     }
@@ -367,6 +374,29 @@ export default function Chat() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Deleted Need Banner */}
+        {isNeedDeleted && (
+          <div style={{
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid var(--danger)',
+            borderRadius: '16px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            marginBottom: '16px',
+            color: 'var(--danger)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Ban size={16} />
+              <span style={{ fontSize: '14px', fontWeight: 700 }}>This Need Request was deleted</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-main)', opacity: 0.8 }}>
+              The user has deleted this need request. You can no longer send messages in this chat.
+            </p>
           </div>
         )}
 
