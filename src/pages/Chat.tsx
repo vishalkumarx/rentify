@@ -10,7 +10,7 @@ import { useBookings } from '../context/BookingContext';
 import { Ban, Lock } from 'lucide-react';
 import chatBg from '../assets/chat-bg.png';
 import { format, isToday, isYesterday } from 'date-fns';
-import { supabase } from '../lib/supabase';
+import { supabase, getStorageJson } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
 export default function Chat() {
@@ -75,6 +75,20 @@ export default function Chat() {
   const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked);
 
   const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;
+
+  const [needRequest, setNeedRequest] = useState<any>(null);
+
+  useEffect(() => {
+    if (isRequestChat && conversation) {
+      const requestId = conversation.itemId.toString().replace('req-', '');
+      getStorageJson('feed/item_requests.json').then((reqs: any[]) => {
+        if (reqs) {
+          const req = reqs.find(r => r.id === requestId);
+          if (req) setNeedRequest(req);
+        }
+      });
+    }
+  }, [isRequestChat, conversation?.itemId]);
 
   useEffect(() => {
     // Scroll to bottom on new message or initial load
@@ -262,24 +276,24 @@ export default function Chat() {
         
         {conversation.itemImage ? (
           <img 
-            onClick={() => navigate(`/item/${conversation.itemId}`)}
+            onClick={() => !isRequestChat && navigate(`/item/${conversation.itemId}`)}
             src={conversation.itemImage}
             alt={conversation.itemTitle}
-            style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', objectFit: 'cover', cursor: 'pointer' }}
+            style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', objectFit: 'cover', cursor: isRequestChat ? 'default' : 'pointer' }}
           />
         ) : (
           <div 
-            onClick={() => navigate(`/item/${conversation.itemId}`)}
-            style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', cursor: 'pointer' }}
+            onClick={() => !isRequestChat && navigate(`/item/${conversation.itemId}`)}
+            style={{ width: '40px', height: '40px', flexShrink: 0, borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', cursor: isRequestChat ? 'default' : 'pointer' }}
           >
-            {conversation.itemTitle.charAt(0)}
+            {conversation.itemTitle.replace('Need: ', '').charAt(0)}
           </div>
         )}
         
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <h2 
-            onClick={() => navigate(`/item/${conversation.itemId}`)}
-            style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px', cursor: 'pointer' }}
+            onClick={() => !isRequestChat && navigate(`/item/${conversation.itemId}`)}
+            style={{ margin: 0, fontSize: '16px', fontWeight: 600, lineHeight: '20px', cursor: isRequestChat ? 'default' : 'pointer' }}
           >
             {conversation.itemTitle}
           </h2>
@@ -287,7 +301,7 @@ export default function Chat() {
             onClick={() => navigate(`/user/${conversation.otherUserId}`)}
             style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', lineHeight: '16px', cursor: 'pointer' }}
           >
-            {isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`}
+            {isRequestChat ? `Posted by ${conversation.otherUserName}` : (isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`)}
           </p>
         </div>
       </header>
@@ -309,6 +323,45 @@ export default function Chat() {
             </ul>
           </div>
         </div>
+
+        {/* Need Request Banner */}
+        {needRequest && (
+          <div style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--primary)',
+            borderRadius: '16px',
+            padding: '16px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            marginBottom: '16px',
+            boxShadow: '0 4px 12px rgba(244, 196, 48, 0.1)'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)' }}>
+              <ShieldAlert size={16} />
+              <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Need Request Details</span>
+            </div>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{needRequest.title}</h3>
+            {needRequest.description && <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>{needRequest.description}</p>}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '4px' }}>
+              {needRequest.budget && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
+                  <strong style={{ opacity: 0.5 }}>Budget:</strong> {needRequest.budget}
+                </div>
+              )}
+              {needRequest.dateRequired && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
+                  <strong style={{ opacity: 0.5 }}>Need by:</strong> {needRequest.dateRequired}
+                </div>
+              )}
+              {needRequest.location && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
+                  <strong style={{ opacity: 0.5 }}>Location:</strong> {needRequest.location}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Pending Booking Banner for Owner */}
         {isOwner && bookingReq?.status === 'pending' && (

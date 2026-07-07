@@ -35,14 +35,22 @@ export default function Messages() {
                 WebkitTouchCallout: 'none'
               }}
             >
-              <img 
-                src={conv.itemImage} 
-                alt={conv.itemTitle} 
-                style={{ width: '56px', height: '56px', borderRadius: '28px', objectFit: 'cover' }} 
-              />
+              {conv.itemImage ? (
+                <img 
+                  src={conv.itemImage} 
+                  alt={conv.itemTitle} 
+                  style={{ width: '56px', height: '56px', borderRadius: '28px', objectFit: 'cover', flexShrink: 0 }} 
+                />
+              ) : (
+                <div style={{ width: '56px', height: '56px', borderRadius: '28px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold', fontSize: '20px', flexShrink: 0 }}>
+                  {conv.itemId.toString().startsWith('req-') ? conv.otherUserName.charAt(0) : conv.itemTitle.charAt(0)}
+                </div>
+              )}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-                  <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>{conv.itemTitle}</h3>
+                  <h3 style={{ margin: '0 0 4px', fontSize: '16px', fontWeight: 600 }}>
+                    {conv.itemId.toString().startsWith('req-') ? conv.otherUserName : conv.itemTitle}
+                  </h3>
                   {conv.lastMessageTime && (
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                       {new Date(conv.lastMessageTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
