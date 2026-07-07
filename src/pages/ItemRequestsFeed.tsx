@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Plus, MessageSquare, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon } from 'lucide-react';
+import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -122,20 +122,6 @@ export default function ItemRequestsFeed() {
         toast.success('Need deleted successfully');
       }
     });
-  };
-
-  const handleMessage = async (request: ItemRequest) => {
-    if (!session) {
-      toast.error('Please log in to send a message');
-      navigate('/login', { state: { returnTo: '/item-requests' } });
-      return;
-    }
-    if (request.userId === session.user.id) {
-      toast.error('You cannot message yourself');
-      return;
-    }
-    const convId = getOrCreateConversation(`req-${request.id}`, `Need: ${request.title}`, request.profilePic || '', request.userId, request.name);
-    navigate(`/chat/${convId}`);
   };
 
   const timeAgo = (dateStr: string) => {
