@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, MessageSquare, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon } from 'lucide-react';
-import { getStorageJson, setStorageJson } from '../lib/supabase';
+import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
