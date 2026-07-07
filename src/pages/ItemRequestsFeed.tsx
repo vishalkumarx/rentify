@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
-import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { createPortal } from 'react-dom';
@@ -24,7 +23,6 @@ interface ItemRequest {
 }
 
 export default function ItemRequestsFeed() {
-  const { getOrCreateConversation } = useChat();
   const navigate = useNavigate();
   const { session, profile } = useAuth();
   const [requests, setRequests] = useState<ItemRequest[]>([]);
