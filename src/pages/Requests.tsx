@@ -138,7 +138,24 @@ export default function Requests() {
           {myIncomingRequests.length > 0 || myAcceptedRequests.length > 0 || myRejectedRequests.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+              <div className="mobile-only" style={{ marginBottom: '4px', position: 'relative' }}>
+                <select 
+                  value={incomingFilter}
+                  onChange={(e) => setIncomingFilter(e.target.value as any)}
+                  style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, outline: 'none', appearance: 'none', cursor: 'pointer' }}
+                >
+                  <option value="all">All Requests</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }}>
+                  ▼
+                </div>
+              </div>
+
+              <div className="desktop-only" style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
                 {['all', 'pending', 'accepted', 'rejected', 'cancelled'].map(f => (
                   <button 
                     key={f}
@@ -293,7 +310,24 @@ export default function Requests() {
         <div className="animate-fade-in">
           {myOutgoingRequests.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+              <div className="mobile-only" style={{ marginBottom: '4px', position: 'relative' }}>
+                <select 
+                  value={outgoingFilter}
+                  onChange={(e) => setOutgoingFilter(e.target.value as any)}
+                  style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, outline: 'none', appearance: 'none', cursor: 'pointer' }}
+                >
+                  <option value="all">All Requests</option>
+                  <option value="pending">Pending</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+                <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }}>
+                  ▼
+                </div>
+              </div>
+
+              <div className="desktop-only" style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
                 {['all', 'pending', 'accepted', 'rejected', 'cancelled'].map(f => (
                   <button 
                     key={f}
