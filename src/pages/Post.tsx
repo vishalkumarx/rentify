@@ -18,6 +18,7 @@ export default function Post() {
   const [loading, setLoading] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [showPreview, setShowPreview] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { addPost } = useFeed();
@@ -41,8 +42,17 @@ export default function Post() {
     setImageFiles(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePreview = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!title || !price || !category || !description) {
+      toast.error('Please fill all required fields');
+      return;
+    }
+    setShowPreview(true);
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
     
     try {
@@ -102,7 +112,44 @@ export default function Post() {
         <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>You are on the post listing page. Fill out the details below to publish your item.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="post-grid" style={{ padding: '24px 0' }}>
+      {showPreview ? (
+        <div className="glass-panel animate-fade-in" style={{ padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '4px', background: 'var(--primary)', display: 'inline-block' }}></span>
+            Preview Listing
+          </h2>
+          <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+            {images.length > 0 && (
+              <img src={images[0]} alt="Cover Preview" style={{ width: '100%', height: '240px', objectFit: 'cover', borderRadius: '12px' }} />
+            )}
+            <h3 style={{ fontSize: '20px', fontWeight: 800, margin: '16px 0 4px 0' }}>{title}</h3>
+            <p style={{ margin: 0, fontSize: '18px', color: 'var(--primary)', fontWeight: 800 }}>₹{price} <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-muted)' }}>/ day</span></p>
+            
+            <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }}>{category}</span>
+              <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600 }}>{department || 'All Departments'}</span>
+            </div>
+            
+            {securityDeposit && (
+              <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(244, 196, 48, 0.1)', borderRadius: '12px', border: '1px dashed var(--primary)' }}>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--primary)', fontWeight: 700 }}>Security Deposit: ₹{securityDeposit}</p>
+              </div>
+            )}
+            
+            <p style={{ marginTop: '16px', fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5, padding: '16px', background: 'var(--bg)', borderRadius: '12px' }}>{description}</p>
+          </div>
+          
+          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+            <button type="button" onClick={() => setShowPreview(false)} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '16px' }}>
+              Edit
+            </button>
+            <button type="button" onClick={() => handleSubmit()} disabled={loading} className="glow" style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '16px' }}>
+              <Upload size={20} /> {loading ? 'Publishing...' : 'Publish'}
+            </button>
+          </div>
+        </div>
+      ) : (
+      <form onSubmit={handlePreview} className="post-grid animate-fade-in" style={{ padding: '24px 0' }}>
         
         {/* Hidden File Input */}
         <input 
@@ -308,9 +355,8 @@ export default function Post() {
             <strong>Liability Disclaimer:</strong> CampusRent is not responsible for any lost, stolen, or damaged items resulting from rentals on this platform. Please secure collateral or take precautions when renting to others.
           </p>
 
-          <button type="submit" disabled={loading} className="glow" style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--primary)', color: '#000', fontWeight: 800, borderRadius: '20px', border: 'none' }}>
-            <Upload size={22} />
-            {loading ? 'Publishing...' : 'Publish Listing'}
+          <button type="submit" className="glow" style={{ marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '17px', background: 'var(--primary)', color: '#000', fontWeight: 800, borderRadius: '20px', border: 'none', cursor: 'pointer' }}>
+            Preview Listing
           </button>
           
           <button type="button" onClick={() => navigate('/')} style={{ marginTop: '0', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', fontSize: '16px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', boxShadow: 'none' }}>
@@ -319,6 +365,7 @@ export default function Post() {
         </div>
 
       </form>
+      )}
     </div>
   );
 }

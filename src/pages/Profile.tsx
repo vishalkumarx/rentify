@@ -334,14 +334,16 @@ export default function Profile() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {myRequests.map((req: any) => (
-                  <div key={req.id} className="glass-panel" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '12px', border: '1px solid var(--surface-border)' }}>
+                  <div key={req.id} className="glass-panel" style={{ background: '#FFFBEA', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <h4 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{req.title}</h4>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 800, lineHeight: 1.2 }}>{req.title}</h4>
+                        <span style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                           {new Date(req.createdAt).toLocaleDateString()}
                         </span>
-                        <div style={{ position: 'relative' }}>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ position: 'relative', marginTop: '-4px', marginRight: '-8px' }}>
                           <button 
                             onClick={(e) => { e.stopPropagation(); setOpenNeedMenuId(openNeedMenuId === req.id ? null : req.id); }}
                             style={{ background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)' }}
@@ -358,7 +360,10 @@ export default function Profile() {
                         </div>
                       </div>
                     </div>
-                    <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                    {req.imageUrl && (
+                      <img src={req.imageUrl} alt={req.title} style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '4px', border: '1px solid var(--surface-border)' }} />
+                    )}
+                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
                       {req.description}
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '4px' }}>

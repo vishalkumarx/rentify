@@ -30,6 +30,7 @@ export default function ItemRequestsFeed() {
   const [requests, setRequests] = useState<ItemRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
@@ -100,6 +101,7 @@ export default function ItemRequestsFeed() {
     setRequests(updatedRequests);
     setIsSubmitting(false);
     setShowModal(false);
+    setShowPreview(false);
     setTitle('');
     setDescription('');
     setBudget('');
@@ -160,20 +162,6 @@ export default function ItemRequestsFeed() {
           </button>
           <h1 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>Community Requests</h1>
         </div>
-        
-        <button 
-          onClick={() => {
-            if (!session) {
-              toast.error('Please log in to post a request');
-              navigate('/login', { state: { returnTo: '/item-requests' } });
-              return;
-            }
-            setShowModal(true);
-          }}
-          style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '8px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
-        >
-          <Plus size={16} /> Post a Need
-        </button>
       </header>
 
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
@@ -205,7 +193,7 @@ export default function ItemRequestsFeed() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {requests.map(req => (
-              <div key={req.id} className="glass-panel" style={{ padding: '20px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div key={req.id} onClick={() => navigate(`/chat/req-${req.id}`)} className="glass-panel" style={{ background: '#FFFBEA', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: 'pointer', position: 'relative' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {req.profilePic ? (
                     <img src={req.profilePic} alt={req.name} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0 }} />
@@ -271,17 +259,6 @@ export default function ItemRequestsFeed() {
                       </div>
                     )}
                   </div>
-                </div>
-                
-                <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '8px', borderTop: '1px solid var(--surface-border)' }}>
-                  {req.userId !== session?.user?.id && (
-                    <button 
-                      onClick={() => handleMessage(req)}
-                      style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
-                    >
-                      <MessageSquare size={16} /> I can help
-                    </button>
-                  )}
                 </div>
               </div>
             ))}
@@ -371,20 +348,86 @@ export default function ItemRequestsFeed() {
                 )}
               </div>
               
-              <button 
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1, marginTop: '8px' }}
-              >
-                {isSubmitting ? 'Posting...' : 'Post Request'}
-              </button>
+              {showPreview ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                  <div style={{ background: '#FFFBEA', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--primary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold' }}>
+                        {session?.user?.user_metadata?.full_name?.charAt(0) || 'U'}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                        <div style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.2 }}>{session?.user?.user_metadata?.full_name || 'You'}</div>
+                        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                          {profile?.department || 'Department'} • {profile?.year || 'Year'}
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>{title || 'Need Title'}</h3>
+                      {imageFile && (
+                        <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '12px', border: '1px solid var(--surface-border)' }} />
+                      )}
+                      <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                        {description || 'Need description...'}
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
+                        {budget && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                            <IndianRupee size={14} color="var(--primary)" /> {budget}
+                          </div>
+                        )}
+                        {locationStr && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                            <MapPin size={14} color="var(--primary)" /> {locationStr}
+                          </div>
+                        )}
+                        {dateRequired && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+                            <Calendar size={14} color="var(--primary)" /> Need by: {dateRequired}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                    <button onClick={() => setShowPreview(false)} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, fontSize: '16px', border: 'none', cursor: 'pointer' }}>
+                      Edit
+                    </button>
+                    <button onClick={handleSubmit} disabled={isSubmitting} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
+                      {isSubmitting ? 'Posting...' : 'Post Need'}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <button 
+                    onClick={() => {
+                      if (!title || !description) {
+                        toast.error('Title and description are required');
+                        return;
+                      }
+                      setShowPreview(true);
+                    }}
+                    style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', marginTop: '8px' }}
+                  >
+                    Preview Need
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>,
         document.body
       )}
 
-      {/* Custom Confirm Dialog */}
+      <button 
+        onClick={() => setShowModal(true)} 
+        style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 90, display: 'flex', alignItems: 'center', gap: '8px', padding: '16px 24px', borderRadius: '32px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', boxShadow: '0 8px 32px var(--primary-glow)' }}
+      >
+        <Plus size={24} strokeWidth={3} />
+        Post a Need
+      </button>
+
       {confirmDialog && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
