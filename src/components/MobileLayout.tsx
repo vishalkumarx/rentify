@@ -1,6 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee } from 'lucide-react';
+import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload } from 'lucide-react';
+import { createPortal } from 'react-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -20,6 +21,7 @@ export default function MobileLayout() {
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
   
   const [showBanner, setShowBanner] = useState(false);
+  const [showPostOptions, setShowPostOptions] = useState(false);
   const [bannerText, setBannerText] = useState('');
   const prevUnread = useRef(totalUnread);
 
@@ -213,8 +215,8 @@ export default function MobileLayout() {
           className="mobile-only"
           icon={<Plus size={24} color="#000" />} 
           label="Post" 
-          isActive={location.pathname === '/post'} 
-          onClick={() => navigate('/post')} 
+          isActive={location.pathname === '/post' || showPostOptions} 
+          onClick={() => setShowPostOptions(true)} 
           style={{ background: 'var(--primary)', color: '#000', borderRadius: '20px', margin: '10px 4px', padding: '6px' }}
         />
         <NavItem className="desktop-only" icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
@@ -236,7 +238,7 @@ export default function MobileLayout() {
 
       {/* Floating Action Button for Posting */}
       <button 
-        onClick={() => navigate('/post')}
+        onClick={() => setShowPostOptions(true)}
         className="animate-slide-up desktop-only"
         style={{
           position: 'fixed',
@@ -263,6 +265,31 @@ export default function MobileLayout() {
         <Plus size={24} />
         List an item
       </button>
+
+      {showPostOptions && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={() => setShowPostOptions(false)}>
+          <div onClick={e => e.stopPropagation()} className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '32px 24px', borderRadius: '32px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>Create New Post</h3>
+            <p style={{ margin: '0 0 24px 0', color: 'var(--text-muted)', fontSize: '15px' }}>What would you like to do today?</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button 
+                onClick={() => { setShowPostOptions(false); navigate('/post'); }} 
+                style={{ padding: '16px', borderRadius: '20px', border: '1px solid var(--primary)', background: 'var(--primary-glow)', color: 'var(--text-main)', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '16px' }}
+              >
+                <Upload size={20} /> List an Item
+              </button>
+              <button 
+                onClick={() => { setShowPostOptions(false); navigate('/item-requests'); }} 
+                style={{ padding: '16px', borderRadius: '20px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '16px' }}
+              >
+                <Megaphone size={20} /> Request a Need
+              </button>
+              <button onClick={() => setShowPostOptions(false)} style={{ padding: '16px', borderRadius: '20px', border: 'none', background: 'transparent', color: 'var(--text-muted)', fontWeight: 700, cursor: 'pointer', marginTop: '4px', fontSize: '15px' }}>Cancel</button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
     </div>
   );
