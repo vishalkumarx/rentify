@@ -343,7 +343,7 @@ export default function Profile() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {myRequests.map((req: any) => (
-                  <div key={req.id} className="glass-panel" style={{ background: '#FFFBEA', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)' }}>
+                  <div key={req.id} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
                         <h4 style={{ margin: 0, fontSize: '18px', fontWeight: 800, lineHeight: 1.2 }}>{req.title}</h4>

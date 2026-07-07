@@ -185,7 +185,7 @@ export default function ItemRequestsFeed() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {requests.map(req => (
-              <div key={req.id} onClick={() => navigate(`/chat/req-${req.id}`)} className="glass-panel" style={{ background: '#FFFBEA', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: 'pointer', position: 'relative' }}>
+              <div key={req.id} onClick={() => navigate(`/chat/req-${req.id}`)} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: 'pointer', position: 'relative' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {req.profilePic ? (
                     <img src={req.profilePic} alt={req.name} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0 }} />
@@ -342,7 +342,7 @@ export default function ItemRequestsFeed() {
               
               {showPreview ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ background: '#FFFBEA', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--primary)' }}>
+                  <div style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--primary)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold' }}>
                         {session?.user?.user_metadata?.full_name?.charAt(0) || 'U'}
