@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { CalendarCheck, Calendar, Check, X, MessageCircle } from 'lucide-react';
+import { CalendarCheck, Calendar, Check, X, MessageCircle, ChevronDown } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { useChat } from '../context/ChatContext';
 import { getStorageJson } from '../lib/supabase';
@@ -32,6 +32,7 @@ export default function Requests() {
   const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee', itemTitle: string, otherUserId: string, otherUserName: string } | null>(null);
   const [customPrice, setCustomPrice] = useState('');
   const [cancelReason, setCancelReason] = useState('');
+  const [showTypeDialog, setShowTypeDialog] = useState(false);
 
   // Incoming Requests: Requests sent TO me (I am the owner)
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
@@ -89,47 +90,26 @@ export default function Requests() {
     <>
     <div className="animate-slide-in" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '100px' }}>
       
-      <div style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '24px' }}>
-        <button
-          onClick={() => setActiveTab('incoming')}
-          style={{
-            flex: 1,
-            padding: '10px 0',
-            background: activeTab === 'incoming' ? 'var(--text-main)' : 'transparent',
-            color: activeTab === 'incoming' ? 'var(--surface)' : 'var(--text-muted)',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: 600,
-            boxShadow: activeTab === 'incoming' ? 'var(--card-shadow)' : 'none',
-            border: 'none',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px'
-          }}
+      <div style={{ marginBottom: '24px' }}>
+        <h1 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 4px 0', color: 'var(--text-main)' }}>Your Requests</h1>
+        <p style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '14px' }}>Manage your incoming and sent rental requests.</p>
+        <p style={{ margin: '0 0 16px 0', color: 'var(--primary)', fontSize: '12px', fontWeight: 600, background: 'rgba(24, 119, 242, 0.1)', display: 'inline-block', padding: '4px 12px', borderRadius: '12px' }}>Currently available on Guru Nanak Dev University, Amritsar only</p>
+        
+        <button 
+          onClick={() => setShowTypeDialog(true)}
+          style={{ width: '100%', padding: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: 'var(--card-shadow)' }}
         >
-          Incoming Requests
-          {myIncomingRequests.length > 0 && (
-            <span style={{ background: activeTab === 'incoming' ? 'var(--danger)' : 'var(--danger)', color: 'white', padding: '2px 6px', borderRadius: '8px', fontSize: '11px', fontWeight: 800 }}>
-              {myIncomingRequests.length}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>
+              {activeTab === 'incoming' ? 'Incoming Requests' : 'Sent Requests'}
             </span>
-          )}
-        </button>
-        <button
-          onClick={() => setActiveTab('outgoing')}
-          style={{
-            flex: 1,
-            padding: '10px 0',
-            background: activeTab === 'outgoing' ? 'var(--text-main)' : 'transparent',
-            color: activeTab === 'outgoing' ? 'var(--surface)' : 'var(--text-muted)',
-            borderRadius: '12px',
-            fontSize: '14px',
-            fontWeight: 600,
-            boxShadow: activeTab === 'outgoing' ? 'var(--card-shadow)' : 'none',
-            border: 'none'
-          }}
-        >
-          My Requests
+            {activeTab === 'incoming' && myIncomingRequests.length > 0 && (
+              <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 800 }}>
+                {myIncomingRequests.length} Pending
+              </span>
+            )}
+          </div>
+          <ChevronDown size={20} color="var(--text-muted)" />
         </button>
       </div>
 
