@@ -361,8 +361,8 @@ export default function UserProfile() {
               <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger)' }}>
                 <AlertTriangle size={20} /> Report User
               </h3>
-              <button onClick={() => setShowReportModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', margin: '0 -8px 0 0' }}>
-                <X size={24} />
+              <button onClick={() => setShowReportModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex' }}>
+                <X size={20} />
               </button>
             </div>
             

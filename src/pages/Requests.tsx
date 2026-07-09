@@ -543,7 +543,7 @@ export default function Requests() {
           <div className="animate-slide-up glass-panel" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', margin: '0 auto', background: 'var(--surface)', borderRadius: '24px', overflow: 'hidden' }}>
             <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Select View</h3>
-              <button onClick={() => setShowTypeDialog(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <button onClick={() => setShowTypeDialog(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex' }}>
                 <X size={20} />
               </button>
             </div>
