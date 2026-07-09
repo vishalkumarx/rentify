@@ -14,7 +14,7 @@ export default function UserItems() {
 
   useSEO(`Items by ${ownerName}`, `View all items available for rent by ${ownerName}`);
 
-  const userItems = items.filter(item => item.owner_id === id);
+  const userItems = items.filter(item => item.userId === id);
 
   useEffect(() => {
     if (!id) return;
@@ -66,7 +66,7 @@ export default function UserItems() {
                 className="product-card"
               >
                 <div className="product-image-container">
-                  <img src={item.images[0]} alt={item.title} className="product-image" loading="lazy" />
+                  <img src={item.images && item.images.length > 0 ? item.images[0] : item.image} alt={item.title} className="product-image" loading="lazy" />
                   <div className="product-price">
                     ₹{item.price}<span className="price-unit">/day</span>
                   </div>

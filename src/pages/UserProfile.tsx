@@ -19,7 +19,7 @@ export default function UserProfile() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
 
-  const userItems = items.filter(item => item.owner_id === id);
+  const userItems = items.filter(item => item.userId === id);
 
   useSEO(profile?.name || 'User Profile', `View ${profile?.name || 'user'}'s profile and items on CampusRent`);
 
@@ -237,7 +237,7 @@ export default function UserProfile() {
                   style={{ minWidth: '160px', width: '160px', flexShrink: 0, cursor: 'pointer' }}
                 >
                   <div className="product-image-container" style={{ height: '140px' }}>
-                    <img src={item.images[0]} alt={item.title} className="product-image" loading="lazy" />
+                    <img src={item.images && item.images.length > 0 ? item.images[0] : item.image} alt={item.title} className="product-image" loading="lazy" />
                   </div>
                   <div className="product-info" style={{ padding: '12px' }}>
                     <h3 className="product-title" style={{ fontSize: '14px', marginBottom: '4px' }}>{item.title}</h3>
