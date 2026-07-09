@@ -165,7 +165,6 @@ export default function ItemRequestsFeed() {
     setRequests(updatedRequests);
     setIsSubmitting(false);
     setShowModal(false);
-    setShowPreview(false);
     setTitle('');
     setDescription('');
     setBudget('');
