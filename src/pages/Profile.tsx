@@ -245,22 +245,22 @@ export default function Profile() {
       {/* Main Content: Tabs & Listings */}
       <div className="profile-content">
         {/* Sub Tabs */}
-        <div className="hide-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '4px 0', marginBottom: '24px', whiteSpace: 'nowrap', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+        <div style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '16px' }}>
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                padding: '12px 24px',
-                background: activeTab === tab ? 'var(--primary)' : 'var(--surface)',
-                color: activeTab === tab ? '#000' : 'var(--text-muted)',
-                borderRadius: '24px',
-                border: activeTab === tab ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
-                fontSize: '15px',
-                fontWeight: 700,
-                transition: 'all 0.2s',
-                cursor: 'pointer',
-                flexShrink: 0
+                flex: 1,
+                padding: '10px 0',
+                background: activeTab === tab ? 'var(--text-main)' : 'transparent',
+                color: activeTab === tab ? 'var(--surface)' : 'var(--text-muted)',
+                borderRadius: '12px',
+                fontSize: '14px',
+                fontWeight: 600,
+                boxShadow: activeTab === tab ? 'var(--card-shadow)' : 'none',
+                border: 'none',
+                cursor: 'pointer'
               }}
             >
               {tab}
