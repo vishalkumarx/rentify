@@ -214,7 +214,7 @@ export default function ItemRequestsFeed() {
       </header>
 
       <div style={{ background: 'rgba(244, 196, 48, 0.1)', color: 'var(--text-main)', padding: '12px 20px', fontSize: '13px', fontWeight: 600, textAlign: 'center', display: 'flex', alignItems: 'center', justifyItems: 'center', gap: '8px', borderBottom: '1px solid var(--surface-border)' }}>
-        <MapPin size={16} color="var(--primary)" style={{ flexShrink: 0 }} /> <span style={{ flex: 1 }}>Currently available on <strong>Guru Nanak Dev University, Amritsar</strong> only</span>
+        <MapPin size={16} color="var(--primary)" style={{ flexShrink: 0 }} /> <span style={{ flex: 1 }}>currently available in <strong>Guru Nanak Dev University, Amritsar</strong> only</span>
       </div>
 
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
