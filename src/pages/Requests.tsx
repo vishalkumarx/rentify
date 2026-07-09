@@ -95,22 +95,23 @@ export default function Requests() {
         <p style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '14px' }}>Manage your incoming and sent rental requests.</p>
         <p style={{ margin: '0 0 16px 0', color: 'var(--primary)', fontSize: '12px', fontWeight: 600, background: 'rgba(24, 119, 242, 0.1)', display: 'inline-block', padding: '4px 12px', borderRadius: '12px' }}>Currently available on Guru Nanak Dev University, Amritsar only</p>
         
-        <button 
-          onClick={() => setShowTypeDialog(true)}
-          style={{ width: '100%', padding: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer', boxShadow: 'var(--card-shadow)' }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-main)' }}>
-              {activeTab === 'incoming' ? 'Incoming Requests' : 'Sent Requests'}
-            </span>
-            {activeTab === 'incoming' && myIncomingRequests.length > 0 && (
-              <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 800 }}>
-                {myIncomingRequests.length} Pending
-              </span>
+        <div style={{ display: 'flex', gap: '8px', padding: '4px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '20px' }}>
+          <button 
+            onClick={() => setActiveTab('incoming')}
+            style={{ flex: 1, padding: '12px', borderRadius: '16px', border: 'none', background: activeTab === 'incoming' ? 'var(--bg)' : 'transparent', color: activeTab === 'incoming' ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: activeTab === 'incoming' ? 'var(--card-shadow)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          >
+            Incoming
+            {myIncomingRequests.length > 0 && (
+              <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '12px' }}>{myIncomingRequests.length}</span>
             )}
-          </div>
-          <ChevronDown size={20} color="var(--text-muted)" />
-        </button>
+          </button>
+          <button 
+            onClick={() => setActiveTab('outgoing')}
+            style={{ flex: 1, padding: '12px', borderRadius: '16px', border: 'none', background: activeTab === 'outgoing' ? 'var(--bg)' : 'transparent', color: activeTab === 'outgoing' ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: activeTab === 'outgoing' ? 'var(--card-shadow)' : 'none', transition: 'all 0.2s' }}
+          >
+            Sent
+          </button>
+        </div>
       </div>
 
       {activeTab === 'incoming' && (
@@ -118,21 +119,14 @@ export default function Requests() {
           {myIncomingRequests.length > 0 || myAcceptedRequests.length > 0 || myRejectedRequests.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               
-              <div className="mobile-only" style={{ marginBottom: '4px', position: 'relative' }}>
-                <select 
-                  value={incomingFilter}
-                  onChange={(e) => setIncomingFilter(e.target.value as any)}
-                  style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, outline: 'none', appearance: 'none', cursor: 'pointer' }}
+              <div className="mobile-only" style={{ marginBottom: '4px' }}>
+                <button 
+                  onClick={() => setShowTypeDialog(true)}
+                  style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
                 >
-                  <option value="all">All Requests</option>
-                  <option value="pending">Pending</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="rejected">Rejected</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-                <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }}>
-                  ▼
-                </div>
+                  <span style={{ textTransform: 'capitalize' }}>{incomingFilter} Requests</span>
+                  <ChevronDown size={20} color="var(--text-muted)" />
+                </button>
               </div>
 
               <div className="desktop-only" style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
@@ -290,21 +284,14 @@ export default function Requests() {
         <div className="animate-fade-in">
           {myOutgoingRequests.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div className="mobile-only" style={{ marginBottom: '4px', position: 'relative' }}>
-                <select 
-                  value={outgoingFilter}
-                  onChange={(e) => setOutgoingFilter(e.target.value as any)}
-                  style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, outline: 'none', appearance: 'none', cursor: 'pointer' }}
+              <div className="mobile-only" style={{ marginBottom: '4px' }}>
+                <button 
+                  onClick={() => setShowTypeDialog(true)}
+                  style={{ width: '100%', padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
                 >
-                  <option value="all">All Requests</option>
-                  <option value="pending">Pending</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="rejected">Rejected</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-                <div style={{ position: 'absolute', right: '16px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-muted)' }}>
-                  ▼
-                </div>
+                  <span style={{ textTransform: 'capitalize' }}>{outgoingFilter} Requests</span>
+                  <ChevronDown size={20} color="var(--text-muted)" />
+                </button>
               </div>
 
               <div className="desktop-only" style={{ display: 'flex', gap: '8px', paddingBottom: '4px' }}>
@@ -562,27 +549,22 @@ export default function Requests() {
               </button>
             </div>
             <div style={{ padding: '8px' }}>
-              <button 
-                onClick={() => { setActiveTab('incoming'); setShowTypeDialog(false); }}
-                style={{ width: '100%', padding: '16px', background: activeTab === 'incoming' ? 'var(--surface-border)' : 'transparent', border: 'none', borderRadius: '16px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)' }}>Incoming Requests</span>
-                  {myIncomingRequests.length > 0 && (
-                    <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 800 }}>
-                      {myIncomingRequests.length}
-                    </span>
-                  )}
-                </div>
-                {activeTab === 'incoming' && <Check size={20} color="var(--primary)" />}
-              </button>
-              <button 
-                onClick={() => { setActiveTab('outgoing'); setShowTypeDialog(false); }}
-                style={{ width: '100%', padding: '16px', background: activeTab === 'outgoing' ? 'var(--surface-border)' : 'transparent', border: 'none', borderRadius: '16px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-              >
-                <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)' }}>Sent Requests</span>
-                {activeTab === 'outgoing' && <Check size={20} color="var(--primary)" />}
-              </button>
+              {['all', 'pending', 'accepted', 'rejected', 'cancelled'].map(type => (
+                <button
+                  key={type}
+                  onClick={() => {
+                    if (activeTab === 'incoming') setIncomingFilter(type as any);
+                    else setOutgoingFilter(type as any);
+                    setShowTypeDialog(false);
+                  }}
+                  style={{ width: '100%', padding: '16px', background: (activeTab === 'incoming' ? incomingFilter : outgoingFilter) === type ? 'var(--surface-border)' : 'transparent', border: 'none', borderRadius: '16px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
+                  <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)', textTransform: 'capitalize' }}>
+                    {type} Requests
+                  </span>
+                  {(activeTab === 'incoming' ? incomingFilter : outgoingFilter) === type && <Check size={20} color="var(--primary)" />}
+                </button>
+              ))}
             </div>
           </div>
         </div>,
