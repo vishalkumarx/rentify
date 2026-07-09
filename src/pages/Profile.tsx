@@ -73,6 +73,7 @@ export default function Profile() {
 
   const [verificationInfo, setVerificationInfo] = useState<any>(null);
   const [showVerificationModal, setShowVerificationModal] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
   const [collegeIdFile, setCollegeIdFile] = useState<File | null>(null);
   const [aadharFile, setAadharFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -244,20 +245,22 @@ export default function Profile() {
       {/* Main Content: Tabs & Listings */}
       <div className="profile-content">
         {/* Sub Tabs */}
-        <div style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '16px' }}>
+        <div className="hide-scrollbar" style={{ display: 'flex', gap: '8px', overflowX: 'auto', padding: '4px 0', marginBottom: '24px', whiteSpace: 'nowrap', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                flex: 1,
-                padding: '10px 0',
-                background: activeTab === tab ? 'var(--text-main)' : 'transparent',
-                color: activeTab === tab ? 'var(--surface)' : 'var(--text-muted)',
-                borderRadius: '12px',
-                fontSize: '14px',
-                fontWeight: 600,
-                boxShadow: activeTab === tab ? 'var(--card-shadow)' : 'none'
+                padding: '12px 24px',
+                background: activeTab === tab ? 'var(--primary)' : 'var(--surface)',
+                color: activeTab === tab ? '#000' : 'var(--text-muted)',
+                borderRadius: '24px',
+                border: activeTab === tab ? '1px solid var(--primary)' : '1px solid var(--surface-border)',
+                fontSize: '15px',
+                fontWeight: 700,
+                transition: 'all 0.2s',
+                cursor: 'pointer',
+                flexShrink: 0
               }}
             >
               {tab}
@@ -411,11 +414,11 @@ export default function Profile() {
         <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', marginTop: '24px' }}>
           <h3 style={{ padding: '20px 20px 8px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Account Settings</h3>
           
-          <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
+          <button onClick={() => setShowComingSoon(true)} style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none', cursor: 'pointer' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><CreditCard size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Payment Methods</span></div>
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
-          <button style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none' }}>
+          <button onClick={() => setShowComingSoon(true)} style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none', cursor: 'pointer' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Settings size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Preferences</span></div>
             <ChevronRight size={20} color="var(--text-muted)" />
           </button>
@@ -533,6 +536,26 @@ export default function Profile() {
               <button onClick={() => setConfirmDialog(null)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
               <button onClick={() => { confirmDialog.onConfirm(); setConfirmDialog(null); }} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Delete</button>
             </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Coming Soon Dialog */}
+      {showComingSoon && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={() => setShowComingSoon(false)}>
+          <div onClick={e => e.stopPropagation()} className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '32px 24px', borderRadius: '32px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <span style={{ fontSize: '32px' }}>🚀</span>
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>Coming Soon!</h3>
+            <p style={{ margin: '0 0 24px 0', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>We're working hard to bring you this feature in a future update. Stay tuned!</p>
+            <button 
+              onClick={() => setShowComingSoon(false)} 
+              style={{ width: '100%', padding: '16px', borderRadius: '20px', border: 'none', background: 'var(--primary)', color: '#000', fontWeight: 800, cursor: 'pointer', fontSize: '16px' }}
+            >
+              Got it
+            </button>
           </div>
         </div>,
         document.body
