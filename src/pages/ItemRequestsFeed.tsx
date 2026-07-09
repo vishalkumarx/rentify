@@ -368,52 +368,59 @@ export default function ItemRequestsFeed() {
               </div>
               
               {showPreview ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--primary)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold' }}>
+                <div className="glass-panel animate-fade-in" style={{ padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '-12px' }}>
+                  <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '4px', background: 'var(--primary)', display: 'inline-block' }}></span>
+                    Preview Need
+                  </h2>
+                  <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold' }}>
                         {session?.user?.user_metadata?.full_name?.charAt(0) || 'U'}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                         <div style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.2 }}>{session?.user?.user_metadata?.full_name || 'You'}</div>
-                        <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                           {profile?.department || 'Department'} • {profile?.year || 'Year'}
                         </div>
                       </div>
                     </div>
-                    <div>
-                      <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>{title || 'Need Title'}</h3>
-                      {imageFile && (
-                        <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '12px', border: '1px solid var(--surface-border)' }} />
+                    
+                    <h3 style={{ margin: '0 0 12px 0', fontSize: '20px', fontWeight: 800 }}>{title || 'Need Title'}</h3>
+                    
+                    {imageFile && (
+                      <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '100%', maxHeight: '240px', objectFit: 'cover', borderRadius: '12px', marginBottom: '16px' }} />
+                    )}
+                    
+                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5, padding: '16px', background: 'var(--bg)', borderRadius: '12px' }}>
+                      {description || 'Need description...'}
+                    </p>
+                    
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
+                      {budget && (
+                        <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <IndianRupee size={12} color="var(--primary)" /> {budget}
+                        </span>
                       )}
-                      <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                        {description || 'Need description...'}
-                      </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px' }}>
-                        {budget && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-                            <IndianRupee size={14} color="var(--primary)" /> {budget}
-                          </div>
-                        )}
-                        {locationStr && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-                            <MapPin size={14} color="var(--primary)" /> {locationStr}
-                          </div>
-                        )}
-                        {dateRequired && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'var(--surface)', padding: '6px 12px', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-                            <Calendar size={14} color="var(--primary)" /> Need by: {dateRequired}
-                          </div>
-                        )}
-                      </div>
+                      {locationStr && (
+                        <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <MapPin size={12} color="var(--text-muted)" /> {locationStr}
+                        </span>
+                      )}
+                      {dateRequired && (
+                        <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={12} color="var(--text-muted)" /> By: {dateRequired}
+                        </span>
+                      )}
                     </div>
                   </div>
+                  
                   <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                    <button onClick={() => setShowPreview(false)} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, fontSize: '16px', border: 'none', cursor: 'pointer' }}>
+                    <button onClick={() => setShowPreview(false)} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '16px' }}>
                       Edit
                     </button>
-                    <button onClick={handleSubmit} disabled={isSubmitting} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1 }}>
-                      {isSubmitting ? 'Posting...' : 'Post Need'}
+                    <button onClick={handleSubmit} disabled={isSubmitting} className="glow" style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 800, cursor: isSubmitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '16px' }}>
+                      {isSubmitting ? 'Publishing...' : 'Publish Need'}
                     </button>
                   </div>
                 </div>
@@ -434,6 +441,22 @@ export default function ItemRequestsFeed() {
                 </>
               )}
             </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Publishing Modal */}
+      {isSubmitting && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '32px 24px', borderRadius: '32px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <div style={{ width: '32px', height: '32px', border: '4px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>Publishing Need...</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Campus community will be notified about your need shortly. Hang tight!
+            </p>
           </div>
         </div>,
         document.body

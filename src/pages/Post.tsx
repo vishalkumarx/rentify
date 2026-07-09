@@ -1,5 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Camera, Upload, Tag, IndianRupee, AlignLeft, Plus, X } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -365,6 +366,22 @@ export default function Post() {
         </div>
 
       </form>
+      )}
+
+      {/* Publishing Modal */}
+      {loading && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '32px 24px', borderRadius: '32px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <div style={{ width: '32px', height: '32px', border: '4px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>Publishing Item...</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Campus community will be notified about your item shortly. Hang tight!
+            </p>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
