@@ -551,6 +551,43 @@ export default function Requests() {
         </div>,
         document.body
       )}
+      {/* Type Selection Dialog */}
+      {showTypeDialog && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'flex-end', padding: '16px' }} onClick={() => setShowTypeDialog(false)}>
+          <div className="animate-slide-up glass-panel" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '400px', margin: '0 auto', background: 'var(--surface)', borderRadius: '24px', overflow: 'hidden' }}>
+            <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Select View</h3>
+              <button onClick={() => setShowTypeDialog(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div style={{ padding: '8px' }}>
+              <button 
+                onClick={() => { setActiveTab('incoming'); setShowTypeDialog(false); }}
+                style={{ width: '100%', padding: '16px', background: activeTab === 'incoming' ? 'var(--surface-border)' : 'transparent', border: 'none', borderRadius: '16px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)' }}>Incoming Requests</span>
+                  {myIncomingRequests.length > 0 && (
+                    <span style={{ background: 'var(--danger)', color: 'white', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 800 }}>
+                      {myIncomingRequests.length}
+                    </span>
+                  )}
+                </div>
+                {activeTab === 'incoming' && <Check size={20} color="var(--primary)" />}
+              </button>
+              <button 
+                onClick={() => { setActiveTab('outgoing'); setShowTypeDialog(false); }}
+                style={{ width: '100%', padding: '16px', background: activeTab === 'outgoing' ? 'var(--surface-border)' : 'transparent', border: 'none', borderRadius: '16px', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              >
+                <span style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-main)' }}>Sent Requests</span>
+                {activeTab === 'outgoing' && <Check size={20} color="var(--primary)" />}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
