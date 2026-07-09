@@ -4,8 +4,9 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 
+import { useFeed } from '../context/FeedContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send } from 'lucide-react';
+import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send, Building } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
@@ -13,9 +14,12 @@ export default function UserProfile() {
   const location = useLocation();
   const state = location.state as { avatar_url?: string } | null;
   const { session } = useAuth();
+  const { items } = useFeed();
 
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<any>(null);
+
+  const userItems = items.filter(item => item.owner_id === id);
 
   useSEO(profile?.name || 'User Profile', `View ${profile?.name || 'user'}'s profile and items on CampusRent`);
 
@@ -176,25 +180,29 @@ export default function UserProfile() {
               }
               return profile?.name?.charAt(0)?.toUpperCase() || 'U';
             })()}
-            {verificationStatus === 'approved' && (
-              <div style={{ position: 'absolute', bottom: '0', right: '0', background: 'var(--surface)', borderRadius: '50%', padding: '2px' }}>
-                <BadgeCheck size={28} fill="#1877F2" color="white" />
-              </div>
-            )}
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', marginBottom: '4px', width: '100%' }}>
             <h2 style={{ fontSize: '24px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', maxWidth: '100%', padding: '0 16px' }}>
               <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{profile?.name}</span>
+              {verificationStatus === 'approved' && (
+                <BadgeCheck size={24} fill="#1877F2" color="white" style={{ flexShrink: 0 }} />
+              )}
             </h2>
             {session?.user?.id === id && session?.user?.email && (
               <p title={session.user.email} style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', maxWidth: '100%', padding: '0 24px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {session.user.email}
               </p>
             )}
+            {profile?.department && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '4px' }}>
+                <Building size={16} />
+                <span>{profile.department}</span>
+              </div>
+            )}
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               <Star size={16} fill="var(--warning)" color="var(--warning)" /> {profile?.rating} 
             </span>
@@ -215,6 +223,44 @@ export default function UserProfile() {
             ))}
           </div>
         </div>
+
+        {/* Other Items Section */}
+        {userItems.length > 0 && (
+          <div style={{ marginBottom: '32px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Other items by {profile?.name || 'this user'}</h3>
+            <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px', margin: '0 -24px', paddingLeft: '24px', paddingRight: '24px', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
+              {userItems.slice(0, 5).map(item => (
+                <div 
+                  key={item.id} 
+                  onClick={() => navigate(`/item/${item.id}`)}
+                  className="product-card"
+                  style={{ minWidth: '160px', width: '160px', flexShrink: 0, cursor: 'pointer' }}
+                >
+                  <div className="product-image-container" style={{ height: '140px' }}>
+                    <img src={item.images[0]} alt={item.title} className="product-image" loading="lazy" />
+                  </div>
+                  <div className="product-info" style={{ padding: '12px' }}>
+                    <h3 className="product-title" style={{ fontSize: '14px', marginBottom: '4px' }}>{item.title}</h3>
+                    <div className="product-price" style={{ fontSize: '14px' }}>₹{item.price}<span className="price-unit">/d</span></div>
+                  </div>
+                </div>
+              ))}
+              
+              {userItems.length > 5 && (
+                <div 
+                  onClick={() => navigate(`/user/${id}/items`)}
+                  className="glass-panel"
+                  style={{ minWidth: '120px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: '24px', cursor: 'pointer', padding: '16px', textAlign: 'center', flexShrink: 0 }}
+                >
+                  <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px' }}>
+                    <ChevronLeft size={24} style={{ transform: 'rotate(180deg)' }} />
+                  </div>
+                  <span style={{ fontSize: '14px', fontWeight: 700 }}>View More</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Reviews Section */}
         <div style={{ marginBottom: '32px' }}>
@@ -245,7 +291,7 @@ export default function UserProfile() {
                 <button 
                   type="submit" 
                   disabled={submittingReview || !newReviewText.trim()}
-                  style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#000000', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
+                  style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#FEF3C7', color: '#000000', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
                 >
                   <Send size={20} />
                 </button>
@@ -315,7 +361,7 @@ export default function UserProfile() {
               <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--danger)' }}>
                 <AlertTriangle size={20} /> Report User
               </h3>
-              <button onClick={() => setShowReportModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <button onClick={() => setShowReportModal(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', margin: '0 -8px 0 0' }}>
                 <X size={24} />
               </button>
             </div>

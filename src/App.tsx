@@ -25,6 +25,7 @@ import SafetyGuidelines from './pages/SafetyGuidelines';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ItemRequestsFeed from './pages/ItemRequestsFeed';
 import EditProfile from './pages/EditProfile';
+import UserItems from './pages/UserItems';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -84,6 +85,7 @@ function AppRoutes() {
       {/* Full Screen Modals/Pages */}
       <Route path="/item/:id" element={<ItemDetail />} />
       <Route path="/user/:id" element={<UserProfile />} />
+      <Route path="/user/:id/items" element={<UserItems />} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
       <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
