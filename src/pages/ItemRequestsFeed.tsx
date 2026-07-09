@@ -40,7 +40,6 @@ export default function ItemRequestsFeed() {
   const [requests, setRequests] = useState<ItemRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [budget, setBudget] = useState('');
@@ -430,79 +429,14 @@ export default function ItemRequestsFeed() {
                 )}
               </div>
               
-              {showPreview ? (
-                <div className="glass-panel animate-fade-in" style={{ padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '-12px' }}>
-                  <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ width: '8px', height: '8px', borderRadius: '4px', background: 'var(--primary)', display: 'inline-block' }}></span>
-                    Preview Need
-                  </h2>
-                  <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-main)', fontWeight: 'bold' }}>
-                        {session?.user?.user_metadata?.full_name?.charAt(0) || 'U'}
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                        <div style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.2 }}>{session?.user?.user_metadata?.full_name || 'You'}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                          {profile?.department || 'Department'} • {profile?.year || 'Year'}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h3 style={{ margin: '0 0 12px 0', fontSize: '20px', fontWeight: 800 }}>{title || 'Need Title'}</h3>
-                    
-                    {imageFile && (
-                      <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '100%', maxHeight: '240px', objectFit: 'cover', borderRadius: '12px', marginBottom: '16px' }} />
-                    )}
-                    
-                    <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-muted)', lineHeight: 1.5, padding: '16px', background: 'var(--bg)', borderRadius: '12px' }}>
-                      {description || 'Need description...'}
-                    </p>
-                    
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '16px' }}>
-                      {budget && (
-                        <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <IndianRupee size={12} color="var(--primary)" /> {budget}
-                        </span>
-                      )}
-                      {locationStr && (
-                        <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MapPin size={12} color="var(--text-muted)" /> {locationStr}
-                        </span>
-                      )}
-                      {dateRequired && (
-                        <span style={{ padding: '6px 12px', background: 'var(--surface-border)', borderRadius: '12px', fontSize: '12px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Calendar size={12} color="var(--text-muted)" /> By: {dateRequired}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                    <button onClick={() => setShowPreview(false)} style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, cursor: 'pointer', fontSize: '16px' }}>
-                      Edit
-                    </button>
-                    <button onClick={handleSubmit} disabled={isSubmitting} className="glow" style={{ flex: 1, padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 800, cursor: isSubmitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '16px' }}>
-                      {isSubmitting ? 'Publishing...' : 'Publish Need'}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <button 
-                    onClick={() => {
-                      if (!title || !description) {
-                        toast.error('Title and description are required');
-                        return;
-                      }
-                      setShowPreview(true);
-                    }}
-                    style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', fontWeight: 800, fontSize: '16px', border: 'none', cursor: 'pointer', marginTop: '8px' }}
-                  >
-                    Preview Need
-                  </button>
-                </>
-              )}
+              <button 
+                onClick={handleSubmit} 
+                disabled={isSubmitting} 
+                className="glow" 
+                style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 800, cursor: isSubmitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '16px', marginTop: '8px' }}
+              >
+                {isSubmitting ? 'Publishing...' : 'Publish Need'}
+              </button>
             </div>
           </div>
         </div>,

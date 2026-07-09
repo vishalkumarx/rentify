@@ -266,8 +266,15 @@ export default function UserProfile() {
                         {item.category || 'Category'}
                       </span>
                       <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
-                      <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--success)' }}>
-                        ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                        <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--success)' }}>
+                          ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
+                        </div>
+                        {item.itemRating != null && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--warning)', fontWeight: 700 }}>
+                            ⭐ {item.itemRating}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>

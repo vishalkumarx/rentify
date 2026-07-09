@@ -59,6 +59,25 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchItems = async () => {
+    // 1. Fetch item reviews to calculate actual product ratings (no dummy ratings)
+    let allItemReviews: any[] = [];
+    const { data: reviewFiles } = await supabase.storage.from('item-images').list('item_reviews');
+    if (reviewFiles && reviewFiles.length > 0) {
+      const validFiles = reviewFiles.filter(f => f.name.endsWith('.json'));
+      const reviewPromises = validFiles.map(async (f) => {
+        const urlData = supabase.storage.from('item-images').getPublicUrl(`item_reviews/${f.name}`);
+        if (urlData.data?.publicUrl) {
+          try {
+            const res = await fetch(`${urlData.data.publicUrl}?t=${Date.now()}`);
+            if (res.ok) return await res.json();
+          } catch (e) {}
+        }
+        return null;
+      });
+      const resolved = await Promise.all(reviewPromises);
+      allItemReviews = resolved.filter(r => r != null);
+    }
+
     const { data, error } = await supabase
       .from('rental_items')
       .select('*')
@@ -73,21 +92,34 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
         if (cleanDept.includes('{') || cleanDept.includes('[') || cleanDept === 'Unknown') {
           cleanDept = DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
         }
+        
+        // Calculate item rating from database reviews
+        const itemReviews = allItemReviews.filter(r => r.itemId === item.id.toString() || r.itemId === item.id);
+        let computedRating = undefined;
+        let computedReviewCount = 0;
+        if (itemReviews.length > 0) {
+          const sum = itemReviews.reduce((acc, r) => acc + (r.rating || 5), 0);
+          computedRating = Number((sum / itemReviews.length).toFixed(1));
+          computedReviewCount = itemReviews.length;
+        }
+
         return {
           ...item,
           department: cleanDept,
           userId: item.user_id,
           createdAt: item.created_at,
           liked: false, // Default local like state
-        seller: {
-          id: item.user_id,
-          name: 'User ' + (item.user_id ? item.user_id.substring(0, 5) : '123'),
-          rating: 4.8,
-          reviewCount: 0,
-          memberSince: new Date().getFullYear().toString(),
-          verifications: ['Email Confirmed']
-        }
-      };
+          itemRating: computedRating,
+          itemReviewCount: computedReviewCount,
+          seller: {
+            id: item.user_id,
+            name: 'User ' + (item.user_id ? item.user_id.substring(0, 5) : '123'),
+            rating: 4.8,
+            reviewCount: 0,
+            memberSince: new Date().getFullYear().toString(),
+            verifications: ['Email Confirmed']
+          }
+        };
     });
       setItems(mappedItems);
     }
