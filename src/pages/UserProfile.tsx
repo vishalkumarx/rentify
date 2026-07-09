@@ -233,15 +233,43 @@ export default function UserProfile() {
                 <div 
                   key={item.id} 
                   onClick={() => navigate(`/item/${item.id}`)}
-                  className="product-card"
-                  style={{ minWidth: '160px', width: '160px', flexShrink: 0, cursor: 'pointer' }}
+                  style={{ 
+                    minWidth: '240px',
+                    width: '240px',
+                    flexShrink: 0,
+                    background: 'var(--surface)', 
+                    borderRadius: '0', 
+                    border: '1px solid var(--surface-border)', 
+                    overflow: 'hidden', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    position: 'relative',
+                    cursor: 'pointer'
+                  }}
                 >
-                  <div className="product-image-container" style={{ height: '140px' }}>
-                    <img src={item.images && item.images.length > 0 ? item.images[0] : item.image} alt={item.title} className="product-image" loading="lazy" />
+                  <div style={{ position: 'relative', height: '180px' }}>
+                    <img 
+                      src={item.images && item.images.length > 0 ? item.images[0] : item.image} 
+                      alt={item.title} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: item.status === 'booked' ? 0.5 : 1 }}
+                    />
+                    {item.status === 'booked' && (
+                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, border: '1px solid var(--surface-border)' }}>
+                        UNAVAILABLE
+                      </div>
+                    )}
                   </div>
-                  <div className="product-info" style={{ padding: '12px' }}>
-                    <h3 className="product-title" style={{ fontSize: '14px', marginBottom: '4px' }}>{item.title}</h3>
-                    <div className="product-price" style={{ fontSize: '14px' }}>₹{item.price}<span className="price-unit">/d</span></div>
+                  
+                  <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
+                      <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px' }}>
+                        {item.category || 'Category'}
+                      </span>
+                      <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
+                      <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--success)' }}>
+                        ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
