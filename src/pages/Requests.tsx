@@ -93,7 +93,6 @@ export default function Requests() {
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '24px', fontWeight: 800, margin: '0 0 4px 0', color: 'var(--text-main)' }}>Your Requests</h1>
         <p style={{ margin: '0 0 16px 0', color: 'var(--text-muted)', fontSize: '14px' }}>Manage your incoming and sent rental requests.</p>
-        <p style={{ margin: '0 0 16px 0', color: 'var(--primary)', fontSize: '12px', fontWeight: 600, background: 'rgba(24, 119, 242, 0.1)', display: 'inline-block', padding: '4px 12px', borderRadius: '12px' }}>Currently available on Guru Nanak Dev University, Amritsar only</p>
         
         <div style={{ display: 'flex', gap: '8px', padding: '4px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '20px' }}>
           <button 
