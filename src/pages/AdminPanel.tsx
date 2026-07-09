@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle, Star, MessageSquare } from 'lucide-react';
+import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle, Star, MessageSquare, Megaphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
@@ -17,6 +17,12 @@ export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs'>('verifications');
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [needs, setNeeds] = useState<any[]>([]);
+  
+  // Needs Filters
+  const [needsFilterName, setNeedsFilterName] = useState('');
+  const [needsFilterEmail, setNeedsFilterEmail] = useState('');
+  const [needsFilterDate, setNeedsFilterDate] = useState('');
+  const [needsFilterDept, setNeedsFilterDept] = useState('');
   
   // Modal State
   const [selectedImage, setSelectedImage] = useState<{ url: string, url2?: string, userId: string, status: string } | null>(null);
@@ -466,58 +472,83 @@ export default function AdminPanel() {
             {activeTab === 'needs' && (
               <div>
                 <h2 style={{ fontSize: '20px', margin: '0 0 20px 0', fontWeight: 700 }}>Community Needs Moderation</h2>
-                <div style={{ display: 'grid', gap: '16px' }}>
-                  {needs.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '64px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
-                      <p style={{ color: 'var(--text-muted)', margin: 0 }}>No community needs posted yet.</p>
-                    </div>
-                  ) : (
-                    needs.map((need: any) => (
-                      <div key={need.id} className="glass-panel" style={{ padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: need.suspended ? '4px solid var(--danger)' : '4px solid transparent' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                            {need.profilePic ? (
-                              <img src={need.profilePic} alt={need.name} style={{ width: '48px', height: '48px', borderRadius: '24px', objectFit: 'cover' }} />
-                            ) : (
-                              <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--text-muted)' }}>
-                                {need.name?.charAt(0) || '?'}
-                              </div>
-                            )}
-                            <div>
-                              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{need.title}</h3>
-                              <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>Posted by {need.name} • {new Date(need.createdAt).toLocaleDateString()}</p>
-                            </div>
-                          </div>
-                          {need.suspended && (
-                            <span style={{ padding: '4px 12px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '12px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>Suspended</span>
-                          )}
-                        </div>
-                        
-                        <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5 }}>
-                          {need.description}
-                        </p>
-                        
-                        {need.imageUrl && (
-                          <img src={need.imageUrl} alt={need.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--surface-border)' }} />
-                        )}
+                
+                {/* Filters */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+                  <input type="text" placeholder="Filter by Name..." value={needsFilterName} onChange={e => setNeedsFilterName(e.target.value)} style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px', outline: 'none' }} />
+                  <input type="text" placeholder="Filter by Email..." value={needsFilterEmail} onChange={e => setNeedsFilterEmail(e.target.value)} style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px', outline: 'none' }} />
+                  <input type="text" placeholder="Filter by Department..." value={needsFilterDept} onChange={e => setNeedsFilterDept(e.target.value)} style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px', outline: 'none' }} />
+                  <input type="date" value={needsFilterDate} onChange={e => setNeedsFilterDate(e.target.value)} style={{ padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '14px', outline: 'none' }} />
+                </div>
 
-                        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {(() => {
+                    const filteredNeeds = needs.filter((need: any) => {
+                      const user = allUsers.find(u => u.id === need.userId);
+                      const userEmail = user?.email || '';
+                      const matchName = need.name?.toLowerCase().includes(needsFilterName.toLowerCase());
+                      const matchEmail = userEmail.toLowerCase().includes(needsFilterEmail.toLowerCase());
+                      const matchDept = need.department?.toLowerCase().includes(needsFilterDept.toLowerCase());
+                      const matchDate = needsFilterDate ? need.createdAt?.startsWith(needsFilterDate) : true;
+                      return matchName && matchEmail && matchDept && matchDate;
+                    });
+
+                    if (filteredNeeds.length === 0) {
+                      return (
+                        <div style={{ textAlign: 'center', padding: '64px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
+                          <p style={{ color: 'var(--text-muted)', margin: 0 }}>No community needs found matching your filters.</p>
+                        </div>
+                      );
+                    }
+
+                    return filteredNeeds.map((need: any) => {
+                      const user = allUsers.find(u => u.id === need.userId);
+                      return (
+                      <div key={need.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '16px', borderLeft: need.suspended ? '4px solid var(--danger)' : '4px solid transparent' }}>
+                        {need.imageUrl ? (
+                          <img src={need.imageUrl} alt={need.title} style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover', flexShrink: 0 }} />
+                        ) : (
+                          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: 'var(--text-muted)' }}>
+                            <Megaphone size={20} />
+                          </div>
+                        )}
+                        
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{need.title}</h3>
+                            {need.suspended && (
+                              <span style={{ padding: '2px 8px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '8px', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', flexShrink: 0 }}>Suspended</span>
+                            )}
+                          </div>
+                          <div style={{ fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                            <span style={{ fontWeight: 600 }}>{need.name}</span>
+                            <span>•</span>
+                            <span>{user?.email || 'No email'}</span>
+                            <span>•</span>
+                            <span>{need.department}</span>
+                            <span>•</span>
+                            <span>{new Date(need.createdAt).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', gap: '8px' }}>
                           <button 
                             onClick={() => handleToggleNeedSuspend(need.id, need.suspended)}
-                            style={{ padding: '10px 20px', background: need.suspended ? 'var(--surface-border)' : 'var(--danger)', color: need.suspended ? 'var(--text-main)' : 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                            style={{ padding: '8px 12px', background: need.suspended ? 'var(--surface-border)' : 'var(--danger)', color: need.suspended ? 'var(--text-main)' : 'white', border: 'none', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}
                           >
-                            <Ban size={16} /> {need.suspended ? 'Unsuspend' : 'Suspend'}
+                            <Ban size={14} /> <span className="desktop-only">{need.suspended ? 'Unsuspend' : 'Suspend'}</span>
                           </button>
                           <button 
                             onClick={() => handleDeleteNeed(need.id)}
-                            style={{ padding: '10px 20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto' }}
+                            style={{ padding: '8px 12px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: '8px', fontWeight: 600, cursor: 'pointer', fontSize: '13px' }}
                           >
-                            Delete Need
+                            Delete
                           </button>
                         </div>
                       </div>
-                    ))
-                  )}
+                      )
+                    })
+                  })()}
                 </div>
               </div>
             )}
