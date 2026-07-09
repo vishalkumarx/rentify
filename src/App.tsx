@@ -24,6 +24,7 @@ import HowItWorks from './pages/HowItWorks';
 import SafetyGuidelines from './pages/SafetyGuidelines';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ItemRequestsFeed from './pages/ItemRequestsFeed';
+import EditProfile from './pages/EditProfile';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -85,6 +86,7 @@ function AppRoutes() {
       <Route path="/user/:id" element={<UserProfile />} />
       <Route path="/chat/:id" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
       <Route path="/admin" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+      <Route path="/edit-profile" element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
       <Route path="/coming-soon" element={<ComingSoon />} />
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/safety-guidelines" element={<SafetyGuidelines />} />

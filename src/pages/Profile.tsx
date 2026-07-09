@@ -170,6 +170,13 @@ export default function Profile() {
             </div>
           </div>
           
+          <button 
+            onClick={() => navigate('/edit-profile')}
+            style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--bg)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontWeight: 600, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
+          >
+            <Edit2 size={16} /> Edit Profile
+          </button>
+          
           <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', margin: '4px 0' }}></div>
 
           {/* Verification Section */}
