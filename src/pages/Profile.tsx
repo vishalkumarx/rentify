@@ -256,8 +256,8 @@ export default function Profile() {
               style={{
                 flex: 1,
                 padding: '10px 0',
-                background: activeTab === tab ? 'var(--text-main)' : 'transparent',
-                color: activeTab === tab ? 'var(--surface)' : 'var(--text-muted)',
+                background: activeTab === tab ? '#FEF3C7' : 'transparent',
+                color: activeTab === tab ? '#000000' : 'var(--text-muted)',
                 borderRadius: '12px',
                 fontSize: '14px',
                 fontWeight: 600,
