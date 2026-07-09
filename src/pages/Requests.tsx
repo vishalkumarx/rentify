@@ -97,7 +97,7 @@ export default function Requests() {
         <div style={{ display: 'flex', gap: '8px', padding: '4px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '20px' }}>
           <button 
             onClick={() => setActiveTab('incoming')}
-            style={{ flex: 1, padding: '12px', borderRadius: '16px', border: 'none', background: activeTab === 'incoming' ? 'var(--bg)' : 'transparent', color: activeTab === 'incoming' ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: activeTab === 'incoming' ? 'var(--card-shadow)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '16px', border: 'none', background: activeTab === 'incoming' ? '#FEF3C7' : 'transparent', color: activeTab === 'incoming' ? '#000000' : 'var(--text-muted)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: activeTab === 'incoming' ? 'var(--card-shadow)' : 'none', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
           >
             Incoming
             {myIncomingRequests.length > 0 && (
@@ -106,7 +106,7 @@ export default function Requests() {
           </button>
           <button 
             onClick={() => setActiveTab('outgoing')}
-            style={{ flex: 1, padding: '12px', borderRadius: '16px', border: 'none', background: activeTab === 'outgoing' ? 'var(--bg)' : 'transparent', color: activeTab === 'outgoing' ? 'var(--text-main)' : 'var(--text-muted)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: activeTab === 'outgoing' ? 'var(--card-shadow)' : 'none', transition: 'all 0.2s' }}
+            style={{ flex: 1, padding: '12px', borderRadius: '16px', border: 'none', background: activeTab === 'outgoing' ? '#FEF3C7' : 'transparent', color: activeTab === 'outgoing' ? '#000000' : 'var(--text-muted)', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: activeTab === 'outgoing' ? 'var(--card-shadow)' : 'none', transition: 'all 0.2s' }}
           >
             Sent
           </button>
