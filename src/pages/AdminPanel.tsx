@@ -14,8 +14,9 @@ export default function AdminPanel() {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials'>('verifications');
+  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs'>('verifications');
   const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [needs, setNeeds] = useState<any[]>([]);
   
   // Modal State
   const [selectedImage, setSelectedImage] = useState<{ url: string, url2?: string, userId: string, status: string } | null>(null);
@@ -94,6 +95,9 @@ export default function AdminPanel() {
       
       const tData = await getStorageJson('admin/testimonials.json') || [];
       setTestimonials(tData);
+
+      const nData = await getStorageJson('feed/item_requests.json') || [];
+      setNeeds(nData.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
 
       setLoading(false);
     };
@@ -196,6 +200,25 @@ export default function AdminPanel() {
     });
   };
 
+  const handleToggleNeedSuspend = async (id: string, currentlySuspended: boolean) => {
+    const updated = needs.map(n => n.id === id ? { ...n, suspended: !currentlySuspended } : n);
+    setNeeds(updated);
+    await setStorageJson('feed/item_requests.json', updated);
+    toast.success(currentlySuspended ? 'Need unsuspended.' : 'Need suspended due to policy violations.');
+  };
+
+  const handleDeleteNeed = (id: string) => {
+    setConfirmDialog({
+      message: 'Are you sure you want to permanently delete this need? This action cannot be undone.',
+      onConfirm: async () => {
+        const updated = needs.filter(n => n.id !== id);
+        setNeeds(updated);
+        await setStorageJson('feed/item_requests.json', updated);
+        toast.success('Need deleted successfully.');
+      }
+    });
+  };
+
 
   const filteredUsers = users.filter(u => u.id.toLowerCase().includes(search.toLowerCase()));
 
@@ -248,10 +271,16 @@ export default function AdminPanel() {
               <UsersIcon size={20} /> Users ({allUsers.length})
             </button>
             <button 
+              onClick={() => setActiveTab('needs')}
+              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'needs' ? 'var(--text-main)' : 'transparent', color: activeTab === 'needs' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
+            >
+              <MessageSquare size={20} /> Needs ({needs.length})
+            </button>
+            <button 
               onClick={() => setActiveTab('testimonials')}
               style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'testimonials' ? 'var(--text-main)' : 'transparent', color: activeTab === 'testimonials' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
             >
-              <MessageSquare size={20} /> Testimonials ({testimonials.filter(t => t.status === 'pending').length})
+              <Star size={20} /> Testimonials ({testimonials.filter(t => t.status === 'pending').length})
             </button>
           </div>
 
@@ -429,6 +458,65 @@ export default function AdminPanel() {
                     <div style={{ textAlign: 'center', padding: '64px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
                       <p style={{ color: 'var(--text-muted)', margin: 0 }}>No users found.</p>
                     </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'needs' && (
+              <div>
+                <h2 style={{ fontSize: '20px', margin: '0 0 20px 0', fontWeight: 700 }}>Community Needs Moderation</h2>
+                <div style={{ display: 'grid', gap: '16px' }}>
+                  {needs.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '64px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
+                      <p style={{ color: 'var(--text-muted)', margin: 0 }}>No community needs posted yet.</p>
+                    </div>
+                  ) : (
+                    needs.map((need: any) => (
+                      <div key={need.id} className="glass-panel" style={{ padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', borderLeft: need.suspended ? '4px solid var(--danger)' : '4px solid transparent' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                            {need.profilePic ? (
+                              <img src={need.profilePic} alt={need.name} style={{ width: '48px', height: '48px', borderRadius: '24px', objectFit: 'cover' }} />
+                            ) : (
+                              <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, color: 'var(--text-muted)' }}>
+                                {need.name?.charAt(0) || '?'}
+                              </div>
+                            )}
+                            <div>
+                              <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{need.title}</h3>
+                              <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>Posted by {need.name} • {new Date(need.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          {need.suspended && (
+                            <span style={{ padding: '4px 12px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', borderRadius: '12px', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase' }}>Suspended</span>
+                          )}
+                        </div>
+                        
+                        <p style={{ margin: 0, fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5 }}>
+                          {need.description}
+                        </p>
+                        
+                        {need.imageUrl && (
+                          <img src={need.imageUrl} alt={need.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--surface-border)' }} />
+                        )}
+
+                        <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                          <button 
+                            onClick={() => handleToggleNeedSuspend(need.id, need.suspended)}
+                            style={{ padding: '10px 20px', background: need.suspended ? 'var(--surface-border)' : 'var(--danger)', color: need.suspended ? 'var(--text-main)' : 'white', border: 'none', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                          >
+                            <Ban size={16} /> {need.suspended ? 'Unsuspend' : 'Suspend'}
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteNeed(need.id)}
+                            style={{ padding: '10px 20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', borderRadius: '12px', fontWeight: 600, cursor: 'pointer', marginLeft: 'auto' }}
+                          >
+                            Delete Need
+                          </button>
+                        </div>
+                      </div>
+                    ))
                   )}
                 </div>
               </div>

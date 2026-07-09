@@ -20,6 +20,7 @@ interface ItemRequest {
   location?: string;
   dateRequired?: string;
   imageUrl?: string;
+  suspended?: boolean;
 }
 
 export default function ItemRequestsFeed() {
@@ -202,7 +203,16 @@ export default function ItemRequestsFeed() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {requests.map(req => (
-              <div key={req.id} onClick={() => { if (req.userId !== session?.user?.id) navigate(`/chat/req-${req.id}`); }} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: req.userId === session?.user?.id ? 'default' : 'pointer', position: 'relative', userSelect: 'none' }}>
+              <div key={req.id} onClick={() => { if (req.userId !== session?.user?.id && !req.suspended) navigate(`/chat/req-${req.id}`); }} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: (req.userId === session?.user?.id || req.suspended) ? 'default' : 'pointer', position: 'relative', userSelect: 'none', opacity: req.suspended ? 0.7 : 1 }}>
+                
+                {req.suspended && (
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '24px' }}>
+                    <div style={{ background: 'var(--danger)', color: 'white', padding: '12px 24px', borderRadius: '24px', fontWeight: 800, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
+                      Unavailable due to policy violations
+                    </div>
+                  </div>
+                )}
+                
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {req.profilePic ? (
                     <img src={req.profilePic} alt={req.name} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0 }} />
