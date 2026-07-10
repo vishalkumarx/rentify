@@ -1,7 +1,7 @@
 import toast from 'react-hot-toast';
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { DEPARTMENTS } from '../lib/constants';
 
 export type SellerProfile = {
@@ -59,6 +59,16 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchItems = async () => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData?.session?.user?.id;
+    let userFavorites: number[] = [];
+    if (userId) {
+      const favs = await getStorageJson(`favorites/${userId}.json`);
+      if (favs && Array.isArray(favs)) {
+        userFavorites = favs;
+      }
+    }
+
     // 1. Fetch item reviews to calculate actual product ratings (no dummy ratings)
     let allItemReviews: any[] = [];
     const { data: reviewFiles } = await supabase.storage.from('item-images').list('item_reviews');
@@ -108,7 +118,7 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
           department: cleanDept,
           userId: item.user_id,
           createdAt: item.created_at,
-          liked: false, // Default local like state
+          liked: userFavorites.includes(item.id), // Fetch real liked state
           itemRating: computedRating,
           itemReviewCount: computedReviewCount,
           seller: {
@@ -230,15 +240,35 @@ export const FeedProvider = ({ children }: { children: ReactNode }) => {
     setItems((prev) => prev.filter(item => item.id !== id));
   };
 
-  const toggleLike = (id: number) => {
+  const toggleLike = async (id: number) => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData?.session?.user?.id;
+    
+    if (!userId) {
+      toast.error('Please log in to save favorites');
+      return;
+    }
+
     setItems((prev) => {
-      const isLiking = !prev.find(i => i.id === id)?.liked;
+      const itemToToggle = prev.find(i => i.id === id);
+      if (!itemToToggle) return prev;
+
+      const isLiking = !itemToToggle.liked;
       if (isLiking) {
         toast.success('Added to favourites');
       } else {
         toast.success('Removed from favourites');
       }
-      return prev.map(item => item.id === id ? { ...item, liked: !item.liked } : item);
+      
+      const newItems = prev.map(item => item.id === id ? { ...item, liked: !item.liked } : item);
+      
+      // Save to database in background
+      (async () => {
+        const favs = newItems.filter(i => i.liked).map(i => i.id);
+        await setStorageJson(`favorites/${userId}.json`, favs);
+      })();
+      
+      return newItems;
     });
   };
 
