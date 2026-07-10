@@ -359,7 +359,7 @@ export default function ItemRequestsFeed() {
                           <Eye size={16} /> {req.views || 0}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <MessageSquare size={16} /> {req.commentCount || 0}
+                          <MessageSquare size={20} /> {req.commentCount || 0}
                         </div>
                   </div>
                   </div>
@@ -657,7 +657,7 @@ export default function ItemRequestsFeed() {
                   disabled={!session || !newComment.trim() || isSubmittingComment}
                   style={{ width: '40px', height: '40px', borderRadius: '20px', background: newComment.trim() ? 'var(--primary)' : 'var(--surface-border)', color: newComment.trim() ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newComment.trim() ? 'pointer' : 'default', flexShrink: 0 }}
                 >
-                  <Send size={18} />
+                  <Send size={22} />
                 </button>
               </div>
             </div>
