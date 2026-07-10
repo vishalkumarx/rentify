@@ -7,6 +7,7 @@ import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as 
 import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useBookings } from '../context/BookingContext';
+import { LoadingDialog } from '../components/LoadingDialog';
 import { Ban, Lock } from 'lucide-react';
 import chatBg from '../assets/chat-bg.png';
 import { format, isToday, isYesterday } from 'date-fns';
@@ -196,7 +197,7 @@ export default function Chat() {
   };
 
   if (!conversation) {
-    return <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>Loading conversation...</div>;
+    return <LoadingDialog message="Loading conversation..." />;
   }
 
   const handleSend = async (e?: React.FormEvent) => {

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ChevronLeft, Grid } from 'lucide-react';
+import { LoadingDialog } from '../components/LoadingDialog';
 import { useFeed } from '../context/FeedContext';
 import { getStorageJson } from '../lib/supabase';
 import { useSEO } from '../hooks/useSEO';
@@ -34,7 +35,7 @@ export default function UserItems() {
   }, [id]);
 
   if (loading) {
-    return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading items...</div>;
+    return <LoadingDialog message="Loading your items..." />;
   }
 
   return (

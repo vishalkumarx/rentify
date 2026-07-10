@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
+import { LoadingDialog } from '../components/LoadingDialog';
 
 import { useFeed } from '../context/FeedContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
@@ -152,7 +153,7 @@ export default function UserProfile() {
   };
 
   if (loading) {
-    return <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>Loading profile...</div>;
+    return <LoadingDialog message="Loading profile..." />;
   }
 
   return (

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon, Eye, MessageSquare, Send } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { LoadingDialog } from '../components/LoadingDialog';
 import toast from 'react-hot-toast';
 import { createPortal } from 'react-dom';
 
@@ -249,11 +250,7 @@ export default function ItemRequestsFeed() {
         </div>
 
         {loading ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {[1,2,3].map(i => (
-              <div key={i} className="skeleton" style={{ height: '140px', borderRadius: '24px' }}></div>
-            ))}
-          </div>
+          <LoadingDialog message="Loading Community Feed..." />
         ) : requests.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
             <Megaphone size={40} color="var(--primary)" style={{ opacity: 0.5, marginBottom: '16px' }} />

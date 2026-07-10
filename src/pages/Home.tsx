@@ -6,6 +6,7 @@ import { CATEGORIES, DEPARTMENTS } from '../lib/constants';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
+import { LoadingDialog } from '../components/LoadingDialog';
 import { useSEO } from '../hooks/useSEO';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import toast from 'react-hot-toast';
@@ -498,12 +499,7 @@ export default function Home() {
 
 
         {loading ? (
-          <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
-            <div className="skeleton" style={{ gridColumn: 'span 2', height: '240px', borderRadius: '24px' }}></div>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="skeleton" style={{ aspectRatio: '4/3', borderRadius: '24px' }}></div>
-            ))}
-          </div>
+          <LoadingDialog message="Loading Campus Rent..." />
         ) : filteredItems.length === 0 ? (
           <div style={{ padding: '32px 16px' }}>
             <div style={{ background: 'rgba(244, 196, 48, 0.1)', border: '2px dashed var(--primary)', borderRadius: '24px', padding: '24px', margin: '0 auto', maxWidth: '400px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
