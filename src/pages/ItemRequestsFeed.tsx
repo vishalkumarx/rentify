@@ -119,10 +119,16 @@ export default function ItemRequestsFeed() {
       text: newComment.trim(),
       createdAt: new Date().toISOString(),
       likes: [],
-      parentId: replyingTo || undefined
+      parentId: undefined // We'll set this below
     };
     
     const allComments = await getStorageJson('feed/need_comments.json') || [];
+    
+    if (replyingTo) {
+      const parentComment = allComments.find((c: NeedComment) => c.id === replyingTo);
+      comment.parentId = parentComment?.parentId || replyingTo;
+    }
+    
     allComments.push(comment);
     await setStorageJson('feed/need_comments.json', allComments);
     
@@ -599,11 +605,9 @@ export default function ItemRequestsFeed() {
                                   <button onClick={() => handleLikeComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: hasLiked ? 'var(--danger)' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '4px', padding: 0 }}>
                                     <Heart size={14} fill={hasLiked ? 'currentColor' : 'none'} /> {c.likes?.length || 0}
                                   </button>
-                                  {!isReply && (
                                     <button onClick={() => setReplyingTo(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left', marginLeft: '4px' }}>
                                       Reply
                                     </button>
-                                  )}
                                 </div>
                               </div>
                             </div>
