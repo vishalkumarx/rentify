@@ -113,6 +113,7 @@ export default function Profile() {
         aadharUrl: aadData.publicUrl,
         submittedAt: new Date().toISOString(),
         email: session?.user?.email || '',
+        name: profile?.name || session?.user?.user_metadata?.full_name || '',
         department: profile?.department || session?.user?.user_metadata?.department || ''
       };
       

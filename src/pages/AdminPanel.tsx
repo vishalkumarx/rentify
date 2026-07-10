@@ -46,20 +46,30 @@ export default function AdminPanel() {
     const fetchAdminData = async () => {
       // 2. Fetch verifications from JSON
       const verificationsData = await getStorageJson('admin/verifications.json') || {};
-      const parsedUsers = Object.keys(verificationsData).map(userId => {
+      const parsedUsers = await Promise.all(Object.keys(verificationsData).map(async userId => {
         const v = verificationsData[userId];
+        let profileName = '';
+        let profileDept = '';
+        try {
+          const profile = await getStorageJson(`profiles/${userId}.json`);
+          if (profile) {
+            profileName = profile.name;
+            profileDept = profile.department;
+          }
+        } catch (e) {}
+        
         return {
           id: userId,
           email: v.email || '',
-          name: 'User ' + userId.substring(0, 5),
-          department: v.department || '',
+          name: v.name || profileName || 'User ' + userId.substring(0, 5),
+          department: v.department || profileDept || '',
           submittedAt: v.submittedAt || new Date().toISOString(),
           idImageUrl: v.collegeIdUrl, // College ID
           aadharUrl: v.aadharUrl, // Aadhar Card
           status: v.status || 'pending',
           rejectionReason: v.rejectionReason || ''
         };
-      });
+      }));
       setUsers(parsedUsers);
 
       // 3. Fetch Reports
