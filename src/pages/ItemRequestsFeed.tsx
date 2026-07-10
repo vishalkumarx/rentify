@@ -325,7 +325,7 @@ export default function ItemRequestsFeed() {
                         </div>
                       </div>
                       {req.userId === session?.user?.id && (
-                        <div style={{ position: 'relative', marginTop: '-4px', marginRight: '-8px' }}>
+                        <div style={{ position: 'relative', marginTop: '-4px', marginRight: '-8px', zIndex: 20 }}>
                           <button 
                             onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === req.id ? null : req.id); }}
                             style={{ background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)' }}
