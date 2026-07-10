@@ -200,6 +200,11 @@ export default function UserProfile() {
                 <span>{profile.department}</span>
               </div>
             )}
+            {profile?.bio && (
+              <p style={{ marginTop: '12px', fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5, maxWidth: '85%' }}>
+                {profile.bio}
+              </p>
+            )}
           </div>
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>
