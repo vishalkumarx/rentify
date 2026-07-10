@@ -1,6 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect } from 'react';
-import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle, Star, MessageSquare, Megaphone, ShieldAlert, Users, Package, Shield, Settings, Activity, Trash2, Edit2, CheckCircle2, LayoutDashboard, Flag } from 'lucide-react';
+import { Ban, Search, ShieldCheck, AlertTriangle, Users as UsersIcon, CheckCircle, XCircle, Star, MessageSquare, Megaphone } from 'lucide-react';
 import { LoadingDialog } from '../components/LoadingDialog';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

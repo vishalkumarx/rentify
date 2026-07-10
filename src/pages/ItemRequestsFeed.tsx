@@ -146,7 +146,7 @@ export default function ItemRequestsFeed() {
       const hasLiked = likes.includes(userId);
       
       if (hasLiked) {
-        comment.likes = likes.filter(id => id !== userId);
+        comment.likes = likes.filter((id: string) => id !== userId);
       } else {
         comment.likes = [...likes, userId];
       }
@@ -350,6 +350,7 @@ export default function ItemRequestsFeed() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <MessageSquare size={16} /> {req.commentCount || 0}
                         </div>
+                  </div>
                   </div>
                 </div>
                 

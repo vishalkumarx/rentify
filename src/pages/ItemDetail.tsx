@@ -5,7 +5,7 @@ import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
-import { getStorageJson } from '../lib/supabase';
+import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
@@ -61,8 +61,8 @@ export default function ItemDetail() {
       const fetchReviews = async () => {
         const { data: reviewFiles } = await supabase.storage.from('item-images').list('item_reviews');
         if (reviewFiles && reviewFiles.length > 0) {
-          const validFiles = reviewFiles.filter(f => f.name.endsWith('.json'));
-          const reviewPromises = validFiles.map(async (f) => {
+          const validFiles = reviewFiles.filter((f: any) => f.name.endsWith('.json'));
+          const reviewPromises = validFiles.map(async (f: any) => {
             const urlData = supabase.storage.from('item-images').getPublicUrl(`item_reviews/${f.name}`);
             if (urlData.data?.publicUrl) {
               try {
@@ -76,7 +76,7 @@ export default function ItemDetail() {
             return null;
           });
           const resolved = await Promise.all(reviewPromises);
-          setReviews(resolved.filter(r => r != null).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+          setReviews(resolved.filter((r: any) => r != null).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
         }
       };
       fetchReviews();
