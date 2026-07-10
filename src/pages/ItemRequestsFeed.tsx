@@ -245,7 +245,7 @@ export default function ItemRequestsFeed() {
             }}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '10px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px var(--primary-glow)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            <Plus size={18} /> <span className="desktop-only">Post a Need</span>
+            <Plus size={18} /> <span>Post a Need</span>
           </button>
         </div>
 
