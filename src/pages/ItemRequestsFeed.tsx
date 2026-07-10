@@ -592,16 +592,16 @@ export default function ItemRequestsFeed() {
                           <div key={c.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginLeft: isReply ? '32px' : '0', borderLeft: isReply ? '2px solid var(--surface-border)' : 'none', paddingLeft: isReply ? '16px' : '0' }}>
                             <div style={{ display: 'flex', gap: '12px' }}>
                               {c.profilePic ? (
-                                <img src={c.profilePic} alt="" style={{ width: '32px', height: '32px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0 }} />
+                                <img src={c.profilePic} alt="" onClick={(e) => { e.stopPropagation(); navigate(`/profile/${c.userId}`); }} style={{ width: '32px', height: '32px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} />
                               ) : (
-                                <div style={{ width: '32px', height: '32px', borderRadius: '16px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', flexShrink: 0 }}>
+                                <div onClick={(e) => { e.stopPropagation(); navigate(`/profile/${c.userId}`); }} style={{ width: '32px', height: '32px', borderRadius: '16px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', flexShrink: 0, cursor: 'pointer' }}>
                                   {c.name.charAt(0)}
                                 </div>
                               )}
                               <div style={{ flex: 1 }}>
                                 <div style={{ background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px' }}>
                                     <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
-                                      <strong style={{ fontSize: '13px', color: 'var(--text-main)' }}>{c.name}</strong>
+                                      <strong onClick={(e) => { e.stopPropagation(); navigate(`/profile/${c.userId}`); }} style={{ fontSize: '13px', color: 'var(--text-main)', cursor: 'pointer' }}>{c.name}</strong>
                                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
                                     </div>
                                   <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
