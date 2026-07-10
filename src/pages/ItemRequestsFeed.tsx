@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon, Eye, MessageSquare, Send } from 'lucide-react';
+import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon, Eye, MessageSquare, Send, Heart } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { LoadingDialog } from '../components/LoadingDialog';
@@ -23,6 +23,7 @@ interface ItemRequest {
   imageUrl?: string;
   suspended?: boolean;
   views?: number;
+  commentCount?: number;
 }
 
 interface NeedComment {
@@ -33,6 +34,8 @@ interface NeedComment {
   profilePic?: string;
   text: string;
   createdAt: string;
+  likes?: string[];
+  parentId?: string;
 }
 
 export default function ItemRequestsFeed() {
@@ -53,6 +56,7 @@ export default function ItemRequestsFeed() {
   const [selectedNeed, setSelectedNeed] = useState<ItemRequest | null>(null);
   const [needComments, setNeedComments] = useState<NeedComment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
   useEffect(() => {
@@ -70,8 +74,15 @@ export default function ItemRequestsFeed() {
   const fetchRequests = async () => {
     setLoading(true);
     const data = await getStorageJson('feed/item_requests.json') || [];
-    // Sort by newest first
-    setRequests(data.sort((a: ItemRequest, b: ItemRequest) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+    const allComments = await getStorageJson('feed/need_comments.json') || [];
+    
+    // Sort by newest first and attach comment counts
+    const enrichedData = data.map((req: ItemRequest) => ({
+      ...req,
+      commentCount: allComments.filter((c: NeedComment) => c.needId === req.id).length
+    })).sort((a: ItemRequest, b: ItemRequest) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    
+    setRequests(enrichedData);
     setLoading(false);
   };
 
@@ -106,7 +117,9 @@ export default function ItemRequestsFeed() {
       name: profile?.name || session.user.user_metadata?.full_name || 'User',
       profilePic: profile?.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
       text: newComment.trim(),
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      likes: [],
+      parentId: replyingTo || undefined
     };
     
     const allComments = await getStorageJson('feed/need_comments.json') || [];
@@ -114,8 +127,33 @@ export default function ItemRequestsFeed() {
     await setStorageJson('feed/need_comments.json', allComments);
     
     setNeedComments(prev => [...prev, comment]);
+    setRequests(prev => prev.map(r => r.id === selectedNeed.id ? { ...r, commentCount: (r.commentCount || 0) + 1 } : r));
     setNewComment('');
+    setReplyingTo(null);
     setIsSubmittingComment(false);
+  };
+
+  const handleLikeComment = async (commentId: string) => {
+    if (!session) return;
+    
+    const userId = session.user.id;
+    const allComments = await getStorageJson('feed/need_comments.json') || [];
+    const commentIndex = allComments.findIndex((c: NeedComment) => c.id === commentId);
+    
+    if (commentIndex > -1) {
+      const comment = allComments[commentIndex];
+      const likes = comment.likes || [];
+      const hasLiked = likes.includes(userId);
+      
+      if (hasLiked) {
+        comment.likes = likes.filter(id => id !== userId);
+      } else {
+        comment.likes = [...likes, userId];
+      }
+      
+      await setStorageJson('feed/need_comments.json', allComments);
+      setNeedComments(prev => prev.map(c => c.id === commentId ? { ...c, likes: comment.likes } : c));
+    }
   };
 
   const handleSubmit = async () => {
@@ -306,8 +344,12 @@ export default function ItemRequestsFeed() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, marginTop: '2px' }}>
                       <span style={{ color: 'var(--primary)' }}>{timeAgo(req.createdAt)}</span>
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Eye size={14} /> {req.views || 0}</span>
-                    </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Eye size={16} /> {req.views || 0}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <MessageSquare size={16} /> {req.commentCount || 0}
+                        </div>
                   </div>
                 </div>
                 
@@ -473,10 +515,10 @@ export default function ItemRequestsFeed() {
       {selectedNeed && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'flex-end' }} onClick={() => setSelectedNeed(null)}>
           <div className="animate-slide-up" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', height: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg)' }}>
+            <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--surface)', position: 'relative' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Need Details</h3>
-              <button onClick={() => setSelectedNeed(null)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex' }}>
-                <X size={24} />
+              <button onClick={() => setSelectedNeed(null)} style={{ position: 'absolute', right: '16px', top: '16px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '8px', borderRadius: '20px', display: 'flex' }}>
+                <X size={20} />
               </button>
             </div>
             
@@ -523,52 +565,88 @@ export default function ItemRequestsFeed() {
 
               <div>
                 <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 800 }}>Comments</h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {needComments.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '24px', background: 'var(--bg)', borderRadius: '16px', color: 'var(--text-muted)', fontSize: '14px' }}>
                       No comments yet. Be the first to comment!
                     </div>
                   ) : (
-                    needComments.map(comment => (
-                      <div key={comment.id} style={{ display: 'flex', gap: '12px' }}>
-                        {comment.profilePic ? (
-                          <img src={comment.profilePic} alt="" style={{ width: '36px', height: '36px', borderRadius: '18px', objectFit: 'cover', flexShrink: 0 }} />
-                        ) : (
-                          <div style={{ width: '36px', height: '36px', borderRadius: '18px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '14px', flexShrink: 0 }}>
-                            {comment.name.charAt(0)}
+                    needComments.filter(c => !c.parentId).map(comment => {
+                      const renderComment = (c: NeedComment, isReply = false) => {
+                        const hasLiked = c.likes?.includes(session?.user?.id || '');
+                        const replies = needComments.filter(r => r.parentId === c.id);
+                        
+                        return (
+                          <div key={c.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginLeft: isReply ? '32px' : '0', borderLeft: isReply ? '2px solid var(--surface-border)' : 'none', paddingLeft: isReply ? '16px' : '0' }}>
+                            <div style={{ display: 'flex', gap: '12px' }}>
+                              {c.profilePic ? (
+                                <img src={c.profilePic} alt="" style={{ width: '32px', height: '32px', borderRadius: '16px', objectFit: 'cover', flexShrink: 0 }} />
+                              ) : (
+                                <div style={{ width: '32px', height: '32px', borderRadius: '16px', background: 'var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '13px', flexShrink: 0 }}>
+                                  {c.name.charAt(0)}
+                                </div>
+                              )}
+                              <div style={{ flex: 1 }}>
+                                <div style={{ background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px' }}>
+                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                                    <strong style={{ fontSize: '13px', color: 'var(--text-main)' }}>{c.name}</strong>
+                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
+                                  </div>
+                                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', marginLeft: '8px' }}>
+                                  <button onClick={() => handleLikeComment(c.id)} style={{ background: 'none', border: 'none', color: hasLiked ? 'var(--danger)' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}>
+                                    <Heart size={14} fill={hasLiked ? 'currentColor' : 'none'} /> {c.likes?.length || 0}
+                                  </button>
+                                  {!isReply && (
+                                    <button onClick={() => setReplyingTo(c.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                                      Reply
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            
+                            {replies.length > 0 && (
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                                {replies.map(r => renderComment(r, true))}
+                              </div>
+                            )}
                           </div>
-                        )}
-                        <div style={{ flex: 1, background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                            <strong style={{ fontSize: '14px', color: 'var(--text-main)' }}>{comment.name}</strong>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(comment.createdAt)}</span>
-                          </div>
-                          <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{comment.text}</p>
-                        </div>
-                      </div>
-                    ))
+                        );
+                      };
+                      return renderComment(comment);
+                    })
                   )}
                 </div>
               </div>
             </div>
             
-            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--surface-border)', background: 'var(--surface)', display: 'flex', gap: '12px', alignItems: 'center', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
-              <input 
-                type="text" 
-                placeholder={session ? "Write a comment..." : "Login to comment"}
-                disabled={!session || isSubmittingComment}
-                value={newComment}
-                onChange={e => setNewComment(e.target.value)}
-                onKeyDown={e => { if (e.key === 'Enter') handleAddComment(); }}
-                style={{ flex: 1, padding: '14px 20px', borderRadius: '24px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }}
-              />
-              <button 
-                onClick={handleAddComment}
-                disabled={!session || !newComment.trim() || isSubmittingComment}
-                style={{ width: '48px', height: '48px', borderRadius: '24px', background: newComment.trim() ? 'var(--primary)' : 'var(--surface-border)', color: newComment.trim() ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newComment.trim() ? 'pointer' : 'default', transition: 'all 0.2s', flexShrink: 0 }}
-              >
-                <Send size={20} style={{ marginLeft: '2px' }} />
-              </button>
+            <div style={{ padding: '16px 20px', borderTop: '1px solid var(--surface-border)', background: 'var(--surface)', display: 'flex', flexDirection: 'column', gap: '8px', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
+              {replyingTo && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', background: 'var(--bg)', borderRadius: '8px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                  <span>Replying to {needComments.find(c => c.id === replyingTo)?.name || 'Comment'}</span>
+                  <button onClick={() => setReplyingTo(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 0, display: 'flex' }}><X size={14} /></button>
+                </div>
+              )}
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <input 
+                  type="text" 
+                  placeholder={session ? (replyingTo ? "Write a reply..." : "Write a comment...") : "Login to comment"}
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  disabled={!session || isSubmittingComment}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddComment(); }}
+                  style={{ flex: 1, padding: '12px 16px', borderRadius: '24px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', outline: 'none' }}
+                />
+                <button 
+                  onClick={handleAddComment}
+                  disabled={!session || !newComment.trim() || isSubmittingComment}
+                  style={{ width: '40px', height: '40px', borderRadius: '20px', background: newComment.trim() ? 'var(--primary)' : 'var(--surface-border)', color: newComment.trim() ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newComment.trim() ? 'pointer' : 'default', flexShrink: 0 }}
+                >
+                  <Send size={18} />
+                </button>
+              </div>
             </div>
           </div>
         </div>,
