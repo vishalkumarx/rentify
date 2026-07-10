@@ -213,8 +213,8 @@ export default function ItemRequestsFeed() {
         </div>
       </header>
 
-      <div style={{ background: 'rgba(244, 196, 48, 0.1)', color: 'var(--text-main)', padding: '12px 20px', fontSize: '13px', fontWeight: 600, textAlign: 'center', display: 'flex', alignItems: 'center', justifyItems: 'center', gap: '8px', borderBottom: '1px solid var(--surface-border)' }}>
-        <MapPin size={16} color="var(--primary)" style={{ flexShrink: 0 }} /> <span style={{ flex: 1 }}>currently available in <strong>Guru Nanak Dev University, Amritsar</strong> only</span>
+      <div style={{ background: 'var(--success)', color: '#fff', padding: '8px 16px', fontSize: '12px', fontWeight: 600, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '100px', margin: '16px auto 0', width: 'fit-content', boxShadow: '0 4px 12px rgba(34, 197, 94, 0.2)' }}>
+        <MapPin size={14} color="#fff" style={{ flexShrink: 0 }} /> <span>Currently available in <strong>Guru Nanak Dev University, Amritsar</strong> only</span>
       </div>
 
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
@@ -268,7 +268,7 @@ export default function ItemRequestsFeed() {
                 {req.suspended && (
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '24px' }}>
                     <div style={{ background: 'var(--danger)', color: 'white', padding: '12px 24px', borderRadius: '24px', fontWeight: 800, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
-                      Unavailable due to policy violations
+                      This post is unavailable due to policy violations
                     </div>
                   </div>
                 )}
