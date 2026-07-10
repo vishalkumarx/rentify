@@ -58,6 +58,11 @@ export default function ItemRequestsFeed() {
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [expandedThreads, setExpandedThreads] = useState<Record<string, boolean>>({});
+
+  const toggleThread = (id: string) => {
+    setExpandedThreads(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -614,7 +619,10 @@ export default function ItemRequestsFeed() {
                             
                             {replies.length > 0 && (
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
-                                {replies.map(r => renderComment(r, true))}
+                                {expandedThreads[c.id] && replies.map(r => renderComment(r, true))}
+                                <button onClick={() => toggleThread(c.id)} style={{ width: 'auto', alignSelf: 'flex-start', background: 'none', border: 'none', color: 'var(--primary)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: '0', marginLeft: isReply ? '32px' : '48px' }}>
+                                  {expandedThreads[c.id] ? 'View less comments' : `View all comments (${replies.length})`}
+                                </button>
                               </div>
                             )}
                           </div>
