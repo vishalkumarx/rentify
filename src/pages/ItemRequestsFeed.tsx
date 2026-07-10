@@ -589,10 +589,10 @@ export default function ItemRequestsFeed() {
                               )}
                               <div style={{ flex: 1 }}>
                                 <div style={{ background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px' }}>
-                                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                                    <strong style={{ fontSize: '13px', color: 'var(--text-main)' }}>{c.name}</strong>
-                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
-                                  </div>
+                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
+                                      <strong style={{ fontSize: '13px', color: 'var(--text-main)' }}>{c.name}</strong>
+                                      <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
+                                    </div>
                                   <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', marginLeft: '8px' }}>
