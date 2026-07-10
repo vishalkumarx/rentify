@@ -282,7 +282,7 @@ export default function MobileLayout() {
                 onClick={() => { setShowPostOptions(false); navigate('/item-requests'); }} 
                 style={{ padding: '16px', borderRadius: '20px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '16px' }}
               >
-                <Megaphone size={20} /> Request a Need
+                <Megaphone size={20} /> Post a Need
               </button>
               <button onClick={() => setShowPostOptions(false)} style={{ padding: '16px', borderRadius: '20px', border: 'none', background: 'transparent', color: 'var(--text-muted)', fontWeight: 700, cursor: 'pointer', marginTop: '4px', fontSize: '15px' }}>Cancel</button>
             </div>

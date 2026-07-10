@@ -31,15 +31,7 @@ const ZoomableImage = ({ img, i }: { img: string, i: number }) => {
   );
 };
 
-const DUMMY_REVIEWS = [
-  { id: 1, initial: 'A', name: 'Alex M.', date: '2 weeks ago', rating: 5, text: 'Item was in perfect condition! Exactly what I needed for my weekend trip. The host was very responsive and accommodating with pickup times. Highly recommend!' },
-  { id: 2, initial: 'S', name: 'Sarah J.', date: '1 month ago', rating: 4, text: 'Great quality, but pickup was a bit far from my dorm. Overall good experience though.' },
-  { id: 3, initial: 'D', name: 'David L.', date: '2 months ago', rating: 5, text: 'Super smooth rental. Saved me a lot of money instead of buying one new!' },
-  { id: 4, initial: 'M', name: 'Michael T.', date: '3 months ago', rating: 5, text: 'Fantastic experience. The equipment was fully charged and ready to go.' },
-  { id: 5, initial: 'E', name: 'Emma R.', date: '4 months ago', rating: 4, text: 'Very useful for my class project. Handover was quick.' },
-  { id: 6, initial: 'J', name: 'James K.', date: '5 months ago', rating: 5, text: 'Exactly as described. Would definitely rent again!' },
-  { id: 7, initial: 'L', name: 'Lisa P.', date: '6 months ago', rating: 4, text: 'Good item, reasonable price. No issues at all.' }
-];
+// Reviews are fetched dynamically now
 
 export default function ItemDetail() {
   const { id } = useParams();
@@ -59,6 +51,59 @@ export default function ItemDetail() {
   
   const [displayReviewsCount, setDisplayReviewsCount] = useState(5);
   const [mobileTab, setMobileTab] = useState<'details' | 'reviews'>('details');
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [newReviewText, setNewReviewText] = useState('');
+  const [newReviewRating, setNewReviewRating] = useState(5);
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      const fetchReviews = async () => {
+        const { data: reviewFiles } = await supabase.storage.from('item-images').list('item_reviews');
+        if (reviewFiles && reviewFiles.length > 0) {
+          const validFiles = reviewFiles.filter(f => f.name.endsWith('.json'));
+          const reviewPromises = validFiles.map(async (f) => {
+            const urlData = supabase.storage.from('item-images').getPublicUrl(`item_reviews/${f.name}`);
+            if (urlData.data?.publicUrl) {
+              try {
+                const res = await fetch(`${urlData.data.publicUrl}?t=${Date.now()}`);
+                if (res.ok) {
+                  const data = await res.json();
+                  if (data.itemId === item.id.toString() || data.itemId === item.id) return data;
+                }
+              } catch (e) {}
+            }
+            return null;
+          });
+          const resolved = await Promise.all(reviewPromises);
+          setReviews(resolved.filter(r => r != null).sort((a,b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+        }
+      };
+      fetchReviews();
+    }
+  }, [item]);
+
+  const handleSubmitReview = async () => {
+    if (!session || !newReviewText.trim()) return;
+    setIsSubmittingReview(true);
+    const reviewId = Date.now().toString();
+    const reviewData = {
+      id: reviewId,
+      itemId: item?.id,
+      userId: session.user.id,
+      name: session.user.user_metadata?.full_name || 'User',
+      initial: (session.user.user_metadata?.full_name || 'U').charAt(0),
+      profilePic: session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
+      rating: newReviewRating,
+      text: newReviewText,
+      createdAt: new Date().toISOString()
+    };
+    await setStorageJson(`item_reviews/${reviewId}.json`, reviewData);
+    setReviews(prev => [reviewData, ...prev]);
+    setNewReviewText('');
+    setIsSubmittingReview(false);
+    toast.success('Review added successfully!');
+  };
 
   useEffect(() => {
     if (zoomImageIndex !== null && isInitialModalRender.current && modalScrollRef.current) {
@@ -273,40 +318,84 @@ export default function ItemDetail() {
             
             <div className="mobile-tabs-container">
               <button className={`mobile-tab-btn ${mobileTab === 'details' ? 'active' : ''}`} onClick={() => setMobileTab('details')}>Details</button>
-              <button className={`mobile-tab-btn ${mobileTab === 'reviews' ? 'active' : ''}`} onClick={() => setMobileTab('reviews')}>Reviews ({DUMMY_REVIEWS.length})</button>
+              <button className={`mobile-tab-btn ${mobileTab === 'reviews' ? 'active' : ''}`} onClick={() => setMobileTab('reviews')}>Reviews ({reviews.length})</button>
             </div>
 
-            {/* Dummy Reviews Section */}
+            {/* Reviews Section */}
             <div className={`mobile-tab-content-reviews ${mobileTab !== 'reviews' ? 'hidden' : ''}`} style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({DUMMY_REVIEWS.length})</h3>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({reviews.length})</h3>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {DUMMY_REVIEWS.slice(0, displayReviewsCount).map((review, index) => (
-                  <div key={review.id} style={{ paddingBottom: '20px', borderBottom: index < Math.min(DUMMY_REVIEWS.length, displayReviewsCount) - 1 ? '1px solid var(--surface-border)' : 'none' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
-                          {review.initial}
-                        </div>
-                        <div>
-                          <div style={{ fontWeight: 600, fontSize: '15px' }}>{review.name}</div>
-                          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{review.date}</div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star key={star} size={14} fill={star <= review.rating ? "var(--warning)" : "transparent"} color={star <= review.rating ? "var(--warning)" : "var(--surface-border)"} />
-                        ))}
-                      </div>
-                    </div>
-                    <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
-                      {review.text}
-                    </p>
+              {/* Write Review Form */}
+              {session && !isOwner && (
+                <div style={{ marginBottom: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                  <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 700 }}>Write a Review</h4>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star 
+                        key={star} 
+                        size={20} 
+                        fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
+                        color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setNewReviewRating(star)}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                  <textarea 
+                    value={newReviewText}
+                    onChange={e => setNewReviewText(e.target.value)}
+                    placeholder="Share your experience..."
+                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
+                  />
+                  <button 
+                    onClick={handleSubmitReview}
+                    disabled={isSubmittingReview || !newReviewText.trim()}
+                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
+                  >
+                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </div>
+              )}
+
+              {reviews.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
+                  No reviews yet. Be the first to review!
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {reviews.slice(0, displayReviewsCount).map((review, index) => (
+                    <div key={review.id} style={{ paddingBottom: '20px', borderBottom: index < Math.min(reviews.length, displayReviewsCount) - 1 ? '1px solid var(--surface-border)' : 'none' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {review.profilePic ? (
+                            <img src={review.profilePic} alt="" style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover' }} />
+                          ) : (
+                            <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+                              {review.initial}
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '15px' }}>{review.name}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              {format(new Date(review.createdAt), 'MMM d, yyyy')}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} size={14} fill={star <= review.rating ? "var(--warning)" : "transparent"} color={star <= review.rating ? "var(--warning)" : "var(--surface-border)"} />
+                          ))}
+                        </div>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+                        {review.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
               
-              {displayReviewsCount < DUMMY_REVIEWS.length && (
+              {displayReviewsCount < reviews.length && (
                 <button 
                   onClick={() => setDisplayReviewsCount(prev => prev + 5)}
                   style={{ width: '100%', marginTop: '16px', padding: '14px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}

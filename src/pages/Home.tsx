@@ -489,7 +489,7 @@ export default function Home() {
           >
             <div>
               <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: 900, color: '#000' }}>Can't find what you need?</h3>
-              <p style={{ margin: 0, fontSize: '14px', color: 'rgba(0,0,0,0.7)', fontWeight: 600 }}>Request an item from the community feed!</p>
+              <p style={{ margin: 0, fontSize: '14px', color: 'rgba(0,0,0,0.7)', fontWeight: 600 }}>Post a need to the community feed!</p>
             </div>
             <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: '#000', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <ChevronRight size={20} />
