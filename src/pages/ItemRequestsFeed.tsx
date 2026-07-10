@@ -595,12 +595,12 @@ export default function ItemRequestsFeed() {
                                     </div>
                                   <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '6px', marginLeft: '8px' }}>
-                                  <button onClick={() => handleLikeComment(c.id)} style={{ background: 'none', border: 'none', color: hasLiked ? 'var(--danger)' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '16px', marginTop: '6px', marginLeft: '8px' }}>
+                                  <button onClick={() => handleLikeComment(c.id)} style={{ background: 'none', border: 'none', color: hasLiked ? 'var(--danger)' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '4px', padding: 0 }}>
                                     <Heart size={14} fill={hasLiked ? 'currentColor' : 'none'} /> {c.likes?.length || 0}
                                   </button>
                                   {!isReply && (
-                                    <button onClick={() => setReplyingTo(c.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0 }}>
+                                    <button onClick={() => setReplyingTo(c.id)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left' }}>
                                       Reply
                                     </button>
                                   )}
