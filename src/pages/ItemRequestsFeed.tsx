@@ -58,6 +58,7 @@ export default function ItemRequestsFeed() {
   const [newComment, setNewComment] = useState('');
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [loadingComments, setLoadingComments] = useState(false);
   const [expandedThreads, setExpandedThreads] = useState<Record<string, boolean>>({});
   const [visibleCount, setVisibleCount] = useState(10);
 
@@ -103,6 +104,7 @@ export default function ItemRequestsFeed() {
   };
 
   const handleViewNeed = async (req: ItemRequest) => {
+    setLoadingComments(true);
     setSelectedNeed(req);
     
     if (req.userId !== session?.user?.id) {
@@ -120,6 +122,7 @@ export default function ItemRequestsFeed() {
     
     const allComments = await getStorageJson('feed/need_comments.json') || [];
     setNeedComments(allComments.filter((c: NeedComment) => c.needId === req.id).sort((a: NeedComment, b: NeedComment) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+    setLoadingComments(false);
   };
   
   const handleAddComment = async () => {
@@ -560,7 +563,12 @@ export default function ItemRequestsFeed() {
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {needComments.length === 0 ? (
+                  {loadingComments ? (
+                    <div style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-muted)', fontSize: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '32px', height: '32px', border: '3px solid var(--surface-border)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                      Loading comments...
+                    </div>
+                  ) : needComments.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '24px', background: 'var(--bg)', borderRadius: '16px', color: 'var(--text-muted)', fontSize: '14px' }}>
                       No comments yet. Be the first to comment!
                     </div>
