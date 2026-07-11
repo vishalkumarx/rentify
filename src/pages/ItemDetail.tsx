@@ -6,7 +6,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, MapPin, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2 } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -352,38 +352,6 @@ export default function ItemDetail() {
             <div className={`mobile-tab-content-reviews ${mobileTab !== 'reviews' ? 'hidden' : ''}`} style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
               <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({reviews.length})</h3>
               
-              {/* Write Review Form */}
-              {session && !isOwner && (
-                <div style={{ marginBottom: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-                  <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 700 }}>Write a Review</h4>
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star 
-                        key={star} 
-                        size={20} 
-                        fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
-                        color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setNewReviewRating(star)}
-                      />
-                    ))}
-                  </div>
-                  <textarea 
-                    value={newReviewText}
-                    onChange={e => setNewReviewText(e.target.value)}
-                    placeholder="Share your experience..."
-                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
-                  />
-                  <button 
-                    onClick={handleSubmitReview}
-                    disabled={isSubmittingReview || !newReviewText.trim()}
-                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
-                  >
-                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-                  </button>
-                </div>
-              )}
-
               {reviews.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
                   No reviews yet. Be the first to review!
@@ -430,6 +398,38 @@ export default function ItemDetail() {
                   Load More Reviews
                 </button>
               )}
+
+              {/* Write Review Form */}
+              {session && !isOwner && (
+                <div style={{ marginTop: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                  <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 700 }}>Write a Review</h4>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star 
+                        key={star} 
+                        size={20} 
+                        fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
+                        color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setNewReviewRating(star)}
+                      />
+                    ))}
+                  </div>
+                  <textarea 
+                    value={newReviewText}
+                    onChange={e => setNewReviewText(e.target.value)}
+                    placeholder="Share your experience..."
+                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
+                  />
+                  <button 
+                    onClick={handleSubmitReview}
+                    disabled={isSubmittingReview || !newReviewText.trim()}
+                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
+                  >
+                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -443,7 +443,7 @@ export default function ItemDetail() {
                 )}
                 <h1 style={{ fontSize: '26px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
               </div>
-              <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--text-main)' }}>₹{item.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
+              <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
             </div>
             
             {/* Item Rating */}
@@ -460,7 +460,7 @@ export default function ItemDetail() {
                 <Tag size={14} /> {item.category}
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <MapPin size={14} /> {item.department || 'Unknown Department'}
+                <Building2 size={14} /> {item.department || 'Unknown Department'}
               </span>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', color: 'var(--success)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
                 <ShieldCheck size={14} /> ₹{item.securityDeposit || '500'} Security Deposit
@@ -576,7 +576,7 @@ export default function ItemDetail() {
                     <span style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
                       ₹{item.price} x {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
                     </span>
-                    <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--text-main)' }}>
+                    <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>
                       ₹{calculateDays() * Number(item.price)}
                     </span>
                   </div>
@@ -834,7 +834,7 @@ export default function ItemDetail() {
           <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
           <div>
             <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>{item.title}</h3>
-            <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--primary)' }}>₹{item.price} / day</p>
+            <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--success)' }}>₹{item.price} / day</p>
           </div>
         </div>
 
@@ -851,7 +851,7 @@ export default function ItemDetail() {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: 700 }}>Total Amount</span>
-            <span style={{ color: 'var(--primary)', fontSize: '24px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
+            <span style={{ color: 'var(--success)', fontSize: '24px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
           </div>
         </div>
 
