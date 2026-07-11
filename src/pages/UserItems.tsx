@@ -59,7 +59,7 @@ export default function UserItems() {
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '16px' }}>No items found for this user.</p>
           </div>
         ) : (
-          <div className="product-grid">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
             {userItems.map(item => (
               <div 
                 key={item.id} 

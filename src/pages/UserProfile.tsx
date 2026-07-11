@@ -152,6 +152,8 @@ export default function UserProfile() {
     setSubmittingReview(false);
   };
 
+  const avgRating = reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1) : 0;
+
   if (loading) {
     return <LoadingDialog message="Loading profile..." />;
   }
@@ -212,23 +214,10 @@ export default function UserProfile() {
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Star size={16} fill="var(--warning)" color="var(--warning)" /> {profile?.rating} 
+              <Star size={16} fill="var(--warning)" color="var(--warning)" /> {avgRating > 0 ? avgRating : '(0)'} 
             </span>
             <span>•</span>
             <span>Joined {profile?.memberSince}</span>
-          </div>
-        </div>
-
-        {/* Verifications */}
-        <div style={{ marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Verifications</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-
-            {profile?.verifications?.map((ver: string, idx: number) => (
-              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', padding: '16px', borderRadius: '16px', color: 'var(--success)', fontWeight: 600 }}>
-                <CheckCircle2 size={20} /> {ver}
-              </div>
-            ))}
           </div>
         </div>
 
@@ -242,8 +231,8 @@ export default function UserProfile() {
                   key={item.id} 
                   onClick={() => navigate(`/item/${item.id}`)}
                   style={{ 
-                    minWidth: '240px',
-                    width: '240px',
+                    minWidth: '160px',
+                    width: '160px',
                     flexShrink: 0,
                     background: 'var(--surface)', 
                     borderRadius: '0', 
@@ -255,7 +244,7 @@ export default function UserProfile() {
                     cursor: 'pointer'
                   }}
                 >
-                  <div style={{ position: 'relative', height: '180px' }}>
+                  <div style={{ position: 'relative', height: '120px' }}>
                     <img 
                       src={item.images && item.images.length > 0 ? item.images[0] : item.image} 
                       alt={item.title} 
