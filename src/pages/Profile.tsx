@@ -56,6 +56,7 @@ export default function Profile() {
   };
   
   useEffect(() => {
+    if (session?.user?.id) {
       getStorageJson(`profiles/${session.user.id}.json`).then(data => {
         if (data) setProfile(data);
       });
