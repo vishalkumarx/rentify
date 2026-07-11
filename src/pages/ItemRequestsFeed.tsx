@@ -664,7 +664,7 @@ export default function ItemRequestsFeed() {
                   disabled={!session || !newComment.trim() || isSubmittingComment}
                   style={{ width: '40px', height: '40px', borderRadius: '20px', background: newComment.trim() ? 'var(--primary)' : 'var(--surface-border)', color: newComment.trim() ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newComment.trim() ? 'pointer' : 'default', flexShrink: 0 }}
                 >
-                  <Send size={22} />
+                  <Send size={24} />
                 </button>
               </div>
             </div>

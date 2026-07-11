@@ -362,10 +362,13 @@ export default function Profile() {
                   <div key={req.id} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', position: 'relative', overflow: 'hidden', opacity: req.suspended ? 0.7 : 1 }}>
                     
                     {req.suspended && (
-                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
                         <div style={{ background: 'var(--danger)', color: 'white', padding: '12px 24px', borderRadius: '24px', fontWeight: 800, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
                           Unavailable due to policy violations
                         </div>
+                        <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); }} style={{ background: 'var(--surface)', color: 'var(--danger)', border: '1px solid var(--danger)', padding: '8px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Trash2 size={16} /> Delete Post
+                        </button>
                       </div>
                     )}
                     
