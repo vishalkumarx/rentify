@@ -7,7 +7,7 @@ import { LoadingDialog } from '../components/LoadingDialog';
 
 import { useFeed } from '../context/FeedContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send, Building, AlignLeft, Mail } from 'lucide-react';
+import { ChevronLeft, Star, AlertTriangle, BadgeCheck, X, Send, Building, AlignLeft, Mail } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
@@ -152,7 +152,7 @@ export default function UserProfile() {
     setSubmittingReview(false);
   };
 
-  const avgRating = reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1) : 0;
+  const avgRating = reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length) : 0;
 
   if (loading) {
     return <LoadingDialog message="Loading profile..." />;
@@ -214,7 +214,7 @@ export default function UserProfile() {
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '8px' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Star size={16} fill="var(--warning)" color="var(--warning)" /> {avgRating > 0 ? avgRating : '(0)'} 
+              <Star size={16} fill="var(--warning)" color="var(--warning)" /> {avgRating > 0 ? avgRating.toFixed(1) : '(0)'} 
             </span>
             <span>•</span>
             <span>Joined {profile?.memberSince}</span>
