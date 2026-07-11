@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon, Eye, MessageSquare, Send, Heart } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
@@ -39,6 +39,7 @@ interface NeedComment {
 }
 
 export default function ItemRequestsFeed() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { session, profile } = useAuth();
   const [requests, setRequests] = useState<ItemRequest[]>([]);
@@ -75,6 +76,16 @@ export default function ItemRequestsFeed() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (requests.length > 0 && location.state?.openNeedId) {
+      const needToOpen = requests.find(r => r.id === location.state.openNeedId);
+      if (needToOpen && !selectedNeed) {
+        handleViewNeed(needToOpen);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [requests, location.state, navigate, selectedNeed]);
 
   useEffect(() => {
     const handleClickOutside = () => {
