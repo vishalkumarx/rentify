@@ -139,9 +139,21 @@ export default function ItemRequestsFeed() {
     
     setNeedComments(prev => [...prev, comment]);
     setRequests(prev => prev.map(r => r.id === selectedNeed.id ? { ...r, commentCount: (r.commentCount || 0) + 1 } : r));
+    setRequests(prev => prev.map(r => r.id === selectedNeed.id ? { ...r, commentCount: (r.commentCount || 0) + 1 } : r));
     setNewComment('');
     setReplyingTo(null);
     setIsSubmittingComment(false);
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    
+    const allComments = await getStorageJson('feed/need_comments.json') || [];
+    const remainingComments = allComments.filter((c: NeedComment) => c.id !== commentId && c.parentId !== commentId);
+    await setStorageJson('feed/need_comments.json', remainingComments);
+    
+    setNeedComments(prev => prev.filter(c => c.id !== commentId && c.parentId !== commentId));
+    setRequests(prev => prev.map(r => r.id === selectedNeed?.id ? { ...r, commentCount: Math.max(0, (r.commentCount || 0) - 1) } : r));
   };
 
   const handleLikeComment = async (commentId: string) => {
@@ -309,7 +321,7 @@ export default function ItemRequestsFeed() {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {requests.map(req => (
-              <div key={req.id} onClick={() => { if (!req.suspended) handleViewNeed(req); }} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', cursor: req.suspended ? 'default' : 'pointer', position: 'relative', userSelect: 'none', opacity: req.suspended ? 0.7 : 1 }}>
+              <div key={req.id} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', position: 'relative', opacity: req.suspended ? 0.7 : 1 }}>
                 
                 {req.suspended && (
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.7)', backdropFilter: 'blur(4px)', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '24px' }}>
@@ -321,16 +333,16 @@ export default function ItemRequestsFeed() {
                 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   {req.profilePic ? (
-                    <img src={req.profilePic} alt={req.name} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0 }} />
+                    <img src={req.profilePic} alt={req.name} onClick={(e) => { e.stopPropagation(); navigate(`/profile/${req.userId}`); }} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} />
                   ) : (
-                    <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', flexShrink: 0 }}>
+                    <div onClick={(e) => { e.stopPropagation(); navigate(`/profile/${req.userId}`); }} style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '16px', textTransform: 'uppercase', flexShrink: 0, cursor: 'pointer' }}>
                       {req.name.charAt(0)}
                     </div>
                   )}
                   <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <div style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.2 }}>{req.name}</div>
+                        <div onClick={(e) => { e.stopPropagation(); navigate(`/profile/${req.userId}`); }} style={{ fontWeight: 700, fontSize: '15px', lineHeight: 1.2, cursor: 'pointer' }}>{req.name}</div>
                         <div style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
                           {req.department} • {req.year}
                         </div>
@@ -358,7 +370,7 @@ export default function ItemRequestsFeed() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Eye size={16} /> {req.views || 0}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <div onClick={(e) => { e.stopPropagation(); if (!req.suspended) handleViewNeed(req); }} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
                           <MessageSquare size={20} /> {req.commentCount || 0}
                         </div>
                   </div>
@@ -390,13 +402,6 @@ export default function ItemRequestsFeed() {
                       </div>
                     )}
                   </div>
-                  {req.commentCount && req.commentCount > 0 ? (
-                    <div style={{ marginTop: '12px' }}>
-                      <button onClick={() => handleViewNeed(req)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500, cursor: 'pointer', padding: 0 }}>
-                        View all {req.commentCount} comments
-                      </button>
-                    </div>
-                  ) : null}
                 </div>
               </div>
             ))}
@@ -535,55 +540,14 @@ export default function ItemRequestsFeed() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'flex-end' }} onClick={() => setSelectedNeed(null)}>
           <div className="animate-slide-up" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', height: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--surface)', position: 'relative' }}>
-              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Need Details</h3>
+              <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Comments</h3>
               <button onClick={() => setSelectedNeed(null)} style={{ position: 'absolute', right: '16px', top: '16px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '8px', borderRadius: '20px', display: 'flex' }}>
                 <X size={20} />
               </button>
             </div>
             
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  {selectedNeed.profilePic ? (
-                    <img src={selectedNeed.profilePic} alt={selectedNeed.name} style={{ width: '48px', height: '48px', borderRadius: '24px', objectFit: 'cover' }} />
-                  ) : (
-                    <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '18px', textTransform: 'uppercase' }}>
-                      {selectedNeed.name.charAt(0)}
-                    </div>
-                  )}
-                  <div>
-                    <div style={{ fontWeight: 800, fontSize: '16px' }}>{selectedNeed.name}</div>
-                    <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>{selectedNeed.department} • {selectedNeed.year}</div>
-                  </div>
-              </div>
-              
               <div>
-                <h2 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>{selectedNeed.title}</h2>
-                {selectedNeed.imageUrl && (
-                  <img src={selectedNeed.imageUrl} alt="Need Attachment" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '16px', border: '1px solid var(--surface-border)' }} />
-                )}
-                <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.6, color: 'var(--text-main)' }}>{selectedNeed.description}</p>
-                
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    <Eye size={16} /> {selectedNeed.views || 0} Views
-                  </span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>
-                    <MessageSquare size={16} /> {needComments.length} Comments
-                  </span>
-                </div>
-              </div>
-              
-              {selectedNeed.userId !== session?.user?.id && (
-                <button 
-                  onClick={() => { setSelectedNeed(null); navigate(`/chat/req-${selectedNeed.id}`); }}
-                  style={{ width: '100%', padding: '16px', borderRadius: '16px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 800, fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                >
-                  Message User Privately
-                </button>
-              )}
-
-              <div>
-                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 800 }}>Comments</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {needComments.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '24px', background: 'var(--bg)', borderRadius: '16px', color: 'var(--text-muted)', fontSize: '14px' }}>
@@ -620,6 +584,11 @@ export default function ItemRequestsFeed() {
                                     <button onClick={() => setReplyingTo(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left', marginLeft: '4px' }}>
                                       Reply
                                     </button>
+                                    {(c.userId === session?.user?.id || selectedNeed?.userId === session?.user?.id) && (
+                                      <button onClick={() => handleDeleteComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <Trash2 size={12} />
+                                      </button>
+                                    )}
                                 </div>
                               </div>
                             </div>
