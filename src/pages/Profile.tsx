@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2 } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -165,6 +165,12 @@ export default function Profile() {
                 <Building2 size={16} color="var(--text-muted)" />
                 {profile?.department || 'Department not set'}
               </div>
+              {profile?.bio && (
+                <div style={{ marginTop: '6px', display: 'flex', alignItems: 'flex-start', gap: '6px', color: 'var(--text-main)', fontSize: '15px' }}>
+                  <AlignLeft size={16} style={{ marginTop: '2px', flexShrink: 0, color: 'var(--text-muted)' }} />
+                  <span style={{ lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{profile.bio}</span>
+                </div>
+              )}
               <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {session?.user?.email}
               </div>
@@ -173,11 +179,6 @@ export default function Profile() {
                 <span style={{ fontSize: '15px', fontWeight: 700 }}>New</span>
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(0 reviews)</span>
               </div>
-              {profile?.bio && (
-                <p style={{ marginTop: '12px', fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
-                  {profile.bio}
-                </p>
-              )}
             </div>
           </div>
           

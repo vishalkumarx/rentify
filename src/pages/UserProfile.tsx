@@ -7,7 +7,7 @@ import { LoadingDialog } from '../components/LoadingDialog';
 
 import { useFeed } from '../context/FeedContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send, Building } from 'lucide-react';
+import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send, Building, AlignLeft } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
@@ -202,9 +202,10 @@ export default function UserProfile() {
               </div>
             )}
             {profile?.bio && (
-              <p style={{ marginTop: '12px', fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5, maxWidth: '85%' }}>
-                {profile.bio}
-              </p>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', color: 'var(--text-main)', fontSize: '15px', marginTop: '12px', maxWidth: '85%', textAlign: 'left' }}>
+                <AlignLeft size={16} style={{ marginTop: '2px', flexShrink: 0, color: 'var(--text-muted)' }} />
+                <span style={{ lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{profile.bio}</span>
+              </div>
             )}
           </div>
           
