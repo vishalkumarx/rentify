@@ -84,12 +84,13 @@ export default function ItemDetail() {
   }, [item]);
 
   const handleSubmitReview = async () => {
-    if (!session || !newReviewText.trim()) return;
+    if (!session || !newReviewText.trim() || !item) return;
     setIsSubmittingReview(true);
-    const reviewId = Date.now().toString();
+    const timestamp = Date.now().toString();
+    const reviewId = `${item.id}-${session.user.id}-${timestamp}`;
     const reviewData = {
       id: reviewId,
-      itemId: item?.id,
+      itemId: item.id,
       userId: session.user.id,
       name: session.user.user_metadata?.full_name || 'User',
       initial: (session.user.user_metadata?.full_name || 'U').charAt(0),
@@ -103,6 +104,32 @@ export default function ItemDetail() {
     setNewReviewText('');
     setIsSubmittingReview(false);
     toast.success('Review added successfully!');
+  };
+
+  const handlePrevImage = () => {
+    if (zoomImageIndex !== null && zoomImageIndex > 0) {
+      const prevIdx = zoomImageIndex - 1;
+      setZoomImageIndex(prevIdx);
+      if (modalScrollRef.current) {
+        modalScrollRef.current.scrollTo({
+          left: prevIdx * window.innerWidth,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
+
+  const handleNextImage = () => {
+    if (zoomImageIndex !== null && zoomImageIndex < allImages.length - 1) {
+      const nextIdx = zoomImageIndex + 1;
+      setZoomImageIndex(nextIdx);
+      if (modalScrollRef.current) {
+        modalScrollRef.current.scrollTo({
+          left: nextIdx * window.innerWidth,
+          behavior: 'smooth'
+        });
+      }
+    }
   };
 
   useEffect(() => {
@@ -647,13 +674,34 @@ export default function ItemDetail() {
             }}
           >
             {allImages.map((img, i) => (
-              <div key={i} style={{ minWidth: '100vw', height: '100%', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div key={i} style={{ minWidth: '100vw', height: '100%', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                 <ZoomableImage img={img} i={i} />
               </div>
             ))}
           </div>
+
+          {/* Left Arrow Button */}
+          {zoomImageIndex > 0 && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+              style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 102 }}
+            >
+              <ChevronLeft size={28} />
+            </button>
+          )}
+
+          {/* Right Arrow Button */}
+          {zoomImageIndex < allImages.length - 1 && (
+            <button 
+              onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+              style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 102 }}
+            >
+              <ChevronRight size={28} />
+            </button>
+          )}
+
           <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px', pointerEvents: 'none' }}>
-            Swipe to change, pinch to zoom
+            Swipe or use buttons to change, pinch to zoom
           </div>
         </div>
       )}
