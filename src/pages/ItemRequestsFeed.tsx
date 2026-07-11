@@ -555,7 +555,7 @@ export default function ItemRequestsFeed() {
           <div className="animate-slide-up" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', height: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--surface)', position: 'relative' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Comments</h3>
-              <button onClick={() => setSelectedNeed(null)} style={{ position: 'absolute', right: '16px', top: '16px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '8px', borderRadius: '20px', display: 'flex' }}>
+              <button onClick={() => setSelectedNeed(null)} style={{ position: 'absolute', right: '16px', top: '16px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '36px', height: '36px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
                 <X size={20} />
               </button>
             </div>
