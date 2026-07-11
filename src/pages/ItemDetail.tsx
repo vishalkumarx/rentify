@@ -439,6 +439,7 @@ export default function ItemDetail() {
                 <ShieldCheck size={14} /> ₹{item.securityDeposit || '500'} Security Deposit
               </span>
             </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
 
             <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>Description</h3>
             <p style={{ color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.6, margin: 0 }}>

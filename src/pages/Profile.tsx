@@ -40,6 +40,7 @@ export default function Profile() {
 
   const [profile, setProfile] = useState<any>(null);
   const [myRequests, setMyRequests] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
 
   const deleteMyRequest = (id: string) => {
     setConfirmDialog({
@@ -55,12 +56,21 @@ export default function Profile() {
   };
   
   useEffect(() => {
-    if (session?.user?.id) {
       getStorageJson(`profiles/${session.user.id}.json`).then(data => {
         if (data) setProfile(data);
       });
       fetchVerificationStatus();
       fetchMyRequests();
+      
+      // Fetch Reviews
+      supabase.storage.from('item-images').list('reviews').then(({ data: reviewFiles }) => {
+        if (reviewFiles) {
+          const targetFiles = reviewFiles.filter(f => f.name.startsWith(session.user.id + '-'));
+          Promise.all(targetFiles.map(f => getStorageJson(`reviews/${f.name}`))).then(loaded => {
+            setReviews(loaded.filter(Boolean));
+          });
+        }
+      });
     }
   }, [session?.user?.id]);
 
@@ -177,7 +187,10 @@ export default function Profile() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(0 reviews)</span>
+                <span style={{ fontSize: '15px', fontWeight: 700 }}>
+                  {reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length).toFixed(1) : '(0)'}
+                </span>
+                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>({reviews.length} reviews)</span>
               </div>
             </div>
           </div>
