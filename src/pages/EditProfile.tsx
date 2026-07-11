@@ -80,7 +80,7 @@ export default function EditProfile() {
   const avatarUrl = profile?.avatar_url || session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture;
 
   return (
-    <div className="animate-slide-in" style={{ paddingBottom: '100px', position: 'relative', background: 'var(--bg)', minHeight: '100vh' }}>
+    <div className="animate-slide-in" style={{ paddingBottom: '100px', position: 'relative', background: 'var(--bg)', minHeight: '100vh', height: '100vh', overflowY: 'auto' }}>
       <header style={{ height: '60px', padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--surface-border)', background: 'var(--surface)', flexShrink: 0, position: 'sticky', top: 0, zIndex: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button onClick={() => navigate(-1)} style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', cursor: 'pointer' }}>

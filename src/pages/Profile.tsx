@@ -177,7 +177,6 @@ export default function Profile() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontSize: '15px', fontWeight: 700 }}>New</span>
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(0 reviews)</span>
               </div>
             </div>
