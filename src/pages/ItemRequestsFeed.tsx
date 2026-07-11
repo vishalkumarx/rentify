@@ -381,13 +381,7 @@ export default function ItemRequestsFeed() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600, marginTop: '2px' }}>
                       <span style={{ color: 'var(--primary)' }}>{timeAgo(req.createdAt)}</span>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <Eye size={16} /> {req.views || 0}
-                        </div>
-                        <div onClick={(e) => { e.stopPropagation(); if (!req.suspended) handleViewNeed(req); }} style={{ display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
-                          <MessageSquare size={20} /> {req.commentCount || 0}
-                        </div>
-                  </div>
+                    </div>
                   </div>
                 </div>
                 
@@ -415,6 +409,14 @@ export default function ItemRequestsFeed() {
                         <Calendar size={14} color="var(--primary)" /> Need by: {req.dateRequired}
                       </div>
                     )}
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--surface-border)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                      <Eye size={16} /> {req.views || 0} Views
+                    </div>
+                    <div onClick={(e) => { e.stopPropagation(); if (!req.suspended) handleViewNeed(req); }} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600, cursor: 'pointer' }}>
+                      <MessageSquare size={16} /> {req.commentCount || 0} Comments
+                    </div>
                   </div>
                 </div>
               </div>
