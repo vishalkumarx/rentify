@@ -390,6 +390,13 @@ export default function ItemRequestsFeed() {
                       </div>
                     )}
                   </div>
+                  {req.commentCount && req.commentCount > 0 ? (
+                    <div style={{ marginTop: '12px' }}>
+                      <button onClick={() => handleViewNeed(req)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500, cursor: 'pointer', padding: 0 }}>
+                        View all {req.commentCount} comments
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             ))}
@@ -621,7 +628,7 @@ export default function ItemRequestsFeed() {
                               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
                                 {expandedThreads[c.id] && replies.map(r => renderComment(r, true))}
                                 <button onClick={() => toggleThread(c.id)} style={{ width: 'auto', alignSelf: 'flex-start', background: 'none', border: 'none', color: 'var(--primary)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: '0', marginLeft: isReply ? '32px' : '48px' }}>
-                                  {expandedThreads[c.id] ? 'View less comments' : `View all comments (${replies.length})`}
+                                  {expandedThreads[c.id] ? 'View less replies' : `View all replies (${replies.length})`}
                                 </button>
                               </div>
                             )}
