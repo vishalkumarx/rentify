@@ -173,6 +173,11 @@ export default function Profile() {
                 <span style={{ fontSize: '15px', fontWeight: 700 }}>New</span>
                 <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>(0 reviews)</span>
               </div>
+              {profile?.bio && (
+                <p style={{ marginTop: '12px', fontSize: '15px', color: 'var(--text-main)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                  {profile.bio}
+                </p>
+              )}
             </div>
           </div>
           
