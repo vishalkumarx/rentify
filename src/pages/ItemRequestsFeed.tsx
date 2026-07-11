@@ -88,6 +88,18 @@ export default function ItemRequestsFeed() {
   }, [requests, location.state, navigate, selectedNeed]);
 
   useEffect(() => {
+    if (location.state?.openNeedModal) {
+      if (!session) {
+        toast.error('Please log in to post a request');
+        navigate('/login', { state: { returnTo: '/item-requests' } });
+      } else {
+        setShowModal(true);
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    }
+  }, [location.state, session, navigate]);
+
+  useEffect(() => {
     const handleClickOutside = () => {
       setOpenMenuId(null);
     };
@@ -331,7 +343,7 @@ export default function ItemRequestsFeed() {
             }}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '10px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px var(--primary-glow)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            <Plus size={18} /> <span>Post a Need</span>
+            <Plus size={18} /> <span>Request a Need</span>
           </button>
         </div>
 
@@ -565,7 +577,7 @@ export default function ItemRequestsFeed() {
       {/* Need View Dialog */}
       {selectedNeed && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'flex-end' }} onClick={() => setSelectedNeed(null)}>
-          <div className="animate-slide-up" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', height: '90vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div className="animate-slide-up" onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: '800px', margin: '0 auto', background: 'var(--surface)', borderTopLeftRadius: '32px', borderTopRightRadius: '32px', height: '66vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border)', display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'var(--surface)', position: 'relative' }}>
               <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800 }}>Comments</h3>
               <button onClick={() => setSelectedNeed(null)} style={{ position: 'absolute', right: '16px', top: '16px', background: 'var(--surface-border)', border: 'none', color: 'var(--text-main)', cursor: 'pointer', width: '36px', height: '36px', borderRadius: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>

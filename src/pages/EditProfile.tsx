@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { ChevronLeft, User, BookOpen, Save, AlignLeft } from 'lucide-react';
 import { DEPARTMENTS } from '../lib/constants';
 import toast from 'react-hot-toast';
+import { getStorageJson, setStorageJson } from '../lib/supabase';
 
 export default function EditProfile() {
   const navigate = useNavigate();
@@ -36,6 +37,36 @@ export default function EditProfile() {
         department,
         bio
       });
+      
+      // Update department in already posted needs and items
+      if (session?.user?.id) {
+        const userId = session.user.id;
+        
+        // Update Needs
+        const requests = await getStorageJson('feed/requests.json') || [];
+        let requestsChanged = false;
+        const updatedRequests = requests.map((req: any) => {
+          if (req.userId === userId) {
+            requestsChanged = true;
+            return { ...req, department };
+          }
+          return req;
+        });
+        if (requestsChanged) await setStorageJson('feed/requests.json', updatedRequests);
+
+        // Update Items
+        const items = await getStorageJson('feed/items.json') || [];
+        let itemsChanged = false;
+        const updatedItems = items.map((item: any) => {
+          if (item.userId === userId) {
+            itemsChanged = true;
+            return { ...item, department };
+          }
+          return item;
+        });
+        if (itemsChanged) await setStorageJson('feed/items.json', updatedItems);
+      }
+
       toast.success('Profile updated successfully!');
       navigate('/profile');
     } catch (error) {
