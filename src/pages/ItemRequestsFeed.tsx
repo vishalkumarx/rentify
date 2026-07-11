@@ -59,10 +59,21 @@ export default function ItemRequestsFeed() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [expandedThreads, setExpandedThreads] = useState<Record<string, boolean>>({});
+  const [visibleCount, setVisibleCount] = useState(10);
 
   const toggleThread = (id: string) => {
     setExpandedThreads(prev => ({ ...prev, [id]: !prev[id] }));
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + document.documentElement.scrollTop >= document.documentElement.offsetHeight - 100) {
+        setVisibleCount(prev => prev + 10);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -320,7 +331,7 @@ export default function ItemRequestsFeed() {
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {requests.map(req => (
+            {requests.slice(0, visibleCount).map(req => (
               <div key={req.id} className="glass-panel" style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', border: '1px solid var(--surface-border)', position: 'relative', opacity: req.suspended ? 0.7 : 1 }}>
                 
                 {req.suspended && (
@@ -585,7 +596,7 @@ export default function ItemRequestsFeed() {
                                       Reply
                                     </button>
                                     {(c.userId === session?.user?.id || selectedNeed?.userId === session?.user?.id) && (
-                                      <button onClick={() => handleDeleteComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                      <button onClick={() => handleDeleteComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, marginLeft: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                         <Trash2 size={12} />
                                       </button>
                                     )}
