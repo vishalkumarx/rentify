@@ -7,7 +7,7 @@ import { LoadingDialog } from '../components/LoadingDialog';
 
 import { useFeed } from '../context/FeedContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send, Building, AlignLeft } from 'lucide-react';
+import { ChevronLeft, Star,CheckCircle2, AlertTriangle, BadgeCheck, X, Send, Building, AlignLeft, Mail } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
@@ -191,9 +191,10 @@ export default function UserProfile() {
               )}
             </h2>
             {session?.user?.id === id && session?.user?.email && (
-              <p title={session.user.email} style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', maxWidth: '100%', padding: '0 24px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div title={session.user.email} style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', maxWidth: '100%', padding: '0 24px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+                <Mail size={16} />
                 {session.user.email}
-              </p>
+              </div>
             )}
             {profile?.department && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '4px' }}>

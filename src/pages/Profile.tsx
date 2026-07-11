@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft, Mail } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -171,7 +171,8 @@ export default function Profile() {
                   <span style={{ lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{profile.bio}</span>
                 </div>
               )}
-              <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Mail size={16} />
                 {session?.user?.email}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>

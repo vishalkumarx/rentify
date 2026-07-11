@@ -300,8 +300,8 @@ export default function ItemRequestsFeed() {
         </div>
       </header>
 
-      <div style={{ background: 'none', color: 'var(--success)', padding: '8px 16px', fontSize: '12px', fontWeight: 600, textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', margin: '16px auto 0', width: 'fit-content' }}>
-        <MapPin size={14} color="var(--success)" style={{ flexShrink: 0 }} /> <span>Currently available in <strong>Guru Nanak Dev University, Amritsar</strong> only</span>
+      <div style={{ background: 'var(--surface)', padding: '10px 16px', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '13px', border: '1px solid var(--surface-border)', color: 'var(--text-main)', margin: '16px auto 0', width: 'fit-content' }}>
+        <MapPin size={16} color="var(--success)" style={{ flexShrink: 0 }} /> <span style={{ fontWeight: 600 }}>Guru Nanak Dev University, Amritsar</span>
       </div>
 
       <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxWidth: '800px', margin: '0 auto', width: '100%' }}>
