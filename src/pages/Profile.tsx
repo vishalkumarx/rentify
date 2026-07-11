@@ -372,8 +372,8 @@ export default function Profile() {
                         <div style={{ background: 'var(--danger)', color: 'white', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
                           Unavailable due to policy violations
                         </div>
-                        <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); }} style={{ background: 'var(--surface)', color: 'var(--danger)', border: '1px solid var(--danger)', padding: '8px 16px', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <Trash2 size={16} /> Delete Post
+                        <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); }} style={{ background: 'var(--surface)', color: 'var(--danger)', border: '1px solid var(--danger)', padding: '6px 12px', borderRadius: '16px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Trash2 size={14} /> Delete Post
                         </button>
                       </div>
                     )}
