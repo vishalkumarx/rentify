@@ -348,7 +348,21 @@ export default function ItemRequestsFeed() {
         </div>
 
         {loading ? (
-          <LoadingDialog message="Loading Community Feed..." />
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 20px', gap: '16px' }}>
+            <div style={{
+              width: '36px', height: '36px',
+              borderRadius: '50%',
+              border: '3px solid var(--surface-border)',
+              borderTopColor: 'var(--primary)',
+              animation: 'spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite'
+            }} />
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600 }}>Loading Community Feed...</span>
+            <style>{`
+              @keyframes spin {
+                to { transform: rotate(360deg); }
+              }
+            `}</style>
+          </div>
         ) : requests.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
             <Megaphone size={40} color="var(--primary)" style={{ opacity: 0.5, marginBottom: '16px' }} />
