@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
-import { MessageCircle, Check, X } from 'lucide-react';
+import { MessageCircle, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 export default function Messages() {
@@ -153,51 +153,7 @@ export default function Messages() {
       )}
 
     
-      {/* Select mode floating action bar */}
-      {isSelectMode && (
-        <div style={{
-          position: 'fixed',
-          bottom: '80px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'calc(100% - 48px)',
-          maxWidth: '400px',
-          background: 'var(--surface)',
-          border: '1px solid var(--surface-border)',
-          borderRadius: '16px',
-          padding: '12px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-          zIndex: 100
-        }}>
-          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-            {selectedConvIds.size} selected
-          </span>
-          <button
-            onClick={() => setShowDeleteConfirm(true)}
-            disabled={selectedConvIds.size === 0}
-            style={{
-              padding: '10px 24px',
-              borderRadius: '12px',
-              border: 'none',
-              background: selectedConvIds.size === 0 ? 'var(--surface-border)' : 'var(--danger)',
-              color: selectedConvIds.size === 0 ? 'var(--text-muted)' : '#fff',
-              fontSize: '14px',
-              fontWeight: 700,
-              cursor: selectedConvIds.size === 0 ? 'not-allowed' : 'pointer',
-              transition: 'all 0.2s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <X size={16} />
-            Delete {selectedConvIds.size > 0 ? `(${selectedConvIds.size})` : ''}
-          </button>
-        </div>
-      )}
+
       
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
