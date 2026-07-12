@@ -41,12 +41,21 @@ export default function Messages() {
         <h1 style={{ fontSize: '28px', margin: 0 }}>Messages</h1>
         {conversations.length > 0 && (
           isSelectMode ? (
-            <button
-              onClick={exitSelectMode}
-              style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
-            >
-              Cancel
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={handleDeleteSelected}
+                disabled={selectedConvIds.size === 0}
+                style={{ padding: '6px 16px', borderRadius: '20px', border: 'none', background: selectedConvIds.size > 0 ? 'var(--danger)' : 'var(--surface-border)', color: selectedConvIds.size > 0 ? '#fff' : 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: selectedConvIds.size > 0 ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '4px' }}
+              >
+                Delete {selectedConvIds.size > 0 ? `(${selectedConvIds.size})` : ''}
+              </button>
+              <button
+                onClick={exitSelectMode}
+                style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+            </div>
           ) : (
             <button
               onClick={() => setIsSelectMode(true)}
