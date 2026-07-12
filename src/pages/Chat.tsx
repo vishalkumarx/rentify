@@ -597,7 +597,16 @@ export default function Chat() {
                         lineHeight: 1.4
                       }}>
                         <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', color: '#3b82f6' }}>Booking Request</p>
-                        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.4 }}>{msg.text.replace('[Booking Request]:', '').trim()}</p>
+                        <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.4 }}>
+                          {(() => {
+                            let text = msg.text.replace('[Booking Request]:', '').trim();
+                            if (msg.senderId === session?.user?.id) {
+                              return text.replace(/^User has requested/i, 'You have requested');
+                            } else {
+                              return text.replace(/^User has requested/i, `${conversation.otherUserName} has requested`);
+                            }
+                          })()}
+                        </p>
                       </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-12px', marginBottom: '16px' }}>
