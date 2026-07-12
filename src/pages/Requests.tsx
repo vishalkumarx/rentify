@@ -219,19 +219,19 @@ export default function Requests() {
                           );
                         })()}
 
-                        <div className="requests-actions-container">
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
                           {req.status === 'pending' && (
-                            <>
+                            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
                               <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(req.total_price.toString()); }} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
                                 <Check size={18} strokeWidth={2.5} /> Accept
                               </button>
                               <button onClick={() => setConfirmAction({ id: req.id, action: 'rejected' })} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
                                 <X size={18} strokeWidth={2.5} /> Reject
                               </button>
-                            </>
+                            </div>
                           )}
                           {(req.status === 'pending' || req.status === 'accepted') && (
-                            <>
+                            <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
                               <button 
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -239,11 +239,10 @@ export default function Requests() {
                                   const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
                                   navigate(`/chat/${convId}`);
                                 }}
-                                className={req.status === 'pending' ? "message-user-btn-pending" : ""}
-                                style={{ flex: req.status === 'accepted' ? 1 : 'none', width: req.status === 'accepted' ? 'auto' : '44px', height: '44px', borderRadius: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                                style={{ flex: 1, height: '44px', borderRadius: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
                               >
                                 <MessageCircle size={18} />
-                                {req.status === 'accepted' ? 'Message User' : <span className="btn-text">Message User</span>}
+                                Message User
                               </button>
                               {req.status === 'accepted' && (
                                 <button 
@@ -256,7 +255,7 @@ export default function Requests() {
                                   <X size={18} /> Cancel
                                 </button>
                               )}
-                            </>
+                            </div>
                           )}
                         </div>
                       </div>
