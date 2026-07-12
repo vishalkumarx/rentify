@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Building2, Heart, Search, X } from 'lucide-react';
+import { ChevronLeft, Building2, Heart, Search, X, Star } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
@@ -144,6 +144,13 @@ export default function CategoryItems() {
                       return null;
                     })()}
 
+                    {item.itemRating != null && (
+                      <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: '#ffffff', color: '#000000', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 10 }}>
+                        <span>{item.itemRating}</span>
+                        <Star size={12} fill="var(--success)" color="var(--success)" />
+                      </div>
+                    )}
+
                     <button 
                       onClick={(e) => { 
                         e.stopPropagation(); 
@@ -165,14 +172,6 @@ export default function CategoryItems() {
                       <div style={{ fontWeight: 800, fontSize: '16px', color: 'var(--success)' }}>
                         ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
                       </div>
-                      {item.itemRating != null && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', marginTop: '2px' }}>
-                          <span style={{ color: 'var(--warning)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px' }}>⭐ {item.itemRating}</span>
-                          <span style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 500 }}>
-                            ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
-                          </span>
-                        </div>
-                      )}
                     </div>
                     
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
