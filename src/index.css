@@ -780,3 +780,28 @@ a:hover {
 .bottom-sheet.visible {
   transform: translateX(-50%) translateY(0);
 }
+
+/* Requests Actions Layout */
+.requests-actions-container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.message-user-btn-pending .btn-text {
+  display: none;
+}
+@media (max-width: 767px) {
+  .requests-actions-container {
+    flex-wrap: wrap;
+  }
+  .requests-actions-container > button {
+    flex: 1 1 calc(50% - 4px);
+  }
+  .requests-actions-container > .message-user-btn-pending {
+    flex: 1 1 100% !important;
+    width: 100% !important;
+  }
+  .requests-actions-container > .message-user-btn-pending .btn-text {
+    display: inline !important;
+  }
+}

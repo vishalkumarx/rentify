@@ -219,7 +219,7 @@ export default function Requests() {
                           );
                         })()}
 
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                        <div className="requests-actions-container">
                           {req.status === 'pending' && (
                             <>
                               <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(req.total_price.toString()); }} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -239,10 +239,11 @@ export default function Requests() {
                                   const convId = getOrCreateConversation(reqItem.id, reqItem.title, reqItem.image, req.requester_id, requesterName);
                                   navigate(`/chat/${convId}`);
                                 }}
+                                className={req.status === 'pending' ? "message-user-btn-pending" : ""}
                                 style={{ flex: req.status === 'accepted' ? 1 : 'none', width: req.status === 'accepted' ? 'auto' : '44px', height: '44px', borderRadius: '12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
                               >
                                 <MessageCircle size={18} />
-                                {req.status === 'accepted' && 'Message User'}
+                                {req.status === 'accepted' ? 'Message User' : <span className="btn-text">Message User</span>}
                               </button>
                               {req.status === 'accepted' && (
                                 <button 
