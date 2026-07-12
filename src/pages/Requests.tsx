@@ -57,7 +57,19 @@ export default function Requests() {
   const getCancelInfo = (req: any, isIncoming: boolean) => {
     let tagText = req.status;
     let cleanReason = '';
-    if (req.status?.toLowerCase() === 'cancelled') {
+    
+    if (req.status?.toLowerCase() === 'rejected') {
+      const noteStr = req.note || '';
+      const parts = noteStr.split('Cancel Reason:');
+      let rawReason = parts[1]?.trim() || '';
+      if (rawReason.startsWith('[Declined by owner]')) {
+        tagText = isIncoming ? 'REJECTED BY YOU' : 'REJECTED BY OWNER';
+        cleanReason = rawReason.replace('[Declined by owner]', '').trim();
+      } else {
+        tagText = isIncoming ? 'REJECTED BY YOU' : 'REJECTED BY OWNER';
+        cleanReason = rawReason;
+      }
+    } else if (req.status?.toLowerCase() === 'cancelled') {
       const noteStr = req.note || '';
       const parts = noteStr.split('Cancel Reason:');
       let rawReason = parts[1]?.trim() || '';
@@ -351,7 +363,7 @@ export default function Requests() {
                           {(() => {
                             const { tagText } = getCancelInfo(req, false);
                             return (
-                              <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : req.status === 'rejected' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : req.status === 'rejected' ? 'var(--danger)' : 'var(--warning)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                              <div style={{ padding: '4px 12px', borderRadius: '16px', background: req.status === 'accepted' ? 'rgba(34, 197, 94, 0.1)' : (req.status === 'rejected' || req.status === 'cancelled') ? 'rgba(239, 68, 68, 0.1)' : 'rgba(245, 158, 11, 0.1)', color: req.status === 'accepted' ? 'var(--success)' : (req.status === 'rejected' || req.status === 'cancelled') ? 'var(--danger)' : 'var(--warning)', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                                 {tagText}
                               </div>
                             );
