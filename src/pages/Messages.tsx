@@ -47,13 +47,13 @@ export default function Messages() {
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 disabled={selectedConvIds.size === 0}
-                style={{ padding: '4px 12px', borderRadius: '16px', border: 'none', background: selectedConvIds.size > 0 ? 'var(--danger)' : 'var(--surface-border)', color: selectedConvIds.size > 0 ? '#fff' : 'var(--text-muted)', fontSize: '13px', fontWeight: 600, cursor: selectedConvIds.size > 0 ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '4px' }}
+                style={{ padding: '2px 10px', borderRadius: '14px', border: 'none', background: selectedConvIds.size > 0 ? 'var(--danger)' : 'var(--surface-border)', color: selectedConvIds.size > 0 ? '#fff' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: selectedConvIds.size > 0 ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '4px' }}
               >
                 Delete {selectedConvIds.size > 0 ? `(${selectedConvIds.size})` : ''}
               </button>
               <button
                 onClick={exitSelectMode}
-                style={{ padding: '4px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                style={{ padding: '2px 10px', borderRadius: '14px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
               >
                 Cancel
               </button>
@@ -61,7 +61,7 @@ export default function Messages() {
           ) : (
             <button
               onClick={() => setIsSelectMode(true)}
-              style={{ padding: '4px 12px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+              style={{ padding: '2px 10px', borderRadius: '14px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}
             >
               Edit
             </button>
