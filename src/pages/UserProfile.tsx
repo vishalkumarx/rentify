@@ -210,16 +210,17 @@ export default function UserProfile() {
             )}
           </div>
           
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '15px', marginTop: '8px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', marginTop: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Star size={16} fill="var(--warning)" color="var(--warning)" />
-              <span style={{ color: 'var(--warning)', fontWeight: 700 }}>{avgRating > 0 ? avgRating.toFixed(1) : '0.0'}</span>
+              <span style={{ color: 'var(--warning)', fontWeight: 700, fontSize: '15px' }}>{avgRating > 0 ? avgRating.toFixed(1) : '0.0'}</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>
                 ({reviews.length} {reviews.length === 1 ? 'global rating' : 'global ratings'})
               </span>
-            </span>
-            <span style={{ color: 'var(--text-muted)' }}>•</span>
-            <span style={{ color: 'var(--text-muted)' }}>Joined {profile?.memberSince}</span>
+            </div>
+            <div style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500 }}>
+              Joined {profile?.memberSince}
+            </div>
           </div>
         </div>
 
