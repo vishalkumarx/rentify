@@ -152,7 +152,7 @@ export default function UserProfile() {
     setSubmittingReview(false);
   };
 
-  const avgRating = reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length) : 0;
+  const avgRating = reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviews.length) : 0;
 
   if (loading) {
     return <LoadingDialog message="Loading profile..." />;
