@@ -36,6 +36,7 @@ export default function Chat() {
   const [customPrice, setCustomPrice] = useState('');
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showDeclineConfirm, setShowDeclineConfirm] = useState(false);
+  const [declineReason, setDeclineReason] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -910,23 +911,48 @@ export default function Chat() {
       {showDeclineConfirm && bookingReq && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }} onClick={e => e.stopPropagation()}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Reject Request?</h3>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Decline Request?</h3>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
-              Are you sure you want to reject this booking request? The user will be notified.
+              Are you sure you want to decline this booking request? The user will be notified.
             </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
+                Reason for declining (optional):
+              </label>
+              <textarea
+                value={declineReason}
+                onChange={e => setDeclineReason(e.target.value)}
+                placeholder="e.g., Item is currently unavailable, busy schedule..."
+                rows={3}
+                style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none', resize: 'none' }}
+              />
+            </div>
+
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button type="button" onClick={() => setShowDeclineConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+              <button type="button" onClick={() => { setShowDeclineConfirm(false); setDeclineReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 No, Go Back
               </button>
               <button 
                 type="button"
-                onClick={() => {
-                  updateRequestStatus(bookingReq.id, 'rejected');
+                onClick={async () => {
+                  const reason = declineReason.trim();
+                  const rolePrefix = `[Declined by owner] `;
+                  const formattedReason = reason ? `${rolePrefix}${reason}` : '';
+                  
+                  await updateRequestStatus(bookingReq.id, 'rejected', undefined, formattedReason);
+                  
+                  if (conversation?.id && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                    const reasonText = reason ? `\nReason: ${reason}` : '';
+                    await sendMessage(conversation.id, session.user.id, `[System]: 🚫 Booking request was declined by ${session.user.user_metadata.full_name}.${reasonText}`);
+                  }
+                  
                   setShowDeclineConfirm(false);
+                  setDeclineReason('');
                 }} 
                 style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
               >
-                Yes, Reject
+                Yes, Decline
               </button>
             </div>
           </div>

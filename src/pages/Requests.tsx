@@ -488,16 +488,46 @@ export default function Requests() {
                 </div>
               </div>
             ) : null}
+            {confirmAction.action === 'rejected' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
+                  Reason for declining (optional):
+                </label>
+                <textarea
+                  value={cancelReason}
+                  onChange={e => setCancelReason(e.target.value)}
+                  placeholder="e.g., Item is currently unavailable, busy schedule..."
+                  rows={3}
+                  style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none', resize: 'none' }}
+                />
+              </div>
+            )}
 
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button onClick={() => setConfirmAction(null)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+              <button onClick={() => { setConfirmAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 {confirmAction.action === 'accepted' ? 'Cancel' : 'No, Go Back'}
               </button>
               {confirmAction.action === 'rejected' && (
                 <button 
-                  onClick={() => {
-                    updateRequestStatus(confirmAction.id, 'rejected');
+                  onClick={async () => {
+                    const req = requests.find(r => r.id === confirmAction.id);
+                    const reason = cancelReason.trim();
+                    const rolePrefix = `[Declined by owner] `;
+                    const formattedReason = reason ? `${rolePrefix}${reason}` : '';
+                    
+                    await updateRequestStatus(confirmAction.id, 'rejected', undefined, formattedReason);
+                    
+                    if (req) {
+                      const reqItem = items.find(i => i.id === req.item_id);
+                      const requesterName = req.requester?.full_name || "User";
+                      const convId = getOrCreateConversation(req.item_id, reqItem?.title || '', reqItem?.image || '', req.requester_id, requesterName);
+                      if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                        const reasonText = reason ? `\nReason: ${reason}` : '';
+                        await sendMessage(convId, session.user.id, `[System]: 🚫 Booking request was declined by ${session.user.user_metadata.full_name}.${reasonText}`);
+                      }
+                    }
                     setConfirmAction(null);
+                    setCancelReason('');
                   }} 
                   style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                   Yes, Decline
