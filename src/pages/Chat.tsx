@@ -594,14 +594,18 @@ export default function Chat() {
                     onPointerCancel={(e) => handlePointerUpOrLeave(e, msg)}
                     onContextMenu={e => e.preventDefault()}
                   >
-                  <div style={{ 
-                  maxWidth: '75%', 
-                  padding: isEmojiOnly ? '4px' : '12px 16px', 
-                  borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
-                  background: isEmojiOnly ? 'transparent' : (isMe ? 'var(--primary)' : 'var(--surface)'),
-                  color: isMe ? '#111827' : 'var(--text-main)',
-                  border: isEmojiOnly ? 'none' : (isMe ? 'none' : '1px solid var(--surface-border)')
-                }}>
+                  <div 
+                    id={`msg-${msg.id}`}
+                    style={{ 
+                      maxWidth: '75%', 
+                      padding: isEmojiOnly ? '4px' : '12px 16px', 
+                      borderRadius: isMe ? '20px 20px 4px 20px' : '20px 20px 20px 4px',
+                      background: isEmojiOnly ? 'transparent' : (isMe ? 'var(--primary)' : 'var(--surface)'),
+                      color: isMe ? '#111827' : 'var(--text-main)',
+                      border: isEmojiOnly ? 'none' : (isMe ? 'none' : '1px solid var(--surface-border)'),
+                      transition: 'background 0.3s ease, transform 0.2s ease'
+                    }}
+                  >
                   {msg.text.startsWith('[Booking Request Note]:') ? (
                     <>
                       <p style={{ margin: 0, fontSize: '11px', fontWeight: 800, opacity: 0.8, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Booking Note</p>
@@ -618,7 +622,25 @@ export default function Chat() {
                             const repliedMsg = allConversationMessages.find(m => m.id === msg.replyToId);
                             if (!repliedMsg) return null;
                             return (
-                              <div style={{ background: 'rgba(0,0,0,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '8px', fontSize: '13px', borderLeft: '3px solid var(--primary)' }}>
+                              <div 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  const el = document.getElementById(`msg-${msg.replyToId}`);
+                                  if (el) {
+                                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    
+                                    // Visual pop highlight and quick scale
+                                    el.style.background = 'rgba(244, 196, 48, 0.45)';
+                                    el.style.transform = 'scale(1.04)';
+                                    
+                                    setTimeout(() => {
+                                      el.style.background = '';
+                                      el.style.transform = '';
+                                    }, 800);
+                                  }
+                                }}
+                                style={{ background: 'rgba(0,0,0,0.1)', padding: '8px', borderRadius: '8px', marginBottom: '8px', fontSize: '13px', borderLeft: '3px solid var(--primary)', cursor: 'pointer', transition: 'all 0.2s ease' }}
+                              >
                                 <strong style={{ display: 'block', marginBottom: '4px', color: isMe ? 'inherit' : 'var(--text-main)' }}>{repliedMsg.senderId === session?.user?.id ? 'You' : conversation.otherUserName}</strong>
                                 <span style={{ display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', color: isMe ? 'inherit' : 'var(--text-muted)' }}>
                                   {repliedMsg.imageUrl ? 'Photo' : repliedMsg.text}
