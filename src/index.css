@@ -708,6 +708,10 @@ a:hover {
     justify-content: space-between !important;
     padding: 24px 32px !important;
   }
+  .mobile-tab-content-reviews.hidden,
+  .mobile-tab-content-details.hidden {
+    display: block !important;
+  }
 }
 
 @media (max-width: 767px) {
