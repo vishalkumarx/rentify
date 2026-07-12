@@ -898,7 +898,7 @@ export default function ItemDetail() {
         <button 
           onClick={() => {
             setShowSuccessSheet(false);
-            navigate('/chat');
+            navigate('/messages');
           }}
           style={{ width: '100%', padding: '18px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '16px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', boxShadow: 'var(--primary-glow)' }}
         >
