@@ -162,6 +162,8 @@ export default function ItemDetail() {
   const isBookingCompleted = userRequest?.status === 'accepted' && userRequest.end_date && new Date(userRequest.end_date).setHours(23, 59, 59, 999) < new Date().getTime();
   const chatExists = item && conversations.some(c => c.itemId === item.id && c.otherUserId === item.userId);
 
+  const [ownerRating, setOwnerRating] = useState<string>('0');
+
   useEffect(() => {
     if (item?.userId) {
       getStorageJson(`profiles/${item.userId}.json`).then(profile => {
@@ -170,6 +172,22 @@ export default function ItemDetail() {
       getStorageJson('admin/verifications.json').then(verificationsData => {
         if (verificationsData && item.userId && verificationsData[item.userId]) {
           setVerificationStatus(verificationsData[item.userId].status);
+        }
+      });
+      
+      // Fetch Owner Reviews to calculate rating
+      supabase.storage.from('item-images').list('reviews').then(({ data: reviewFiles }) => {
+        if (reviewFiles) {
+          const targetFiles = reviewFiles.filter(f => f.name.startsWith(item.userId + '-'));
+          Promise.all(targetFiles.map(f => getStorageJson(`reviews/${f.name}`))).then(loaded => {
+            const valid = loaded.filter(Boolean);
+            if (valid.length > 0) {
+              const total = valid.reduce((sum, rev) => sum + (rev.rating || 5), 0);
+              setOwnerRating((total / valid.length).toFixed(1));
+            } else {
+              setOwnerRating('0');
+            }
+          });
         }
       });
     }
@@ -632,9 +650,13 @@ export default function ItemDetail() {
                         <BadgeCheck size={20} fill="#1877F2" color="white" />
                       )}
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Joined {item.seller.memberSince}</span>
-                    </div>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
+                       <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Joined {item.seller.memberSince}</span>
+                       <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>•</span>
+                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600 }}>
+                         <Star size={14} fill="var(--warning)" color="var(--warning)" /> {ownerRating !== '0' ? ownerRating : '(0)'}
+                       </span>
+                     </div>
                   </div>
                 </div>
               </div>
@@ -849,7 +871,7 @@ export default function ItemDetail() {
               {startDate ? format(parseISO(startDate), 'MMM d') : ''} - {endDate ? format(parseISO(endDate), 'MMM d') : ''}
             </span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: 700 }}>Total Amount</span>
             <span style={{ color: 'var(--success)', fontSize: '24px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
           </div>

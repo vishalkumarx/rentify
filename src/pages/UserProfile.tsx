@@ -222,7 +222,7 @@ export default function UserProfile() {
         {/* Other Items Section */}
         {userItems.length > 1 && (
           <div style={{ marginBottom: '32px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Other items by {profile?.name || 'this user'}</h3>
+            <h3 style={{ fontSize: '15px', fontWeight: 700, marginBottom: '16px' }}>Other items by {profile?.name || 'this user'}</h3>
             <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '16px', margin: '0 -24px', paddingLeft: '24px', paddingRight: '24px', WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}>
               {userItems.slice(0, 5).map(item => (
                 <div 
