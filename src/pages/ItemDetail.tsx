@@ -765,26 +765,14 @@ export default function ItemDetail() {
               <MessageCircle size={18} />
               Chat with Owner
             </button>
-          ) : chatExists && userRequest ? (
-            <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-              <button onClick={handleMessageClick} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}>
-                <MessageCircle size={18} />
-                Chat with Owner
-              </button>
-            </div>
-          ) : item.status === 'booked' ? (
-            <button onClick={() => toast.success("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
-              <Bell size={22} />
-              Notify Me
-            </button>
           ) : userRequest?.status === 'pending' ? (
             <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
               <button 
-                onClick={() => setShowChatLockedDialog(true)}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}
+                onClick={chatExists ? handleMessageClick : () => setShowChatLockedDialog(true)}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: chatExists ? 'var(--text-main)' : 'var(--surface-border)', color: chatExists ? 'var(--surface)' : 'var(--text-muted)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}
               >
                 <MessageCircle size={18} />
-                Chat Locked
+                {chatExists ? 'Chat with Owner' : 'Chat Locked'}
               </button>
               <button 
                 onClick={() => setShowCancelConfirm(true)}
@@ -793,6 +781,11 @@ export default function ItemDetail() {
                 Withdraw
               </button>
             </div>
+          ) : item.status === 'booked' ? (
+            <button onClick={() => toast.success("You'll be notified when this item becomes available again!")} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary-glow)', color: 'var(--primary)', border: 'none', boxShadow: 'none', width: '100%', cursor: 'pointer' }}>
+              <Bell size={22} />
+              Notify Me
+            </button>
           ) : (
             <button 
               onClick={handleRequestClick} 
