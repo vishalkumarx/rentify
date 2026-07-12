@@ -298,39 +298,6 @@ export default function UserProfile() {
         <div style={{ marginBottom: '32px' }}>
           <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px' }}>Reviews ({reviews.length})</h3>
           
-          {session?.user?.id && session.user.id !== id && (
-            <form onSubmit={handleSubmitReview} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-              <div style={{ display: 'flex', gap: '4px' }}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star 
-                    key={star} 
-                    size={24} 
-                    fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
-                    color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
-                    style={{ cursor: 'pointer', transition: 'all 0.2s' }}
-                    onClick={() => setNewReviewRating(star)}
-                  />
-                ))}
-              </div>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <input 
-                  type="text" 
-                  placeholder="Write a public review..." 
-                  value={newReviewText}
-                  onChange={(e) => setNewReviewText(e.target.value)}
-                  style={{ flex: 1, padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none' }}
-                />
-                <button 
-                  type="submit" 
-                  disabled={submittingReview || !newReviewText.trim()}
-                  style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#FEF3C7', color: '#000000', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
-                >
-                  <Send size={20} />
-                </button>
-              </div>
-            </form>
-          )}
-
           {reviews.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '32px 16px', background: 'var(--surface)', borderRadius: '16px', border: '1px dashed var(--surface-border)', color: 'var(--text-muted)' }}>
               No reviews yet. Be the first to leave one!
@@ -367,6 +334,39 @@ export default function UserProfile() {
                 </button>
               )}
             </div>
+          )}
+
+          {session?.user?.id && session.user.id !== id && (
+            <form onSubmit={handleSubmitReview} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '24px' }}>
+              <div style={{ display: 'flex', gap: '4px' }}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star 
+                    key={star} 
+                    size={24} 
+                    fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
+                    color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
+                    style={{ cursor: 'pointer', transition: 'all 0.2s' }}
+                    onClick={() => setNewReviewRating(star)}
+                  />
+                ))}
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <input 
+                  type="text" 
+                  placeholder="Write a public review..." 
+                  value={newReviewText}
+                  onChange={(e) => setNewReviewText(e.target.value)}
+                  style={{ flex: 1, padding: '14px 16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none' }}
+                />
+                <button 
+                  type="submit" 
+                  disabled={submittingReview || !newReviewText.trim()}
+                  style={{ width: '48px', height: '48px', borderRadius: '24px', background: '#FEF3C7', color: '#000000', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newReviewText.trim() ? 'pointer' : 'not-allowed', opacity: newReviewText.trim() ? 1 : 0.4 }}
+                >
+                  <Send size={20} />
+                </button>
+              </div>
+            </form>
           )}
         </div>
 
