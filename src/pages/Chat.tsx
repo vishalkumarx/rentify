@@ -33,6 +33,30 @@ export default function Chat() {
   const [swipeTargetId, setSwipeTargetId] = useState<string | null>(null);
   const [swipeOffset, setSwipeOffset] = useState(0);
 
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedMsgIds, setSelectedMsgIds] = useState<Set<string>>(new Set());
+
+  const toggleSelectMsg = (msgId: string) => {
+    setSelectedMsgIds(prev => {
+      const next = new Set(prev);
+      if (next.has(msgId)) next.delete(msgId); else next.add(msgId);
+      return next;
+    });
+  };
+
+  const exitSelectMode = () => {
+    setIsSelectMode(false);
+    setSelectedMsgIds(new Set());
+  };
+
+  const deleteSelected = async () => {
+    for (const msgId of selectedMsgIds) {
+      await unsendMessage(conversation!.id, msgId);
+    }
+    exitSelectMode();
+    toast.success(`${selectedMsgIds.size} message${selectedMsgIds.size > 1 ? 's' : ''} deleted`);
+  };
+
   const [customPrice, setCustomPrice] = useState('');
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showDeclineConfirm, setShowDeclineConfirm] = useState(false);
@@ -344,6 +368,23 @@ export default function Chat() {
             )}
           </div>
         </div>
+
+        {/* Edit / Cancel button */}
+        {isSelectMode ? (
+          <button
+            onClick={exitSelectMode}
+            style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            Cancel
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsSelectMode(true)}
+            style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
+          >
+            Edit
+          </button>
+        )}
       </header>
 
       {/* Messages */}
@@ -597,7 +638,29 @@ export default function Chat() {
                     </div>
                   </>
                 ) : (
-                <div style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%' }}>
+                <div
+                  onClick={() => isSelectMode && isMe && !msg.isDeleted ? toggleSelectMsg(msg.id) : undefined}
+                  style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%', alignItems: 'center', gap: '8px', cursor: isSelectMode && isMe && !msg.isDeleted ? 'pointer' : 'default' }}
+                >
+                  {/* Select mode checkbox */}
+                  {isSelectMode && isMe && !msg.isDeleted && (
+                    <div style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                      border: `2px solid ${selectedMsgIds.has(msg.id) ? 'var(--primary)' : 'var(--surface-border)'}`,
+                      background: selectedMsgIds.has(msg.id) ? 'var(--primary)' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.15s ease',
+                    }}>
+                      {selectedMsgIds.has(msg.id) && (
+                        <Check size={12} strokeWidth={3} color="#111827" />
+                      )}
+                    </div>
+                  )}
                   {/* Reply icon revealed on swipe */}
                   {swipeTargetId === msg.id && swipeOffset > 10 && !msg.isDeleted && (
                     <div style={{
@@ -792,7 +855,37 @@ export default function Chat() {
 
       {/* Input */}
       <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
-        
+
+        {/* Select mode — delete bar */}
+        {isSelectMode ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+              {selectedMsgIds.size} selected
+            </span>
+            <button
+              onClick={deleteSelected}
+              disabled={selectedMsgIds.size === 0}
+              style={{
+                padding: '10px 24px',
+                borderRadius: '12px',
+                border: 'none',
+                background: selectedMsgIds.size === 0 ? 'var(--surface-border)' : 'var(--danger)',
+                color: selectedMsgIds.size === 0 ? 'var(--text-muted)' : '#fff',
+                fontSize: '14px',
+                fontWeight: 700,
+                cursor: selectedMsgIds.size === 0 ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+            >
+              <X size={16} />
+              Delete {selectedMsgIds.size > 0 ? `(${selectedMsgIds.size})` : ''}
+            </button>
+          </div>
+        ) : (
+        <>
         {replyingToMessage && (
           <div style={{ padding: '12px', background: '#f3f4f6', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
@@ -893,6 +986,8 @@ export default function Chat() {
             <Send size={20} />
           </button>
         </form>
+        </>
+        )}
       </footer>
 
       {isOwner && bookingReq?.status === 'pending' && (

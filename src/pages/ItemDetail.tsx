@@ -760,17 +760,16 @@ export default function ItemDetail() {
               <p style={{ margin: 0, fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><BadgeCheck size={18} color="var(--primary)" /> Booking Completed</p>
               <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>You booked this from {userRequest?.start_date ? format(parseISO(userRequest.start_date), 'dd MMM') : ''} to {userRequest?.end_date ? format(parseISO(userRequest.end_date), 'dd MMM') : ''}</p>
             </div>
-          ) : userRequest?.status === 'accepted' || (chatExists && userRequest) ? (
+          ) : userRequest?.status === 'accepted' ? (
+            <button onClick={handleMessageClick} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}>
+              <MessageCircle size={18} />
+              Chat with Owner
+            </button>
+          ) : chatExists && userRequest ? (
             <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
               <button onClick={handleMessageClick} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}>
                 <MessageCircle size={18} />
                 Chat with Owner
-              </button>
-              <button 
-                onClick={() => setShowCancelConfirm(true)}
-                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', boxShadow: 'none', cursor: 'pointer', fontWeight: 700 }}>
-                <X size={18} />
-                Withdraw
               </button>
             </div>
           ) : item.status === 'booked' ? (
