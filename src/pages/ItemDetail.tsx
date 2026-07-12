@@ -468,8 +468,10 @@ export default function ItemDetail() {
             {item.itemRating && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
                 <Star size={18} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontWeight: 700, fontSize: '15px' }}>{item.itemRating}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '14px' }}>({item.itemReviewCount} reviews)</span>
+                <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--warning)' }}>{item.itemRating}</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>
+                  ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
+                </span>
               </div>
             )}
 
@@ -653,8 +655,9 @@ export default function ItemDetail() {
                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
                        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Joined {item.seller.memberSince}</span>
                        <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>•</span>
-                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-muted)', fontWeight: 600 }}>
-                         <Star size={14} fill="var(--warning)" color="var(--warning)" /> {ownerRating !== '0' ? ownerRating : '(0)'}
+                       <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 600 }}>
+                         <Star size={14} fill="var(--warning)" color="var(--warning)" />
+                         <span style={{ color: 'var(--warning)' }}>{ownerRating !== '0' ? ownerRating : '0.0'}</span>
                        </span>
                      </div>
                   </div>

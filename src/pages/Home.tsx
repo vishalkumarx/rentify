@@ -293,8 +293,11 @@ export default function Home() {
             ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
           </div>
           {item.itemRating != null && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, marginTop: '2px' }}>
-              ⭐ {item.itemRating} ({item.itemReviewCount || 0})
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', marginTop: '2px' }}>
+              <span style={{ color: 'var(--warning)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '2px' }}>⭐ {item.itemRating}</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '11px', fontWeight: 500 }}>
+                ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
+              </span>
             </div>
           )}
         </div>

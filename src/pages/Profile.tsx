@@ -188,10 +188,12 @@ export default function Profile() {
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
                 <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontSize: '15px', fontWeight: 700 }}>
-                  {reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviews.length).toFixed(1) : '(0)'}
+                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--warning)' }}>
+                  {reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviews.length).toFixed(1) : '0.0'}
                 </span>
-                <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>({reviews.length} reviews)</span>
+                <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                  ({reviews.length} {reviews.length === 1 ? 'global rating' : 'global ratings'})
+                </span>
               </div>
             </div>
           </div>
