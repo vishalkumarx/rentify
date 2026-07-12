@@ -26,6 +26,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ItemRequestsFeed from './pages/ItemRequestsFeed';
 import EditProfile from './pages/EditProfile';
 import UserItems from './pages/UserItems';
+import RequestNeed from './pages/RequestNeed';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -83,6 +84,7 @@ function AppRoutes() {
       </Route>
       
       {/* Full Screen Modals/Pages */}
+      <Route path="/request-need" element={<ProtectedRoute message="Login to request a need."><RequestNeed /></ProtectedRoute>} />
       <Route path="/item/:id" element={<ItemDetail />} />
       <Route path="/user/:id" element={<UserProfile />} />
       <Route path="/user/:id/items" element={<UserItems />} />

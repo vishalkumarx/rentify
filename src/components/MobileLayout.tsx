@@ -279,7 +279,7 @@ export default function MobileLayout() {
                 <Upload size={20} /> List an Item
               </button>
               <button 
-                onClick={() => { setShowPostOptions(false); navigate('/item-requests', { state: { openNeedModal: true } }); }} 
+                onClick={() => { setShowPostOptions(false); navigate('/request-need'); }} 
                 style={{ padding: '16px', borderRadius: '20px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', fontSize: '16px' }}
               >
                 <Megaphone size={20} /> Request a Need

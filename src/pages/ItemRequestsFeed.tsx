@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon, Eye, MessageSquare, Send, Heart } from 'lucide-react';
-import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
+import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Eye, MessageSquare, Send, Heart } from 'lucide-react';
+import { getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { createPortal } from 'react-dom';
@@ -43,14 +43,6 @@ export default function ItemRequestsFeed() {
   const { session, profile } = useAuth();
   const [requests, setRequests] = useState<ItemRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [budget, setBudget] = useState('');
-  const [locationStr, setLocationStr] = useState('');
-  const [dateRequired, setDateRequired] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
   const [selectedNeed, setSelectedNeed] = useState<ItemRequest | null>(null);
@@ -86,17 +78,7 @@ export default function ItemRequestsFeed() {
     }
   }, [requests, location.state, navigate, selectedNeed]);
 
-  useEffect(() => {
-    if (location.state?.openNeedModal) {
-      if (!session) {
-        toast.error('Please log in to post a request');
-        navigate('/login', { state: { returnTo: '/item-requests' } });
-      } else {
-        setShowModal(true);
-        navigate(location.pathname, { replace: true, state: {} });
-      }
-    }
-  }, [location.state, session, navigate]);
+
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -215,62 +197,7 @@ export default function ItemRequestsFeed() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!title.trim() || !description.trim()) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-    
-    if (!session) {
-      toast.error('You must be logged in to post a request');
-      return;
-    }
 
-    setIsSubmitting(true);
-    
-    let uploadedImageUrl = undefined;
-    if (imageFile) {
-      const fileExt = imageFile.name.split('.').pop();
-      const fileName = `need-${Date.now()}-${Math.random()}.${fileExt}`;
-      const { error } = await supabase.storage.from('item-images').upload(fileName, imageFile);
-      if (!error) {
-        const { data } = supabase.storage.from('item-images').getPublicUrl(fileName);
-        uploadedImageUrl = data.publicUrl;
-      }
-    }
-    
-    const newRequest: ItemRequest = {
-      id: Date.now().toString(),
-      userId: session.user.id,
-      name: profile?.name || session.user.user_metadata?.full_name || 'Anonymous Student',
-      department: profile?.department || 'Unknown Department',
-      year: profile?.memberSince || new Date().getFullYear().toString(),
-      title: title.trim(),
-      description: description.trim(),
-      budget: budget.trim() || undefined,
-      location: locationStr.trim() || undefined,
-      dateRequired: dateRequired.trim() || undefined,
-      createdAt: new Date().toISOString(),
-      profilePic: profile?.avatar_url || session.user.user_metadata?.avatar_url || session.user.user_metadata?.picture,
-      imageUrl: uploadedImageUrl
-    };
-
-    const currentRequests = await getStorageJson('feed/item_requests.json') || [];
-    const updatedRequests = [newRequest, ...currentRequests];
-    
-    await setStorageJson('feed/item_requests.json', updatedRequests);
-    
-    setRequests(updatedRequests);
-    setIsSubmitting(false);
-    setShowModal(false);
-    setTitle('');
-    setDescription('');
-    setBudget('');
-    setLocationStr('');
-    setDateRequired('');
-    setImageFile(null);
-    toast.success('Request posted successfully!');
-  };
 
   const deleteRequest = (id: string) => {
     setConfirmDialog({
@@ -335,10 +262,10 @@ export default function ItemRequestsFeed() {
             onClick={() => {
               if (!session) {
                 toast.error('Please log in to post a request');
-                navigate('/login', { state: { returnTo: '/item-requests' } });
+                navigate('/login', { state: { returnTo: '/request-need' } });
                 return;
               }
-              setShowModal(true);
+              navigate('/request-need');
             }}
             style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '10px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px var(--primary-glow)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
@@ -461,117 +388,7 @@ export default function ItemRequestsFeed() {
         )}
       </div>
 
-      {showModal && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', animation: 'fadeIn 0.2s' }}>
-          <div className="animate-slide-up" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '32px', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', maxHeight: '85vh', overflowY: 'auto' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
-              <h2 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Request a Need</h2>
-              <button onClick={() => setShowModal(false)} style={{ background: 'var(--surface-border)', border: 'none', width: '36px', height: '36px', borderRadius: '18px', color: 'var(--text-main)', cursor: 'pointer', padding: 0, margin: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><X size={20} /></button>
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 700 }}>What do you need?</label>
-                <input 
-                  type="text" 
-                  placeholder="e.g. Scientific Calculator Casio fx-991" 
-                  value={title} 
-                  onChange={e => setTitle(e.target.value)} 
-                  style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
-                />
-              </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 700 }}>Budget (Optional)</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. ₹50/day" 
-                    value={budget} 
-                    onChange={e => setBudget(e.target.value)} 
-                    style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
-                  />
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: 700 }}>Need By (Optional)</label>
-                  <input 
-                    type="date" 
-                    value={dateRequired} 
-                    onChange={e => setDateRequired(e.target.value)} 
-                    style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
-                  />
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 700 }}>Location (Optional)</label>
-                <input 
-                  type="text" 
-                  placeholder="e.g. North Campus, Block C" 
-                  value={locationStr} 
-                  onChange={e => setLocationStr(e.target.value)} 
-                  style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px' }} 
-                />
-              </div>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 700 }}>More Details</label>
-                <textarea 
-                  placeholder="When do you need it by? Any specific requirements?" 
-                  value={description} 
-                  onChange={e => setDescription(e.target.value)} 
-                  rows={4} 
-                  style={{ padding: '14px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '15px', resize: 'none', fontFamily: 'inherit' }} 
-                />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: 700 }}>Attach Image (Optional)</label>
-                {imageFile ? (
-                  <div style={{ position: 'relative', width: 'fit-content' }}>
-                    <img src={URL.createObjectURL(imageFile)} alt="Preview" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--surface-border)' }} />
-                    <button onClick={() => setImageFile(null)} style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--danger)', color: '#fff', border: 'none', borderRadius: '50%', width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
-                      <X size={12} />
-                    </button>
-                  </div>
-                ) : (
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: 'var(--bg)', border: '1px dashed var(--primary)', borderRadius: '16px', color: 'var(--primary)', fontWeight: 600, fontSize: '14px', cursor: 'pointer', width: 'fit-content' }}>
-                    <ImageIcon size={18} />
-                    <span>Upload Image</span>
-                    <input type="file" accept="image/*" onChange={(e) => { if (e.target.files && e.target.files[0]) setImageFile(e.target.files[0]); }} style={{ display: 'none' }} />
-                  </label>
-                )}
-              </div>
-              
-              <button 
-                onClick={handleSubmit} 
-                disabled={isSubmitting} 
-                className="glow" 
-                style={{ padding: '16px', borderRadius: '20px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 800, cursor: isSubmitting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontSize: '16px', marginTop: '8px' }}
-              >
-                {isSubmitting ? 'Publishing...' : 'Publish Need'}
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {/* Publishing Modal */}
-      {isSubmitting && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '32px 24px', borderRadius: '32px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-              <div style={{ width: '32px', height: '32px', border: '4px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-            </div>
-            <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>Publishing Need...</h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
-              Campus community will be notified about your need shortly. Hang tight!
-            </p>
-          </div>
-        </div>,
-        document.body
-      )}
 
       {confirmDialog && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
