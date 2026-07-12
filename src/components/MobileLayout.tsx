@@ -119,7 +119,26 @@ export default function MobileLayout() {
             >
               <MessageCircle size={24} fill={(location.pathname === '/messages' || location.pathname.startsWith('/chat')) ? '#000' : 'none'} />
               {totalUnread > 0 && (
-                <div style={{ position: 'absolute', top: '6px', right: '6px', width: '10px', height: '10px', background: 'var(--danger)', borderRadius: '50%', border: '2px solid var(--primary)' }} />
+                <div style={{
+                  position: 'absolute',
+                  top: '2px',
+                  right: '2px',
+                  minWidth: '18px',
+                  height: '18px',
+                  background: 'var(--danger)',
+                  borderRadius: '10px',
+                  border: '2px solid #fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  color: '#fff',
+                  lineHeight: 1,
+                  padding: '0 3px',
+                }}>
+                  {totalUnread > 99 ? '99+' : totalUnread}
+                </div>
               )}
             </button>
           </div>
