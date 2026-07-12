@@ -34,6 +34,7 @@ export default function Chat() {
   const [swipeOffset, setSwipeOffset] = useState(0);
 
   const [customPrice, setCustomPrice] = useState('');
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -411,63 +412,7 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Pending Booking Banner for Owner */}
-        {isOwner && bookingReq?.status === 'pending' && (
-          <div style={{
-            position: 'sticky',
-            top: '0',
-            zIndex: 20,
-            background: 'rgba(34, 197, 94, 0.9)',
-            backdropFilter: 'blur(10px)',
-            border: '1px solid var(--success)',
-            borderRadius: '12px',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
-            marginBottom: '16px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
-          }}>
-            <p style={{ margin: 0, fontSize: '14px', color: '#fff' }}>
-              <strong>Pending Request:</strong> The user wants to book this item. Original requested price: ₹{bookingReq.total_price}.
-            </p>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#fff' }}>
-                Final Accepting Price (₹)
-              </label>
-              <input
-                type="number"
-                value={customPrice}
-                onChange={e => setCustomPrice(e.target.value)}
-                placeholder="Enter negotiated price"
-                style={{ padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--success)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none' }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-              <button 
-                onClick={() => {
-                  const finalPrice = customPrice ? Number(customPrice) : bookingReq.total_price;
-                  updateRequestStatus(bookingReq.id, 'accepted', finalPrice);
-                }}
-                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: '#fff', color: 'var(--success)', border: 'none', fontWeight: 700, cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
-              >
-                Accept Booking
-              </button>
-              <button 
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to decline this booking request?')) {
-                    updateRequestStatus(bookingReq.id, 'rejected');
-                  }
-                }}
-                style={{ flex: 1, padding: '10px', borderRadius: '8px', background: 'rgba(255,255,255,0.2)', color: '#fff', border: '1px solid rgba(255,255,255,0.4)', fontWeight: 600, cursor: 'pointer' }}
-              >
-                Decline
-              </button>
-            </div>
-          </div>
-        )}
 
 
         {/* Not Accepted Banner */}
@@ -863,6 +808,95 @@ export default function Chat() {
           </button>
         </form>
       </footer>
+
+      {isOwner && bookingReq?.status === 'pending' && (
+        <div style={{ position: 'absolute', bottom: '92px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button 
+            type="button"
+            onClick={() => setShowAcceptDialog(true)}
+            style={{ padding: '12px 24px', borderRadius: '24px', background: 'var(--success)', color: '#fff', border: 'none', fontWeight: 800, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)', display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}
+          >
+            <Check size={16} strokeWidth={3} />
+            Accept Booking
+          </button>
+          <button 
+            type="button"
+            onClick={() => {
+              if (window.confirm('Are you sure you want to decline this booking request?')) {
+                updateRequestStatus(bookingReq.id, 'rejected');
+              }
+            }}
+            style={{ padding: '12px 20px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(239, 68, 68, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
+          >
+            <X size={16} strokeWidth={3} />
+            Decline
+          </button>
+        </div>
+      )}
+
+      {showAcceptDialog && bookingReq && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Accept Booking?</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+              Choose one of the options below to accept this booking request.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  updateRequestStatus(bookingReq.id, 'accepted', bookingReq.total_price);
+                  setShowAcceptDialog(false);
+                }}
+                style={{ width: '100%', padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+              >
+                <span>Accept at Original Price</span>
+                <span style={{ fontSize: '16px', fontWeight: 800 }}>₹{bookingReq.total_price}</span>
+              </button>
+              
+              <div style={{ height: '1px', background: 'var(--surface-border)', margin: '4px 0' }} />
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at a new price (₹):</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="number"
+                    value={customPrice}
+                    onChange={e => setCustomPrice(e.target.value)}
+                    placeholder="Enter new price"
+                    style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
+                  />
+                  <button
+                    type="button"
+                    disabled={!customPrice || Number(customPrice) <= 0}
+                    onClick={() => {
+                      updateRequestStatus(bookingReq.id, 'accepted', Number(customPrice));
+                      setShowAcceptDialog(false);
+                    }}
+                    style={{ padding: '0 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '14px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                <p style={{ margin: 0, fontSize: '12px', color: 'var(--danger)', lineHeight: 1.5, fontWeight: 500 }}>
+                  <strong style={{ fontWeight: 800 }}>Disclaimer:</strong> Campus Rent is not responsible for any transactions. Always exercise proper caution.
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button type="button" onClick={() => setShowAcceptDialog(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
       {/* Deleted Item Dialog */}
       {isItemDeleted && (

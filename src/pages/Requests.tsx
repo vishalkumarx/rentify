@@ -432,52 +432,77 @@ export default function Requests() {
       )}
       </div>
       
-      {/* Confirm Action Modal */}
       {confirmAction && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
             <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>
               {confirmAction.action === 'accepted' ? 'Accept Request?' : 'Reject Request?'}
             </h3>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
-              Are you sure you want to {confirmAction.action === 'accepted' ? 'accept' : 'reject'} this booking request?
-              {confirmAction.action === 'accepted' ? ' You will be expected to fulfill this booking.' : ' The user will be notified.'}
+              {confirmAction.action === 'accepted' 
+                ? 'Choose one of the options below to accept this booking request.' 
+                : 'Are you sure you want to reject this booking request? The user will be notified.'}
             </p>
-            {confirmAction.action === 'accepted' && (
-              <div style={{ marginTop: '8px' }}>
-                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)', marginBottom: '8px', display: 'block' }}>
-                  Accepting Price (₹)
-                </label>
-                <input
-                  type="number"
-                  value={customPrice}
-                  onChange={e => setCustomPrice(e.target.value)}
-                  style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
-                />
-                <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
-                  Original requested price: ₹{confirmAction.originalPrice}
-                </p>
+            {confirmAction.action === 'accepted' ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                <button
+                  onClick={() => {
+                    updateRequestStatus(confirmAction.id, 'accepted', confirmAction.originalPrice);
+                    setConfirmAction(null);
+                  }}
+                  style={{ width: '100%', padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                >
+                  <span>Accept at Original Price</span>
+                  <span style={{ fontSize: '16px', fontWeight: 800 }}>₹{confirmAction.originalPrice}</span>
+                </button>
                 
-                <div style={{ marginTop: '16px', padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                <div style={{ height: '1px', background: 'var(--surface-border)', margin: '4px 0' }} />
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at a new price (₹):</label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="number"
+                      value={customPrice}
+                      onChange={e => setCustomPrice(e.target.value)}
+                      placeholder="Enter new price"
+                      style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
+                    />
+                    <button
+                      disabled={!customPrice || Number(customPrice) <= 0}
+                      onClick={() => {
+                        updateRequestStatus(confirmAction.id, 'accepted', Number(customPrice));
+                        setConfirmAction(null);
+                      }}
+                      style={{ padding: '0 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '14px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                   <p style={{ margin: 0, fontSize: '12px', color: 'var(--danger)', lineHeight: 1.5, fontWeight: 500 }}>
-                    <strong style={{ fontWeight: 800 }}>Disclaimer:</strong> Campus Rent is not responsible for any items or transactions. Always make sure to rent your items to verified users only and exercise proper caution.
+                    <strong style={{ fontWeight: 800 }}>Disclaimer:</strong> Campus Rent is not responsible for any transactions. Always exercise proper caution.
                   </p>
                 </div>
               </div>
-            )}
+            ) : null}
+
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button onClick={() => setConfirmAction(null)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
-                Cancel
+                {confirmAction.action === 'accepted' ? 'Cancel' : 'No, Go Back'}
               </button>
-              <button 
-                onClick={() => {
-                  const price = confirmAction.action === 'accepted' ? Number(customPrice) || confirmAction.originalPrice : undefined;
-                  updateRequestStatus(confirmAction.id, confirmAction.action, price);
-                  setConfirmAction(null);
-                }} 
-                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: confirmAction.action === 'accepted' ? 'var(--success)' : 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
-                Yes, {confirmAction.action === 'accepted' ? 'Accept' : 'Reject'}
-              </button>
+              {confirmAction.action === 'rejected' && (
+                <button 
+                  onClick={() => {
+                    updateRequestStatus(confirmAction.id, 'rejected');
+                    setConfirmAction(null);
+                  }} 
+                  style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                  Yes, Reject
+                </button>
+              )}
             </div>
           </div>
         </div>,
