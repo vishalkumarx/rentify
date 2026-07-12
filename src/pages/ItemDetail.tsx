@@ -671,10 +671,10 @@ export default function ItemDetail() {
       {zoomImageIndex !== null && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(0,0,0,0.95)', zIndex: 100,
+          background: 'rgba(0,0,0,0.95)', zIndex: 1000,
           display: 'flex', flexDirection: 'column'
         }}>
-          <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 101, position: 'absolute', top: 0, left: 0, right: 0 }}>
+          <div style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 1002, position: 'absolute', top: 0, left: 0, right: 0 }}>
             <span style={{ color: 'white', fontWeight: 600 }}>{zoomImageIndex + 1} / {allImages.length}</span>
             <button 
               onClick={() => setZoomImageIndex(null)}
@@ -683,46 +683,49 @@ export default function ItemDetail() {
               <X size={32} />
             </button>
           </div>
-          <div 
-            ref={modalScrollRef}
-            style={{ flex: 1, display: 'flex', alignItems: 'center', overflowX: 'auto', scrollSnapType: 'x mandatory', width: '100vw' }}
-            className="hide-scrollbar"
-            onScroll={(e) => {
-              const el = e.currentTarget;
-              const index = Math.round(el.scrollLeft / el.clientWidth);
-              if (index !== zoomImageIndex && !isInitialModalRender.current) {
-                setZoomImageIndex(index);
-              }
-            }}
-          >
-            {allImages.map((img, i) => (
-              <div key={i} style={{ minWidth: '100vw', height: '100%', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                <ZoomableImage img={img} i={i} />
-              </div>
-            ))}
+          
+          <div style={{ position: 'relative', flex: 1, display: 'flex', alignItems: 'center', width: '100vw', height: '100%' }}>
+            <div 
+              ref={modalScrollRef}
+              style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', overflowX: 'auto', scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
+              className="hide-scrollbar"
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                const index = Math.round(el.scrollLeft / el.clientWidth);
+                if (index !== zoomImageIndex && !isInitialModalRender.current) {
+                  setZoomImageIndex(index);
+                }
+              }}
+            >
+              {allImages.map((img, i) => (
+                <div key={i} style={{ minWidth: '100vw', height: '100%', scrollSnapAlign: 'start', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <ZoomableImage img={img} i={i} />
+                </div>
+              ))}
+            </div>
+
+            {/* Left Arrow Button */}
+            {zoomImageIndex > 0 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+                style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '56px', height: '56px', borderRadius: '28px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1005 }}
+              >
+                <ChevronLeft size={36} color="white" />
+              </button>
+            )}
+
+            {/* Right Arrow Button */}
+            {zoomImageIndex < allImages.length - 1 && (
+              <button 
+                onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+                style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '56px', height: '56px', borderRadius: '28px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 1005 }}
+              >
+                <ChevronRight size={36} color="white" />
+              </button>
+            )}
           </div>
 
-          {/* Left Arrow Button */}
-          {zoomImageIndex > 0 && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-              style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 102 }}
-            >
-              <ChevronLeft size={28} />
-            </button>
-          )}
-
-          {/* Right Arrow Button */}
-          {zoomImageIndex < allImages.length - 1 && (
-            <button 
-              onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-              style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', width: '48px', height: '48px', borderRadius: '24px', background: 'rgba(255,255,255,0.2)', border: 'none', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', zIndex: 102 }}
-            >
-              <ChevronRight size={28} />
-            </button>
-          )}
-
-          <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px', pointerEvents: 'none' }}>
+          <div style={{ position: 'absolute', bottom: '20px', left: 0, right: 0, textAlign: 'center', color: 'rgba(255,255,255,0.6)', fontSize: '14px', pointerEvents: 'none', zIndex: 1002 }}>
             Swipe or use buttons to change, pinch to zoom
           </div>
         </div>
