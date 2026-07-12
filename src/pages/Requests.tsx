@@ -203,8 +203,8 @@ export default function Requests() {
                           })()}
                         </div>
 
-                        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
+                        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                          <div style={{ flex: '1 1 200px' }}>
                             <p style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--text-muted)' }}>
                               Requested by <strong onClick={(e) => { e.stopPropagation(); navigate(`/user/${req.requester_id}`); }} style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}>{requesterName}</strong> for {(() => {
                                 const days = getDurationDays(req.start_date, req.end_date);
@@ -216,7 +216,7 @@ export default function Requests() {
                               {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
                             </p>
                           </div>
-                          <div style={{ textAlign: 'right' }}>
+                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
                             <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#000' }}>₹{req.total_price}</p>
                           </div>
                         </div>
@@ -370,8 +370,8 @@ export default function Requests() {
                           })()}
                         </div>
 
-                        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
+                        <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                          <div style={{ flex: '1 1 200px' }}>
                             <p style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--text-muted)' }}>
                               Requested by <strong>You</strong> for {(() => {
                                 const days = getDurationDays(req.start_date, req.end_date);
@@ -383,7 +383,7 @@ export default function Requests() {
                               {req.start_date ? format(parseISO(req.start_date), 'dd MMM yyyy') : ''} to {req.end_date ? format(parseISO(req.end_date), 'dd MMM yyyy') : ''}
                             </p>
                           </div>
-                          <div style={{ textAlign: 'right' }}>
+                          <div style={{ textAlign: 'right', flexShrink: 0 }}>
                             <p style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: '#000' }}>₹{req.total_price}</p>
                           </div>
                         </div>
