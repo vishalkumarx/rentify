@@ -825,7 +825,7 @@ export default function ItemDetail() {
       <div className={`bottom-sheet ${showConfirmSheet ? 'visible' : ''}`}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <h2 style={{ fontSize: '24px', margin: 0, fontWeight: 800 }}>Confirm Request</h2>
-          <button onClick={() => setShowConfirmSheet(false)} style={{ background: 'var(--surface)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button onClick={() => setShowConfirmSheet(false)} style={{ background: 'var(--surface-border)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)', padding: 0 }}>
             <X size={24} />
           </button>
         </div>
