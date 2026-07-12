@@ -1,16 +1,62 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Check, X } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function Messages() {
-  const { conversations } = useChat();
+  const { conversations, deleteConversation } = useChat();
   const { session } = useAuth();
   const navigate = useNavigate();
 
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedConvIds, setSelectedConvIds] = useState<Set<string>>(new Set());
+
+  const toggleSelectConv = (id: string) => {
+    const newSet = new Set(selectedConvIds);
+    if (newSet.has(id)) newSet.delete(id);
+    else newSet.add(id);
+    setSelectedConvIds(newSet);
+  };
+
+  const exitSelectMode = () => {
+    setIsSelectMode(false);
+    setSelectedConvIds(newSet => { newSet.clear(); return newSet; });
+  };
+
+  const handleDeleteSelected = async () => {
+    let deletedCount = 0;
+    for (const id of selectedConvIds) {
+      await deleteConversation(id);
+      deletedCount++;
+    }
+    exitSelectMode();
+    toast.success(`${deletedCount} chat${deletedCount > 1 ? 's' : ''} deleted`);
+  };
+
   return (
-    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '100px', display: 'flex', flexDirection: 'column', gap: '24px' }} className="animate-slide-in">
-      <h1 style={{ fontSize: '28px', margin: 0 }}>Messages</h1>
+    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', width: '100%', paddingBottom: '100px', display: 'flex', flexDirection: 'column', gap: '24px', position: 'relative', minHeight: '100vh' }} className="animate-slide-in">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ fontSize: '28px', margin: 0 }}>Messages</h1>
+        {conversations.length > 0 && (
+          isSelectMode ? (
+            <button
+              onClick={exitSelectMode}
+              style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              Cancel
+            </button>
+          ) : (
+            <button
+              onClick={() => setIsSelectMode(true)}
+              style={{ padding: '6px 16px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}
+            >
+              Edit
+            </button>
+          )
+        )}
+      </div>
       
       {conversations.length === 0 ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '50vh', color: 'var(--text-muted)' }}>
@@ -22,7 +68,7 @@ export default function Messages() {
           {conversations.map(conv => (
             <div 
               key={conv.id} 
-              onClick={() => navigate(`/chat/${conv.id}`)}
+              onClick={() => isSelectMode ? toggleSelectConv(conv.id) : navigate(`/chat/${conv.id}`)}
               className="glass-panel" 
               style={{ 
                 padding: '16px', 
@@ -35,6 +81,25 @@ export default function Messages() {
                 WebkitTouchCallout: 'none'
               }}
             >
+              {isSelectMode && (
+                <div style={{
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  border: `2px solid ${selectedConvIds.has(conv.id) ? 'var(--primary)' : 'var(--surface-border)'}`,
+                  background: selectedConvIds.has(conv.id) ? 'var(--primary)' : 'transparent',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
+                  marginRight: '8px'
+                }}>
+                  {selectedConvIds.has(conv.id) && (
+                    <Check size={14} strokeWidth={3} color="#111827" />
+                  )}
+                </div>
+              )}
               {conv.itemImage ? (
                 <img 
                   src={conv.itemImage} 
@@ -76,6 +141,52 @@ export default function Messages() {
         </div>
       )}
 
+    
+      {/* Select mode floating action bar */}
+      {isSelectMode && (
+        <div style={{
+          position: 'fixed',
+          bottom: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'calc(100% - 48px)',
+          maxWidth: '400px',
+          background: 'var(--surface)',
+          border: '1px solid var(--surface-border)',
+          borderRadius: '16px',
+          padding: '12px 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          zIndex: 100
+        }}>
+          <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+            {selectedConvIds.size} selected
+          </span>
+          <button
+            onClick={handleDeleteSelected}
+            disabled={selectedConvIds.size === 0}
+            style={{
+              padding: '10px 24px',
+              borderRadius: '12px',
+              border: 'none',
+              background: selectedConvIds.size === 0 ? 'var(--surface-border)' : 'var(--danger)',
+              color: selectedConvIds.size === 0 ? 'var(--text-muted)' : '#fff',
+              fontSize: '14px',
+              fontWeight: 700,
+              cursor: selectedConvIds.size === 0 ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
+            <X size={16} />
+            Delete {selectedConvIds.size > 0 ? `(${selectedConvIds.size})` : ''}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

@@ -33,29 +33,7 @@ export default function Chat() {
   const [swipeTargetId, setSwipeTargetId] = useState<string | null>(null);
   const [swipeOffset, setSwipeOffset] = useState(0);
 
-  const [isSelectMode, setIsSelectMode] = useState(false);
-  const [selectedMsgIds, setSelectedMsgIds] = useState<Set<string>>(new Set());
 
-  const toggleSelectMsg = (msgId: string) => {
-    setSelectedMsgIds(prev => {
-      const next = new Set(prev);
-      if (next.has(msgId)) next.delete(msgId); else next.add(msgId);
-      return next;
-    });
-  };
-
-  const exitSelectMode = () => {
-    setIsSelectMode(false);
-    setSelectedMsgIds(new Set());
-  };
-
-  const deleteSelected = async () => {
-    for (const msgId of selectedMsgIds) {
-      await unsendMessage(conversation!.id, msgId);
-    }
-    exitSelectMode();
-    toast.success(`${selectedMsgIds.size} message${selectedMsgIds.size > 1 ? 's' : ''} deleted`);
-  };
 
   const [customPrice, setCustomPrice] = useState('');
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
@@ -105,7 +83,12 @@ export default function Chat() {
 
   const isItemDeleted = conversation && !item && !bookingReq && !conversation?.itemId?.toString().startsWith('req-');
 
-  const hasAcceptedBooking = bookingReq?.status === 'accepted';
+  const hasAcceptedBooking = conversation && session ? requests.some(r => 
+    r.item_id === Number(conversation.itemId) && 
+    ((r.requester_id === session.user.id && r.owner_id === conversation.otherUserId) || 
+     (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId)) &&
+    r.status === 'accepted'
+  ) : false;
   const isRequestChat = conversation?.itemId?.toString().startsWith('req-');
 
   const ownerId = item?.userId || bookingReq?.owner_id;
@@ -368,23 +351,6 @@ export default function Chat() {
             )}
           </div>
         </div>
-
-        {/* Edit / Cancel button */}
-        {isSelectMode ? (
-          <button
-            onClick={exitSelectMode}
-            style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-muted)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >
-            Cancel
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsSelectMode(true)}
-            style={{ padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontSize: '13px', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}
-          >
-            Edit
-          </button>
-        )}
       </header>
 
       {/* Messages */}
@@ -579,12 +545,12 @@ export default function Chat() {
                         const isCancelled = /cancelled/i.test(text);
                         const isAccepted = /accepted/i.test(text);
                         const accent = isDeclined
-                          ? { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.5)', titleColor: 'var(--danger)' }
+                          ? { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.5)', iconBg: 'rgba(239,68,68,0.2)', iconColor: 'var(--danger)', titleColor: 'var(--danger)', icon: <X size={14} strokeWidth={3} /> }
                           : isCancelled
-                          ? { bg: 'rgba(107,114,128,0.1)', border: 'rgba(107,114,128,0.4)', titleColor: 'var(--text-main)' }
+                          ? { bg: 'rgba(107,114,128,0.1)', border: 'rgba(107,114,128,0.4)', iconBg: 'rgba(107,114,128,0.2)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: <Ban size={14} /> }
                           : isAccepted
-                          ? { bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.5)', titleColor: 'var(--success)' }
-                          : { bg: 'rgba(0,0,0,0.03)', border: 'var(--surface-border)', titleColor: 'var(--text-main)' };
+                          ? { bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.5)', iconBg: 'rgba(34,197,94,0.2)', iconColor: 'var(--success)', titleColor: 'var(--success)', icon: <Check size={14} strokeWidth={3} /> }
+                          : { bg: 'rgba(0,0,0,0.03)', border: 'var(--surface-border)', iconBg: 'rgba(0,0,0,0.06)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: null };
                         const lines = text.split(/\. ?Reason:/i);
                         const mainText = lines[0].replace(/^[🚫✅🔔]\s*/, '').trim();
                         const reasonText = lines[1]?.trim();
@@ -593,13 +559,23 @@ export default function Chat() {
                             background: accent.bg,
                             border: `1px solid ${accent.border}`,
                             borderRadius: '14px',
-                            padding: '10px 16px',
+                            padding: '10px 14px',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '10px',
                             maxWidth: '85%',
-                            textAlign: 'center',
+                            textAlign: 'left',
                           }}>
-                            <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: accent.titleColor }}>{mainText}</p>
-                            {reasonText && <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Reason: "{reasonText}"</p>}
-                            <p style={{ margin: '3px 0 0', fontSize: '10px', opacity: 0.6, color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            {accent.icon && (
+                              <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: accent.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: accent.iconColor, flexShrink: 0, marginTop: '1px' }}>
+                                {accent.icon}
+                              </div>
+                            )}
+                            <div>
+                              <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: accent.titleColor }}>{mainText}</p>
+                              {reasonText && <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Reason: "{reasonText}"</p>}
+                              <p style={{ margin: '3px 0 0', fontSize: '10px', opacity: 0.6, color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
                           </div>
                         );
                       })()}
@@ -632,28 +608,8 @@ export default function Chat() {
                   </>
                 ) : (
                 <div
-                  onClick={() => isSelectMode && isMe && !msg.isDeleted ? toggleSelectMsg(msg.id) : undefined}
-                  style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%', alignItems: 'center', gap: '8px', cursor: isSelectMode && isMe && !msg.isDeleted ? 'pointer' : 'default' }}
+                  style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%', alignItems: 'center', gap: '8px' }}
                 >
-                  {/* Select mode checkbox */}
-                  {isSelectMode && isMe && !msg.isDeleted && (
-                    <div style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '50%',
-                      border: `2px solid ${selectedMsgIds.has(msg.id) ? 'var(--primary)' : 'var(--surface-border)'}`,
-                      background: selectedMsgIds.has(msg.id) ? 'var(--primary)' : 'transparent',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      transition: 'all 0.15s ease',
-                    }}>
-                      {selectedMsgIds.has(msg.id) && (
-                        <Check size={12} strokeWidth={3} color="#111827" />
-                      )}
-                    </div>
-                  )}
                   {/* Reply icon revealed on swipe */}
                   {swipeTargetId === msg.id && swipeOffset > 10 && !msg.isDeleted && (
                     <div style={{
@@ -849,36 +805,6 @@ export default function Chat() {
       {/* Input */}
       <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
 
-        {/* Select mode — delete bar */}
-        {isSelectMode ? (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
-            <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
-              {selectedMsgIds.size} selected
-            </span>
-            <button
-              onClick={deleteSelected}
-              disabled={selectedMsgIds.size === 0}
-              style={{
-                padding: '10px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                background: selectedMsgIds.size === 0 ? 'var(--surface-border)' : 'var(--danger)',
-                color: selectedMsgIds.size === 0 ? 'var(--text-muted)' : '#fff',
-                fontSize: '14px',
-                fontWeight: 700,
-                cursor: selectedMsgIds.size === 0 ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-              }}
-            >
-              <X size={16} />
-              Delete {selectedMsgIds.size > 0 ? `(${selectedMsgIds.size})` : ''}
-            </button>
-          </div>
-        ) : (
-        <>
         {replyingToMessage && (
           <div style={{ padding: '12px', background: '#f3f4f6', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', overflow: 'hidden' }}>
@@ -979,8 +905,6 @@ export default function Chat() {
             <Send size={20} />
           </button>
         </form>
-        </>
-        )}
       </footer>
 
       {isOwner && bookingReq?.status === 'pending' && (
@@ -1017,7 +941,7 @@ export default function Chat() {
                 type="button"
                 onClick={() => {
                   updateRequestStatus(bookingReq.id, 'accepted', bookingReq.total_price);
-                  sendMessage(conversation.id, session!.user.id, `[System]: ✅ Booking accepted by ${session!.user.user_metadata.full_name}.`);
+                  sendMessage(conversation.id, session!.user.id, `[System]: Booking accepted by ${session!.user.user_metadata.full_name}.`);
                   setShowAcceptDialog(false);
                 }}
                 style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center' }}
@@ -1043,7 +967,7 @@ export default function Chat() {
                     disabled={!customPrice || Number(customPrice) <= 0}
                     onClick={() => {
                       updateRequestStatus(bookingReq.id, 'accepted', Number(customPrice));
-                      sendMessage(conversation.id, session!.user.id, `[System]: ✅ Booking accepted by ${session!.user.user_metadata.full_name}.`);
+                      sendMessage(conversation.id, session!.user.id, `[System]: Booking accepted by ${session!.user.user_metadata.full_name}.`);
                       setShowAcceptDialog(false);
                     }}
                     style={{ padding: '0 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '14px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
@@ -1106,7 +1030,7 @@ export default function Chat() {
                   
                   if (conversation?.id && session?.user?.id && session?.user?.user_metadata?.full_name) {
                     const reasonText = reason ? `\nReason: ${reason}` : '';
-                    await sendMessage(conversation.id, session.user.id, `[System]: 🚫 Booking request was declined by ${session.user.user_metadata.full_name}.${reasonText}`);
+                    await sendMessage(conversation.id, session.user.id, `[System]: Booking request was declined by ${session.user.user_metadata.full_name}.${reasonText}`);
                   }
                   
                   setShowDeclineConfirm(false);

@@ -837,7 +837,7 @@ export default function ItemDetail() {
                   const convId = getOrCreateConversation(item.id, item.title, item.image, ownerId, ownerName);
                   if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
                     const reasonText = cancelReason.trim() ? `\nReason: ${cancelReason.trim()}` : '';
-                    await sendMessage(convId, session.user.id, `[System]: 🚫 Booking request was withdrawn by ${session.user.user_metadata.full_name}.${reasonText}`);
+                    await sendMessage(convId, session.user.id, `[System]: Booking request was withdrawn by ${session.user.user_metadata.full_name}.${reasonText}`);
                   }
                   
                   setShowCancelConfirm(false);

@@ -555,7 +555,7 @@ export default function Requests() {
                       const convId = getOrCreateConversation(req.item_id, reqItem?.title || '', reqItem?.image || '', req.requester_id, requesterName);
                       if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
                         const reasonText = reason ? `\nReason: ${reason}` : '';
-                        await sendMessage(convId, session.user.id, `[System]: 🚫 Booking request was declined by ${session.user.user_metadata.full_name}.${reasonText}`);
+                        await sendMessage(convId, session.user.id, `[System]: Booking request was declined by ${session.user.user_metadata.full_name}.${reasonText}`);
                       }
                     }
                     setConfirmAction(null);
@@ -609,7 +609,7 @@ export default function Requests() {
                     const convId = getOrCreateConversation(req.item_id, cancelAction.itemTitle, "", cancelAction.otherUserId, cancelAction.otherUserName);
                     if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
                       const reasonText = cancelReason.trim() ? `\nReason: ${cancelReason.trim()}` : '';
-                      await sendMessage(convId, session.user.id, `[System]: 🚫 Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
+                      await sendMessage(convId, session.user.id, `[System]: Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
                     }
                   }
                   
