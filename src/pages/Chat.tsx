@@ -724,15 +724,19 @@ export default function Chat() {
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   const el = document.getElementById(`msg-${msg.replyToId}`);
-                                  if (el) {
+                                  if (el && repliedMsg) {
                                     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    
+                                    const isRepliedMe = repliedMsg.senderId === session?.user?.id;
+                                    const isRepliedEmojiOnly = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u.test(repliedMsg.text || '') && (repliedMsg.text || '').trim().length > 0;
+                                    const originalBg = isRepliedEmojiOnly ? 'transparent' : (isRepliedMe ? 'var(--primary)' : 'var(--surface)');
                                     
                                     // Visual pop highlight and quick scale
                                     el.style.background = 'rgba(244, 196, 48, 0.45)';
                                     el.style.transform = 'scale(1.04)';
                                     
                                     setTimeout(() => {
-                                      el.style.background = '';
+                                      el.style.background = originalBg;
                                       el.style.transform = '';
                                     }, 800);
                                   }
