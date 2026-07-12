@@ -577,11 +577,14 @@ export default function Chat() {
                         }
                         const isDeclined = /declined|withdrawn/i.test(text);
                         const isCancelled = /cancelled/i.test(text);
+                        const isAccepted = /accepted/i.test(text);
                         const accent = isDeclined
-                          ? { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.5)', iconBg: 'rgba(239,68,68,0.2)', iconColor: 'var(--danger)', titleColor: 'var(--danger)', icon: <X size={14} strokeWidth={3} /> }
+                          ? { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.5)', titleColor: 'var(--danger)' }
                           : isCancelled
-                          ? { bg: 'rgba(107,114,128,0.1)', border: 'rgba(107,114,128,0.4)', iconBg: 'rgba(107,114,128,0.2)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: <Ban size={14} /> }
-                          : { bg: 'rgba(0,0,0,0.03)', border: 'var(--surface-border)', iconBg: 'rgba(0,0,0,0.06)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: null };
+                          ? { bg: 'rgba(107,114,128,0.1)', border: 'rgba(107,114,128,0.4)', titleColor: 'var(--text-main)' }
+                          : isAccepted
+                          ? { bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.5)', titleColor: 'var(--success)' }
+                          : { bg: 'rgba(0,0,0,0.03)', border: 'var(--surface-border)', titleColor: 'var(--text-main)' };
                         const lines = text.split(/\. ?Reason:/i);
                         const mainText = lines[0].replace(/^[🚫✅🔔]\s*/, '').trim();
                         const reasonText = lines[1]?.trim();
@@ -590,23 +593,13 @@ export default function Chat() {
                             background: accent.bg,
                             border: `1px solid ${accent.border}`,
                             borderRadius: '14px',
-                            padding: '10px 14px',
-                            display: 'flex',
-                            alignItems: 'flex-start',
-                            gap: '10px',
+                            padding: '10px 16px',
                             maxWidth: '85%',
-                            textAlign: 'left',
+                            textAlign: 'center',
                           }}>
-                            {accent.icon && (
-                              <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: accent.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: accent.iconColor, flexShrink: 0, marginTop: '1px' }}>
-                                {accent.icon}
-                              </div>
-                            )}
-                            <div>
-                              <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: accent.titleColor }}>{mainText}</p>
-                              {reasonText && <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Reason: "{reasonText}"</p>}
-                              <p style={{ margin: '3px 0 0', fontSize: '10px', opacity: 0.6, color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                            </div>
+                            <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: accent.titleColor }}>{mainText}</p>
+                            {reasonText && <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Reason: "{reasonText}"</p>}
+                            <p style={{ margin: '3px 0 0', fontSize: '10px', opacity: 0.6, color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                           </div>
                         );
                       })()}
@@ -1024,6 +1017,7 @@ export default function Chat() {
                 type="button"
                 onClick={() => {
                   updateRequestStatus(bookingReq.id, 'accepted', bookingReq.total_price);
+                  sendMessage(conversation.id, session!.user.id, `[System]: ✅ Booking accepted by ${session!.user.user_metadata.full_name}.`);
                   setShowAcceptDialog(false);
                 }}
                 style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center' }}
@@ -1049,6 +1043,7 @@ export default function Chat() {
                     disabled={!customPrice || Number(customPrice) <= 0}
                     onClick={() => {
                       updateRequestStatus(bookingReq.id, 'accepted', Number(customPrice));
+                      sendMessage(conversation.id, session!.user.id, `[System]: ✅ Booking accepted by ${session!.user.user_metadata.full_name}.`);
                       setShowAcceptDialog(false);
                     }}
                     style={{ padding: '0 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '14px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
