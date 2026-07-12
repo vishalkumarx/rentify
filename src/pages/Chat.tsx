@@ -616,10 +616,8 @@ export default function Chat() {
                       }}>
                         {(() => {
                           let text = msg.text.replace('[System]:', '').trim();
-                          const myName = session?.user?.user_metadata?.full_name;
-                          if (myName && msg.senderId === session?.user?.id) {
-                            const regex = new RegExp(`by\\s+${myName}`, 'gi');
-                            text = text.replace(regex, 'by you');
+                          if (msg.senderId === session?.user?.id) {
+                            text = text.replace(/(declined|cancelled|withdrawn|accepted) by\s+[^.\n]+/gi, '$1 by you');
                           }
                           return text;
                         })()}
