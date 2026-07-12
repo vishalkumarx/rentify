@@ -10,7 +10,7 @@ import { useBookings } from '../context/BookingContext';
 import { LoadingDialog } from '../components/LoadingDialog';
 import { Ban, Lock } from 'lucide-react';
 import chatBg from '../assets/chat-bg.png';
-import { format, isToday, isYesterday } from 'date-fns';
+import { format, isToday, isYesterday, differenceInDays, parseISO } from 'date-fns';
 import { supabase, getStorageJson } from '../lib/supabase';
 import toast from 'react-hot-toast';
 
@@ -35,6 +35,7 @@ export default function Chat() {
 
   const [customPrice, setCustomPrice] = useState('');
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [showDeclineConfirm, setShowDeclineConfirm] = useState(false);
   const [showAttachments, setShowAttachments] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,6 +60,18 @@ export default function Chat() {
     ((r.requester_id === session.user.id && r.owner_id === conversation.otherUserId) || 
      (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId))
   ) : null;
+
+  const totalDays = useMemo(() => {
+    if (!bookingReq?.start_date || !bookingReq?.end_date) return 0;
+    try {
+      const start = parseISO(bookingReq.start_date);
+      const end = parseISO(bookingReq.end_date);
+      const days = differenceInDays(end, start) + 1;
+      return days > 0 ? days : 1;
+    } catch (e) {
+      return 1;
+    }
+  }, [bookingReq?.start_date, bookingReq?.end_date]);
 
   const isOwner = session && (
     (item && item.userId === session.user.id) || 
@@ -821,11 +834,7 @@ export default function Chat() {
           </button>
           <button 
             type="button"
-            onClick={() => {
-              if (window.confirm('Are you sure you want to decline this booking request?')) {
-                updateRequestStatus(bookingReq.id, 'rejected');
-              }
-            }}
+            onClick={() => setShowDeclineConfirm(true)}
             style={{ padding: '12px 20px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(239, 68, 68, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
           >
             <X size={16} strokeWidth={3} />
@@ -849,10 +858,10 @@ export default function Chat() {
                   updateRequestStatus(bookingReq.id, 'accepted', bookingReq.total_price);
                   setShowAcceptDialog(false);
                 }}
-                style={{ width: '100%', padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center' }}
               >
-                <span>Accept at Original Price</span>
-                <span style={{ fontSize: '16px', fontWeight: 800 }}>₹{bookingReq.total_price}</span>
+                <span style={{ fontSize: '14px', opacity: 0.9 }}>Accept at Original Price</span>
+                <span style={{ fontSize: '16px', fontWeight: 800 }}>₹{bookingReq.total_price} for {totalDays} {totalDays === 1 ? 'day' : 'days'}</span>
               </button>
               
               <div style={{ height: '1px', background: 'var(--surface-border)', margin: '4px 0' }} />
@@ -891,6 +900,33 @@ export default function Chat() {
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button type="button" onClick={() => setShowAcceptDialog(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {showDeclineConfirm && bookingReq && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Reject Request?</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Are you sure you want to reject this booking request? The user will be notified.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button type="button" onClick={() => setShowDeclineConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                No, Go Back
+              </button>
+              <button 
+                type="button"
+                onClick={() => {
+                  updateRequestStatus(bookingReq.id, 'rejected');
+                  setShowDeclineConfirm(false);
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Yes, Reject
               </button>
             </div>
           </div>
