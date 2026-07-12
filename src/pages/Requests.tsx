@@ -226,7 +226,7 @@ export default function Requests() {
                                 <Check size={18} strokeWidth={2.5} /> Accept
                               </button>
                               <button onClick={() => setConfirmAction({ id: req.id, action: 'rejected' })} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
-                                <X size={18} strokeWidth={2.5} /> Reject
+                                <X size={18} strokeWidth={2.5} /> Decline
                               </button>
                             </div>
                           )}
@@ -436,12 +436,12 @@ export default function Requests() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
             <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>
-              {confirmAction.action === 'accepted' ? 'Accept Request?' : 'Reject Request?'}
+              {confirmAction.action === 'accepted' ? 'Accept Request?' : 'Decline Request?'}
             </h3>
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
               {confirmAction.action === 'accepted' 
                 ? 'Choose one of the options below to accept this booking request.' 
-                : 'Are you sure you want to reject this booking request? The user will be notified.'}
+                : 'Are you sure you want to decline this booking request? The user will be notified.'}
             </p>
             {confirmAction.action === 'accepted' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
@@ -500,7 +500,7 @@ export default function Requests() {
                     setConfirmAction(null);
                   }} 
                   style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
-                  Yes, Reject
+                  Yes, Decline
                 </button>
               )}
             </div>
