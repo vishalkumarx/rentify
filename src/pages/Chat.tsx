@@ -448,7 +448,7 @@ export default function Chat() {
             <div>
               <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--success)' }}>Booking Confirmed</p>
               <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
-                This request was accepted at a price of <strong>₹{bookingReq.total_price}</strong>.
+                This request was accepted by <strong>{isOwner ? 'you' : 'the owner'}</strong> at a price of <strong>₹{bookingReq.total_price}</strong>.
               </p>
             </div>
           </div>
@@ -480,7 +480,7 @@ export default function Chat() {
               <div>
                 <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>Booking Declined</p>
                 <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  This booking request has been declined.
+                  This booking request has been declined by <strong>{isOwner ? 'you' : 'the owner'}</strong>.
                   {cleanReason && <span style={{ display: 'block', marginTop: '4px', fontStyle: 'italic' }}>Reason: "{cleanReason}"</span>}
                 </p>
               </div>
@@ -494,10 +494,10 @@ export default function Chat() {
           let cleanReason = parts[1]?.trim() || '';
           let cancelledBy = 'This booking has been cancelled.';
           if (cleanReason.startsWith('[Cancelled by owner]')) {
-            cancelledBy = 'Cancelled by owner.';
+            cancelledBy = isOwner ? 'Cancelled by you.' : 'Cancelled by owner.';
             cleanReason = cleanReason.replace('[Cancelled by owner]', '').trim();
           } else if (cleanReason.startsWith('[Cancelled by rentee]')) {
-            cancelledBy = 'Cancelled by requester.';
+            cancelledBy = isOwner ? 'Cancelled by requester.' : 'Cancelled by you.';
             cleanReason = cleanReason.replace('[Cancelled by rentee]', '').trim();
           }
           return (
@@ -614,7 +614,15 @@ export default function Chat() {
                         whiteSpace: 'pre-wrap',
                         lineHeight: 1.4
                       }}>
-                        {msg.text.replace('[System]:', '').trim()}
+                        {(() => {
+                          let text = msg.text.replace('[System]:', '').trim();
+                          const myName = session?.user?.user_metadata?.full_name;
+                          if (myName && msg.senderId === session?.user?.id) {
+                            const regex = new RegExp(`by\\s+${myName}`, 'gi');
+                            text = text.replace(regex, 'by you');
+                          }
+                          return text;
+                        })()}
                       </div>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-12px', marginBottom: '16px' }}>
