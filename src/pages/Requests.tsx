@@ -271,17 +271,19 @@ export default function Requests() {
                                 <MessageCircle size={18} />
                                 Message User
                               </button>
-                              {req.status === 'accepted' && (
-                                <button 
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setCancelAction({ id: req.id, role: 'owner', itemTitle: reqItem?.title || '', otherUserId: req.requester_id, otherUserName: requesterName });
-                                  }}
-                                  style={{ flex: 1, height: '44px', borderRadius: '12px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
-                                >
-                                  <X size={18} /> Cancel
-                                </button>
-                              )}
+                            </div>
+                          )}
+                          {req.status === 'accepted' && (
+                            <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '8px' }}>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setCancelAction({ id: req.id, role: 'owner', itemTitle: reqItem?.title || '', otherUserId: req.requester_id, otherUserName: requesterName });
+                                }}
+                                style={{ flex: 1, height: '44px', borderRadius: '12px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+                              >
+                                <X size={18} /> Cancel Booking
+                              </button>
                             </div>
                           )}
                         </div>
