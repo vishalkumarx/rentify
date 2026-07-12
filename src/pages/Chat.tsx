@@ -429,6 +429,104 @@ export default function Chat() {
 
 
 
+        {bookingReq?.status === 'accepted' && (
+          <div style={{
+            background: 'rgba(34, 197, 94, 0.1)',
+            border: '1px solid var(--success)',
+            borderRadius: '12px',
+            padding: '12px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '16px',
+            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.05)',
+            animation: 'slideDown 0.3s ease-out'
+          }}>
+            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--success)', flexShrink: 0 }}>
+              <Check size={16} strokeWidth={3} />
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--success)' }}>Booking Confirmed</p>
+              <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
+                This request was accepted at a price of <strong>₹{bookingReq.total_price}</strong>.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {bookingReq?.status === 'rejected' && (() => {
+          const noteStr = bookingReq.note || '';
+          const parts = noteStr.split('Cancel Reason:');
+          let cleanReason = parts[1]?.trim() || '';
+          if (cleanReason.startsWith('[Declined by owner]')) {
+            cleanReason = cleanReason.replace('[Declined by owner]', '').trim();
+          }
+          return (
+            <div style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid var(--danger)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              marginBottom: '16px',
+              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.05)',
+              animation: 'slideDown 0.3s ease-out'
+            }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }}>
+                <X size={16} strokeWidth={3} />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>Booking Declined</p>
+                <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                  This booking request has been declined.
+                  {cleanReason && <span style={{ display: 'block', marginTop: '4px', fontStyle: 'italic' }}>Reason: "{cleanReason}"</span>}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
+        {bookingReq?.status === 'cancelled' && (() => {
+          const noteStr = bookingReq.note || '';
+          const parts = noteStr.split('Cancel Reason:');
+          let cleanReason = parts[1]?.trim() || '';
+          let cancelledBy = 'This booking has been cancelled.';
+          if (cleanReason.startsWith('[Cancelled by owner]')) {
+            cancelledBy = 'Cancelled by owner.';
+            cleanReason = cleanReason.replace('[Cancelled by owner]', '').trim();
+          } else if (cleanReason.startsWith('[Cancelled by rentee]')) {
+            cancelledBy = 'Cancelled by requester.';
+            cleanReason = cleanReason.replace('[Cancelled by rentee]', '').trim();
+          }
+          return (
+            <div style={{
+              background: 'rgba(107, 114, 128, 0.1)',
+              border: '1px solid var(--text-muted)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              marginBottom: '16px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)',
+              animation: 'slideDown 0.3s ease-out'
+            }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(107, 114, 128, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', flexShrink: 0, marginTop: '2px' }}>
+                <Ban size={16} />
+              </div>
+              <div>
+                <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-main)' }}>Booking Cancelled</p>
+                <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                  {cancelledBy}
+                  {cleanReason && <span style={{ display: 'block', marginTop: '4px', fontStyle: 'italic' }}>Reason: "{cleanReason}"</span>}
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Not Accepted Banner */}
         {!isItemDeleted && !isChatUnlocked && (
           <div style={{
