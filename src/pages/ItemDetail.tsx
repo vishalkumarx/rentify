@@ -6,7 +6,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2 } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -141,6 +141,7 @@ export default function ItemDetail() {
 
   // Booking state has been refactored inline
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showChatLockedDialog, setShowChatLockedDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
 
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
@@ -779,7 +780,10 @@ export default function ItemDetail() {
             </button>
           ) : userRequest?.status === 'pending' ? (
             <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
-              <button disabled style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', cursor: 'not-allowed', border: 'none', fontWeight: 700 }}>
+              <button 
+                onClick={() => setShowChatLockedDialog(true)}
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}
+              >
                 <MessageCircle size={18} />
                 Chat Locked
               </button>
@@ -844,6 +848,26 @@ export default function ItemDetail() {
                 Yes, Cancel
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {showChatLockedDialog && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 10000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={() => setShowChatLockedDialog(false)}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }} onClick={e => e.stopPropagation()}>
+            <div style={{ width: '56px', height: '56px', borderRadius: '28px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}>
+              <Lock size={28} />
+            </div>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Chat is Locked</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              To prevent spam, chat is disabled until the owner accepts your booking request. Once accepted, you can message the owner directly!
+            </p>
+            <button 
+              onClick={() => setShowChatLockedDialog(false)} 
+              style={{ width: '100%', padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#000', fontSize: '16px', fontWeight: 700, cursor: 'pointer', marginTop: '8px' }}
+            >
+              Got it
+            </button>
           </div>
         </div>
       )}
