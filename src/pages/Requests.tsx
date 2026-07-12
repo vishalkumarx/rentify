@@ -63,10 +63,10 @@ export default function Requests() {
       const parts = noteStr.split('Cancel Reason:');
       let rawReason = parts[1]?.trim() || '';
       if (rawReason.startsWith('[Declined by owner]')) {
-        tagText = isIncoming ? 'REJECTED BY YOU' : 'REJECTED BY OWNER';
+        tagText = isIncoming ? 'DECLINED BY YOU' : 'DECLINED BY OWNER';
         cleanReason = rawReason.replace('[Declined by owner]', '').trim();
       } else {
-        tagText = isIncoming ? 'REJECTED BY YOU' : 'REJECTED BY OWNER';
+        tagText = isIncoming ? 'DECLINED BY YOU' : 'DECLINED BY OWNER';
         cleanReason = rawReason;
       }
     } else if (req.status?.toLowerCase() === 'cancelled') {
