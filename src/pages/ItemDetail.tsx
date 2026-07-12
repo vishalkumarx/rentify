@@ -889,7 +889,7 @@ export default function ItemDetail() {
       </div>
 
       {/* Success Bottom Sheet */}
-      <div className={`bottom-sheet-overlay ${showSuccessSheet ? 'visible' : ''}`} onClick={() => {}}></div>
+      <div className={`bottom-sheet-overlay ${showSuccessSheet ? 'visible' : ''}`} onClick={() => setShowSuccessSheet(false)}></div>
       <div className={`bottom-sheet ${showSuccessSheet ? 'visible' : ''}`} style={{ textAlign: 'center', padding: '40px 24px' }}>
         <div style={{ width: '80px', height: '80px', borderRadius: '40px', background: 'var(--primary-glow)', color: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
           <CheckCircle2 size={40} />
@@ -899,13 +899,10 @@ export default function ItemDetail() {
           The owner will review your request. We'll notify you as soon as they accept.
         </p>
         <button 
-          onClick={() => {
-            setShowSuccessSheet(false);
-            navigate('/messages');
-          }}
+          onClick={() => setShowSuccessSheet(false)}
           style={{ width: '100%', padding: '18px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '16px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', boxShadow: 'var(--primary-glow)' }}
         >
-          View in Messages
+          Got it
         </button>
       </div>
 
