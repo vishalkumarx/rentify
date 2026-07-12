@@ -452,30 +452,30 @@ export default function ItemDetail() {
           </div>
 
           <div className={`item-detail-info mobile-tab-content-details ${mobileTab !== 'details' ? 'hidden' : ''}`} style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {userRequest?.status === 'accepted' ? (
                   <span style={{ display: 'inline-block', background: 'var(--success)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start', textTransform: 'uppercase' }}>RENTED BY YOU</span>
                 ) : item.status === 'booked' && (
                   <span style={{ display: 'inline-block', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start' }}>BOOKED</span>
                 )}
-                <h1 style={{ fontSize: '26px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
+                <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
               </div>
-              <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
+              <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
             </div>
             
             {/* Item Rating */}
             {item.itemRating && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '16px' }}>
-                <Star size={18} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontWeight: 700, fontSize: '15px', color: 'var(--warning)' }}>{item.itemRating}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+                <Star size={16} fill="var(--warning)" color="var(--warning)" />
+                <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--warning)' }}>{item.itemRating}</span>
                 <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>
                   ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
                 </span>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--primary-glow)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
                 <Tag size={14} /> {item.category}
               </span>
@@ -486,10 +486,10 @@ export default function ItemDetail() {
                 <ShieldCheck size={14} /> ₹{item.securityDeposit || '500'} Security Deposit
               </span>
             </div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '24px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
 
-            <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>Description</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '16px', lineHeight: 1.6, margin: 0 }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Description</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: 0 }}>
               {item.description || "No description provided for this item. It's currently available for rent in good condition! Reach out to the owner for more details."}
             </p>
 
@@ -497,7 +497,7 @@ export default function ItemDetail() {
             {/* User's Booking Information */}
             {userRequest && (
               <div style={{
-                marginTop: '32px',
+                marginTop: '20px',
                 padding: '24px',
                 borderRadius: '24px',
                 background: userRequest.status === 'accepted' 
@@ -630,7 +630,7 @@ export default function ItemDetail() {
               <div 
                 onClick={() => navigate('/user/' + (item.userId || 'user-123'), { state: { avatar_url: ownerProfile?.avatar_url || null } })}
                 className="glass-panel" 
-                style={{ marginTop: '32px', padding: '20px', borderRadius: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px' }}
+                style={{ marginTop: '20px', padding: '20px', borderRadius: '20px', cursor: 'pointer', display: 'flex', flexDirection: 'column', gap: '16px' }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <h3 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>Posted by</h3>
