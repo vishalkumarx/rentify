@@ -7,7 +7,7 @@ import { LoadingDialog } from '../components/LoadingDialog';
 
 import { useFeed } from '../context/FeedContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, Star, AlertTriangle, BadgeCheck, X, Send, Building, AlignLeft, Mail } from 'lucide-react';
+import { ChevronLeft, Star, AlertTriangle, BadgeCheck, X, Send, Building2, AlignLeft, Mail } from 'lucide-react';
 
 export default function UserProfile() {
   const { id } = useParams<{ id: string }>();
@@ -198,12 +198,10 @@ export default function UserProfile() {
                 {session.user.email}
               </div>
             )}
-            {profile?.department && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '15px', marginTop: '4px' }}>
-                <Building size={16} />
-                <span>{profile.department}</span>
-              </div>
-            )}
+            <div style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500 }}>
+              <Building2 size={16} color="var(--text-muted)" />
+              <span>{profile?.department || 'Department not set'}</span>
+            </div>
             {profile?.bio && (
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', color: 'var(--text-main)', fontSize: '15px', marginTop: '12px', maxWidth: '85%', textAlign: 'left' }}>
                 <AlignLeft size={16} style={{ marginTop: '2px', flexShrink: 0, color: 'var(--text-muted)' }} />
