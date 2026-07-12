@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Image as ImageIcon, Eye, MessageSquare, Send, Heart } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { LoadingDialog } from '../components/LoadingDialog';
 import toast from 'react-hot-toast';
 import { createPortal } from 'react-dom';
 
