@@ -12,6 +12,7 @@ export default function Messages() {
 
   const [isSelectMode, setIsSelectMode] = useState(false);
   const [selectedConvIds, setSelectedConvIds] = useState<Set<string>>(new Set());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const toggleSelectConv = (id: string) => {
     const newSet = new Set(selectedConvIds);
@@ -31,6 +32,7 @@ export default function Messages() {
       await deleteConversation(id);
       deletedCount++;
     }
+    setShowDeleteConfirm(false);
     exitSelectMode();
     toast.success(`${deletedCount} chat${deletedCount > 1 ? 's' : ''} deleted`);
   };
@@ -43,7 +45,7 @@ export default function Messages() {
           isSelectMode ? (
             <div style={{ display: 'flex', gap: '8px' }}>
               <button
-                onClick={handleDeleteSelected}
+                onClick={() => setShowDeleteConfirm(true)}
                 disabled={selectedConvIds.size === 0}
                 style={{ padding: '6px 16px', borderRadius: '20px', border: 'none', background: selectedConvIds.size > 0 ? 'var(--danger)' : 'var(--surface-border)', color: selectedConvIds.size > 0 ? '#fff' : 'var(--text-muted)', fontSize: '14px', fontWeight: 600, cursor: selectedConvIds.size > 0 ? 'pointer' : 'not-allowed', display: 'flex', alignItems: 'center', gap: '4px' }}
               >
@@ -174,7 +176,7 @@ export default function Messages() {
             {selectedConvIds.size} selected
           </span>
           <button
-            onClick={handleDeleteSelected}
+            onClick={() => setShowDeleteConfirm(true)}
             disabled={selectedConvIds.size === 0}
             style={{
               padding: '10px 24px',
@@ -194,6 +196,26 @@ export default function Messages() {
             <X size={16} />
             Delete {selectedConvIds.size > 0 ? `(${selectedConvIds.size})` : ''}
           </button>
+        </div>
+      )}
+      
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={() => setShowDeleteConfirm(false)}>
+          <div style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', width: '100%', maxWidth: '340px', border: '1px solid var(--surface-border)' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Delete Messages</h3>
+            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: '12px 0 24px' }}>
+              Are you sure you want to delete {selectedConvIds.size === 1 ? 'this conversation' : `these ${selectedConvIds.size} conversations`}? This action cannot be undone.
+            </p>
+            <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+              <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Cancel
+              </button>
+              <button onClick={handleDeleteSelected} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
