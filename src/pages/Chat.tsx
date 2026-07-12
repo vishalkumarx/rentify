@@ -454,79 +454,6 @@ export default function Chat() {
           </div>
         )}
 
-        {bookingReq?.status === 'rejected' && (() => {
-          const noteStr = bookingReq.note || '';
-          const parts = noteStr.split('Cancel Reason:');
-          let cleanReason = parts[1]?.trim() || '';
-          if (cleanReason.startsWith('[Declined by owner]')) {
-            cleanReason = cleanReason.replace('[Declined by owner]', '').trim();
-          }
-          return (
-            <div style={{
-              background: 'rgba(239, 68, 68, 0.1)',
-              border: '1px solid var(--danger)',
-              borderRadius: '12px',
-              padding: '12px 16px',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '12px',
-              marginBottom: '16px',
-              boxShadow: '0 2px 8px rgba(239, 68, 68, 0.05)',
-              animation: 'slideDown 0.3s ease-out'
-            }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--danger)', flexShrink: 0, marginTop: '2px' }}>
-                <X size={16} strokeWidth={3} />
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>Booking Declined</p>
-                <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  This booking request has been declined by <strong>{isOwner ? 'you' : 'the owner'}</strong>.
-                  {cleanReason && <span style={{ display: 'block', marginTop: '4px', fontStyle: 'italic' }}>Reason: "{cleanReason}"</span>}
-                </p>
-              </div>
-            </div>
-          );
-        })()}
-
-        {bookingReq?.status === 'cancelled' && (() => {
-          const noteStr = bookingReq.note || '';
-          const parts = noteStr.split('Cancel Reason:');
-          let cleanReason = parts[1]?.trim() || '';
-          let cancelledBy = 'This booking has been cancelled.';
-          if (cleanReason.startsWith('[Cancelled by owner]')) {
-            cancelledBy = isOwner ? 'Cancelled by you.' : 'Cancelled by owner.';
-            cleanReason = cleanReason.replace('[Cancelled by owner]', '').trim();
-          } else if (cleanReason.startsWith('[Cancelled by rentee]')) {
-            cancelledBy = isOwner ? 'Cancelled by requester.' : 'Cancelled by you.';
-            cleanReason = cleanReason.replace('[Cancelled by rentee]', '').trim();
-          }
-          return (
-            <div style={{
-              background: 'rgba(107, 114, 128, 0.1)',
-              border: '1px solid var(--text-muted)',
-              borderRadius: '12px',
-              padding: '12px 16px',
-              display: 'flex',
-              alignItems: 'flex-start',
-              gap: '12px',
-              marginBottom: '16px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.02)',
-              animation: 'slideDown 0.3s ease-out'
-            }}>
-              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(107, 114, 128, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', flexShrink: 0, marginTop: '2px' }}>
-                <Ban size={16} />
-              </div>
-              <div>
-                <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-main)' }}>Booking Cancelled</p>
-                <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
-                  {cancelledBy}
-                  {cleanReason && <span style={{ display: 'block', marginTop: '4px', fontStyle: 'italic' }}>Reason: "{cleanReason}"</span>}
-                </p>
-              </div>
-            </div>
-          );
-        })()}
-
         {/* Not Accepted Banner */}
         {!isItemDeleted && !isChatUnlocked && (
           <div style={{
@@ -602,31 +529,46 @@ export default function Chat() {
                 {msg.text.startsWith('[System]:') ? (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
-                      <div style={{ 
-                        background: 'rgba(0, 0, 0, 0.03)', 
-                        border: '1px solid var(--surface-border)',
-                        padding: '12px 16px', 
-                        borderRadius: '12px', 
-                        fontSize: '13px', 
-                        color: 'var(--text-main)', 
-                        textAlign: 'center',
-                        maxWidth: '85%',
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.4
-                      }}>
-                        {(() => {
-                          let text = msg.text.replace('[System]:', '').trim();
-                          if (msg.senderId === session?.user?.id) {
-                            text = text.replace(/(declined|cancelled|withdrawn|accepted) by\s+[^.\n]+/gi, '$1 by you');
-                          }
-                          return text;
-                        })()}
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'center', marginTop: '-12px', marginBottom: '16px' }}>
-                      <span style={{ fontSize: '10px', opacity: 0.7, color: 'var(--text-muted)' }}>
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
+                      {(() => {
+                        let text = msg.text.replace('[System]:', '').trim();
+                        if (msg.senderId === session?.user?.id) {
+                          text = text.replace(/(declined|cancelled|withdrawn|accepted) by\s+[^.\n]+/gi, '$1 by you');
+                        }
+                        const isDeclined = /declined|withdrawn/i.test(text);
+                        const isCancelled = /cancelled/i.test(text);
+                        const accent = isDeclined
+                          ? { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.5)', iconBg: 'rgba(239,68,68,0.2)', iconColor: 'var(--danger)', titleColor: 'var(--danger)', icon: <X size={14} strokeWidth={3} /> }
+                          : isCancelled
+                          ? { bg: 'rgba(107,114,128,0.1)', border: 'rgba(107,114,128,0.4)', iconBg: 'rgba(107,114,128,0.2)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: <Ban size={14} /> }
+                          : { bg: 'rgba(0,0,0,0.03)', border: 'var(--surface-border)', iconBg: 'rgba(0,0,0,0.06)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: null };
+                        const lines = text.split(/\. ?Reason:/i);
+                        const mainText = lines[0].replace(/^[🚫✅🔔]\s*/, '').trim();
+                        const reasonText = lines[1]?.trim();
+                        return (
+                          <div style={{
+                            background: accent.bg,
+                            border: `1px solid ${accent.border}`,
+                            borderRadius: '14px',
+                            padding: '10px 14px',
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '10px',
+                            maxWidth: '85%',
+                            textAlign: 'left',
+                          }}>
+                            {accent.icon && (
+                              <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: accent.iconBg, display: 'flex', alignItems: 'center', justifyContent: 'center', color: accent.iconColor, flexShrink: 0, marginTop: '1px' }}>
+                                {accent.icon}
+                              </div>
+                            )}
+                            <div>
+                              <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: accent.titleColor }}>{mainText}</p>
+                              {reasonText && <p style={{ margin: '3px 0 0', fontSize: '12px', color: 'var(--text-muted)', fontStyle: 'italic' }}>Reason: "{reasonText}"</p>}
+                              <p style={{ margin: '3px 0 0', fontSize: '10px', opacity: 0.6, color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </>
 
