@@ -7,7 +7,7 @@ import { CalendarCheck, Calendar, Check, X, MessageCircle, ChevronDown } from 'l
 import { useBookings } from '../context/BookingContext';
 import { useChat } from '../context/ChatContext';
 import { getStorageJson } from '../lib/supabase';
-import { format, parseISO, isToday, isYesterday } from 'date-fns';
+import { format, parseISO, isToday, isYesterday, differenceInDays } from 'date-fns';
 
 export default function Requests() {
   const { items } = useFeed();
@@ -15,6 +15,18 @@ export default function Requests() {
   const { requests, updateRequestStatus } = useBookings();
   const { getOrCreateConversation, sendMessage } = useChat();
   const navigate = useNavigate();
+
+  const getDurationDays = (startDateStr: string, endDateStr: string) => {
+    if (!startDateStr || !endDateStr) return 0;
+    try {
+      const start = parseISO(startDateStr);
+      const end = parseISO(endDateStr);
+      const days = differenceInDays(end, start) + 1;
+      return days > 0 ? days : 1;
+    } catch (e) {
+      return 1;
+    }
+  };
 
   const formatTiming = (dateStr?: string) => {
     if (!dateStr) return '';
@@ -182,7 +194,10 @@ export default function Requests() {
                         <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div>
                             <p style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                              Requested by <strong onClick={(e) => { e.stopPropagation(); navigate(`/user/${req.requester_id}`); }} style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}>{requesterName}</strong>
+                              Requested by <strong onClick={(e) => { e.stopPropagation(); navigate(`/user/${req.requester_id}`); }} style={{ color: 'var(--text-main)', cursor: 'pointer', textDecoration: 'underline', textUnderlineOffset: '4px' }}>{requesterName}</strong> for {(() => {
+                                const days = getDurationDays(req.start_date, req.end_date);
+                                return `${days} ${days === 1 ? 'day' : 'days'}`;
+                              })()}
                             </p>
                             <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <Calendar size={14} />
@@ -346,7 +361,10 @@ export default function Requests() {
                         <div style={{ background: 'var(--surface-border)', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div>
                             <p style={{ margin: '0 0 4px', fontSize: '14px', color: 'var(--text-muted)' }}>
-                              Requested by <strong>You</strong>
+                              Requested by <strong>You</strong> for {(() => {
+                                const days = getDurationDays(req.start_date, req.end_date);
+                                return `${days} ${days === 1 ? 'day' : 'days'}`;
+                              })()}
                             </p>
                             <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <Calendar size={14} />
