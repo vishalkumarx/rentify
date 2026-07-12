@@ -754,16 +754,16 @@ export default function ItemDetail() {
               <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>You booked this from {userRequest?.start_date ? format(parseISO(userRequest.start_date), 'dd MMM') : ''} to {userRequest?.end_date ? format(parseISO(userRequest.end_date), 'dd MMM') : ''}</p>
             </div>
           ) : userRequest?.status === 'accepted' || (chatExists && userRequest) ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-              <button onClick={handleMessageClick} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
-                <MessageCircle size={22} />
+            <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+              <button onClick={handleMessageClick} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--text-main)', color: 'var(--surface)', boxShadow: 'none', cursor: 'pointer', border: 'none', fontWeight: 700 }}>
+                <MessageCircle size={18} />
                 Chat with Owner
               </button>
               <button 
                 onClick={() => setShowCancelConfirm(true)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px', fontSize: '16px', borderRadius: '24px', background: 'transparent', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
-                <X size={20} />
-                Withdraw Request
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', boxShadow: 'none', cursor: 'pointer', fontWeight: 700 }}>
+                <X size={18} />
+                Withdraw
               </button>
             </div>
           ) : item.status === 'booked' ? (
@@ -772,16 +772,16 @@ export default function ItemDetail() {
               Notify Me
             </button>
           ) : userRequest?.status === 'pending' ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-              <button disabled style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', width: '100%', cursor: 'not-allowed', border: 'none' }}>
-                <MessageCircle size={22} />
-                Chat Locked (Pending)
+            <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+              <button disabled style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-muted)', boxShadow: 'none', cursor: 'not-allowed', border: 'none', fontWeight: 700 }}>
+                <MessageCircle size={18} />
+                Chat Locked
               </button>
               <button 
                 onClick={() => setShowCancelConfirm(true)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '14px', fontSize: '16px', borderRadius: '24px', background: 'transparent', color: 'var(--danger)', boxShadow: 'none', width: '100%', cursor: 'pointer', border: 'none' }}>
-                <X size={20} />
-                Withdraw Request
+                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px', fontSize: '14px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', boxShadow: 'none', cursor: 'pointer', fontWeight: 700 }}>
+                <X size={18} />
+                Withdraw
               </button>
             </div>
           ) : (
