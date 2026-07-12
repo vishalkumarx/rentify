@@ -824,7 +824,7 @@ export default function Chat() {
       </footer>
 
       {isOwner && bookingReq?.status === 'pending' && (
-        <div style={{ position: 'absolute', bottom: '92px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ position: 'absolute', top: '76px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button 
             type="button"
             onClick={() => setShowAcceptDialog(true)}
