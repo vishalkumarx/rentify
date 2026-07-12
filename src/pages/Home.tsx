@@ -292,6 +292,11 @@ export default function Home() {
           <div style={{ fontWeight: 800, fontSize: '16px', color: 'var(--success)' }}>
             ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
           </div>
+          {item.itemRating != null && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, marginTop: '2px' }}>
+              ⭐ {item.itemRating} ({item.itemReviewCount || 0})
+            </div>
+          )}
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
@@ -301,17 +306,7 @@ export default function Home() {
               {item.department?.startsWith('lat:') ? DEPARTMENTS[(item.id % (DEPARTMENTS.length - 1)) + 1] : item.department}
             </span>
           </p>
-          
-          {item.itemRating != null && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--warning)', fontWeight: 700, flexShrink: 0 }}>
-              ⭐ {item.itemRating} ({item.itemReviewCount || 0})
-            </div>
-          )}
         </div>
-        
-        <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.3 }}>
-          {item.description || 'No description available for this item. Contact the seller for more details.'}
-        </p>
       </div>
     </div>
   );

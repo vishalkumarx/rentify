@@ -444,25 +444,29 @@ export default function ItemRequestsFeed() {
                                 </div>
                               )}
                               <div style={{ flex: 1 }}>
-                                <div style={{ background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
+                                <div style={{ background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px', position: 'relative' }}>
+                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px', paddingRight: '24px' }}>
                                       <strong onClick={(e) => { e.stopPropagation(); navigate(`/profile/${c.userId}`); }} style={{ fontSize: '13px', color: 'var(--text-main)', cursor: 'pointer' }}>{c.name}</strong>
                                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
                                     </div>
-                                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
+                                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)', paddingRight: '24px' }}>{c.text}</p>
+                                  
+                                  {(c.userId === session?.user?.id || selectedNeed?.userId === session?.user?.id) && (
+                                    <button 
+                                      onClick={() => handleDeleteComment(c.id)} 
+                                      style={{ position: 'absolute', top: '12px', right: '12px', width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
+                                    >
+                                      <Trash2 size={14} />
+                                    </button>
+                                  )}
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '4px', marginTop: '6px', marginLeft: '8px' }}>
                                   <button onClick={() => handleLikeComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: hasLiked ? 'var(--danger)' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '4px', padding: 0 }}>
                                     <Heart size={14} fill={hasLiked ? 'currentColor' : 'none'} /> {c.likes?.length || 0}
                                   </button>
-                                    <button onClick={() => setReplyingTo(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left', marginLeft: '4px' }}>
-                                      Reply
-                                    </button>
-                                    {(c.userId === session?.user?.id || selectedNeed?.userId === session?.user?.id) && (
-                                      <button onClick={() => handleDeleteComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, marginLeft: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <Trash2 size={12} />
-                                      </button>
-                                    )}
+                                  <button onClick={() => setReplyingTo(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left', marginLeft: '4px' }}>
+                                    Reply
+                                  </button>
                                 </div>
                               </div>
                             </div>
