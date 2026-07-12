@@ -551,7 +551,7 @@ export default function Chat() {
                           : isAccepted
                           ? { bg: 'rgba(34,197,94,0.1)', border: 'rgba(34,197,94,0.5)', iconBg: 'rgba(34,197,94,0.2)', iconColor: 'var(--success)', titleColor: 'var(--success)', icon: <Check size={14} strokeWidth={3} /> }
                           : { bg: 'rgba(0,0,0,0.03)', border: 'var(--surface-border)', iconBg: 'rgba(0,0,0,0.06)', iconColor: 'var(--text-muted)', titleColor: 'var(--text-main)', icon: null };
-                        const lines = text.split(/\. ?Reason:/i);
+                        const lines = text.split(/(?:\.|\n)*\s*Reason:/i);
                         const mainText = lines[0].replace(/^[🚫✅🔔]\s*/, '').trim();
                         const reasonText = lines[1]?.trim();
                         return (
