@@ -466,7 +466,7 @@ export default function Profile() {
             style={{ background: 'transparent', color: 'var(--danger)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, display: 'flex', alignItems: 'center', gap: '12px', boxShadow: 'none' }}
           >
             <LogOut size={20} />
-            <span style={{ fontWeight: 500 }}>Log Out</span>
+            <span style={{ fontWeight: 500 }}>Sign Out</span>
           </button>
         </div>
       </div>
@@ -477,7 +477,7 @@ export default function Profile() {
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
           <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', textAlign: 'center' }}>
             <h3 style={{ margin: '0 0 16px 0', fontSize: '20px', fontWeight: 800 }}>Sign Out</h3>
-            <p style={{ margin: '0 0 24px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Are you sure you want to log out of your account?</p>
+            <p style={{ margin: '0 0 24px 0', color: 'var(--text-muted)', fontSize: '15px' }}>Are you sure you want to sign out of your account?</p>
             <div style={{ display: 'flex', gap: '12px' }}>
               <button onClick={() => setShowLogoutConfirm(false)} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}>Cancel</button>
               <button onClick={handleSignOut} style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: 'white', fontWeight: 600, cursor: 'pointer' }}>Sign Out</button>
