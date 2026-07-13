@@ -475,30 +475,32 @@ export default function Requests() {
                 ? 'Choose one of the options below to accept this booking request.' 
                 : 'Are you sure you want to decline this booking request? The user will be notified.'}
             </p>
-            {confirmAction.action === 'accepted' ? (
+            {confirmAction.action === 'accepted' ? (() => {
+              const reqToConfirm = requests.find(r => r.id === confirmAction.id);
+              const totalDays = reqToConfirm ? getDurationDays(reqToConfirm.start_date, reqToConfirm.end_date) : 1;
+              return (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
                 <button
                   onClick={() => {
                     updateRequestStatus(confirmAction.id, 'accepted', confirmAction.originalPrice);
                     setConfirmAction(null);
                   }}
-                  style={{ width: '100%', padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                  style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
                 >
-                  <span>Accept at Original Price</span>
-                  <span style={{ fontSize: '16px', fontWeight: 800 }}>₹{confirmAction.originalPrice}</span>
+                  Accept at ₹{confirmAction.originalPrice} for {totalDays} {totalDays === 1 ? 'day' : 'days'}
                 </button>
                 
                 <div style={{ height: '1px', background: 'var(--surface-border)', margin: '4px 0' }} />
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at a new price (₹):</label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at new price (₹) for {totalDays} {totalDays === 1 ? 'day' : 'days'}:</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <input
                       type="number"
                       value={customPrice}
                       onChange={e => setCustomPrice(e.target.value)}
                       placeholder="Enter new price"
-                      style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
+                      style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
                     />
                     <button
                       disabled={!customPrice || Number(customPrice) <= 0}
@@ -506,10 +508,35 @@ export default function Requests() {
                         updateRequestStatus(confirmAction.id, 'accepted', Number(customPrice));
                         setConfirmAction(null);
                       }}
-                      style={{ padding: '0 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '14px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
+                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '15px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
                     >
                       Apply
                     </button>
+                  {customPrice && Number(customPrice) > 0 && (
+                    <div style={{ marginTop: '4px', padding: '12px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--surface-border)', fontSize: '13px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Price per day</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{Math.round(Number(customPrice) / totalDays)}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Duration</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{totalDays} {totalDays === 1 ? 'day' : 'days'}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Platform Fee</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹0</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>GST</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹0</span>
+                      </div>
+                      <div style={{ height: '1px', background: 'var(--surface-border)', margin: '8px 0' }} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)' }}>
+                        <span style={{ fontWeight: 700 }}>You will receive</span>
+                        <span style={{ fontWeight: 800 }}>₹{customPrice}</span>
+                      </div>
+                    </div>
+                  )}
                   </div>
                 </div>
 
@@ -519,7 +546,7 @@ export default function Requests() {
                   </p>
                 </div>
               </div>
-            ) : null}
+            )})() : null}
             {confirmAction.action === 'rejected' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
                 <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
