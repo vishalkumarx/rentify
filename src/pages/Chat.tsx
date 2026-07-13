@@ -1027,6 +1027,23 @@ export default function Chat() {
                   >
                     Apply
                   </button>
+                  {customPrice && Number(customPrice) > 0 && (
+                    <div style={{ marginTop: '4px', padding: '12px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--surface-border)', fontSize: '13px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Price per day</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{Math.round(Number(customPrice) / totalDays)}</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>Duration</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{totalDays} {totalDays === 1 ? 'day' : 'days'}</span>
+                      </div>
+                      <div style={{ height: '1px', background: 'var(--surface-border)', margin: '8px 0' }} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)' }}>
+                        <span style={{ fontWeight: 700 }}>You will receive</span>
+                        <span style={{ fontWeight: 800 }}>₹{customPrice}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
