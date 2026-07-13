@@ -22,6 +22,12 @@ export default function Chat() {
   const { requests, updateRequestStatus } = useBookings();
   const { conversations, messages, sendMessage, unsendMessage, markAsRead } = useChat();
   const [inputText, setInputText] = useState('');
+  
+  const isWebView = typeof window !== 'undefined' && (
+    /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent) || 
+    /Android.*(wv|\.b)/i.test(navigator.userAgent) ||
+    (window as any).ReactNativeWebView
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
@@ -38,6 +44,8 @@ export default function Chat() {
   const [customPrice, setCustomPrice] = useState('');
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showDeclineConfirm, setShowDeclineConfirm] = useState(false);
+  const [showMultiRequestConfirm, setShowMultiRequestConfirm] = useState(false);
+  const [pendingAcceptPrice, setPendingAcceptPrice] = useState<number | null>(null);
   const [declineReason, setDeclineReason] = useState('');
   const [showAttachments, setShowAttachments] = useState(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
@@ -63,6 +71,47 @@ export default function Chat() {
     ((r.requester_id === session.user.id && r.owner_id === conversation.otherUserId) || 
      (r.owner_id === session.user.id && r.requester_id === conversation.otherUserId))
   ) : null;
+
+  const otherPendingRequests = useMemo(() => {
+    if (!bookingReq || !session) return [];
+    return requests.filter(r => 
+      r.item_id === bookingReq.item_id && 
+      r.status === 'pending' && 
+      r.id !== bookingReq.id
+    );
+  }, [requests, bookingReq, session]);
+
+  const performAccept = async (price: number) => {
+    if (!bookingReq || !session || !conversation) return;
+    
+    await updateRequestStatus(bookingReq.id, 'accepted', price);
+    await sendMessage(conversation.id, session.user.id, `[System]: Booking accepted by ${session.user.user_metadata.full_name}.`);
+    
+    if (otherPendingRequests.length > 0) {
+      for (const req of otherPendingRequests) {
+        const reason = '[Declined by owner] Item is Unavailable';
+        await updateRequestStatus(req.id, 'rejected', undefined, reason);
+        const otherConv = conversations.find(c => c.itemId === String(req.item_id) && c.otherUserId === req.requester_id);
+        if (otherConv) {
+          await sendMessage(otherConv.id, session.user.id, `[System]: Booking request was declined by ${session.user.user_metadata.full_name}.\nReason: Item is Unavailable`);
+        }
+      }
+    }
+    
+    setShowAcceptDialog(false);
+    setShowMultiRequestConfirm(false);
+    setPendingAcceptPrice(null);
+  };
+
+  const handleAcceptBooking = (price: number) => {
+    if (otherPendingRequests.length > 0) {
+      setPendingAcceptPrice(price);
+      setShowMultiRequestConfirm(true);
+      setShowAcceptDialog(false);
+    } else {
+      performAccept(price);
+    }
+  };
 
   const totalDays = useMemo(() => {
     if (!bookingReq?.start_date || !bookingReq?.end_date) return 0;
@@ -917,7 +966,7 @@ export default function Chat() {
       </footer>
 
       {isOwner && bookingReq?.status === 'pending' && (
-        <div style={{ position: 'absolute', top: '76px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ position: 'absolute', top: isWebView ? 'auto' : '76px', bottom: isWebView ? 'calc(90px + env(safe-area-inset-bottom))' : 'auto', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', gap: '8px', alignItems: 'center' }}>
           <button 
             type="button"
             onClick={() => setShowAcceptDialog(true)}
@@ -949,37 +998,32 @@ export default function Chat() {
               <button
                 type="button"
                 onClick={() => {
-                  updateRequestStatus(bookingReq.id, 'accepted', bookingReq.total_price);
-                  sendMessage(conversation.id, session!.user.id, `[System]: Booking accepted by ${session!.user.user_metadata.full_name}.`);
-                  setShowAcceptDialog(false);
+                  handleAcceptBooking(bookingReq.total_price);
                 }}
-                style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '15px', fontWeight: 700, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textAlign: 'center' }}
+                style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
               >
-                <span style={{ fontSize: '14px', opacity: 0.9 }}>Accept at Original Price</span>
-                <span style={{ fontSize: '16px', fontWeight: 800 }}>₹{bookingReq.total_price} for {totalDays} {totalDays === 1 ? 'day' : 'days'}</span>
+                Accept at ₹{bookingReq.total_price} for {totalDays} {totalDays === 1 ? 'day' : 'days'}
               </button>
               
               <div style={{ height: '1px', background: 'var(--surface-border)', margin: '4px 0' }} />
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at a new price (₹):</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at new price (₹) for {totalDays} {totalDays === 1 ? 'day' : 'days'}:</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   <input
                     type="number"
                     value={customPrice}
                     onChange={e => setCustomPrice(e.target.value)}
                     placeholder="Enter new price"
-                    style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
+                    style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
                   />
                   <button
                     type="button"
                     disabled={!customPrice || Number(customPrice) <= 0}
                     onClick={() => {
-                      updateRequestStatus(bookingReq.id, 'accepted', Number(customPrice));
-                      sendMessage(conversation.id, session!.user.id, `[System]: Booking accepted by ${session!.user.user_metadata.full_name}.`);
-                      setShowAcceptDialog(false);
+                      handleAcceptBooking(Number(customPrice));
                     }}
-                    style={{ padding: '0 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '14px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
+                    style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '15px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
                   >
                     Apply
                   </button>
@@ -996,6 +1040,35 @@ export default function Chat() {
             <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
               <button type="button" onClick={() => setShowAcceptDialog(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Cancel
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {showMultiRequestConfirm && bookingReq && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Multiple Requests</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              This item has been requested by <strong>{otherPendingRequests.length}</strong> other user{otherPendingRequests.length > 1 ? 's' : ''}. 
+              If you accept this booking, all other pending requests will be automatically declined with the reason "Unavailable".
+            </p>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                type="button" 
+                onClick={() => { setShowMultiRequestConfirm(false); setShowAcceptDialog(true); }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Go Back
+              </button>
+              <button
+                type="button"
+                onClick={() => { if (pendingAcceptPrice) performAccept(pendingAcceptPrice); }}
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Confirm Accept
               </button>
             </div>
           </div>
