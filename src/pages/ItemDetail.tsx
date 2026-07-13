@@ -893,6 +893,14 @@ export default function ItemDetail() {
               {startDate ? format(parseISO(startDate), 'MMM d') : ''} - {endDate ? format(parseISO(endDate), 'MMM d') : ''}
             </span>
           </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Platform Fee</span>
+            <span style={{ fontWeight: 600 }}>₹0</span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>GST</span>
+            <span style={{ fontWeight: 600 }}>₹0</span>
+          </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: 700 }}>Total Amount</span>
             <span style={{ color: 'var(--success)', fontSize: '24px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
