@@ -97,11 +97,15 @@ export default function ItemRequestsFeed() {
     const data = await getStorageJson('feed/item_requests.json') || [];
     const allComments = await getStorageJson('feed/need_comments.json') || [];
     
+    const today = new Date().toISOString().split('T')[0];
+    
     // Sort by newest first and attach comment counts
-    const enrichedData = data.map((req: ItemRequest) => ({
-      ...req,
-      commentCount: allComments.filter((c: NeedComment) => c.needId === req.id).length
-    })).sort((a: ItemRequest, b: ItemRequest) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    const enrichedData = data
+      .filter((req: ItemRequest) => !req.dateRequired || req.dateRequired >= today)
+      .map((req: ItemRequest) => ({
+        ...req,
+        commentCount: allComments.filter((c: NeedComment) => c.needId === req.id).length
+      })).sort((a: ItemRequest, b: ItemRequest) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     
     setRequests(enrichedData);
     setLoading(false);
@@ -163,15 +167,19 @@ export default function ItemRequestsFeed() {
     setIsSubmittingComment(false);
   };
 
-  const handleDeleteComment = async (commentId: string) => {
-    if (!window.confirm('Are you sure you want to delete this comment?')) return;
-    
-    const allComments = await getStorageJson('feed/need_comments.json') || [];
-    const remainingComments = allComments.filter((c: NeedComment) => c.id !== commentId && c.parentId !== commentId);
-    await setStorageJson('feed/need_comments.json', remainingComments);
-    
-    setNeedComments(prev => prev.filter(c => c.id !== commentId && c.parentId !== commentId));
-    setRequests(prev => prev.map(r => r.id === selectedNeed?.id ? { ...r, commentCount: Math.max(0, (r.commentCount || 0) - 1) } : r));
+  const handleDeleteComment = (commentId: string) => {
+    setConfirmDialog({
+      message: 'Are you sure you want to delete this comment?',
+      onConfirm: async () => {
+        const allComments = await getStorageJson('feed/need_comments.json') || [];
+        const remainingComments = allComments.filter((c: NeedComment) => c.id !== commentId && c.parentId !== commentId);
+        await setStorageJson('feed/need_comments.json', remainingComments);
+        
+        setNeedComments(prev => prev.filter(c => c.id !== commentId && c.parentId !== commentId));
+        setRequests(prev => prev.map(r => r.id === selectedNeed?.id ? { ...r, commentCount: Math.max(0, (r.commentCount || 0) - 1) } : r));
+        toast.success('Comment deleted');
+      }
+    });
   };
 
   const handleLikeComment = async (commentId: string) => {
@@ -445,20 +453,12 @@ export default function ItemRequestsFeed() {
                               )}
                               <div style={{ flex: 1 }}>
                                 <div style={{ background: 'var(--bg)', padding: '12px 16px', borderRadius: '16px', borderTopLeftRadius: '4px', position: 'relative' }}>
-                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px', paddingRight: '24px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '4px' }}>
                                       <strong onClick={(e) => { e.stopPropagation(); navigate(`/profile/${c.userId}`); }} style={{ fontSize: '13px', color: 'var(--text-main)', cursor: 'pointer' }}>{c.name}</strong>
                                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
                                     </div>
                                   <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)', paddingRight: '24px' }}>{c.text}</p>
-                                  
-                                  {(c.userId === session?.user?.id || selectedNeed?.userId === session?.user?.id) && (
-                                    <button 
-                                      onClick={() => handleDeleteComment(c.id)} 
-                                      style={{ position: 'absolute', top: '12px', right: '12px', width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center' }}
-                                    >
-                                      <Trash2 size={14} />
-                                    </button>
-                                  )}
+                                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '4px', marginTop: '6px', marginLeft: '8px' }}>
                                   <button onClick={() => handleLikeComment(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: hasLiked ? 'var(--danger)' : 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '4px', padding: 0 }}>
@@ -467,6 +467,14 @@ export default function ItemRequestsFeed() {
                                   <button onClick={() => setReplyingTo(c.id)} style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left', marginLeft: '4px' }}>
                                     Reply
                                   </button>
+                                  {(c.userId === session?.user?.id || selectedNeed?.userId === session?.user?.id) && (
+                                    <button 
+                                      onClick={() => handleDeleteComment(c.id)} 
+                                      style={{ width: 'auto', background: 'none', border: 'none', color: 'var(--danger)', fontSize: '12px', fontWeight: 600, cursor: 'pointer', padding: 0, textAlign: 'left', marginLeft: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                    >
+                                      Delete
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             </div>
