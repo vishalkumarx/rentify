@@ -127,7 +127,6 @@ export default function MobileLayout() {
                   height: '18px',
                   background: 'var(--danger)',
                   borderRadius: '10px',
-                  border: '2px solid #fff',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
