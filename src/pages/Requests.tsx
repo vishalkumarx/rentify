@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { CalendarCheck, Calendar, Check, X, MessageCircle, ChevronDown } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { useChat } from '../context/ChatContext';
-import { getStorageJson } from '../lib/supabase';
+import { getStorageJson, supabase } from '../lib/supabase';
 import { format, parseISO, isToday, isYesterday, differenceInDays } from 'date-fns';
 
 export default function Requests() {
@@ -45,6 +45,42 @@ export default function Requests() {
   const [customPrice, setCustomPrice] = useState('');
   const [cancelReason, setCancelReason] = useState('');
   const [showTypeDialog, setShowTypeDialog] = useState(false);
+  const [showCustomPriceDialog, setShowCustomPriceDialog] = useState(false);
+  const [showMultiRequestConfirm, setShowMultiRequestConfirm] = useState(false);
+  const [otherPendingRequests, setOtherPendingRequests] = useState<any[]>([]);
+  const [pendingAcceptPrice, setPendingAcceptPrice] = useState<number | null>(null);
+  const [bookingToAccept, setBookingToAccept] = useState<any>(null);
+
+  const handleAcceptBooking = async (price: number) => {
+    if (!confirmAction) return;
+    
+    const req = requests.find(r => r.id === confirmAction.id);
+    if (!req) return;
+    
+    // Check if there are other pending requests for the same item
+    const { data: otherReqs } = await supabase
+      .from('booking_requests')
+      .select('*')
+      .eq('item_id', req.item_id)
+      .eq('status', 'pending')
+      .neq('id', req.id);
+      
+    if (otherReqs && otherReqs.length > 0) {
+      setOtherPendingRequests(otherReqs);
+      setPendingAcceptPrice(price);
+      setBookingToAccept(req);
+      setConfirmAction(null); // Hide the accept bottom sheet
+      setShowMultiRequestConfirm(true); // Show the warning
+    } else {
+      performAccept(req.id, price);
+    }
+  };
+
+  const performAccept = async (reqId: number, price: number) => {
+    await updateRequestStatus(reqId, 'accepted', price);
+    setConfirmAction(null);
+    setShowMultiRequestConfirm(false);
+  };
 
   // Incoming Requests: Requests sent TO me (I am the owner)
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
@@ -465,89 +501,84 @@ export default function Requests() {
       </div>
       
       {confirmAction && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>
-              {confirmAction.action === 'accepted' ? 'Accept Request?' : 'Decline Request?'}
-            </h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
-              {confirmAction.action === 'accepted' 
-                ? 'Choose one of the options below to accept this booking request.' 
-                : 'Are you sure you want to decline this booking request? The user will be notified.'}
-            </p>
-            {confirmAction.action === 'accepted' ? (() => {
-              const reqToConfirm = requests.find(r => r.id === confirmAction.id);
-              const totalDays = reqToConfirm ? getDurationDays(reqToConfirm.start_date, reqToConfirm.end_date) : 1;
-              return (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
-                <button
-                  onClick={() => {
-                    updateRequestStatus(confirmAction.id, 'accepted', confirmAction.originalPrice);
-                    setConfirmAction(null);
-                  }}
-                  style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}
-                >
-                  Accept at ₹{confirmAction.originalPrice} for {totalDays} {totalDays === 1 ? 'day' : 'days'}
+        confirmAction.action === 'accepted' ? (
+          <>
+            <div className={`bottom-sheet-overlay visible`} onClick={() => { setConfirmAction(null); setCancelReason(''); }} style={{ zIndex: 999998 }}></div>
+            <div className={`bottom-sheet visible`} style={{ zIndex: 999999 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Accept Booking?</h3>
+                <button onClick={() => { setConfirmAction(null); setCancelReason(''); }} style={{ background: 'var(--surface-border)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)', padding: 0 }}>
+                  <X size={24} />
                 </button>
-                
-                <div style={{ height: '1px', background: 'var(--surface-border)', margin: '4px 0' }} />
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Or accept at new price (₹) for {totalDays} {totalDays === 1 ? 'day' : 'days'}:</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <input
-                      type="number"
-                      value={customPrice}
-                      onChange={e => setCustomPrice(e.target.value)}
-                      placeholder="Enter new price"
-                      style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
-                    />
-                    <button
-                      disabled={!customPrice || Number(customPrice) <= 0}
-                      onClick={() => {
-                        updateRequestStatus(confirmAction.id, 'accepted', Number(customPrice));
-                        setConfirmAction(null);
-                      }}
-                      style={{ width: '100%', padding: '14px 16px', borderRadius: '12px', border: 'none', background: (customPrice && Number(customPrice) > 0) ? 'var(--primary)' : 'var(--surface-border)', color: (customPrice && Number(customPrice) > 0) ? '#000' : 'var(--text-muted)', fontSize: '15px', fontWeight: 700, cursor: (customPrice && Number(customPrice) > 0) ? 'pointer' : 'default' }}
-                    >
-                      Apply
-                    </button>
-                  {customPrice && Number(customPrice) > 0 && (
-                    <div style={{ marginTop: '4px', padding: '12px', background: 'var(--bg)', borderRadius: '12px', border: '1px solid var(--surface-border)', fontSize: '13px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+              </div>
+              {(() => {
+                const reqToConfirm = requests.find(r => r.id === confirmAction.id);
+                const totalDays = reqToConfirm ? getDurationDays(reqToConfirm.start_date, reqToConfirm.end_date) : 1;
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                    <div style={{ padding: '16px', background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', fontSize: '14px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Price per day</span>
-                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{Math.round(Number(customPrice) / totalDays)}</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{(customPrice && Number(customPrice) > 0) ? Number(customPrice) : confirmAction.originalPrice}</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Duration</span>
                         <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{totalDays} {totalDays === 1 ? 'day' : 'days'}</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Platform Fee</span>
                         <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹0</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>GST</span>
                         <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹0</span>
                       </div>
-                      <div style={{ height: '1px', background: 'var(--surface-border)', margin: '8px 0' }} />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)' }}>
+                      <div style={{ height: '1px', background: 'var(--surface-border)', margin: '12px 0' }} />
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)', fontSize: '16px' }}>
                         <span style={{ fontWeight: 700 }}>You will receive</span>
-                        <span style={{ fontWeight: 800 }}>₹{customPrice}</span>
+                        <span style={{ fontWeight: 800 }}>₹{(customPrice && Number(customPrice) > 0) ? (Number(customPrice) * totalDays) : (confirmAction.originalPrice || 0)}</span>
                       </div>
                     </div>
-                  )}
-                  </div>
-                </div>
 
-                <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.05)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                  <p style={{ margin: 0, fontSize: '12px', color: 'var(--danger)', lineHeight: 1.5, fontWeight: 500 }}>
-                    <strong style={{ fontWeight: 800 }}>Disclaimer:</strong> Campus Rent is not responsible for any transactions. Always exercise proper caution.
-                  </p>
-                </div>
+                    <div>
+                      <button
+                        onClick={() => setShowCustomPriceDialog(true)}
+                        style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--primary)', background: 'transparent', color: 'var(--primary)', fontSize: '14px', fontWeight: 700, cursor: 'pointer', textAlign: 'center', transition: 'all 0.2s ease' }}
+                      >
+                        Click here for custom price
+                      </button>
+                    </div>
+
+
+
+                    <div style={{ marginTop: '8px' }}>
+                      <button
+                        onClick={() => {
+                          const priceToUse = (customPrice && Number(customPrice) > 0) ? (Number(customPrice) * totalDays) : (confirmAction.originalPrice || 0);
+                          handleAcceptBooking(priceToUse);
+                        }}
+                        style={{ width: '100%', padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', textAlign: 'center' }}
+                      >
+                        Proceed with ₹{(customPrice && Number(customPrice) > 0) ? (Number(customPrice) * totalDays) : confirmAction.originalPrice} for {totalDays} {totalDays === 1 ? 'day' : 'days'} &gt;&gt;
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button onClick={() => { setConfirmAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                  Cancel
+                </button>
               </div>
-            )})() : null}
-            {confirmAction.action === 'rejected' && (
+            </div>
+          </>
+        ) : (
+          <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+            <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Decline Request?</h3>
+              <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px' }}>
+                Are you sure you want to decline this booking request? The user will be notified.
+              </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
                 <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
                   Reason for declining (optional):
@@ -560,13 +591,10 @@ export default function Requests() {
                   style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '15px', outline: 'none', resize: 'none' }}
                 />
               </div>
-            )}
-
-            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button onClick={() => { setConfirmAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
-                {confirmAction.action === 'accepted' ? 'Cancel' : 'No, Go Back'}
-              </button>
-              {confirmAction.action === 'rejected' && (
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button onClick={() => { setConfirmAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                  No, Go Back
+                </button>
                 <button 
                   onClick={async () => {
                     const req = requests.find(r => r.id === confirmAction.id);
@@ -591,7 +619,80 @@ export default function Requests() {
                   style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                   Yes, Decline
                 </button>
-              )}
+              </div>
+            </div>
+          </div>
+        ),
+        document.body
+      )}
+
+      {showCustomPriceDialog && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 9999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Custom Price</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '14px' }}>Enter the custom price per day below:</p>
+            <input
+              type="number"
+              value={customPrice}
+              onChange={e => setCustomPrice(e.target.value)}
+              placeholder="Enter price per day"
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--bg)', color: 'var(--text-main)', fontSize: '16px', outline: 'none' }}
+              autoFocus
+            />
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                type="button" 
+                onClick={() => { setCustomPrice(''); setShowCustomPriceDialog(false); }} 
+                style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '15px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowCustomPriceDialog(false)}
+                disabled={!customPrice || Number(customPrice) <= 0}
+                style={{ flex: 1, padding: '14px', borderRadius: '16px', border: 'none', background: 'var(--primary)', color: '#000', fontSize: '15px', fontWeight: 600, cursor: (!customPrice || Number(customPrice) <= 0) ? 'default' : 'pointer', opacity: (!customPrice || Number(customPrice) <= 0) ? 0.5 : 1 }}
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {showMultiRequestConfirm && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Multiple Requests</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              This item has been requested by <strong>{otherPendingRequests.length}</strong> other user{otherPendingRequests.length > 1 ? 's' : ''}. 
+              If you accept this booking, all other pending requests will be automatically declined with the reason "Unavailable".
+            </p>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                type="button" 
+                onClick={() => { 
+                  setShowMultiRequestConfirm(false); 
+                  if (bookingToAccept) {
+                    setConfirmAction({ id: bookingToAccept.id, action: 'accepted', originalPrice: bookingToAccept.total_price });
+                  }
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Go Back
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (bookingToAccept && pendingAcceptPrice !== null) {
+                    performAccept(bookingToAccept.id, pendingAcceptPrice);
+                  }
+                }}
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Confirm Accept
+              </button>
             </div>
           </div>
         </div>,
