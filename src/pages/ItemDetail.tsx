@@ -669,16 +669,18 @@ export default function ItemDetail() {
                       boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
                       borderLeft: '4px dashed var(--success)'
                     }}>
-                      <button
-                        onClick={() => setBookingNote('')}
-                        style={{ position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
-                      >
-                        <X size={16} />
-                      </button>
-                      <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                        Bargain Request Attached
-                      </h4>
-                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, fontStyle: 'italic', paddingRight: '24px', whiteSpace: 'pre-wrap' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Bargain Request Attached
+                        </h4>
+                        <button
+                          onClick={() => setBookingNote('')}
+                          style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '6px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>
                         "{bookingNote}"
                       </p>
                     </div>
