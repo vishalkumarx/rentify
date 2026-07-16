@@ -78,7 +78,9 @@ export default function ItemDetail() {
             return null;
           });
           const resolved = await Promise.all(reviewPromises);
-          setReviews(resolved.filter((r: any) => r != null).sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+          const validReviews = resolved.filter((r: any) => r != null);
+          const uniqueReviews = Array.from(new Map(validReviews.map((r: any) => [r.id, r])).values()) as any[];
+          setReviews(uniqueReviews.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
         }
       };
       fetchReviews();

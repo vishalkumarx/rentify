@@ -68,7 +68,9 @@ export default function Profile() {
         if (reviewFiles) {
           const targetFiles = reviewFiles.filter(f => f.name.startsWith(session.user.id + '-'));
           Promise.all(targetFiles.map(f => getStorageJson(`reviews/${f.name}`))).then(loaded => {
-            setReviews(loaded.filter(Boolean));
+            const valid = loaded.filter(Boolean);
+            const unique = Array.from(new Map(valid.map((r: any) => [r.id || r.timestamp, r])).values()) as any[];
+            setReviews(unique);
           });
         }
       });

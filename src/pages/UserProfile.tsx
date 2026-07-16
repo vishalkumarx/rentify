@@ -57,8 +57,10 @@ export default function UserProfile() {
         loadedReviews = await Promise.all(
           targetFiles.map(async f => await getStorageJson(`reviews/${f.name}`))
         );
-        loadedReviews = loadedReviews.filter(Boolean).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-        setReviews(loadedReviews);
+        loadedReviews = loadedReviews.filter(Boolean);
+        const uniqueLoaded = Array.from(new Map(loadedReviews.map((r: any) => [r.id || r.timestamp, r])).values()) as any[];
+        uniqueLoaded.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        setReviews(uniqueLoaded);
       }
       
       let computedRating = '5.0';
