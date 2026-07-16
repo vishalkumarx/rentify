@@ -129,7 +129,9 @@ export default function ItemRequestsFeed() {
     }
     
     const allComments = await getStorageJson('feed/need_comments.json') || [];
-    setNeedComments(allComments.filter((c: NeedComment) => c.needId === req.id).sort((a: NeedComment, b: NeedComment) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+    const validComments = allComments.filter((c: NeedComment) => c.needId === req.id);
+    const uniqueComments = Array.from(new Map(validComments.map((c: NeedComment) => [c.id, c])).values()) as NeedComment[];
+    setNeedComments(uniqueComments.sort((a: NeedComment, b: NeedComment) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
     setLoadingComments(false);
   };
   
