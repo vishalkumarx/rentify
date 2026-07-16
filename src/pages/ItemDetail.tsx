@@ -675,9 +675,9 @@ export default function ItemDetail() {
                         </h4>
                         <button
                           onClick={() => setBookingNote('')}
-                          style={{ background: 'rgba(239, 68, 68, 0.1)', border: 'none', color: 'var(--danger)', cursor: 'pointer', padding: '6px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                         >
-                          <X size={14} />
+                          <X size={16} />
                         </button>
                       </div>
                       <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>
