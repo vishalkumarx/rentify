@@ -1,5 +1,6 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
 import { useChat } from '../context/ChatContext';
@@ -55,6 +56,7 @@ export default function ItemDetail() {
   const [newReviewText, setNewReviewText] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [showReviewConfirm, setShowReviewConfirm] = useState(false);
 
   useEffect(() => {
     if (item) {
@@ -103,6 +105,7 @@ export default function ItemDetail() {
     setReviews(prev => [reviewData, ...prev]);
     setNewReviewText('');
     setIsSubmittingReview(false);
+    setShowReviewConfirm(false);
     toast.success('Review added successfully!');
   };
 
@@ -149,6 +152,8 @@ export default function ItemDetail() {
   const [startDate, setStartDate] = useState(location.state?.startDate || '');
   const [endDate, setEndDate] = useState(location.state?.endDate || '');
   const [bookingNote, setBookingNote] = useState(location.state?.bookingNote || '');
+  const [showBargainDialog, setShowBargainDialog] = useState(false);
+  const [tempNote, setTempNote] = useState('');
   const [showConfirmSheet, setShowConfirmSheet] = useState(false);
   const [showSuccessSheet, setShowSuccessSheet] = useState(false);
   
@@ -200,8 +205,7 @@ export default function ItemDetail() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
         <h2>Item not found</h2>
-        <button onClick={() => navigate(-1)} style={{ width: 'auto', padding: '12px 24px' }}>Go Back</button>
-      </div>
+    </div>
     );
   }
 
@@ -233,8 +237,7 @@ export default function ItemDetail() {
   };
 
   const handleConfirmBookRequest = async () => {
-    const days = differenceInDays(parseISO(endDate), parseISO(startDate));
-    const totalDays = days === 0 ? 1 : days;
+    const totalDays = calculateDays();
     const totalPrice = totalDays * Number(item.price);
 
     await createRequest({
@@ -267,7 +270,7 @@ export default function ItemDetail() {
     const e = parseISO(endDate);
     if (!isValid(s) || !isValid(e)) return 0;
     const days = differenceInDays(e, s);
-    return days < 0 ? 0 : days === 0 ? 1 : days;
+    return days < 0 ? 0 : days + 1;
   };
 
   return (
@@ -441,7 +444,7 @@ export default function ItemDetail() {
                     style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
                   />
                   <button 
-                    onClick={handleSubmitReview}
+                    onClick={() => setShowReviewConfirm(true)}
                     disabled={isSubmittingReview || !newReviewText.trim()}
                     style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
                   >
@@ -465,6 +468,34 @@ export default function ItemDetail() {
               <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
             </div>
             
+            {showReviewConfirm && createPortal(
+              <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Submit Review</h3>
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+                    Are you sure you want to submit this review? This action cannot be undone.
+                  </p>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                    <button 
+                      onClick={() => setShowReviewConfirm(false)} 
+                      disabled={isSubmittingReview}
+                      style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSubmitReview}
+                      disabled={isSubmittingReview}
+                      style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer', opacity: isSubmittingReview ? 0.7 : 1 }}
+                    >
+                      {isSubmittingReview ? 'Submitting...' : 'Submit'}
+                    </button>
+                  </div>
+                </div>
+              </div>,
+              document.body
+            )}
+
             {/* Item Rating */}
             {item.itemRating && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
@@ -604,24 +635,54 @@ export default function ItemDetail() {
                 )}
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-                  <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--success)' }}>Message / Offer to Owner (Optional)</label>
-                  <textarea
-                    value={bookingNote}
-                    onChange={(e) => setBookingNote(e.target.value)}
-                    placeholder="e.g. Hi, I'm a student too, would you be willing to do ₹500 total?"
-                    style={{
-                      width: '100%',
-                      minHeight: '80px',
-                      padding: '16px',
-                      borderRadius: '16px',
-                      background: 'rgba(34, 197, 94, 0.1)',
+                  {!bookingNote ? (
+                    <button
+                      onClick={() => {
+                        setTempNote('');
+                        setShowBargainDialog(true);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        borderRadius: '16px',
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        color: 'var(--success)',
+                        border: '1px dashed var(--success)',
+                        fontWeight: 700,
+                        fontSize: '15px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <MessageCircle size={18} /> Send a bargain request
+                    </button>
+                  ) : (
+                    <div style={{
+                      position: 'relative',
+                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)',
                       border: '1px solid var(--success)',
-                      color: 'var(--text-main)',
-                      fontSize: '15px',
-                      resize: 'none',
-                      fontFamily: 'inherit'
-                    }}
-                  />
+                      borderRadius: '12px',
+                      padding: '16px',
+                      boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
+                      borderLeft: '4px dashed var(--success)'
+                    }}>
+                      <button
+                        onClick={() => setBookingNote('')}
+                        style={{ position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}
+                      >
+                        <X size={16} />
+                      </button>
+                      <h4 style={{ margin: '0 0 8px 0', fontSize: '13px', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                        Bargain Request Attached
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, fontStyle: 'italic', paddingRight: '24px', whiteSpace: 'pre-wrap' }}>
+                        "{bookingNote}"
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -874,36 +935,39 @@ export default function ItemDetail() {
           </button>
         </div>
         
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-          <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', background: 'var(--surface)', padding: '12px', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+          <img src={item.image} alt={item.title} style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover' }} />
           <div>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '18px' }}>{item.title}</h3>
-            <p style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--success)' }}>₹{item.price} / day</p>
+            <h3 style={{ margin: '0 0 6px 0', fontSize: '16px' }}>{item.title}</h3>
+            <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--success)' }}>₹{item.price} / day</p>
           </div>
         </div>
 
-        <div style={{ background: 'var(--surface)', padding: '20px', borderRadius: '16px', marginBottom: '24px', border: '1px solid var(--surface-border)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Duration</span>
-            <span style={{ fontWeight: 600 }}>{calculateDays()} Days</span>
+        <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', marginBottom: '20px', border: '1px solid var(--surface-border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500, fontSize: '14px' }}>Duration</span>
+            <span style={{ fontWeight: 600, fontSize: '14px' }}>{calculateDays()} Days</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Dates</span>
-            <span style={{ fontWeight: 600 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500, fontSize: '14px' }}>Dates</span>
+            <span style={{ fontWeight: 600, fontSize: '14px' }}>
               {startDate ? format(parseISO(startDate), 'MMM d') : ''} - {endDate ? format(parseISO(endDate), 'MMM d') : ''}
             </span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Platform Fee</span>
-            <span style={{ fontWeight: 600 }}>₹0</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500, fontSize: '14px' }}>Platform Fee</span>
+            <span style={{ fontWeight: 600, fontSize: '14px' }}>₹0</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '16px', borderBottom: '1px solid var(--surface-border)' }}>
-            <span style={{ color: 'var(--text-muted)', fontWeight: 500 }}>GST</span>
-            <span style={{ fontWeight: 600 }}>₹0</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+            <span style={{ color: 'var(--text-muted)', fontWeight: 500, fontSize: '14px' }}>GST</span>
+            <span style={{ fontWeight: 600, fontSize: '14px' }}>₹0</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ color: 'var(--text-main)', fontSize: '18px', fontWeight: 700 }}>Total Amount</span>
-            <span style={{ color: 'var(--success)', fontSize: '24px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ color: 'var(--text-main)', fontSize: '16px', fontWeight: 700 }}>Total Amount</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px' }}>{calculateDays()} {calculateDays() === 1 ? 'day' : 'days'} × ₹{item.price}</span>
+            </div>
+            <span style={{ color: 'var(--success)', fontSize: '20px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
           </div>
         </div>
 
@@ -932,6 +996,58 @@ export default function ItemDetail() {
           Got it
         </button>
       </div>
+
+      {/* Bargain Dialog */}
+      {showBargainDialog && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>
+              Bargain Request
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Type your custom message or offer to the owner. This will be sent along with your booking request.
+            </p>
+            
+            <textarea
+              value={tempNote}
+              onChange={e => setTempNote(e.target.value)}
+              placeholder="e.g. Hi, I'm a student too, would you be willing to do ₹500 total?"
+              style={{
+                width: '100%',
+                minHeight: '120px',
+                padding: '16px',
+                borderRadius: '16px',
+                background: 'var(--bg)',
+                border: '1px solid var(--surface-border)',
+                color: 'var(--text-main)',
+                fontFamily: 'inherit',
+                fontSize: '15px',
+                resize: 'none'
+              }}
+            />
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => setShowBargainDialog(false)}
+                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  setBookingNote(tempNote);
+                  setShowBargainDialog(false);
+                }}
+                disabled={!tempNote.trim()}
+                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, cursor: 'pointer', opacity: !tempNote.trim() ? 0.5 : 1 }}
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
 
     </>
   );

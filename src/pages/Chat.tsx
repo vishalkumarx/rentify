@@ -33,6 +33,9 @@ export default function Chat() {
   
   const [replyingToMessage, setReplyingToMessage] = useState<any>(null);
   const [contextMenu, setContextMenu] = useState<{ messageId: string, x: number, y: number } | null>(null);
+  const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee'; itemTitle: string; otherUserId: string; otherUserName: string } | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const swipeStartX = useRef<number | null>(null);
   const swipeStartY = useRef<number | null>(null);
@@ -486,30 +489,6 @@ export default function Chat() {
 
 
 
-        {bookingReq?.status === 'accepted' && (
-          <div style={{
-            background: 'rgba(34, 197, 94, 0.1)',
-            border: '1px solid var(--success)',
-            borderRadius: '12px',
-            padding: '12px 16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            marginBottom: '16px',
-            boxShadow: '0 2px 8px rgba(34, 197, 94, 0.05)',
-            animation: 'slideDown 0.3s ease-out'
-          }}>
-            <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--success)', flexShrink: 0 }}>
-              <Check size={16} strokeWidth={3} />
-            </div>
-            <div>
-              <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--success)' }}>Booking Confirmed</p>
-              <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
-                This request was accepted by <strong>{isOwner ? 'you' : 'the owner'}</strong> at a price of <strong>₹{bookingReq.total_price}</strong>.
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* Not Accepted Banner */}
         {!isItemDeleted && !isChatUnlocked && (
@@ -530,7 +509,38 @@ export default function Chat() {
           </div>
         )}
 
-
+        {/* Cancel Booking Button at top */}
+        {bookingReq?.status === 'accepted' && !isItemDeleted && (
+          <div style={{ padding: '0 0px', marginBottom: '16px' }}>
+            <button
+              onClick={() => {
+                setCancelAction({ 
+                  id: bookingReq.id, 
+                  role: isOwner ? 'owner' : 'rentee', 
+                  itemTitle: item?.title || '', 
+                  otherUserId: conversation!.otherUserId, 
+                  otherUserName: conversation!.otherUserName 
+                });
+              }}
+              style={{
+                width: '100%',
+                padding: '12px',
+                background: 'rgba(239, 68, 68, 0.1)',
+                color: 'var(--danger)',
+                border: '1px solid rgba(239, 68, 68, 0.2)',
+                borderRadius: '12px',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              <X size={18} /> Cancel Booking
+            </button>
+          </div>
+        )}
 
         {conversationMessages.length === 0 && !bookingReq?.note && (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '40px', fontSize: '14px' }}>
@@ -538,52 +548,49 @@ export default function Chat() {
           </div>
         )}
         
-        {conversationMessages.map((msg, index) => {
-            const isMe = msg.senderId === session?.user?.id;
-            const isEmojiOnly = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u.test(msg.text) && msg.text.trim().length > 0;
-            
-            const msgDate = new Date(msg.timestamp);
-            let showDateDivider = false;
+        {(() => {
+          const grouped = conversationMessages.reduce((acc, msg) => {
+            const d = new Date(msg.timestamp);
+            d.setHours(0,0,0,0);
+            const key = d.getTime().toString();
+            if(!acc[key]) acc[key] = { date: d, messages: [] };
+            acc[key].messages.push(msg);
+            return acc;
+          }, {} as Record<string, { date: Date, messages: any[] }>);
+          
+          return Object.values(grouped).map(group => {
             let dateLabel = '';
-            
-            if (index === 0) {
-              showDateDivider = true;
+            if (isToday(group.date)) {
+              dateLabel = 'Today';
+            } else if (isYesterday(group.date)) {
+              dateLabel = 'Yesterday';
             } else {
-              const prevMsgDate = new Date(conversationMessages[index - 1].timestamp);
-              if (msgDate.toDateString() !== prevMsgDate.toDateString()) {
-                showDateDivider = true;
-              }
-            }
-
-            if (showDateDivider) {
-              if (isToday(msgDate)) {
-                dateLabel = 'Today';
-              } else if (isYesterday(msgDate)) {
-                dateLabel = 'Yesterday';
-              } else {
-                dateLabel = format(msgDate, 'dd MMMM yyyy');
-              }
+              dateLabel = format(group.date, 'dd MMMM yyyy');
             }
             
             return (
-              <Fragment key={msg.id}>
-                {showDateDivider && (
-                  <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 0px', position: 'sticky', top: '10px', zIndex: 10 }}>
-                    <span style={{ 
-                      background: 'rgba(0,0,0,0.3)', 
-                      color: '#fff', 
-                      padding: '4px 12px', 
-                      borderRadius: '12px', 
-                      fontSize: '12px', 
-                      fontWeight: 600,
-                      backdropFilter: 'blur(4px)',
-                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                    }}>
-                      {dateLabel}
-                    </span>
-                  </div>
-                )}
-                {msg.text.startsWith('[System]:') ? (
+              <div key={group.date.getTime()} style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 0px', position: 'sticky', top: '10px', zIndex: 10 }}>
+                  <span style={{ 
+                    background: 'rgba(0,0,0,0.3)', 
+                    color: '#fff', 
+                    padding: '4px 12px', 
+                    borderRadius: '12px', 
+                    fontSize: '12px', 
+                    fontWeight: 600,
+                    backdropFilter: 'blur(4px)',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}>
+                    {dateLabel}
+                  </span>
+                </div>
+                {group.messages.map((msg, index) => {
+                  const isMe = msg.senderId === session?.user?.id;
+                  const isEmojiOnly = /^[\p{Emoji_Presentation}\p{Extended_Pictographic}\s]+$/u.test(msg.text) && msg.text.trim().length > 0;
+                  
+                  return (
+                    <Fragment key={msg.id}>
+                      {msg.text.startsWith('[System]:') ? (
                   <>
                     <div style={{ display: 'flex', justifyContent: 'center', width: '100%', margin: '16px 0', zIndex: 2 }}>
                       {(() => {
@@ -594,6 +601,34 @@ export default function Chat() {
                         const isDeclined = /declined|withdrawn/i.test(text);
                         const isCancelled = /cancelled/i.test(text);
                         const isAccepted = /accepted/i.test(text);
+                        if (isAccepted && bookingReq) {
+                          return (
+                            <div style={{
+                              background: 'rgba(34, 197, 94, 0.1)',
+                              border: '1px solid var(--success)',
+                              borderRadius: '12px',
+                              padding: '12px 16px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '12px',
+                              maxWidth: '85%',
+                              boxShadow: '0 2px 8px rgba(34, 197, 94, 0.05)',
+                              textAlign: 'left',
+                            }}>
+                              <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(34, 197, 94, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--success)', flexShrink: 0 }}>
+                                <Check size={16} strokeWidth={3} />
+                              </div>
+                              <div>
+                                <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--success)' }}>Booking Confirmed</p>
+                                <p style={{ margin: '2px 0 0', fontSize: '13px', color: 'var(--text-muted)' }}>
+                                  This request was accepted by {text.includes('by you') ? 'you' : 'the owner'} at a price of ₹{bookingReq.total_price} for {totalDays} {totalDays === 1 ? 'day' : 'days'}
+                                </p>
+                                <p style={{ margin: '3px 0 0', fontSize: '10px', opacity: 0.6, color: 'var(--text-muted)' }}>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                              </div>
+                            </div>
+                          );
+                        }
+
                         const accent = isDeclined
                           ? { bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.5)', iconBg: 'rgba(239,68,68,0.2)', iconColor: 'var(--danger)', titleColor: 'var(--danger)', icon: <X size={14} strokeWidth={3} /> }
                           : isCancelled
@@ -811,9 +846,13 @@ export default function Chat() {
                 </div>
                 </div>
                 )}
-              </Fragment>
+                    </Fragment>
+                  );
+                })}
+              </div>
             );
-          })}
+          });
+        })()}
       </main>
 
       {/* Context Menu Overlay */}
@@ -954,6 +993,9 @@ export default function Chat() {
           />
           <button 
             type="submit" 
+            onPointerDown={(e) => {
+              e.preventDefault();
+            }}
             disabled={(!inputText.trim() && selectedImages.length === 0) || isChatDisabled || isUploading}
             style={{ 
               width: '46px', 
@@ -1273,6 +1315,68 @@ export default function Chat() {
         </div>,
         document.body
       )}
+      {/* Cancel Action Modal */}
+      {cancelAction && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: 'var(--danger)' }}>
+              Cancel Booking?
+            </h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              {cancelAction.role === 'rentee' 
+                ? "You are about to cancel this booking. Cancellations are free up to 24 hours before the rental start date. Frequent last-minute cancellations may negatively affect your profile standing. Are you sure?"
+                : "You are about to cancel this booking. Please ensure you only cancel if the item is truly unavailable. Frequent cancellations will lower your seller rating. Are you sure?"}
+            </p>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>Reason for cancellation (optional)</label>
+              <textarea
+                value={cancelReason}
+                onChange={e => setCancelReason(e.target.value)}
+                placeholder="Why are you cancelling this booking?"
+                style={{
+                  width: '100%',
+                  minHeight: '80px',
+                  padding: '12px',
+                  borderRadius: '12px',
+                  border: '1px solid var(--surface-border)',
+                  background: 'var(--bg)',
+                  color: 'var(--text-main)',
+                  fontFamily: 'inherit',
+                  resize: 'vertical'
+                }}
+              />
+            </div>
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => {
+                  setCancelAction(null);
+                  setCancelReason('');
+                }}
+                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Go Back
+              </button>
+              <button 
+                onClick={async () => {
+                  await updateRequestStatus(cancelAction.id, 'cancelled', undefined, cancelReason);
+                  const reasonText = cancelReason ? `\nReason: ${cancelReason}` : '';
+                  await sendMessage(conversation!.id, session!.user.id, `[System]: Booking was cancelled by ${session!.user.user_metadata.full_name}.${reasonText}`);
+                  
+                  setCancelAction(null);
+                  setCancelReason('');
+                }} 
+                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)' }}
+              >
+                Cancel Booking
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
     </div>
   );
 }

@@ -198,12 +198,14 @@ export default function Profile() {
             </div>
           </div>
           
-          <button 
-            onClick={() => navigate('/edit-profile')}
-            style={{ width: '100%', padding: '12px', borderRadius: '12px', background: 'var(--bg)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontWeight: 600, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
-          >
-            <Edit2 size={16} /> Edit Profile
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <button 
+              onClick={() => navigate('/edit-profile')}
+              style={{ width: 'fit-content', padding: '10px 24px', borderRadius: '12px', background: 'var(--bg)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontWeight: 600, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
+            >
+              <Edit2 size={16} /> Edit Profile
+            </button>
+          </div>
           
           <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', margin: '4px 0' }}></div>
 
@@ -388,7 +390,7 @@ export default function Profile() {
                         <div style={{ background: 'var(--danger)', color: 'white', padding: '8px 16px', borderRadius: '16px', fontWeight: 700, fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
                           Unavailable due to policy violations
                         </div>
-                        <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); }} style={{ background: 'var(--surface)', color: 'var(--danger)', border: '1px solid var(--danger)', padding: '6px 12px', borderRadius: '16px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); }} style={{ width: 'fit-content', background: 'var(--surface)', color: 'var(--danger)', border: '1px solid var(--danger)', padding: '6px 16px', borderRadius: '16px', fontSize: '13px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', margin: '0 auto' }}>
                           <Trash2 size={14} /> Delete Post
                         </button>
                       </div>

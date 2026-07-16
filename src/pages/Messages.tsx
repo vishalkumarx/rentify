@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -156,14 +157,14 @@ export default function Messages() {
 
       
       {/* Delete Confirmation Modal */}
-      {showDeleteConfirm && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={() => setShowDeleteConfirm(false)}>
-          <div style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', width: '100%', maxWidth: '340px', border: '1px solid var(--surface-border)' }} onClick={e => e.stopPropagation()}>
+      {showDeleteConfirm && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }} onClick={() => setShowDeleteConfirm(false)}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }} onClick={e => e.stopPropagation()}>
             <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Delete Messages</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: '12px 0 24px' }}>
+            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: 0 }}>
               Are you sure you want to delete {selectedConvIds.size === 1 ? 'this conversation' : `these ${selectedConvIds.size} conversations`}? This action cannot be undone.
             </p>
-            <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
+            <div style={{ display: 'flex', gap: '12px', width: '100%', marginTop: '8px' }}>
               <button onClick={() => setShowDeleteConfirm(false)} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
                 Cancel
               </button>
@@ -172,7 +173,8 @@ export default function Messages() {
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
