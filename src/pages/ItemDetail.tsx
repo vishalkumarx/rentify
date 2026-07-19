@@ -714,7 +714,7 @@ export default function ItemDetail() {
                         <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap' }}>
                           Bargain:
                         </span>
-                        <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flex: 1, minWidth: 0 }}>
                           "{bookingNote}"
                         </span>
                       </div>
