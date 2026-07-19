@@ -137,7 +137,7 @@ export default function CategoryItems() {
                                 UNAVAILABLE
                               </div>
                               <div style={{ fontSize: '10px', fontWeight: 700, color: '#333', background: 'rgba(255,255,255,0.8)', padding: '2px 8px', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                                Available after {acceptedReq?.end_date ? new Date(acceptedReq.end_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) : 'soon'}
+                                {acceptedReq?.end_date ? `Available after ${new Date(acceptedReq.end_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'Available soon'}
                               </div>
                             </div>
                           )}
