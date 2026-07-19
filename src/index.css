@@ -446,7 +446,7 @@ a:hover {
 .responsive-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
+  gap: 24px;
 }
 @media (min-width: 768px) {
   .responsive-grid {

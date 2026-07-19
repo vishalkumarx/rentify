@@ -92,7 +92,7 @@ export default function CategoryItems() {
             </button>
           </div>
         ) : (
-          <div className="responsive-grid" style={{ gap: '20px' }}>
+          <div className="responsive-grid">
             {categoryItems.map((item, index) => {
               const isFeatured = item.itemRating && item.itemRating >= 4.8;
               
