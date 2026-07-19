@@ -346,17 +346,20 @@ export default function Profile() {
                       </div>
                       <div style={{ position: 'relative' }}>
                         <button 
-                          onClick={(e) => { e.stopPropagation(); setOpenMenuId(openMenuId === item.id ? null : item.id); }}
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenMenuId(openMenuId === item.id ? null : item.id); }}
+                          onTouchEnd={(e) => e.stopPropagation()}
                           style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', display: 'flex', color: 'var(--text-main)' }}
                         >
                           <MoreVertical size={20} />
                         </button>
                         {openMenuId === item.id && (
                           <div style={{ position: 'absolute', top: '100%', right: '0', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, minWidth: '120px', overflow: 'hidden' }}>
-                            <button onClick={(e) => { e.stopPropagation(); navigate(`/edit/${item.id}`); }} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', borderBottom: '1px solid var(--surface-border)', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', borderRadius: 0, fontWeight: 600 }}>
+                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/edit/${item.id}`); }}
+                              onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', borderBottom: '1px solid var(--surface-border)', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', borderRadius: 0, fontWeight: 600 }}>
                               <Edit2 size={16} /> Edit
                             </button>
-                            <button onClick={async (e) => { e.stopPropagation(); if (window.confirm('Are you sure you want to delete this listing?')) { await deletePost(item.id); } }} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
+                            <button onClick={async (e) => { e.preventDefault(); e.stopPropagation(); if (window.confirm('Are you sure you want to delete this listing?')) { await deletePost(item.id); } }}
+                              onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
                               <Trash2 size={16} /> Delete
                             </button>
                           </div>
@@ -408,14 +411,16 @@ export default function Profile() {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{ position: 'relative', marginTop: '-4px', marginRight: '-8px' }}>
                           <button 
-                            onClick={(e) => { e.stopPropagation(); setOpenNeedMenuId(openNeedMenuId === req.id ? null : req.id); }}
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenNeedMenuId(openNeedMenuId === req.id ? null : req.id); }}
+                            onTouchEnd={(e) => e.stopPropagation()}
                             style={{ background: 'transparent', border: 'none', padding: '4px', cursor: 'pointer', color: 'var(--text-muted)' }}
                           >
                             <MoreVertical size={20} />
                           </button>
                           {openNeedMenuId === req.id && (
                             <div style={{ position: 'absolute', top: '100%', right: '0', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, minWidth: '120px', overflow: 'hidden' }}>
-                              <button onClick={(e) => { e.stopPropagation(); deleteMyRequest(req.id); setOpenNeedMenuId(null); }} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
+                              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); deleteMyRequest(req.id); setOpenNeedMenuId(null); }}
+                                onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
                                 <Trash2 size={16} /> Delete
                               </button>
                             </div>
