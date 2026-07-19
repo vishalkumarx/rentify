@@ -351,12 +351,18 @@ export default function ItemDetail() {
               ))}
             </div>
             
-            <div style={{ position: 'absolute', bottom: '16px', left: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 700, backdropFilter: 'blur(8px)', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: '16px', left: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 700, backdropFilter: 'blur(8px)', pointerEvents: 'none', zIndex: 10 }}>
               {currentMainImageIndex + 1} / {allImages.length}
             </div>
-            <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 600, backdropFilter: 'blur(8px)', fontSize: '12px', pointerEvents: 'none' }}>
+            <div style={{ position: 'absolute', top: '16px', right: '16px', background: 'rgba(0,0,0,0.6)', padding: '6px 12px', borderRadius: '16px', color: 'white', fontWeight: 600, backdropFilter: 'blur(8px)', fontSize: '12px', pointerEvents: 'none', zIndex: 10 }}>
               Tap to Zoom
             </div>
+            {item.itemRating != null && (
+              <div style={{ position: 'absolute', bottom: '16px', left: '16px', background: '#ffffff', color: '#000000', padding: '6px 10px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', fontWeight: 800, boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, pointerEvents: 'none' }}>
+                <span>{item.itemRating}</span>
+                <Star size={14} fill="var(--success)" color="var(--success)" />
+              </div>
+            )}
             {/* Dots indicator */}
             {allImages.length > 1 && (
               <div style={{ position: 'absolute', bottom: '16px', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '6px', pointerEvents: 'none' }}>
