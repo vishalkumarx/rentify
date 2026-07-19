@@ -703,26 +703,25 @@ export default function ItemDetail() {
                       border: '1px solid var(--success)',
                       borderRadius: '12px',
                       padding: '12px 16px',
+                      paddingRight: '36px',
                       boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
                       borderLeft: '4px dashed var(--success)',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '4px'
                     }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <MessageCircle size={16} color="var(--success)" style={{ flexShrink: 0 }} />
-                          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            Bargain Request Attached
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => setBookingNote('')}
-                          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: '-4px' }}
-                        >
-                          <X size={16} />
-                        </button>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <MessageCircle size={16} color="var(--success)" style={{ flexShrink: 0 }} />
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Bargain Request Attached
+                        </span>
                       </div>
+                      <button
+                        onClick={() => setBookingNote('')}
+                        style={{ position: 'absolute', top: '8px', right: '8px', background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2 }}
+                      >
+                        <X size={16} />
+                      </button>
                       <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'pre-wrap', paddingLeft: '22px' }}>
                         "{bookingNote}"
                       </span>
