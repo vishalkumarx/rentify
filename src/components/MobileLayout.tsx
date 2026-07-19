@@ -5,10 +5,13 @@ import { createPortal } from 'react-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
+import { useBottomSheetSwipe } from '../hooks/useBottomSheetSwipe';
+
 import CompleteProfileModal from './CompleteProfileModal';
 import logoImg from '../assets/logo campus rent.png';
 
 export default function MobileLayout() {
+  useBottomSheetSwipe();
   const location = useLocation();
   const navigate = useNavigate();
   const { conversations } = useChat();

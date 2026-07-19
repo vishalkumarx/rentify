@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, X, Image as ImageIcon } from 'lucide-react';
 import { getStorageJson, setStorageJson, supabase } from '../lib/supabase';
@@ -20,8 +21,8 @@ export default function RequestNeed() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async () => {
-    if (!title.trim() || !description.trim()) {
-      toast.error('Please fill in all fields');
+    if (!title.trim()) {
+      toast.error('Please provide a title');
       return;
     }
     
@@ -132,7 +133,7 @@ export default function RequestNeed() {
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            <label style={{ fontSize: '13px', fontWeight: 700 }}>More Details</label>
+            <label style={{ fontSize: '13px', fontWeight: 700 }}>More Details (Optional)</label>
             <textarea 
               placeholder="When do you need it by? Any specific requirements?" 
               value={description} 
@@ -170,6 +171,22 @@ export default function RequestNeed() {
           </button>
         </div>
       </div>
+
+      {/* Publishing Modal */}
+      {isSubmitting && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '360px', padding: '32px 24px', borderRadius: '32px', textAlign: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '32px', background: 'var(--primary-glow)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+              <div style={{ width: '32px', height: '32px', border: '4px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 900 }}>Publishing Need...</h3>
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Campus community will see your request shortly. Hang tight!
+            </p>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
