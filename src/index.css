@@ -132,11 +132,11 @@ body {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.4s ease-out both;
 }
 
 .animate-slide-in {
-  animation: slideInRight 0.3s ease-out forwards;
+  animation: slideInRight 0.3s ease-out both;
 }
 
 /* Hide scrollbar for category pills */
@@ -485,7 +485,7 @@ a:hover {
 }
 
 .animate-slide-up {
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes float {
