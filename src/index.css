@@ -809,3 +809,15 @@ a:hover {
     display: inline !important;
   }
 }
+
+/* Tile Image Container for feed and category items */
+.tile-image-container {
+  position: relative;
+  height: 140px;
+}
+
+@media (min-width: 768px) {
+  .tile-image-container {
+    height: 200px;
+  }
+}

@@ -239,7 +239,7 @@ export default function Home() {
         boxShadow: isFeatured ? '0 8px 30px rgba(34, 197, 94, 0.15)' : 'none'
       }}
     >
-      <div style={{ position: 'relative', height: '200px' }}>
+      <div className="tile-image-container">
         {isFeatured && (
           <div style={{ position: 'absolute', top: '-1px', right: '16px', background: 'var(--success)', color: '#fff', padding: '6px 12px', borderRadius: '0 0 12px 12px', fontSize: '11px', fontWeight: 800, letterSpacing: '1px', zIndex: 10, boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)' }}>
             FEATURED
