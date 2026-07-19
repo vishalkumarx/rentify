@@ -298,7 +298,7 @@ export default function Home() {
       {/* Text Container Below Image */}
       <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px', textAlign: 'center', display: 'inline-block', alignSelf: 'center' }}>
             {item.category}
           </span>
           <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
