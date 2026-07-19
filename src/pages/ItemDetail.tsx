@@ -705,24 +705,28 @@ export default function ItemDetail() {
                       background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)',
                       border: '1px solid var(--success)',
                       borderRadius: '12px',
-                      padding: '16px',
+                      padding: '12px 16px',
                       boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
-                      borderLeft: '4px dashed var(--success)'
+                      borderLeft: '4px dashed var(--success)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
                     }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <h4 style={{ margin: 0, fontSize: '13px', fontWeight: 800, color: 'var(--success)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                          Bargain Request Attached
-                        </h4>
-                        <button
-                          onClick={() => setBookingNote('')}
-                          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        >
-                          <X size={16} />
-                        </button>
+                      <MessageCircle size={16} color="var(--success)" style={{ flexShrink: 0 }} />
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap' }}>
+                          Bargain:
+                        </span>
+                        <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          "{bookingNote}"
+                        </span>
                       </div>
-                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, fontStyle: 'italic', whiteSpace: 'pre-wrap' }}>
-                        "{bookingNote}"
-                      </p>
+                      <button
+                        onClick={() => setBookingNote('')}
+                        style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, marginRight: '-4px' }}
+                      >
+                        <X size={16} />
+                      </button>
                     </div>
                   )}
                 </div>
