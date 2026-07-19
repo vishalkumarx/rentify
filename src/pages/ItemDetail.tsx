@@ -51,7 +51,7 @@ export default function ItemDetail() {
   const modalScrollRef = useRef<HTMLDivElement>(null);
   
   const [displayReviewsCount, setDisplayReviewsCount] = useState(5);
-  const [mobileTab, setMobileTab] = useState<'details' | 'reviews'>('details');
+  const [detailTab, setDetailTab] = useState<'description' | 'reviews'>('description');
   const [reviews, setReviews] = useState<any[]>([]);
   const [newReviewText, setNewReviewText] = useState('');
   const [newReviewRating, setNewReviewRating] = useState(5);
@@ -367,14 +367,120 @@ export default function ItemDetail() {
             )}
             </div>
             
-            <div className="mobile-tabs-container">
-              <button className={`mobile-tab-btn ${mobileTab === 'details' ? 'active' : ''}`} onClick={() => setMobileTab('details')}>Details</button>
-              <button className={`mobile-tab-btn ${mobileTab === 'reviews' ? 'active' : ''}`} onClick={() => setMobileTab('reviews')}>Reviews ({reviews.length})</button>
+            
+          </div>
+
+          <div className="item-detail-info" style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                {userRequest?.status === 'accepted' ? (
+                  <span style={{ display: 'inline-block', background: 'var(--success)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start', textTransform: 'uppercase' }}>RENTED BY YOU</span>
+                ) : item.status === 'booked' && (
+                  <span style={{ display: 'inline-block', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start' }}>BOOKED</span>
+                )}
+                <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
+            </div>
+            
+            {showReviewConfirm && createPortal(
+              <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
+                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Submit Review</h3>
+                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+                    Are you sure you want to submit this review? This action cannot be undone.
+                  </p>
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                    <button 
+                      onClick={() => setShowReviewConfirm(false)} 
+                      disabled={isSubmittingReview}
+                      style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={handleSubmitReview}
+                      disabled={isSubmittingReview}
+                      style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer', opacity: isSubmittingReview ? 0.7 : 1 }}
+                    >
+                      {isSubmittingReview ? 'Submitting...' : 'Submit'}
+                    </button>
+                  </div>
+                </div>
+              </div>,
+              document.body
+            )}
+
+            {/* Item Rating */}
+            {item.itemRating && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+                <Star size={16} fill="var(--warning)" color="var(--warning)" />
+                <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--warning)' }}>{item.itemRating}</span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>
+                  ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
+                </span>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--primary-glow)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
+                <Tag size={14} /> {item.category}
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
+                <Building2 size={14} /> {item.department || 'Unknown Department'}
+              </span>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', color: 'var(--success)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
+                <ShieldCheck size={14} /> ₹{item.securityDeposit || '500'} Security Deposit
+              </span>
+            </div>
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
+
+            
+            {/* Tabs for Description and Reviews */}
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--surface-border)', marginBottom: '24px', marginTop: '32px' }}>
+              <button 
+                onClick={() => setDetailTab('description')}
+                style={{ 
+                  flex: 1, 
+                  background: 'none', 
+                  border: 'none', 
+                  padding: '12px', 
+                  fontSize: '16px', 
+                  fontWeight: 700, 
+                  color: detailTab === 'description' ? 'var(--primary)' : 'var(--text-muted)',
+                  borderBottom: detailTab === 'description' ? '2px solid var(--primary)' : '2px solid transparent',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Description
+              </button>
+              <button 
+                onClick={() => setDetailTab('reviews')}
+                style={{ 
+                  flex: 1, 
+                  background: 'none', 
+                  border: 'none', 
+                  padding: '12px', 
+                  fontSize: '16px', 
+                  fontWeight: 700, 
+                  color: detailTab === 'reviews' ? 'var(--primary)' : 'var(--text-muted)',
+                  borderBottom: detailTab === 'reviews' ? '2px solid var(--primary)' : '2px solid transparent',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                Reviews ({reviews.length})
+              </button>
             </div>
 
-            {/* Reviews Section */}
-            <div className={`mobile-tab-content-reviews ${mobileTab !== 'reviews' ? 'hidden' : ''}`} style={{ marginTop: '24px', padding: '24px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: '0 4px 15px rgba(0,0,0,0.03)' }}>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({reviews.length})</h3>
+            {detailTab === 'description' ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: 0 }}>
+                {item.description || "No description provided for this item. It's currently available for rent in good condition! Reach out to the owner for more details."}
+              </p>
+            ) : (
+              <div style={{ paddingTop: '8px' }}>
+<h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({reviews.length})</h3>
               
               {reviews.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
@@ -454,78 +560,10 @@ export default function ItemDetail() {
                   </button>
                 </div>
               )}
-            </div>
-          </div>
-
-          <div className={`item-detail-info mobile-tab-content-details ${mobileTab !== 'details' ? 'hidden' : ''}`} style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '10px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {userRequest?.status === 'accepted' ? (
-                  <span style={{ display: 'inline-block', background: 'var(--success)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start', textTransform: 'uppercase' }}>RENTED BY YOU</span>
-                ) : item.status === 'booked' && (
-                  <span style={{ display: 'inline-block', background: 'var(--danger)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 800, letterSpacing: '0.5px', alignSelf: 'flex-start' }}>BOOKED</span>
-                )}
-                <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
-              </div>
-              <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
-            </div>
             
-            {showReviewConfirm && createPortal(
-              <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-                <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
-                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Submit Review</h3>
-                  <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
-                    Are you sure you want to submit this review? This action cannot be undone.
-                  </p>
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                    <button 
-                      onClick={() => setShowReviewConfirm(false)} 
-                      disabled={isSubmittingReview}
-                      style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSubmitReview}
-                      disabled={isSubmittingReview}
-                      style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer', opacity: isSubmittingReview ? 0.7 : 1 }}
-                    >
-                      {isSubmittingReview ? 'Submitting...' : 'Submit'}
-                    </button>
-                  </div>
-                </div>
-              </div>,
-              document.body
-            )}
-
-            {/* Item Rating */}
-            {item.itemRating && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
-                <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--warning)' }}>{item.itemRating}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>
-                  ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
-                </span>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--primary-glow)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <Tag size={14} /> {item.category}
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <Building2 size={14} /> {item.department || 'Unknown Department'}
-              </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', color: 'var(--success)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <ShieldCheck size={14} /> ₹{item.securityDeposit || '500'} Security Deposit
-              </span>
-            </div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
-
-            <h3 style={{ fontSize: '16px', fontWeight: 700, marginBottom: '8px' }}>Description</h3>
-            <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: 0 }}>
-              {item.description || "No description provided for this item. It's currently available for rent in good condition! Reach out to the owner for more details."}
-            </p>
 
 
             {/* User's Booking Information */}
