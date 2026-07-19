@@ -735,16 +735,15 @@ a:hover {
   opacity: 0;
 }
 
-/* Looping Animation for Category Text */
+/* Single-play Animation for Category Text */
 @keyframes loopTypewriter {
-  0%, 5% { clip-path: inset(0 100% 0 0); }
-  25%, 85% { clip-path: inset(0 0 0 0); }
-  95%, 100% { clip-path: inset(0 100% 0 0); }
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
 }
 
 .animate-typewriter {
   display: inline-block;
-  animation: loopTypewriter 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  animation: loopTypewriter 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 /* Bottom Sheet Transitions */
