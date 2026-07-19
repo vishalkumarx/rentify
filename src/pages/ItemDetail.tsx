@@ -7,7 +7,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock } from 'lucide-react';
+import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -893,9 +893,12 @@ export default function ItemDetail() {
           ) : (
             <button 
               onClick={handleRequestClick} 
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#000', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none' }}>
-              <CalendarIcon size={22} />
-              Request Booking
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#000', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none', fontWeight: 800 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, justifyContent: 'center' }}>
+                <CalendarIcon size={20} />
+                Request Booking
+              </span>
+              <ArrowRight size={20} style={{ opacity: 0.8 }} />
             </button>
           )}
         </div>
