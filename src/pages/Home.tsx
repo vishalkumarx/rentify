@@ -297,13 +297,13 @@ export default function Home() {
 
       {/* Text Container Below Image */}
       <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px' }}>
-          <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px', textAlign: 'center', display: 'inline-block', alignSelf: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1px' }}>
+          <span style={{ fontSize: '5px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '1px 3px', borderRadius: '4px', marginBottom: '1px', textAlign: 'center', display: 'inline-block', alignSelf: 'center' }}>
             {item.category}
           </span>
-          <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
-          <div style={{ fontWeight: 800, fontSize: '16px', color: 'var(--success)' }}>
-            ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
+          <h3 style={{ margin: 0, fontSize: '9px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
+          <div style={{ fontWeight: 800, fontSize: '8px', color: 'var(--success)' }}>
+            ₹{item.price}<span style={{ fontSize: '6px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
           </div>
         </div>
         
