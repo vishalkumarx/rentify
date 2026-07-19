@@ -417,16 +417,7 @@ export default function ItemDetail() {
               document.body
             )}
 
-            {/* Item Rating */}
-            {item.itemRating && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
-                <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontWeight: 700, fontSize: '14px', color: 'var(--warning)' }}>{item.itemRating}</span>
-                <span style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 500 }}>
-                  ({item.itemReviewCount || 0} {item.itemReviewCount === 1 ? 'global rating' : 'global ratings'})
-                </span>
-              </div>
-            )}
+
 
             <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--primary-glow)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
