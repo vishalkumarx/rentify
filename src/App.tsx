@@ -23,6 +23,7 @@ import ComingSoon from './pages/ComingSoon';
 import HowItWorks from './pages/HowItWorks';
 import SafetyGuidelines from './pages/SafetyGuidelines';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import { useBottomSheetSwipe } from './hooks/useBottomSheetSwipe';
 import ItemRequestsFeed from './pages/ItemRequestsFeed';
 import EditProfile from './pages/EditProfile';
 import UserItems from './pages/UserItems';
@@ -62,6 +63,7 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 function AppRoutes() {
+  useBottomSheetSwipe();
   return (
     <Routes>
       <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
