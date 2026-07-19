@@ -102,7 +102,7 @@ export default function CategoryItems() {
                   onClick={() => navigate(`/item/${item.id}`)}
                   className="glass-panel animate-slide-up hover-scale"
                   style={{ 
-                    borderRadius: '0 0 24px 24px', 
+                    borderRadius: '0', 
                     overflow: 'hidden', 
                     display: 'flex', 
                     flexDirection: 'column', 
