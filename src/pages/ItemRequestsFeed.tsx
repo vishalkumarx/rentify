@@ -99,12 +99,14 @@ export default function ItemRequestsFeed() {
     
     const today = new Date().toISOString().split('T')[0];
     
+    const uniqueComments = Array.from(new Map(allComments.map((c: NeedComment) => [c.id, c])).values()) as NeedComment[];
+    
     // Sort by newest first and attach comment counts
     const enrichedData = data
       .filter((req: ItemRequest) => !req.dateRequired || req.dateRequired >= today)
       .map((req: ItemRequest) => ({
         ...req,
-        commentCount: allComments.filter((c: NeedComment) => c.needId === req.id).length
+        commentCount: uniqueComments.filter((c: NeedComment) => c.needId === req.id).length
       })).sort((a: ItemRequest, b: ItemRequest) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     
     setRequests(enrichedData);
@@ -162,7 +164,6 @@ export default function ItemRequestsFeed() {
     await setStorageJson('feed/need_comments.json', allComments);
     
     setNeedComments(prev => [...prev, comment]);
-    setRequests(prev => prev.map(r => r.id === selectedNeed.id ? { ...r, commentCount: (r.commentCount || 0) + 1 } : r));
     setRequests(prev => prev.map(r => r.id === selectedNeed.id ? { ...r, commentCount: (r.commentCount || 0) + 1 } : r));
     setNewComment('');
     setReplyingTo(null);
