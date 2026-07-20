@@ -275,6 +275,99 @@ export default function ItemDetail() {
     return days < 0 ? 0 : days + 1;
   };
 
+
+  const descriptionBlock = (
+    <p style={{ color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5, margin: 0 }}>
+                {item.description || "No description provided for this item. It's currently available for rent in good condition! Reach out to the owner for more details."}
+              </p>
+  );
+
+  const reviewsBlock = (
+    <div style={{ paddingTop: '8px' }}>
+<h3 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-main)' }}>Reviews ({reviews.length})</h3>
+              
+              {reviews.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
+                  No reviews yet. Be the first to review!
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {reviews.slice(0, displayReviewsCount).map((review, index) => (
+                    <div key={review.id} style={{ paddingBottom: '20px', borderBottom: index < Math.min(reviews.length, displayReviewsCount) - 1 ? '1px solid var(--surface-border)' : 'none' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                          {review.profilePic ? (
+                            <img src={review.profilePic} alt="" style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover' }} />
+                          ) : (
+                            <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
+                              {review.initial}
+                            </div>
+                          )}
+                          <div>
+                            <div style={{ fontWeight: 600, fontSize: '15px' }}>{review.name}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                              {format(new Date(review.createdAt), 'MMM d, yyyy')}
+                            </div>
+                          </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                          {[1, 2, 3, 4, 5].map((star) => (
+                            <Star key={star} size={14} fill={star <= review.rating ? "var(--warning)" : "transparent"} color={star <= review.rating ? "var(--warning)" : "var(--surface-border)"} />
+                          ))}
+                        </div>
+                      </div>
+                      <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
+                        {review.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {displayReviewsCount < reviews.length && (
+                <button 
+                  onClick={() => setDisplayReviewsCount(prev => prev + 5)}
+                  style={{ width: '100%', marginTop: '16px', padding: '14px', background: 'transparent', color: 'var(--text-main)', border: '1px solid var(--surface-border)', borderRadius: '16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}
+                >
+                  Load More Reviews
+                </button>
+              )}
+
+              {/* Write Review Form */}
+              {session && !isOwner && (
+                <div style={{ marginTop: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                  <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 700 }}>Write a Review</h4>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star 
+                        key={star} 
+                        size={20} 
+                        fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
+                        color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setNewReviewRating(star)}
+                      />
+                    ))}
+                  </div>
+                  <textarea 
+                    value={newReviewText}
+                    onChange={e => setNewReviewText(e.target.value)}
+                    placeholder="Share your experience..."
+                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
+                  />
+                  <button 
+                    onClick={() => setShowReviewConfirm(true)}
+                    disabled={isSubmittingReview || !newReviewText.trim()}
+                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
+                  >
+                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </div>
+              )}
+            
+              </div>
+  );
+
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', background: 'var(--bg-color)' }} className="animate-slide-in">
