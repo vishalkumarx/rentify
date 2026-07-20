@@ -53,6 +53,7 @@ export default function ItemRequestsFeed() {
   const [loadingComments, setLoadingComments] = useState(false);
   const [expandedThreads, setExpandedThreads] = useState<Record<string, boolean>>({});
   const [visibleCount, setVisibleCount] = useState(10);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const toggleThread = (id: string) => {
     setExpandedThreads(prev => ({ ...prev, [id]: !prev[id] }));
@@ -362,7 +363,12 @@ export default function ItemRequestsFeed() {
                 <div>
                   <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 800 }}>{req.title}</h3>
                   {req.imageUrl && (
-                    <img src={req.imageUrl} alt="Need Attachment" style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '12px', border: '1px solid var(--surface-border)' }} />
+                    <img 
+                      src={req.imageUrl} 
+                      alt="Need Attachment" 
+                      onClick={(e) => { e.stopPropagation(); setPreviewImage(req.imageUrl!); }}
+                      style={{ width: '100%', maxHeight: '300px', objectFit: 'cover', borderRadius: '16px', marginBottom: '12px', border: '1px solid var(--surface-border)', cursor: 'zoom-in' }} 
+                    />
                   )}
                   <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-main)', lineHeight: 1.5, opacity: 0.9 }}>
                     {req.description}
@@ -398,6 +404,16 @@ export default function ItemRequestsFeed() {
           </div>
         )}
       </div>
+
+      {previewImage && createPortal(
+        <div 
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100000, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'zoom-out' }}
+          onClick={(e) => { e.stopPropagation(); setPreviewImage(null); }}
+        >
+          <img src={previewImage} alt="Preview" style={{ maxWidth: '90vw', maxHeight: '90vh', objectFit: 'contain' }} />
+        </div>,
+        document.body
+      )}
 
 
 
