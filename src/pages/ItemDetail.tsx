@@ -293,32 +293,27 @@ export default function ItemDetail() {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {reviews.slice(0, displayReviewsCount).map((review, index) => (
-                    <div key={review.id} style={{ paddingBottom: '20px', borderBottom: index < Math.min(reviews.length, displayReviewsCount) - 1 ? '1px solid var(--surface-border)' : 'none' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                          {review.profilePic ? (
-                            <img src={review.profilePic} alt="" style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover' }} />
-                          ) : (
-                            <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}>
-                              {review.initial}
-                            </div>
-                          )}
-                          <div>
-                            <div style={{ fontWeight: 600, fontSize: '15px' }}>{review.name}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                              {format(new Date(review.createdAt), 'MMM d, yyyy')}
-                            </div>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} size={14} fill={star <= review.rating ? "var(--warning)" : "transparent"} color={star <= review.rating ? "var(--warning)" : "var(--surface-border)"} />
-                          ))}
-                        </div>
+                    <div key={review.id} style={{ paddingBottom: '20px', borderBottom: index < Math.min(reviews.length, displayReviewsCount) - 1 ? '1px solid var(--surface-border)' : 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star key={star} size={14} fill={star <= review.rating ? "var(--warning)" : "transparent"} color={star <= review.rating ? "var(--warning)" : "var(--surface-border)"} />
+                        ))}
                       </div>
                       <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
                         {review.text}
                       </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
+                        {review.profilePic ? (
+                          <img src={review.profilePic} alt="" style={{ width: '20px', height: '20px', borderRadius: '10px', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '20px', height: '20px', borderRadius: '10px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '10px' }}>
+                            {review.initial}
+                          </div>
+                        )}
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                          {review.name} • {format(new Date(review.createdAt), 'MMM d, yyyy')}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
