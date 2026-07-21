@@ -302,8 +302,17 @@ export default function ItemDetail() {
                       <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-secondary)' }}>
                         {review.text}
                       </p>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                        {review.name}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                        {review.profilePic ? (
+                          <img src={review.profilePic} alt="" style={{ width: '20px', height: '20px', borderRadius: '10px', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '20px', height: '20px', borderRadius: '10px', background: index % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: index % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '10px' }}>
+                            {review.initial}
+                          </div>
+                        )}
+                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                          {review.name} • {format(new Date(review.createdAt), 'MMM d, yyyy')}
+                        </span>
                       </div>
                     </div>
                   ))}

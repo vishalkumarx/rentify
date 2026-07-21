@@ -322,8 +322,13 @@ export default function UserProfile() {
                     ))}
                   </div>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.5, color: 'var(--text-main)' }}>{rev.text}</p>
-                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    {rev.reviewerName}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
+                    <div style={{ width: '20px', height: '20px', borderRadius: '10px', background: idx % 2 === 0 ? 'var(--primary)' : '#e5e7eb', color: idx % 2 === 0 ? '#000' : '#374151', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '10px' }}>
+                      {rev.reviewerName?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      {rev.reviewerName} • {new Date(rev.timestamp).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
               ))}
