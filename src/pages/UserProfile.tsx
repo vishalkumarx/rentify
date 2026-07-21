@@ -165,7 +165,7 @@ export default function UserProfile() {
       
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '600px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '1000px' }}>
           <div onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px', boxShadow: 'none' }}>
             <ChevronLeft size={28} />
           </div>
@@ -173,7 +173,7 @@ export default function UserProfile() {
         </div>
       </div>
 
-      <div style={{ padding: '24px', maxWidth: '600px', width: '100%', margin: '0 auto' }}>
+      <div style={{ padding: '24px', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
         
         {/* User Card */}
         <div className="glass-panel" style={{ padding: '32px 24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '24px' }}>
