@@ -42,7 +42,7 @@ export default function UserItems() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', paddingBottom: '32px' }} className="animate-slide-in">
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '800px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '1000px' }}>
           <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px' }}>
             <ChevronLeft size={28} />
           </button>
@@ -52,14 +52,14 @@ export default function UserItems() {
         </div>
       </div>
 
-      <div style={{ padding: '24px', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
+      <div style={{ padding: '16px', maxWidth: '1000px', width: '100%', margin: '0 auto' }}>
         {userItems.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '64px 20px', background: 'var(--surface)', borderRadius: '24px', border: '1px solid var(--surface-border)' }}>
             <Grid size={48} color="var(--text-muted)" style={{ marginBottom: '16px', opacity: 0.5 }} />
             <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '16px' }}>No items found for this user.</p>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+          <div className="responsive-grid">
             {userItems.map(item => (
               <div 
                 key={item.id} 
