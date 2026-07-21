@@ -323,7 +323,7 @@ export default function UserProfile() {
                   </div>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.5, color: 'var(--text-main)' }}>{rev.text}</p>
                   <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
-                    {rev.reviewerName} • {new Date(rev.timestamp).toLocaleDateString()}
+                    {rev.reviewerName}
                   </div>
                 </div>
               ))}
