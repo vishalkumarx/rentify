@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, Grid } from 'lucide-react';
+import { ChevronLeft, Grid, Star } from 'lucide-react';
 import { LoadingDialog } from '../components/LoadingDialog';
 import { useFeed } from '../context/FeedContext';
 import { getStorageJson } from '../lib/supabase';
@@ -42,11 +42,11 @@ export default function UserItems() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', paddingBottom: '32px' }} className="animate-slide-in">
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '1000px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '20px', marginLeft: '-8px' }}>
-            <ChevronLeft size={28} />
+        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '1000px', gap: '12px' }}>
+          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
+            <ChevronLeft size={36} />
           </button>
-          <h1 style={{ flex: 1, textAlign: 'center', margin: 0, fontSize: '18px', fontWeight: 700, marginRight: '32px' }}>
+          <h1 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>
             Items by {ownerName}
           </h1>
         </div>
@@ -81,6 +81,12 @@ export default function UserItems() {
                     style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} 
                     loading="lazy" 
                   />
+                  {item.itemRating != null && (
+                    <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#ffffff', color: '#000000', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 10 }}>
+                      <span>{item.itemRating}</span>
+                      <Star size={12} fill="var(--success)" color="var(--success)" />
+                    </div>
+                  )}
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', padding: '16px 12px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                     <div style={{ color: 'white', fontWeight: 800, fontSize: '16px' }}>
                       ₹{item.price}<span style={{ fontSize: '11px', fontWeight: 600, opacity: 0.8, marginLeft: '2px' }}>/day</span>
