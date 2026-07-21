@@ -45,7 +45,7 @@ export default function UserItems() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', width: '100%', maxWidth: '1000px' }}>
           <button 
             onClick={() => navigate(-1)} 
-            style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)', cursor: 'pointer' }}
+            style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)', cursor: 'pointer', marginLeft: '-8px' }}
           >
             <ChevronLeft size={20} />
           </button>
