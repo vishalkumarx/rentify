@@ -310,24 +310,21 @@ export default function UserProfile() {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {reviews.slice(0, displayReviewsCount).map((rev, idx) => (
-                <div key={idx} className="glass-panel" style={{ padding: '16px', borderRadius: '16px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span style={{ fontWeight: 700, fontSize: '15px' }}>{rev.reviewerName}</span>
-                      <div style={{ display: 'flex', gap: '2px' }}>
-                        {[1, 2, 3, 4, 5].map(star => (
-                          <Star 
-                            key={star} 
-                            size={12} 
-                            fill={star <= (rev.rating || 5) ? "var(--warning)" : "transparent"} 
-                            color={star <= (rev.rating || 5) ? "var(--warning)" : "var(--surface-border)"} 
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '13px' }}>{new Date(rev.timestamp).toLocaleDateString()}</span>
+                <div key={idx} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '2px' }}>
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <Star 
+                        key={star} 
+                        size={14} 
+                        fill={star <= (rev.rating || 5) ? "var(--warning)" : "transparent"} 
+                        color={star <= (rev.rating || 5) ? "var(--warning)" : "var(--surface-border)"} 
+                      />
+                    ))}
                   </div>
                   <p style={{ margin: 0, fontSize: '15px', lineHeight: 1.5, color: 'var(--text-main)' }}>{rev.text}</p>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                    {rev.reviewerName} • {new Date(rev.timestamp).toLocaleDateString()}
+                  </div>
                 </div>
               ))}
               {reviews.length > displayReviewsCount && (
