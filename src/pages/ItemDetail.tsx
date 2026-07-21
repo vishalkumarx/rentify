@@ -310,9 +310,14 @@ export default function ItemDetail() {
                             {review.initial}
                           </div>
                         )}
-                        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                          {review.name} • {format(new Date(review.createdAt), 'MMM d, yyyy')}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                          <span style={{ fontSize: '12px', color: 'var(--text-main)', fontWeight: 600 }}>
+                            {review.name}
+                          </span>
+                          <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                            {format(new Date(review.createdAt), 'MMM d, yyyy')}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))}
