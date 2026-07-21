@@ -42,13 +42,17 @@ export default function UserItems() {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', background: 'var(--bg-color)', paddingBottom: '32px' }} className="animate-slide-in">
       {/* Header */}
       <div style={{ position: 'sticky', top: 0, zIndex: 10, display: 'flex', justifyContent: 'center', background: 'var(--surface)', borderBottom: '1px solid var(--surface-border)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', padding: '16px 20px', width: '100%', maxWidth: '1000px', gap: '12px' }}>
-          <button onClick={() => navigate(-1)} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}>
-            <ChevronLeft size={36} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', width: '100%', maxWidth: '1000px' }}>
+          <button 
+            onClick={() => navigate(-1)} 
+            style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)', cursor: 'pointer' }}
+          >
+            <ChevronLeft size={20} />
           </button>
-          <h1 style={{ margin: 0, fontSize: '18px', fontWeight: 700 }}>
+          <h1 style={{ fontSize: '18px', margin: 0, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '60%' }}>
             Items by {ownerName}
           </h1>
+          <div style={{ width: '40px', height: '40px' }} />
         </div>
       </div>
 
@@ -96,7 +100,7 @@ export default function UserItems() {
                 <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
                   <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '8px' }}>
-                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--primary)', background: 'var(--primary-glow)', padding: '4px 8px', borderRadius: '12px' }}>{item.category}</span>
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: '#000', background: 'var(--primary-glow)', padding: '4px 8px', borderRadius: '12px' }}>{item.category}</span>
                   </div>
                 </div>
               </div>
