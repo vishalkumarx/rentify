@@ -736,7 +736,7 @@ export default function ItemDetail() {
                         </div>
                         <button
                           onClick={() => setBookingNote('')}
-                          style={{ background: 'var(--surface-border)', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                          style={{ background: 'var(--surface-border)', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', width: '24px', height: '24px', minWidth: '24px', minHeight: '24px', aspectRatio: '1 / 1', padding: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
                         >
                           <X size={14} />
                         </button>
