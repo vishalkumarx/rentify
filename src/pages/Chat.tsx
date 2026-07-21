@@ -920,13 +920,13 @@ export default function Chat() {
             {selectedImages.map((file, idx) => (
               <div key={idx} style={{ position: 'relative', width: '80px', height: '80px', flexShrink: 0 }}>
                 <img src={URL.createObjectURL(file)} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '12px', border: '1px solid var(--surface-border)' }} />
-                <button 
-                  type="button"
-                  onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))}
-                  style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--danger)', color: '#fff', border: 'none', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', padding: 0 }}
-                >
-                  <X size={14} />
-                </button>
+                  <button 
+                    type="button"
+                    onClick={() => setSelectedImages(prev => prev.filter((_, i) => i !== idx))}
+                    style={{ position: 'absolute', top: '-6px', right: '-6px', background: 'var(--danger)', color: '#fff', border: 'none', borderRadius: '50%', width: '24px', height: '24px', minWidth: '24px', minHeight: '24px', flexShrink: 0, aspectRatio: '1 / 1', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 4px rgba(0,0,0,0.2)', padding: 0 }}
+                  >
+                    <X size={14} />
+                  </button>
               </div>
             ))}
           </div>
