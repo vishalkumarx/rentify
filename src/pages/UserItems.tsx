@@ -64,18 +64,33 @@ export default function UserItems() {
               <div 
                 key={item.id} 
                 onClick={() => navigate(`/item/${item.id}`)}
-                className="product-card"
+                className="glass-panel animate-slide-up hover-scale"
+                style={{ 
+                  borderRadius: '0', 
+                  overflow: 'hidden', 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  position: 'relative',
+                  cursor: 'pointer'
+                }}
               >
-                <div className="product-image-container">
-                  <img src={item.images && item.images.length > 0 ? item.images[0] : item.image} alt={item.title} className="product-image" loading="lazy" />
-                  <div className="product-price">
-                    ₹{item.price}<span className="price-unit">/day</span>
+                <div className="tile-image-container">
+                  <img 
+                    src={item.images && item.images.length > 0 ? item.images[0] : item.image} 
+                    alt={item.title} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} 
+                    loading="lazy" 
+                  />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', padding: '16px 12px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                    <div style={{ color: 'white', fontWeight: 800, fontSize: '16px' }}>
+                      ₹{item.price}<span style={{ fontSize: '11px', fontWeight: 600, opacity: 0.8, marginLeft: '2px' }}>/day</span>
+                    </div>
                   </div>
                 </div>
-                <div className="product-info">
-                  <h3 className="product-title">{item.title}</h3>
-                  <div className="product-meta">
-                    <span className="product-category">{item.category}</span>
+                <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                  <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto', paddingTop: '8px' }}>
+                    <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--primary)', background: 'var(--primary-glow)', padding: '4px 8px', borderRadius: '12px' }}>{item.category}</span>
                   </div>
                 </div>
               </div>
