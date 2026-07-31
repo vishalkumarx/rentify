@@ -46,7 +46,7 @@ export function Calendar({ startDate, endDate, onChange, disabled = false }: Cal
         style={{ background: 'var(--surface-border)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: disabled ? 'not-allowed' : 'pointer', color: 'var(--text-main)', opacity: (disabled || isBefore(startOfMonth(currentMonth), startOfMonth(today))) ? 0.35 : 1 }}
         disabled={disabled || isBefore(startOfMonth(currentMonth), startOfMonth(today))}
       >
-        <ChevronLeft size={18} color="var(--text-main)" />
+        <ChevronLeft size={18} color="black" />
       </button>
       <div style={{ fontWeight: 600, fontSize: '16px', color: 'var(--text-main)' }}>
         {format(currentMonth, 'MMMM yyyy')}
@@ -56,7 +56,7 @@ export function Calendar({ startDate, endDate, onChange, disabled = false }: Cal
         style={{ background: 'var(--surface-border)', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: disabled ? 'not-allowed' : 'pointer', color: 'var(--text-main)', opacity: disabled ? 0.35 : 1 }}
         disabled={disabled}
       >
-        <ChevronRight size={18} color="var(--text-main)" />
+        <ChevronRight size={18} color="black" />
       </button>
     </div>
   );
