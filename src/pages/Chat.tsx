@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X, Link } from 'lucide-react';
+import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X, Link, MoreVertical } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useBookings } from '../context/BookingContext';
@@ -20,7 +20,7 @@ export default function Chat() {
   const { session } = useAuth();
   const { items } = useFeed();
   const { requests, updateRequestStatus } = useBookings();
-  const { conversations, messages, sendMessage, unsendMessage, markAsRead } = useChat();
+  const { conversations, messages, sendMessage, unsendMessage, markAsRead, toggleBlockUser } = useChat();
   const [inputText, setInputText] = useState('');
   
   const isWebView = typeof window !== 'undefined' && (
@@ -56,6 +56,7 @@ export default function Chat() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const [visibleCount, setVisibleCount] = useState(20);
 
@@ -150,7 +151,9 @@ export default function Chat() {
   const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage || isRequestChat;
   const [isNeedDeleted, setIsNeedDeleted] = useState(false);
 
-  const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked) || isNeedDeleted;
+  const isBlocked = conversation?.blockedBy && conversation.blockedBy.length > 0;
+  const isBlockedByMe = conversation?.blockedBy?.includes(session?.user?.id || '');
+  const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked) || isNeedDeleted || isBlocked;
 
   const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;
 
@@ -403,6 +406,56 @@ export default function Chat() {
               <span>{isOwner ? `Chat with ${conversation.otherUserName} • Listed by you` : `Listed by ${conversation.otherUserName}`}</span>
             )}
           </div>
+        </div>
+
+        <div style={{ position: 'relative' }}>
+          <button 
+            onClick={() => setShowMenu(!showMenu)} 
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', display: 'flex', padding: '8px' }}
+          >
+            <MoreVertical size={20} />
+          </button>
+          
+          {showMenu && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              right: 0,
+              background: 'var(--surface)',
+              border: '1px solid var(--surface-border)',
+              borderRadius: '12px',
+              padding: '8px',
+              minWidth: '160px',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              zIndex: 100
+            }}>
+              <button 
+                onClick={async () => {
+                  setShowMenu(false);
+                  await toggleBlockUser(conversation.id);
+                }}
+                style={{ 
+                  width: '100%', 
+                  padding: '10px 12px', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  background: 'transparent', 
+                  border: 'none', 
+                  color: 'var(--danger)', 
+                  cursor: 'pointer',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: '14px'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+              >
+                <Ban size={16} />
+                {conversation.blockedBy?.includes(session?.user?.id || '') ? 'Unblock User' : 'Block User'}
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -966,7 +1019,7 @@ export default function Chat() {
           <textarea
             ref={textareaRef}
             rows={1}
-            placeholder={isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
+            placeholder={isBlockedByMe ? "You blocked this user" : isBlocked ? "You have been blocked" : isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
             value={inputText}
             onChange={e => {
               setInputText(e.target.value);

@@ -27,6 +27,7 @@ export type Conversation = {
   messages: Message[];
   unreadCounts: Record<string, number>; // { userId: 0 }
   deletedBy?: string[];
+  blockedBy?: string[];
 };
 
 // UI Representation
@@ -41,6 +42,7 @@ export type UIConversation = {
   lastMessageTime?: number;
   lastSenderId?: string;
   unreadCount: number;
+  blockedBy?: string[];
 };
 
 type ChatContextType = {
@@ -51,6 +53,7 @@ type ChatContextType = {
   markAsRead: (conversationId: string) => void;
   getOrCreateConversation: (itemId: number | string, itemTitle: string, itemImage: string, otherUserId: string, otherUserName: string) => string;
   deleteConversation: (conversationId: string) => Promise<void>;
+  toggleBlockUser: (conversationId: string) => Promise<void>;
 };
 
 const ChatContext = createContext<ChatContextType>({
@@ -61,6 +64,7 @@ const ChatContext = createContext<ChatContextType>({
   markAsRead: () => {},
   getOrCreateConversation: () => '',
   deleteConversation: async () => {},
+  toggleBlockUser: async () => {},
 });
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
@@ -129,7 +133,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           lastMessage: c.lastMessage,
           lastMessageTime: c.lastMessageTime,
           lastSenderId: lastMsg?.senderId,
-          unreadCount: c.unreadCounts?.[myId] || 0
+          unreadCount: c.unreadCounts?.[myId] || 0,
+          blockedBy: c.blockedBy || []
         };
       });
 
@@ -207,6 +212,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             [uiConv.otherUserId]: 0
           }
         };
+      }
+      if (chatData.blockedBy && chatData.blockedBy.length > 0) {
+        throw new Error('Message sending blocked');
       }
 
       chatData.messages = [...(chatData.messages || []), newMsg];
@@ -395,7 +403,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       unsendMessage,
       markAsRead,
       getOrCreateConversation,
-      deleteConversation
+      deleteConversation,
+      toggleBlockUser
     }}>
       {children}
     </ChatContext.Provider>

@@ -260,7 +260,7 @@ export default function ItemDetail() {
     if (bookingNote.trim() !== '') {
       await sendMessage(convId, session!.user.id, `[Booking Request Note]: ${bookingNote.trim()}`);
     } else {
-      await sendMessage(convId, session!.user.id, `[Booking Request]: User has requested to book this item from ${format(parseISO(startDate), 'MMM d, yyyy')} to ${format(parseISO(endDate), 'MMM d, yyyy')} for ₹${totalPrice}.`);
+      await sendMessage(convId, session!.user.id, `[Booking Request]: User has requested to book this item from ${format(parseISO(startDate), 'MMM d, yyyy')} to ${format(parseISO(endDate), 'MMM d, yyyy')} for ₹${item.price}/day.`);
     }
     setShowConfirmSheet(false);
     setShowSuccessSheet(true);
