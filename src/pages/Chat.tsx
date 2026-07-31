@@ -57,6 +57,7 @@ export default function Chat() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showBlockConfirm, setShowBlockConfirm] = useState(false);
 
   const [visibleCount, setVisibleCount] = useState(20);
 
@@ -418,44 +419,50 @@ export default function Chat() {
           </button>
           
           {showMenu && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              right: 0,
-              background: 'var(--surface)',
-              border: '1px solid var(--surface-border)',
-              borderRadius: '12px',
-              padding: '8px',
-              minWidth: '160px',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
-              zIndex: 100
-            }}>
-              <button 
-                onClick={async () => {
-                  setShowMenu(false);
-                  await toggleBlockUser(conversation.id);
-                }}
-                style={{ 
-                  width: '100%', 
-                  padding: '10px 12px', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '8px',
-                  background: 'transparent', 
-                  border: 'none', 
-                  color: 'var(--danger)', 
-                  cursor: 'pointer',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  fontSize: '14px'
-                }}
-                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'}
-                onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
-              >
-                <Ban size={16} />
-                {conversation.blockedBy?.includes(session?.user?.id || '') ? 'Unblock messages' : 'Block messages'}
-              </button>
-            </div>
+            <>
+              <div 
+                style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99 }} 
+                onClick={() => setShowMenu(false)}
+              />
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                right: 0,
+                background: 'var(--surface)',
+                border: '1px solid var(--surface-border)',
+                borderRadius: '12px',
+                padding: '8px',
+                minWidth: '160px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                zIndex: 100
+              }}>
+                <button 
+                  onClick={() => {
+                    setShowMenu(false);
+                    setShowBlockConfirm(true);
+                  }}
+                  style={{ 
+                    width: '100%', 
+                    padding: '10px 12px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '8px',
+                    background: 'transparent', 
+                    border: 'none', 
+                    color: 'var(--danger)', 
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    fontSize: '14px'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.background = 'rgba(239,68,68,0.1)'}
+                  onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+                >
+                  <Ban size={16} />
+                  {isBlockedByMe ? 'Unblock messages' : 'Block messages'}
+                </button>
+              </div>
+            </>
           )}
         </div>
       </header>
@@ -1424,6 +1431,46 @@ export default function Chat() {
                 style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.2)' }}
               >
                 Cancel Booking
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+      {/* Block Confirm Modal */}
+      {showBlockConfirm && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '24px', background: 'rgba(239,68,68,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--danger)' }}>
+                <Ban size={24} />
+              </div>
+              <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>
+                {isBlockedByMe ? 'Unblock messages?' : 'Block messages?'}
+              </h3>
+            </div>
+            
+            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              {isBlockedByMe 
+                ? `Are you sure you want to unblock ${conversation.otherUserName}? They will be able to send you messages again across all item chats.` 
+                : `Are you sure you want to block ${conversation.otherUserName}? They will no longer be able to message you regarding any items.`}
+            </p>
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+              <button 
+                onClick={() => setShowBlockConfirm(false)}
+                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'transparent', color: 'var(--text-main)', fontWeight: 600, cursor: 'pointer' }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={async () => {
+                  setShowBlockConfirm(false);
+                  await toggleBlockUser(conversation.id);
+                }}
+                style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 700, cursor: 'pointer' }}
+              >
+                {isBlockedByMe ? 'Unblock' : 'Block'}
               </button>
             </div>
           </div>
