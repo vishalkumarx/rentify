@@ -301,6 +301,28 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [session?.user?.id]);
 
+  const toggleBlockUser = useCallback(async (conversationId: string) => {
+    if (!session?.user?.id) return;
+    const myId = session.user.id;
+    try {
+      const chatPath = `reviews/${conversationId}.json`;
+      let chatData = await getStorageJson(chatPath) as Conversation;
+      if (chatData) {
+        const blockedBy = chatData.blockedBy || [];
+        if (blockedBy.includes(myId)) {
+          chatData.blockedBy = blockedBy.filter(id => id !== myId);
+        } else {
+          chatData.blockedBy = [...blockedBy, myId];
+        }
+        await setStorageJson(chatPath, chatData);
+        fetchChats();
+      }
+    } catch (e) {
+      console.error('Failed to toggle block status', e);
+    }
+  }, [session?.user?.id, fetchChats]);
+
+
   const unsendMessage = useCallback(async (conversationId: string, messageId: string) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
