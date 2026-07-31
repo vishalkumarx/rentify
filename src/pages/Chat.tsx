@@ -1019,7 +1019,7 @@ export default function Chat() {
           <textarea
             ref={textareaRef}
             rows={1}
-            placeholder={isBlockedByMe ? "You blocked this user" : isBlocked ? "You have been blocked" : isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
+            placeholder={isBlockedByMe ? "You have blocked the user messages" : isBlocked ? "You have been blocked" : isItemDeleted ? "Item deleted" : isChatDisabled ? "Chat locked" : "Type a message..."}
             value={inputText}
             onChange={e => {
               setInputText(e.target.value);
