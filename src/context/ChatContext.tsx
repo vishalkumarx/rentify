@@ -239,6 +239,10 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const otherUserIds = Object.keys(chatData.participants || {}).filter(id => id !== myId);
       otherUserIds.forEach(id => {
         chatData.unreadCounts[id] = (chatData.unreadCounts[id] || 0) + 1;
+        // If the receiving user previously deleted the chat, restore it
+        if (chatData.deletedBy && chatData.deletedBy.includes(id)) {
+          chatData.deletedBy = chatData.deletedBy.filter(deletedId => deletedId !== id);
+        }
       });
 
       await setStorageJson(chatPath, chatData);
