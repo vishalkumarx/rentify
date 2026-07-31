@@ -23,11 +23,6 @@ export default function Chat() {
   const { conversations, messages, sendMessage, unsendMessage, markAsRead, toggleBlockUser } = useChat();
   const [inputText, setInputText] = useState('');
   
-  const isWebView = typeof window !== 'undefined' && (
-    /(iPhone|iPod|iPad).*AppleWebKit(?!.*Safari)/i.test(navigator.userAgent) || 
-    /Android.*(wv|\.b)/i.test(navigator.userAgent) ||
-    (window as any).ReactNativeWebView
-  );
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
@@ -961,8 +956,30 @@ export default function Chat() {
         </div>
       )}
 
+      {/* Accept / Decline Action Bar */}
+      {isOwner && bookingReq?.status === 'pending' && (
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', padding: '12px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)' }}>
+          <button 
+            type="button"
+            onClick={() => setShowAcceptDialog(true)}
+            style={{ flex: 1, padding: '12px 24px', borderRadius: '12px', background: 'var(--success)', color: '#fff', border: 'none', fontWeight: 800, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          >
+            <Check size={16} strokeWidth={3} />
+            Accept Booking
+          </button>
+          <button 
+            type="button"
+            onClick={() => setShowDeclineConfirm(true)}
+            style={{ flex: 1, padding: '12px 20px', borderRadius: '12px', background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+          >
+            <X size={16} strokeWidth={3} />
+            Decline
+          </button>
+        </div>
+      )}
+
       {/* Input */}
-      <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
+      <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: isOwner && bookingReq?.status === 'pending' ? 'none' : '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
 
         {replyingToMessage && (
           <div style={{ padding: '12px', background: '#f3f4f6', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
@@ -1077,26 +1094,6 @@ export default function Chat() {
         </form>
       </footer>
 
-      {isOwner && bookingReq?.status === 'pending' && (
-        <div style={{ position: 'absolute', top: isWebView ? 'auto' : '76px', bottom: isWebView ? 'calc(90px + env(safe-area-inset-bottom))' : 'auto', left: '50%', transform: 'translateX(-50%)', zIndex: 1000, display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button 
-            type="button"
-            onClick={() => setShowAcceptDialog(true)}
-            style={{ padding: '12px 24px', borderRadius: '24px', background: 'var(--success)', color: '#fff', border: 'none', fontWeight: 800, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(34, 197, 94, 0.4)', display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}
-          >
-            <Check size={16} strokeWidth={3} />
-            Accept Booking
-          </button>
-          <button 
-            type="button"
-            onClick={() => setShowDeclineConfirm(true)}
-            style={{ padding: '12px 20px', borderRadius: '24px', background: 'rgba(239, 68, 68, 0.9)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 20px rgba(239, 68, 68, 0.4)', display: 'flex', alignItems: 'center', gap: '6px', whiteSpace: 'nowrap' }}
-          >
-            <X size={16} strokeWidth={3} />
-            Decline
-          </button>
-        </div>
-      )}
 
       {createPortal(
         <>
