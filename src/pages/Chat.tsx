@@ -465,137 +465,137 @@ export default function Chat() {
       {/* Messages */}
       <main onScroll={handleScroll} ref={scrollRef} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', backgroundImage: `url(${chatBg})`, backgroundSize: 'contain', backgroundPosition: 'top left', backgroundRepeat: 'repeat', backgroundAttachment: 'fixed' }}>
         
-        <div style={{ background: 'var(--surface-border)', padding: '16px', borderRadius: '12px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px', alignSelf: 'center', maxWidth: '300px', width: 'fit-content' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldAlert size={20} color="var(--text-muted)" style={{ flexShrink: 0 }} />
-            <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>Safety Guidelines</strong>
-          </div>
-          <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
-            <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              <li>CampusRent does not mediate transactions and is not liable for items.</li>
-              <li>Verify the item's condition and exchange in public locations.</li>
-              <li>Never pay in advance or share personal banking details.</li>
-              <li>Keep all communication inside the app for protection.</li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Need Request Banner */}
-        {needRequest && (
-          <div style={{
-            background: 'var(--surface)',
-            border: '1px solid var(--primary)',
-            borderRadius: '16px',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            marginBottom: '16px',
-            boxShadow: '0 4px 12px rgba(244, 196, 48, 0.1)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)' }}>
-              <ShieldAlert size={16} />
-              <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Need Request Details</span>
+        {false && (
+          <>
+            <div style={{ background: 'var(--surface-border)', padding: '16px', borderRadius: '12px', marginBottom: '16px', display: 'flex', flexDirection: 'column', gap: '8px', alignSelf: 'center', maxWidth: '300px', width: 'fit-content' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldAlert size={20} color="var(--text-muted)" style={{ flexShrink: 0 }} />
+                <strong style={{ color: 'var(--text-main)', fontSize: '14px' }}>Safety Guidelines</strong>
+              </div>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                <ul style={{ margin: 0, paddingLeft: '24px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <li>CampusRent does not mediate transactions and is not liable for items.</li>
+                  <li>Verify the item's condition and exchange in public locations.</li>
+                  <li>Never pay in advance or share personal banking details.</li>
+                  <li>Keep all communication inside the app for protection.</li>
+                </ul>
+              </div>
             </div>
-            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{needRequest.title}</h3>
-            {needRequest.description && <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>{needRequest.description}</p>}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '4px' }}>
-              {needRequest.budget && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
-                  <strong style={{ opacity: 0.5 }}>Budget:</strong> {needRequest.budget}
-                </div>
-              )}
-              {needRequest.dateRequired && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
-                  <strong style={{ opacity: 0.5 }}>Need by:</strong> {needRequest.dateRequired}
-                </div>
-              )}
-              {needRequest.location && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
-                  <strong style={{ opacity: 0.5 }}>Location:</strong> {needRequest.location}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
 
-        {/* Deleted Need Banner */}
-        {isNeedDeleted && (
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid var(--danger)',
-            borderRadius: '16px',
-            padding: '16px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            marginBottom: '16px',
-            color: 'var(--danger)'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Ban size={16} />
-              <span style={{ fontSize: '14px', fontWeight: 700 }}>This Need Request was deleted</span>
-            </div>
-            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-main)', opacity: 0.8 }}>
-              The user has deleted this need request. You can no longer send messages in this chat.
-            </p>
-          </div>
-        )}
-
-
-
-
-
-        {/* Not Accepted Banner */}
-        {!isItemDeleted && !isChatUnlocked && (
-          <div style={{
-            background: 'rgba(255, 193, 7, 0.1)',
-            border: '1px solid var(--warning)',
-            borderRadius: '12px',
-            padding: '12px',
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center',
-            marginBottom: '16px'
-          }}>
-            <Lock size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
-            <p style={{ margin: 0, fontSize: '13px', color: 'var(--warning)', fontWeight: 600 }}>
-              {isOwner ? "Chat is currently locked for the requester. Send a message to unlock it." : "Chat is locked until the owner initiates or accepts the booking."}
-            </p>
-          </div>
-        )}
-
-        {/* Cancel Booking Button at top */}
-        {bookingReq?.status === 'accepted' && !isItemDeleted && (
-          <div style={{ padding: '0 0px', marginBottom: '16px' }}>
-            <button
-              onClick={() => {
-                setCancelAction({ 
-                  id: bookingReq.id, 
-                  role: isOwner ? 'owner' : 'rentee', 
-                  itemTitle: item?.title || '', 
-                  otherUserId: conversation!.otherUserId, 
-                  otherUserName: conversation!.otherUserName 
-                });
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'rgba(239, 68, 68, 0.1)',
-                color: 'var(--danger)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                borderRadius: '12px',
-                fontWeight: 600,
+            {/* Need Request Banner */}
+            {needRequest && (
+              <div style={{
+                background: 'var(--surface)',
+                border: '1px solid var(--primary)',
+                borderRadius: '16px',
+                padding: '16px',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: 'column',
                 gap: '8px',
-                cursor: 'pointer'
-              }}
-            >
-              <X size={18} /> Cancel Booking
-            </button>
-          </div>
+                marginBottom: '16px',
+                boxShadow: '0 4px 12px rgba(244, 196, 48, 0.1)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)' }}>
+                  <ShieldAlert size={16} />
+                  <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Need Request Details</span>
+                </div>
+                <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700 }}>{needRequest.title}</h3>
+                {needRequest.description && <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>{needRequest.description}</p>}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '4px' }}>
+                  {needRequest.budget && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
+                      <strong style={{ opacity: 0.5 }}>Budget:</strong> {needRequest.budget}
+                    </div>
+                  )}
+                  {needRequest.dateRequired && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
+                      <strong style={{ opacity: 0.5 }}>Need by:</strong> {needRequest.dateRequired}
+                    </div>
+                  )}
+                  {needRequest.location && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '13px', color: 'var(--text-main)', background: 'rgba(0,0,0,0.05)', padding: '4px 8px', borderRadius: '8px' }}>
+                      <strong style={{ opacity: 0.5 }}>Location:</strong> {needRequest.location}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Deleted Need Banner */}
+            {isNeedDeleted && (
+              <div style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                border: '1px solid var(--danger)',
+                borderRadius: '16px',
+                padding: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                marginBottom: '16px',
+                color: 'var(--danger)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Ban size={16} />
+                  <span style={{ fontSize: '14px', fontWeight: 700 }}>This Need Request was deleted</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-main)', opacity: 0.8 }}>
+                  The user has deleted this need request. You can no longer send messages in this chat.
+                </p>
+              </div>
+            )}
+
+            {/* Not Accepted Banner */}
+            {!isItemDeleted && !isChatUnlocked && (
+              <div style={{
+                background: 'rgba(255, 193, 7, 0.1)',
+                border: '1px solid var(--warning)',
+                borderRadius: '12px',
+                padding: '12px',
+                display: 'flex',
+                gap: '12px',
+                alignItems: 'center',
+                marginBottom: '16px'
+              }}>
+                <Lock size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
+                <p style={{ margin: 0, fontSize: '13px', color: 'var(--warning)', fontWeight: 600 }}>
+                  {isOwner ? "Chat is currently locked for the requester. Send a message to unlock it." : "Chat is locked until the owner initiates or accepts the booking."}
+                </p>
+              </div>
+            )}
+
+            {/* Cancel Booking Button at top */}
+            {bookingReq?.status === 'accepted' && !isItemDeleted && (
+              <div style={{ padding: '0 0px', marginBottom: '16px' }}>
+                <button
+                  onClick={() => {
+                    setCancelAction({ 
+                      id: bookingReq?.id || 0, 
+                      role: isOwner ? 'owner' : 'rentee', 
+                      itemTitle: item?.title || '', 
+                      otherUserId: conversation!.otherUserId, 
+                      otherUserName: conversation!.otherUserName 
+                    });
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    background: 'rgba(239, 68, 68, 0.1)',
+                    color: 'var(--danger)',
+                    border: '1px solid rgba(239, 68, 68, 0.2)',
+                    borderRadius: '12px',
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <X size={18} /> Cancel Booking
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {conversationMessages.length === 0 && !bookingReq?.note && (
