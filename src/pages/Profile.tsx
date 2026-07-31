@@ -334,41 +334,61 @@ export default function Profile() {
         {activeTab === 'My Listings' && (
           <div style={{ padding: '24px 0' }}>
             {myItems.length > 0 ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
-                {myItems.map(item => (
-                  <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', cursor: 'pointer', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <img src={item.image} alt={item.title} style={{ width: '72px', height: '72px', borderRadius: '12px', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
-                      <div style={{ flex: 1 }}>
-                        <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
-                        <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}<span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>/day</span></span>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Posted on {new Date(item.createdAt || Date.now()).toLocaleDateString()}</div>
-                      </div>
-                      <div style={{ position: 'relative' }}>
-                        <button 
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenMenuId(openMenuId === item.id ? null : item.id); }}
-                          onTouchEnd={(e) => e.stopPropagation()}
-                          style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', display: 'flex', color: 'var(--text-main)' }}
-                        >
-                          <MoreVertical size={20} />
-                        </button>
-                        {openMenuId === item.id && (
-                          <div style={{ position: 'absolute', top: '100%', right: '0', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, minWidth: '120px', overflow: 'hidden' }}>
-                            <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/edit/${item.id}`); }}
-                              onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', borderBottom: '1px solid var(--surface-border)', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', borderRadius: 0, fontWeight: 600 }}>
-                              <Edit2 size={16} /> Edit
-                            </button>
-                            <button onClick={async (e) => { e.preventDefault(); e.stopPropagation(); if (window.confirm('Are you sure you want to delete this listing?')) { await deletePost(item.id); } }}
-                              onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
-                              <Trash2 size={16} /> Delete
-                            </button>
-                          </div>
-                        )}
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                  {myItems.slice(0, 5).map(item => (
+                    <div key={item.id} onClick={() => navigate(`/item/${item.id}`)} className="glass-panel" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '12px', cursor: 'pointer', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <img src={item.image} alt={item.title} style={{ width: '72px', height: '72px', borderRadius: '12px', objectFit: 'cover', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }} />
+                        <div style={{ flex: 1 }}>
+                          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
+                          <span style={{ fontSize: '15px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}<span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>/day</span></span>
+                          <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Posted on {new Date(item.createdAt || Date.now()).toLocaleDateString()}</div>
+                        </div>
+                        <div style={{ position: 'relative' }}>
+                          <button 
+                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenMenuId(openMenuId === item.id ? null : item.id); }}
+                            onTouchEnd={(e) => e.stopPropagation()}
+                            style={{ background: 'transparent', border: 'none', padding: '8px', cursor: 'pointer', display: 'flex', color: 'var(--text-main)' }}
+                          >
+                            <MoreVertical size={20} />
+                          </button>
+                          {openMenuId === item.id && (
+                            <div style={{ position: 'absolute', top: '100%', right: '0', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)', zIndex: 10, minWidth: '120px', overflow: 'hidden' }}>
+                              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/edit/${item.id}`); }}
+                                onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', borderBottom: '1px solid var(--surface-border)', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', borderRadius: 0, fontWeight: 600 }}>
+                                <Edit2 size={16} /> Edit
+                              </button>
+                              <button onClick={async (e) => { e.preventDefault(); e.stopPropagation(); if (window.confirm('Are you sure you want to delete this listing?')) { await deletePost(item.id); } }}
+                                onTouchEnd={(e) => e.stopPropagation()} style={{ width: '100%', padding: '12px 16px', background: 'transparent', border: 'none', textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: 'var(--danger)', borderRadius: 0, fontWeight: 600 }}>
+                                <Trash2 size={16} /> Delete
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+                {myItems.length > 5 && (
+                  <button 
+                    onClick={() => navigate(`/user/${session?.user?.id}/items`)}
+                    style={{ 
+                      width: '100%', 
+                      marginTop: '20px', 
+                      padding: '14px', 
+                      background: 'var(--surface)', 
+                      border: '1px solid var(--surface-border)', 
+                      borderRadius: '12px', 
+                      color: 'var(--text-main)', 
+                      fontWeight: 600, 
+                      cursor: 'pointer' 
+                    }}
+                  >
+                    View All
+                  </button>
+                )}
+              </>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
                 <Package size={64} opacity={0.5} style={{ marginBottom: '16px' }} />
