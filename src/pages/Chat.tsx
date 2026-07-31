@@ -452,7 +452,7 @@ export default function Chat() {
                 onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
               >
                 <Ban size={16} />
-                {conversation.blockedBy?.includes(session?.user?.id || '') ? 'Unblock User' : 'Block User'}
+                {conversation.blockedBy?.includes(session?.user?.id || '') ? 'Unblock messages' : 'Block messages'}
               </button>
             </div>
           )}
