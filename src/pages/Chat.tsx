@@ -151,8 +151,9 @@ export default function Chat() {
   const isChatUnlocked = hasAcceptedBooking || hasOwnerMessage || isRequestChat;
   const [isNeedDeleted, setIsNeedDeleted] = useState(false);
 
-  const isBlocked = conversation?.blockedBy && conversation.blockedBy.length > 0;
-  const isBlockedByMe = conversation?.blockedBy?.includes(session?.user?.id || '');
+  const allChatsWithUser = conversations.filter(c => c.otherUserId === conversation?.otherUserId);
+  const isBlockedByMe = allChatsWithUser.some(c => c.blockedBy?.includes(session?.user?.id || ''));
+  const isBlocked = isBlockedByMe || allChatsWithUser.some(c => c.blockedBy?.some(id => id !== session?.user?.id));
   const isChatDisabled = isItemDeleted || (!isOwner && !isChatUnlocked) || isNeedDeleted || isBlocked;
 
   const lastMessageId = allConversationMessages.length > 0 ? allConversationMessages[allConversationMessages.length - 1].id : null;

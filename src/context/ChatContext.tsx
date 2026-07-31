@@ -213,6 +213,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           }
         };
       }
+      
+      const otherUserId = Object.keys(chatData.participants || {}).find(id => id !== myId);
+      if (otherUserId) {
+        const isBlockedAnywhere = conversations.some(c => 
+          c.otherUserId === otherUserId && 
+          c.blockedBy && 
+          c.blockedBy.length > 0
+        );
+        if (isBlockedAnywhere) {
+          throw new Error('Message sending blocked globally between these users');
+        }
+      }
+
       if (chatData.blockedBy && chatData.blockedBy.length > 0) {
         throw new Error('Message sending blocked');
       }
@@ -305,22 +318,41 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     if (!session?.user?.id) return;
     const myId = session.user.id;
     try {
-      const chatPath = `reviews/${conversationId}.json`;
-      let chatData = await getStorageJson(chatPath) as Conversation;
-      if (chatData) {
-        const blockedBy = chatData.blockedBy || [];
-        if (blockedBy.includes(myId)) {
-          chatData.blockedBy = blockedBy.filter(id => id !== myId);
-        } else {
-          chatData.blockedBy = [...blockedBy, myId];
+      // Find the target conversation to determine the other user
+      const targetConv = conversations.find(c => c.id === conversationId);
+      if (!targetConv) return;
+      const targetOtherUserId = targetConv.otherUserId;
+
+      // Find all conversations with this other user
+      const allTargetConvs = conversations.filter(c => c.otherUserId === targetOtherUserId);
+      
+      // Determine current global block state
+      const isCurrentlyBlocked = allTargetConvs.some(c => c.blockedBy?.includes(myId));
+
+      // Update all conversations
+      for (const conv of allTargetConvs) {
+        const chatPath = `reviews/${conv.id}.json`;
+        let chatData = await getStorageJson(chatPath) as Conversation;
+        if (chatData) {
+          const blockedBy = chatData.blockedBy || [];
+          if (isCurrentlyBlocked) {
+            // Unblock: remove myId
+            chatData.blockedBy = blockedBy.filter(id => id !== myId);
+          } else {
+            // Block: add myId if not present
+            if (!blockedBy.includes(myId)) {
+              chatData.blockedBy = [...blockedBy, myId];
+            }
+          }
+          await setStorageJson(chatPath, chatData);
         }
-        await setStorageJson(chatPath, chatData);
-        fetchChats();
       }
+      
+      fetchChats();
     } catch (e) {
       console.error('Failed to toggle block status', e);
     }
-  }, [session?.user?.id, fetchChats]);
+  }, [session?.user?.id, conversations, fetchChats]);
 
 
   const unsendMessage = useCallback(async (conversationId: string, messageId: string) => {
