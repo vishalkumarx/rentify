@@ -268,22 +268,7 @@ export default function ItemRequestsFeed() {
           </div>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <h2 style={{ fontSize: '24px', fontWeight: 900, margin: 0 }}>Community Needs</h2>
-          <button 
-            onClick={() => {
-              if (!session) {
-                toast.error('Please log in to post a request');
-                navigate('/login', { state: { returnTo: '/request-need' } });
-                return;
-              }
-              navigate('/request-need');
-            }}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--primary)', color: '#000', padding: '10px 16px', borderRadius: '20px', border: 'none', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px var(--primary-glow)', width: 'fit-content', whiteSpace: 'nowrap', flexShrink: 0 }}
-          >
-            <Plus size={18} /> <span>Request a Need</span>
-          </button>
-        </div>
+
 
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 20px', gap: '16px' }}>
