@@ -305,7 +305,7 @@ export default function ItemRequestsFeed() {
                   </div>
                 )}
                 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   {req.profilePic ? (
                     <img src={req.profilePic} alt={req.name} onClick={(e) => { e.stopPropagation(); navigate(`/profile/${req.userId}`); }} style={{ width: '40px', height: '40px', borderRadius: '20px', objectFit: 'cover', flexShrink: 0, cursor: 'pointer' }} />
                   ) : (
