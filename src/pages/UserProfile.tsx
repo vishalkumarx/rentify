@@ -256,8 +256,14 @@ export default function UserProfile() {
                       style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: item.status === 'booked' ? 0.5 : 1 }}
                     />
                     {item.status === 'booked' && (
-                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, border: '1px solid var(--surface-border)' }}>
+                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, border: '1px solid var(--surface-border)', zIndex: 10 }}>
                         UNAVAILABLE
+                      </div>
+                    )}
+                    {item.itemRating != null && item.status !== 'booked' && (
+                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#ffffff', color: '#000000', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 10 }}>
+                        <span>{item.itemRating}</span>
+                        <Star size={12} fill="var(--success)" color="var(--success)" />
                       </div>
                     )}
                   </div>
@@ -272,11 +278,7 @@ export default function UserProfile() {
                         <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--success)' }}>
                           ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
                         </div>
-                        {item.itemRating != null && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--warning)', fontWeight: 700 }}>
-                            ⭐ {item.itemRating}
-                          </div>
-                        )}
+
                       </div>
                     </div>
                   </div>

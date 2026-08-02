@@ -7,7 +7,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock } from 'lucide-react';
+import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2 } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -36,7 +36,7 @@ const ZoomableImage = ({ img, i }: { img: string, i: number }) => {
 
 export default function ItemDetail() {
   const { id } = useParams();
-  const { items, toggleLike } = useFeed();
+  const { items, toggleLike, deletePost } = useFeed();
   const item = items.find(i => i.id === Number(id));
   useSEO(item?.title || 'Item Detail', item?.description || 'View item details on CampusRent');
 
@@ -896,9 +896,25 @@ export default function ItemDetail() {
       }}>
         <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
           {isOwner ? (
-            <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer' }}>
-              Edit Your Item
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
+              <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+                Edit Your Item
+              </button>
+              <button onClick={async () => {
+                  if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
+                    try {
+                      await deletePost(item.id);
+                      toast.success('Listing deleted');
+                      navigate(-1);
+                    } catch (e) {
+                      // error handled in context
+                    }
+                  }
+                }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+                <Trash2 size={18} />
+                Delete Listing
+              </button>
+            </div>
           ) : isBookingCompleted ? (
             <div style={{ padding: '18px', background: 'var(--surface)', color: 'var(--text-main)', borderRadius: '24px', textAlign: 'center', border: '1px solid var(--surface-border)' }}>
               <p style={{ margin: 0, fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><BadgeCheck size={18} color="var(--primary)" /> Booking Completed</p>
