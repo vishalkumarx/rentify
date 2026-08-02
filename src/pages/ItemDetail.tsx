@@ -7,7 +7,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2 } from 'lucide-react';
+import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2, Share } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -413,18 +413,37 @@ export default function ItemDetail() {
         <h1 style={{ fontSize: '18px', margin: 0, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '200px' }}>
           {item.title}
         </h1>
-        <button 
-          onClick={() => {
-            if (!session) {
-              navigate('/login');
-            } else {
-              toggleLike(item.id);
-            }
-          }} 
-          style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: item.liked ? 'var(--danger)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
-        >
-          <Heart size={20} fill={item.liked ? 'var(--danger)' : 'none'} />
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button 
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: item.title,
+                  text: `Check out ${item.title} on CampusRent!`,
+                  url: window.location.href,
+                }).catch(console.error);
+              } else {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success('Link copied to clipboard!');
+              }
+            }} 
+            style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
+          >
+            <Share size={20} />
+          </button>
+          <button 
+            onClick={() => {
+              if (!session) {
+                navigate('/login');
+              } else {
+                toggleLike(item.id);
+              }
+            }} 
+            style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: item.liked ? 'var(--danger)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
+          >
+            <Heart size={20} fill={item.liked ? 'var(--danger)' : 'none'} />
+          </button>
+        </div>
       </header>
 
       {/* Content */}
