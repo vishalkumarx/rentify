@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useChat } from '../context/ChatContext';
-import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X, Link, MoreVertical } from 'lucide-react';
+import { ChevronLeft, Send, ShieldAlert, Check, CheckCheck, Paperclip, Image as ImageIcon, MapPin, X, MoreVertical } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useFeed } from '../context/FeedContext';
 import { useBookings } from '../context/BookingContext';
@@ -878,7 +878,13 @@ export default function Chat() {
                             </a>
                           )}
                           {msg.text && !msg.location && (
-                            <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.text}</p>
+                            <p style={{ margin: 0, fontSize: isEmojiOnly ? '48px' : '15px', lineHeight: 1.4, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                              {msg.text.split(/(https?:\/\/[^\s]+)/g).map((part: string, i: number) => 
+                                /^https?:\/\/[^\s]+$/.test(part) ? (
+                                  <a key={i} href={part} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline' }}>{part}</a>
+                                ) : part
+                              )}
+                            </p>
                           )}
                         </>
                       )}
@@ -1024,14 +1030,7 @@ export default function Chat() {
                 <button type="button" onClick={handleLocationShare} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'transparent', border: 'none', color: 'var(--text-main)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
                   <MapPin size={18} /> Location
                 </button>
-                <button type="button" onClick={() => {
-                  if (conversation?.itemId) {
-                    setInputText(prev => prev + (prev ? '\n' : '') + window.location.origin + '/item/' + conversation.itemId);
-                  }
-                  setShowAttachments(false);
-                }} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'transparent', border: 'none', color: 'var(--text-main)', borderRadius: '12px', cursor: 'pointer', textAlign: 'left', fontWeight: 600 }}>
-                  <Link size={18} /> Item Link
-                </button>
+
               </div>
             )}
           </div>
