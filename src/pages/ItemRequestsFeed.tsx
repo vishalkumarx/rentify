@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, Plus, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Eye, MessageSquare, Send, Heart } from 'lucide-react';
+import { ChevronLeft, Megaphone, X, MoreVertical, Trash2, MapPin, IndianRupee, Calendar, Eye, MessageSquare, Send, Heart } from 'lucide-react';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
