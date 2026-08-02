@@ -476,7 +476,6 @@ export default function ItemRequestsFeed() {
                                       <strong onClick={(e) => { e.stopPropagation(); navigate(`/profile/${c.userId}`); }} style={{ fontSize: '13px', color: 'var(--text-main)', cursor: 'pointer' }}>{c.name}</strong>
                                       <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{timeAgo(c.createdAt)}</span>
                                     </div>
-                                  <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)', paddingRight: '24px' }}>{c.text}</p>
                                   <p style={{ margin: 0, fontSize: '14px', lineHeight: 1.5, color: 'var(--text-main)' }}>{c.text}</p>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: '4px', marginTop: '6px', marginLeft: '8px' }}>
