@@ -261,7 +261,7 @@ export default function UserProfile() {
                       </div>
                     )}
                     {item.itemRating != null && item.status !== 'booked' && (
-                      <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#ffffff', color: '#000000', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 10 }}>
+                      <div style={{ position: 'absolute', bottom: '12px', left: '12px', background: '#ffffff', color: '#000000', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 10 }}>
                         <span>{item.itemRating}</span>
                         <Star size={12} fill="var(--success)" color="var(--success)" />
                       </div>
