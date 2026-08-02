@@ -310,7 +310,7 @@ const MonsoonBanner: React.FC = () => {
         }
       `}</style>
 
-      <div className="monsoon-banner" onClick={() => navigate('/category/Monsoon')}>
+      <div className="monsoon-banner" onClick={() => navigate('/category/Monsoon Essentials')}>
         <div className="monsoon-flash"></div>
         <div className="monsoon-bolt"></div>
         <div className="monsoon-cloud"></div>
@@ -323,7 +323,7 @@ const MonsoonBanner: React.FC = () => {
             Rent monsoon-ready items from fellow students — umbrellas, raincoats, waterproof bags, gumboots, and more.
           </p>
           <div className="monsoon-cta-row">
-            <div className="monsoon-btn monsoon-btn-primary" onClick={(e) => { e.stopPropagation(); navigate('/category/Monsoon'); }}>Explore Items</div>
+            <div className="monsoon-btn monsoon-btn-primary" onClick={(e) => { e.stopPropagation(); navigate('/category/Monsoon Essentials'); }}>Explore Items</div>
             <div className="monsoon-btn monsoon-btn-secondary" onClick={(e) => { e.stopPropagation(); navigate('/post'); }}>List an Item</div>
           </div>
         </div>

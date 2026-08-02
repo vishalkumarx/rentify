@@ -1,5 +1,6 @@
 export const CATEGORIES = [
   'All',
+  'Monsoon Essentials',
   'Electronics',
   'Books and Stationary',
   'Mobility',
