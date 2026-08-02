@@ -622,7 +622,7 @@ export default function Chat() {
             
             return (
               <div key={group.date.getTime()} style={{ display: 'flex', flexDirection: 'column' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 0px', position: 'sticky', top: '10px', zIndex: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 16px', position: 'sticky', top: '10px', zIndex: 10 }}>
                   <span style={{ 
                     background: 'rgba(0,0,0,0.3)', 
                     color: '#fff', 
