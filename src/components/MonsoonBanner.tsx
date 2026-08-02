@@ -321,7 +321,7 @@ const MonsoonBanner: React.FC = () => {
           </p>
           <div className="monsoon-cta-row">
             <div className="monsoon-btn monsoon-btn-primary" onClick={(e) => { e.stopPropagation(); navigate('/category/Monsoon'); }}>Explore Items</div>
-            <div className="monsoon-btn monsoon-btn-secondary" onClick={(e) => { e.stopPropagation(); navigate('/add-item'); }}>List an Item</div>
+            <div className="monsoon-btn monsoon-btn-secondary" onClick={(e) => { e.stopPropagation(); navigate('/post'); }}>List an Item</div>
           </div>
         </div>
 
