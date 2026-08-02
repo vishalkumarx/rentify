@@ -15,9 +15,10 @@ export default function AdminPanel() {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs'>('verifications');
+  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs' | 'settings'>('verifications');
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [needs, setNeeds] = useState<any[]>([]);
+  const [siteSettings, setSiteSettings] = useState<any>({ showMonsoonBanner: true });
   
   // Needs Filters
   const [needsFilterName, setNeedsFilterName] = useState('');
@@ -44,6 +45,10 @@ export default function AdminPanel() {
     }
 
     const fetchAdminData = async () => {
+      // 1. Fetch Site Settings
+      const settings = await getStorageJson('admin/site_settings.json') || { showMonsoonBanner: true };
+      setSiteSettings(settings);
+
       // 2. Fetch verifications from JSON
       const verificationsData = await getStorageJson('admin/verifications.json') || {};
       const parsedUsers = await Promise.all(Object.keys(verificationsData).map(async userId => {
@@ -298,6 +303,12 @@ export default function AdminPanel() {
               style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'testimonials' ? 'var(--text-main)' : 'transparent', color: activeTab === 'testimonials' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
             >
               <Star size={20} /> Testimonials ({testimonials.filter(t => t.status === 'pending').length})
+            </button>
+            <button 
+              onClick={() => setActiveTab('settings')}
+              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'settings' ? 'var(--text-main)' : 'transparent', color: activeTab === 'settings' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
+            >
+              <Megaphone size={20} /> Site Settings
             </button>
           </div>
 
@@ -617,6 +628,42 @@ export default function AdminPanel() {
                     ))}
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Settings Tab */}
+            {activeTab === 'settings' && (
+              <div>
+                <h2 style={{ fontSize: '20px', margin: '0 0 20px 0', fontWeight: 700 }}>Site Settings</h2>
+                
+                <div style={{ background: 'var(--surface)', padding: '24px', borderRadius: '24px', border: '1px solid var(--surface-border)', boxShadow: 'var(--card-shadow)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>Monsoon Banner</h3>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Toggle the visibility of the Monsoon Essentials banner on the homepage.</p>
+                    </div>
+                    <button 
+                      onClick={async () => {
+                        const newSettings = { ...siteSettings, showMonsoonBanner: !siteSettings.showMonsoonBanner };
+                        setSiteSettings(newSettings);
+                        await setStorageJson('admin/site_settings.json', newSettings);
+                        toast.success('Site settings updated');
+                      }}
+                      style={{ 
+                        padding: '12px 24px', 
+                        borderRadius: '12px', 
+                        border: 'none', 
+                        background: siteSettings?.showMonsoonBanner ? 'var(--success)' : 'var(--surface-border)', 
+                        color: siteSettings?.showMonsoonBanner ? '#fff' : 'var(--text-main)', 
+                        fontWeight: 700, 
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                    >
+                      {siteSettings?.showMonsoonBanner ? 'Visible' : 'Hidden'}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 

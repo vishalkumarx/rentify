@@ -163,6 +163,17 @@ export default function Home() {
   const [activeDepartment, setActiveDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredOffset, setFeaturedOffset] = useState(0);
+  const [showMonsoonBanner, setShowMonsoonBanner] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const settings = await getStorageJson('admin/site_settings.json');
+      if (settings && settings.showMonsoonBanner !== undefined) {
+        setShowMonsoonBanner(settings.showMonsoonBanner);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const updateFeaturedOffset = () => {
@@ -403,11 +414,13 @@ export default function Home() {
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
 
         {/* Monsoon Banner */}
-        <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '100%', maxWidth: '1400px' }}>
-            <MonsoonBanner />
+        {showMonsoonBanner && (
+          <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '1400px' }}>
+              <MonsoonBanner />
+            </div>
           </div>
-        </div>
+        )}
         
         {/* Promo Carousel */}
         <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
