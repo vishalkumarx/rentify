@@ -650,16 +650,17 @@ export default function AdminPanel() {
                         toast.success('Site settings updated');
                       }}
                       style={{ 
-                        padding: '10px 20px', 
-                        borderRadius: '12px', 
+                        padding: '8px 16px', 
+                        borderRadius: '10px', 
                         border: 'none', 
                         background: siteSettings?.showMonsoonBanner ? 'var(--success)' : 'var(--surface-border)', 
                         color: siteSettings?.showMonsoonBanner ? '#fff' : 'var(--text-main)', 
-                        fontWeight: 700, 
+                        fontWeight: 700,
+                        fontSize: '14px', 
                         cursor: 'pointer',
                         transition: 'all 0.2s',
                         whiteSpace: 'nowrap',
-                        flexShrink: 0
+                        width: 'fit-content'
                       }}
                     >
                       {siteSettings?.showMonsoonBanner ? 'Visible' : 'Hidden'}
