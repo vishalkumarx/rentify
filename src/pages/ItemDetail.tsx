@@ -405,7 +405,13 @@ export default function ItemDetail() {
         zIndex: 50
       }}>
         <button 
-          onClick={() => navigate(-1)} 
+          onClick={() => {
+            if (window.history.state && window.history.state.idx > 0) {
+              navigate(-1);
+            } else {
+              navigate('/', { replace: true });
+            }
+          }} 
           style={{ width: '40px', height: '40px', padding: 0, borderRadius: '20px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--card-shadow)' }}
         >
           <ChevronLeft size={20} />
