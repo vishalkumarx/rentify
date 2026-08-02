@@ -535,9 +535,9 @@ export default function ItemRequestsFeed() {
                 <button 
                   onClick={handleAddComment}
                   disabled={!session || !newComment.trim() || isSubmittingComment}
-                  style={{ width: '40px', height: '40px', borderRadius: '20px', background: newComment.trim() ? 'var(--primary)' : 'var(--surface-border)', color: newComment.trim() ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newComment.trim() ? 'pointer' : 'default', flexShrink: 0 }}
+                  style={{ width: '48px', height: '48px', borderRadius: '24px', background: newComment.trim() ? 'var(--primary)' : 'var(--surface-border)', color: newComment.trim() ? '#000' : 'var(--text-muted)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: newComment.trim() ? 'pointer' : 'default', flexShrink: 0 }}
                 >
-                  <Send size={24} />
+                  <Send size={26} style={{ marginLeft: '-2px', marginTop: '2px' }} />
                 </button>
               </div>
             </div>
