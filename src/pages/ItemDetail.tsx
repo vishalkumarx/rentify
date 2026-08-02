@@ -57,6 +57,7 @@ export default function ItemDetail() {
   const [newReviewRating, setNewReviewRating] = useState(5);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [showReviewConfirm, setShowReviewConfirm] = useState(false);
+  const [showWriteReview, setShowWriteReview] = useState(false);
 
   useEffect(() => {
     if (item) {
@@ -335,33 +336,52 @@ export default function ItemDetail() {
 
               {/* Write Review Form */}
               {session && !isOwner && (
-                <div style={{ marginTop: '24px', padding: '16px', background: 'var(--bg)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
-                  <h4 style={{ margin: '0 0 12px 0', fontSize: '15px', fontWeight: 700 }}>Write a Review</h4>
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star 
-                        key={star} 
-                        size={20} 
-                        fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
-                        color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setNewReviewRating(star)}
+                <div style={{ marginTop: '24px' }}>
+                  {!showWriteReview ? (
+                    <button 
+                      onClick={() => setShowWriteReview(true)}
+                      style={{ width: '100%', padding: '14px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', borderRadius: '16px', fontSize: '15px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s' }}
+                    >
+                      Click here to write a review about this product
+                    </button>
+                  ) : (
+                    <div className="animate-slide-up" style={{ padding: '16px', background: 'var(--bg)', borderRadius: '16px', border: '1px solid var(--surface-border)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                        <h4 style={{ margin: 0, fontSize: '15px', fontWeight: 700 }}>Write a Review</h4>
+                        <button 
+                          onClick={() => setShowWriteReview(false)}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                        {[1, 2, 3, 4, 5].map(star => (
+                          <Star 
+                            key={star} 
+                            size={20} 
+                            fill={star <= newReviewRating ? "var(--warning)" : "transparent"} 
+                            color={star <= newReviewRating ? "var(--warning)" : "var(--surface-border)"} 
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => setNewReviewRating(star)}
+                          />
+                        ))}
+                      </div>
+                      <textarea 
+                        value={newReviewText}
+                        onChange={e => setNewReviewText(e.target.value)}
+                        placeholder="Share your experience..."
+                        style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
                       />
-                    ))}
-                  </div>
-                  <textarea 
-                    value={newReviewText}
-                    onChange={e => setNewReviewText(e.target.value)}
-                    placeholder="Share your experience..."
-                    style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '1px solid var(--surface-border)', background: 'var(--surface)', resize: 'vertical', minHeight: '80px', marginBottom: '12px', outline: 'none' }}
-                  />
-                  <button 
-                    onClick={() => setShowReviewConfirm(true)}
-                    disabled={isSubmittingReview || !newReviewText.trim()}
-                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
-                  >
-                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
-                  </button>
+                      <button 
+                        onClick={() => setShowReviewConfirm(true)}
+                        disabled={isSubmittingReview || !newReviewText.trim()}
+                        style={{ width: '100%', background: 'var(--primary)', color: '#000', border: 'none', padding: '12px 20px', borderRadius: '12px', fontWeight: 700, cursor: 'pointer', opacity: isSubmittingReview || !newReviewText.trim() ? 0.5 : 1 }}
+                      >
+                        {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             
