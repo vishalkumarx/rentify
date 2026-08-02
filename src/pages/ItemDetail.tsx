@@ -543,11 +543,15 @@ export default function ItemDetail() {
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'var(--surface)', border: '1px solid var(--surface-border)', color: 'var(--text-main)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
                 <Building2 size={14} /> {item.department || 'Unknown Department'}
               </span>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', color: 'var(--success)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
-                <ShieldCheck size={14} /> ₹{item.securityDeposit || '500'} Security Deposit
-              </span>
+              {item.securityDeposit && (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '6px 12px', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid var(--success)', color: 'var(--success)', borderRadius: '16px', fontSize: '13px', fontWeight: 600 }}>
+                  <ShieldCheck size={14} /> ₹{item.securityDeposit} Security Deposit
+                </span>
+              )}
             </div>
-            <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
+            {item.securityDeposit && (
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '16px', fontStyle: 'italic' }}>* Security deposit is fully refundable upon safe return.</div>
+            )}
 
             
             {/* Mobile View: Tabs for Description and Reviews */}
