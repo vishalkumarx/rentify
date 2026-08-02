@@ -465,17 +465,20 @@ Resources:`;for(let t of c){if(!t||typeof t!=`string`)throw Error(`@supabase/aut
 
         @media (max-width: 640px) {
           .monsoon-banner {
-            height: 320px;
+            height: 400px;
           }
 
           .monsoon-content {
-            padding: 28px 22px;
+            padding: 24px 22px;
+            justify-content: flex-start;
           }
 
           .monsoon-details {
             left: 22px;
             right: 22px;
+            bottom: 20px;
             justify-content: flex-start;
+            gap: 8px;
           }
 
           .monsoon-cloud {
