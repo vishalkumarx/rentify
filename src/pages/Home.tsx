@@ -10,6 +10,7 @@ import { LoadingDialog } from '../components/LoadingDialog';
 import { useSEO } from '../hooks/useSEO';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import toast from 'react-hot-toast';
+import MonsoonBanner from '../components/MonsoonBanner';
 
 // @ts-ignore
 import imgBooks from '../assets/books and stationary.PNG';
@@ -400,6 +401,13 @@ export default function Home() {
 
         {/* Main Scroll Content */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+
+        {/* Monsoon Banner */}
+        <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ width: '100%', maxWidth: '1400px' }}>
+            <MonsoonBanner />
+          </div>
+        </div>
         
         {/* Promo Carousel */}
         <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
