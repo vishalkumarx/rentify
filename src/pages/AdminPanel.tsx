@@ -715,7 +715,7 @@ export default function AdminPanel() {
               </div>
             )}
 
-            {activeTab === 'promos' && (
+            {activeTab === 'settings' && (
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                   <h2 style={{ fontSize: '20px', margin: 0, fontWeight: 700 }}>Promo Carousels</h2>
