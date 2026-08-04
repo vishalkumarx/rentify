@@ -56,7 +56,7 @@ export default function RecentlyAdded() {
       </div>
 
       {/* Grid */}
-      <div style={{ padding: '24px 16px' }}>
+      <div style={{ padding: '24px 16px 100px 16px' }}>
         <div className="responsive-grid">
           {displayedItems.map((item) => (
             <div 

@@ -51,7 +51,7 @@ export default function CategoryItems() {
         <h1 style={{ fontSize: '18px', fontWeight: 800, margin: 0, color: 'var(--text-main)' }}>{decodedCategory}</h1>
       </header>
 
-      <div style={{ padding: '24px 16px', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '24px 16px 100px 16px', flex: 1, overflowY: 'auto' }}>
         <div style={{ position: 'relative', width: '50%', minWidth: '280px', marginBottom: '24px' }}>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
             <div style={{ flex: 1, position: 'relative', display: 'flex', alignItems: 'center', background: 'var(--surface)', border: '1px solid var(--surface-border)', borderRadius: '16px', padding: '12px 16px', gap: '12px', transition: 'all 0.2s' }}>
