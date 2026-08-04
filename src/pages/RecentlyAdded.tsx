@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
 import { useAuth } from '../context/AuthContext';
+import { useBookings } from '../context/BookingContext';
 
 export default function RecentlyAdded() {
   const navigate = useNavigate();
   const { session } = useAuth();
+  const { requests } = useBookings();
   const { items, toggleLike } = useFeed();
   const [displayCount, setDisplayCount] = useState(12);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -64,7 +66,33 @@ export default function RecentlyAdded() {
               onClick={() => navigate(`/item/${item.id}`)}
             >
               <div className="tile-image-container">
-                <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <img src={item.image} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: item.status === 'booked' ? 0.5 : 1 }} />
+                
+                {(() => {
+                  const userAcceptedReq = session ? requests.find(r => r.item_id === item.id && r.requester_id === session.user.id && r.status === 'accepted') : null;
+                  const acceptedReq = requests.find(r => r.item_id === item.id && r.status === 'accepted');
+                  
+                  return (
+                    <>
+                      {item.status === 'booked' && (
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 5 }}>
+                          <div style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, border: '1px solid var(--surface-border)', marginBottom: '4px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                            UNAVAILABLE
+                          </div>
+                          <div style={{ fontSize: '10px', fontWeight: 700, color: '#333', background: 'rgba(255,255,255,0.8)', padding: '2px 8px', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                            {acceptedReq?.end_date ? `Available after ${new Date(acceptedReq.end_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}` : 'Available soon'}
+                          </div>
+                        </div>
+                      )}
+                      {userAcceptedReq && (
+                        <div style={{ position: 'absolute', top: '12px', left: '12px', background: 'var(--success)', color: '#fff', padding: '4px 10px', borderRadius: '4px', fontSize: '10px', fontWeight: 800, letterSpacing: '0.5px', zIndex: 6 }}>
+                          RENTED BY YOU
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
