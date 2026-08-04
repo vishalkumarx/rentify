@@ -592,7 +592,7 @@ export default function Home() {
                             {renderItemCard(item, index, false)}
                             {inlinePromo && (
                               <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px', margin: '16px 0' }}>
-                                <div className="card-hover item-card" style={{ cursor: 'pointer', aspectRatio: '1 / 1', borderRadius: '0', position: 'relative', overflow: 'hidden', border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
+                                <div className="card-hover item-card" style={{ cursor: 'pointer', height: '250px', borderRadius: '0', position: 'relative', overflow: 'hidden', border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
                                   <img src={inlinePromo.url} alt={inlinePromo.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
                                   <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
