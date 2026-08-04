@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X, Star, Coffee } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
@@ -165,6 +165,7 @@ export default function Home() {
   const [featuredOffset, setFeaturedOffset] = useState(0);
   const [showMonsoonBanner, setShowMonsoonBanner] = useState(true);
   const [showPromoCarousel, setShowPromoCarousel] = useState(true);
+  const [promos, setPromos] = useState<any[]>([]);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -172,6 +173,19 @@ export default function Home() {
       if (settings) {
         if (settings.showMonsoonBanner !== undefined) setShowMonsoonBanner(settings.showMonsoonBanner);
         if (settings.showPromoCarousel !== undefined) setShowPromoCarousel(settings.showPromoCarousel);
+      }
+      
+      const pData = await getStorageJson('admin/promos.json');
+      if (pData) {
+        setPromos(pData);
+      } else {
+        const defaultPromos = [
+          { id: '1', title: "Campus Commute", subtitle: "Rent e-scooters from ₹50/day", badge: "Mobility", url: "https://images.unsplash.com/photo-1778735790178-f2d243a914d9?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Mobility' },
+          { id: '2', title: "Zone out. Study in.", subtitle: "Premium noise-cancelling gear", badge: "Electronics", url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Electronics' },
+          { id: '3', title: "Finals Week Deals", subtitle: "Up to 40% off study essentials", badge: "Hot", url: "https://images.unsplash.com/photo-1620287920810-3f5b9746380c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Books%20and%20Stationary' },
+          { id: '4', title: "Weekend Trip?", subtitle: "Tents & outdoor gear for rent", badge: "Sports", url: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Sports%20and%20Fitness' },
+        ];
+        setPromos(defaultPromos);
       }
     };
     fetchSettings();
@@ -429,8 +443,8 @@ export default function Home() {
           <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
             <div style={{ width: '100%', maxWidth: '1400px' }}>
               <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
-                {PROMOS.slice(0, 4).map((p, i) => (
-                <div onClick={() => navigate('/coming-soon')} key={i} className="promo-card" style={{ cursor: 'pointer', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
+                {promos.filter(p => p.position === 'top' && p.isVisible).map((p, i) => (
+                <div onClick={() => navigate(p.link || '/coming-soon')} key={p.id || i} className="promo-card" style={{ cursor: 'pointer', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
                   <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
                   <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
@@ -576,7 +590,28 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
-                      {normalItems.map((item, index) => renderItemCard(item, index, false))}
+                      {normalItems.map((item, index) => {
+                        const inlinePromo = promos.find(p => p.position === 'inline' && p.isVisible && p.inlineIndex === index + 1);
+                        return (
+                          <Fragment key={item.id}>
+                            {renderItemCard(item, index, false)}
+                            {inlinePromo && (
+                              <div className="card-hover item-card" style={{ cursor: 'pointer', height: '100%', minHeight: '300px', borderRadius: '24px', position: 'relative', overflow: 'hidden', border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
+                                <img src={inlinePromo.url} alt={inlinePromo.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
+                                <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
+                                  <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{inlinePromo.badge}</span>
+                                  <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{inlinePromo.title}</h3>
+                                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{inlinePromo.subtitle || 'Explore now'}</p>
+                                    <ArrowRight size={20} className="text-volt" />
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </Fragment>
+                        );
+                      })}
                     </div>
                   </>
                 )}

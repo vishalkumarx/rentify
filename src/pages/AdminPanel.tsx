@@ -15,9 +15,10 @@ export default function AdminPanel() {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs' | 'settings'>('verifications');
+  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs' | 'settings' | 'promos'>('verifications');
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [needs, setNeeds] = useState<any[]>([]);
+  const [promos, setPromos] = useState<any[]>([]);
   const [siteSettings, setSiteSettings] = useState<any>({ showMonsoonBanner: true, showPromoCarousel: true });
   
   // Needs Filters
@@ -120,6 +121,20 @@ export default function AdminPanel() {
 
       const nData = await getStorageJson('feed/item_requests.json') || [];
       setNeeds(nData.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+
+      const pData = await getStorageJson('admin/promos.json');
+      if (pData) {
+        setPromos(pData);
+      } else {
+        const defaultPromos = [
+          { id: '1', title: "Campus Commute", subtitle: "Rent e-scooters from ₹50/day", badge: "Mobility", url: "https://images.unsplash.com/photo-1778735790178-f2d243a914d9?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Mobility' },
+          { id: '2', title: "Zone out. Study in.", subtitle: "Premium noise-cancelling gear", badge: "Electronics", url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Electronics' },
+          { id: '3', title: "Finals Week Deals", subtitle: "Up to 40% off study essentials", badge: "Hot", url: "https://images.unsplash.com/photo-1620287920810-3f5b9746380c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Books%20and%20Stationary' },
+          { id: '4', title: "Weekend Trip?", subtitle: "Tents & outdoor gear for rent", badge: "Sports", url: "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?crop=entropy&cs=srgb&fm=jpg&q=85&w=800", isVisible: true, position: 'top', link: '/category/Sports%20and%20Fitness' },
+        ];
+        setPromos(defaultPromos);
+        await setStorageJson('admin/promos.json', defaultPromos);
+      }
 
       setLoading(false);
     };
@@ -309,6 +324,12 @@ export default function AdminPanel() {
               style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'settings' ? 'var(--text-main)' : 'transparent', color: activeTab === 'settings' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
             >
               <Megaphone size={20} /> Site Settings
+            </button>
+            <button 
+              onClick={() => setActiveTab('promos')}
+              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'promos' ? 'var(--text-main)' : 'transparent', color: activeTab === 'promos' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
+            >
+              <Megaphone size={20} /> Promo Carousels
             </button>
           </div>
 
@@ -696,6 +717,132 @@ export default function AdminPanel() {
                       {siteSettings?.showPromoCarousel !== false ? 'Visible' : 'Hidden'}
                     </button>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'promos' && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                  <h2 style={{ fontSize: '20px', margin: 0, fontWeight: 700 }}>Promo Carousels</h2>
+                  <button 
+                    onClick={() => {
+                      const newPromo = {
+                        id: Date.now().toString(),
+                        title: 'New Promo',
+                        subtitle: 'Promo Subtitle',
+                        badge: 'NEW',
+                        url: 'https://images.unsplash.com/photo-1555529771-835f59bfc50c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800',
+                        link: '/category/All',
+                        isVisible: true,
+                        position: 'inline',
+                        inlineIndex: 6
+                      };
+                      const updated = [...promos, newPromo];
+                      setPromos(updated);
+                      setStorageJson('admin/promos.json', updated);
+                      toast.success('Added new inline promo!');
+                    }}
+                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    + Add Inline Promo
+                  </button>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+                  {promos.map((promo, idx) => (
+                    <div key={promo.id} style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 800, background: 'var(--surface-border)', padding: '4px 8px', borderRadius: '4px', color: 'var(--text-main)' }}>
+                          {promo.position === 'top' ? 'Top Carousel' : `Inline (After ${promo.inlineIndex} items)`}
+                        </span>
+                        <button
+                          onClick={async () => {
+                            const updated = [...promos];
+                            updated[idx].isVisible = !updated[idx].isVisible;
+                            setPromos(updated);
+                            await setStorageJson('admin/promos.json', updated);
+                            toast.success(`Promo ${updated[idx].isVisible ? 'enabled' : 'disabled'}`);
+                          }}
+                          style={{
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            border: 'none',
+                            background: promo.isVisible ? 'var(--success)' : 'var(--danger)',
+                            color: '#fff',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          {promo.isVisible ? 'Visible' : 'Hidden'}
+                        </button>
+                      </div>
+                      
+                      <div style={{ position: 'relative', height: '120px', borderRadius: '8px', overflow: 'hidden' }}>
+                        <img src={promo.url} alt={promo.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)' }} />
+                        <div style={{ position: 'absolute', bottom: '8px', left: '8px', color: '#fff' }}>
+                          <div style={{ fontSize: '10px', background: 'var(--primary)', color: '#000', padding: '2px 6px', borderRadius: '10px', display: 'inline-block', marginBottom: '4px', fontWeight: 800 }}>{promo.badge}</div>
+                          <div style={{ fontWeight: 800, fontSize: '14px' }}>{promo.title}</div>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <input
+                          type="text"
+                          value={promo.title}
+                          onChange={(e) => {
+                            const updated = [...promos];
+                            updated[idx].title = e.target.value;
+                            setPromos(updated);
+                          }}
+                          onBlur={() => setStorageJson('admin/promos.json', promos)}
+                          placeholder="Title"
+                          style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)' }}
+                        />
+                        <input
+                          type="text"
+                          value={promo.link}
+                          onChange={(e) => {
+                            const updated = [...promos];
+                            updated[idx].link = e.target.value;
+                            setPromos(updated);
+                          }}
+                          onBlur={() => setStorageJson('admin/promos.json', promos)}
+                          placeholder="Link URL (e.g. /category/Electronics)"
+                          style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)' }}
+                        />
+                        {promo.position === 'inline' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Show after item #</span>
+                            <input
+                              type="number"
+                              value={promo.inlineIndex}
+                              onChange={(e) => {
+                                const updated = [...promos];
+                                updated[idx].inlineIndex = parseInt(e.target.value) || 0;
+                                setPromos(updated);
+                              }}
+                              onBlur={() => setStorageJson('admin/promos.json', promos)}
+                              style={{ padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', width: '60px' }}
+                            />
+                            <button
+                              onClick={async () => {
+                                const updated = promos.filter(p => p.id !== promo.id);
+                                setPromos(updated);
+                                await setStorageJson('admin/promos.json', updated);
+                                toast.success('Promo deleted');
+                              }}
+                              style={{ marginLeft: 'auto', background: 'var(--danger)', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
