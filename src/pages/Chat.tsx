@@ -754,7 +754,7 @@ export default function Chat() {
                   </>
                 ) : (
                 <div
-                  style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%', alignItems: 'center', gap: '8px' }}
+                  style={{ position: 'relative', display: 'flex', justifyContent: isMe ? 'flex-end' : 'flex-start', width: '100%', alignItems: 'center', gap: '8px', marginBottom: '8px' }}
                 >
                   {/* Reply icon revealed on swipe */}
                   {swipeTargetId === msg.id && swipeOffset > 10 && !msg.isDeleted && (
