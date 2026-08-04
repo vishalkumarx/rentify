@@ -13,15 +13,13 @@ export default function SurjitPatarBanner() {
       background: '#efbe39' // Closest yellow match to the image
     }}>
       {/* Left Content Side */}
-      <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
+      <div style={{ flex: 1, padding: '36px 36px 36px 38px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', zIndex: 10 }}>
         <h2 style={{ 
-          fontSize: 'clamp(24px, 5vw, 64px)', 
+          fontSize: 'clamp(1.8rem, 4.5vw, 4.3rem)', 
           margin: 0, 
-          fontWeight: 800, 
+          fontWeight: 900, 
           color: '#000', 
-          letterSpacing: '2px',
-          textTransform: 'uppercase',
-          textAlign: 'center',
+          letterSpacing: '-0.04em',
           lineHeight: 1
         }}>
           SURJIT PATAR
@@ -41,7 +39,7 @@ export default function SurjitPatarBanner() {
         </div>
         
         <button style={{ 
-          marginTop: '20px', 
+          marginTop: '12px', 
           background: 'transparent', 
           border: 'none', 
           color: '#000', 
