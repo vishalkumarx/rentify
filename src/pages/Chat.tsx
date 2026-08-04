@@ -203,11 +203,7 @@ export default function Chat() {
     }
   };
 
-  useEffect(() => {
-    if (bookingReq?.status === 'pending' && customPrice === '') {
-      setCustomPrice(bookingReq.total_price.toString());
-    }
-  }, [bookingReq?.id, bookingReq?.status, bookingReq?.total_price]);
+
 
   useEffect(() => {
     if (id) {
