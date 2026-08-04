@@ -534,7 +534,7 @@ export default function Requests() {
                         <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹0</span>
                       </div>
                       <div style={{ height: '1px', background: 'var(--surface-border)', margin: '12px 0' }} />
-                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--success)', fontSize: '16px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-main)', fontSize: '16px' }}>
                         <span style={{ fontWeight: 700 }}>You will receive</span>
                         <span style={{ fontWeight: 800 }}>₹{(customPrice && Number(customPrice) > 0) ? (Number(customPrice) * totalDays) : (confirmAction.originalPrice || 0)}</span>
                       </div>
