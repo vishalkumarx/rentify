@@ -725,29 +725,6 @@ export default function AdminPanel() {
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                   <h2 style={{ fontSize: '20px', margin: 0, fontWeight: 700 }}>Promo Carousels</h2>
-                  <button 
-                    onClick={() => {
-                      const newPromo = {
-                        id: Date.now().toString(),
-                        title: 'New Promo',
-                        subtitle: 'Promo Subtitle',
-                        badge: 'NEW',
-                        url: 'https://images.unsplash.com/photo-1555529771-835f59bfc50c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800',
-                        link: '/category/All',
-                        isVisible: true,
-                        position: 'inline',
-                        inlineIndex: 6,
-                        itemIds: []
-                      };
-                      const updated = [...promos, newPromo];
-                      setPromos(updated);
-                      setStorageJson('admin/promos.json', updated);
-                      toast.success('Added new inline promo!');
-                    }}
-                    style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '8px 16px', borderRadius: '8px', fontWeight: 700, cursor: 'pointer' }}
-                  >
-                    + Add Inline Promo
-                  </button>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
@@ -854,9 +831,61 @@ export default function AdminPanel() {
                             </button>
                           </div>
                         )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const toastId = toast.loading('Uploading image...');
+                            try {
+                              const ext = file.name.split('.').pop();
+                              const fileName = `promo-${Date.now()}.${ext}`;
+                              const filePath = `promos/${fileName}`;
+                              const { error: uploadError } = await supabase.storage.from('item-images').upload(filePath, file);
+                              if (uploadError) throw uploadError;
+                              const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(filePath);
+                              const updated = [...promos];
+                              updated[idx].url = publicUrl;
+                              setPromos(updated);
+                              await setStorageJson('admin/promos.json', updated);
+                              toast.success('Image uploaded', { id: toastId });
+                            } catch (err) {
+                              toast.error('Upload failed', { id: toastId });
+                            }
+                          }}
+                          style={{ padding: '8px', borderRadius: '8px', border: '1px dashed var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '12px', marginTop: '8px' }}
+                        />
                       </div>
                     </div>
                   ))}
+                  
+                  {/* Add Promo Button at Bottom */}
+                  <div style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '2px dashed var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
+                    <button 
+                      onClick={() => {
+                        const newPromo = {
+                          id: Date.now().toString(),
+                          title: 'New Promo',
+                          subtitle: 'Promo Subtitle',
+                          badge: 'NEW',
+                          url: 'https://images.unsplash.com/photo-1555529771-835f59bfc50c?crop=entropy&cs=srgb&fm=jpg&q=85&w=800',
+                          link: '/category/All',
+                          isVisible: true,
+                          position: 'inline',
+                          inlineIndex: 6,
+                          itemIds: []
+                        };
+                        const updated = [...promos, newPromo];
+                        setPromos(updated);
+                        setStorageJson('admin/promos.json', updated);
+                        toast.success('Added new inline promo!');
+                      }}
+                      style={{ background: 'var(--primary)', color: '#000', border: 'none', padding: '12px 24px', borderRadius: '12px', fontWeight: 800, cursor: 'pointer', fontSize: '16px' }}
+                    >
+                      + Add Inline Promo
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
