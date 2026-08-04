@@ -323,13 +323,7 @@ export default function AdminPanel() {
               onClick={() => setActiveTab('settings')}
               style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'settings' ? 'var(--text-main)' : 'transparent', color: activeTab === 'settings' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
             >
-              <Megaphone size={20} /> Site Settings
-            </button>
-            <button 
-              onClick={() => setActiveTab('promos')}
-              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'promos' ? 'var(--text-main)' : 'transparent', color: activeTab === 'promos' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
-            >
-              <Megaphone size={20} /> Promo Carousels
+              <Megaphone size={20} /> Site Settings & Promos
             </button>
           </div>
 
