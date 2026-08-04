@@ -820,3 +820,14 @@ a:hover {
     height: 200px;
   }
 }
+
+/* Inline Promo Banner */
+.inline-promo-banner {
+  height: 320px;
+}
+@media (min-width: 768px) {
+  .inline-promo-banner {
+    height: auto;
+    aspect-ratio: 1500 / 563;
+  }
+}
