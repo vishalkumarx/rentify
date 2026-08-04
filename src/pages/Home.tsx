@@ -164,12 +164,14 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredOffset, setFeaturedOffset] = useState(0);
   const [showMonsoonBanner, setShowMonsoonBanner] = useState(true);
+  const [showPromoCarousel, setShowPromoCarousel] = useState(true);
 
   useEffect(() => {
     const fetchSettings = async () => {
       const settings = await getStorageJson('admin/site_settings.json');
-      if (settings && settings.showMonsoonBanner !== undefined) {
-        setShowMonsoonBanner(settings.showMonsoonBanner);
+      if (settings) {
+        if (settings.showMonsoonBanner !== undefined) setShowMonsoonBanner(settings.showMonsoonBanner);
+        if (settings.showPromoCarousel !== undefined) setShowPromoCarousel(settings.showPromoCarousel);
       }
     };
     fetchSettings();
@@ -423,26 +425,28 @@ export default function Home() {
         )}
         
         {/* Promo Carousel */}
-        <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
-          <div style={{ width: '100%', maxWidth: '1400px' }}>
-            <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
-              {PROMOS.slice(0, 4).map((p, i) => (
-              <div onClick={() => navigate('/coming-soon')} key={i} className="promo-card" style={{ cursor: 'pointer', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
-                <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
-                <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
-                  <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{p.badge}</span>
-                  <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{p.title}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{p.subtitle}</p>
-                    <ArrowRight size={20} className="text-volt" />
+        {showPromoCarousel && (
+          <div style={{ width: '100%', overflow: 'hidden', marginTop: '16px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '1400px' }}>
+              <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
+                {PROMOS.slice(0, 4).map((p, i) => (
+                <div onClick={() => navigate('/coming-soon')} key={i} className="promo-card" style={{ cursor: 'pointer', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
+                  <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
+                  <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
+                    <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{p.badge}</span>
+                    <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{p.title}</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{p.subtitle}</p>
+                      <ArrowRight size={20} className="text-volt" />
+                    </div>
                   </div>
                 </div>
+              ))}
               </div>
-            ))}
             </div>
           </div>
-        </div>
+        )}
 
         {/* Visual Categories Grid */}
         <div style={{ padding: '16px', width: '100%', display: 'block' }}>
