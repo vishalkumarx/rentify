@@ -587,15 +587,7 @@ export default function Home() {
                                     <source media="(max-width: 768px)" srcSet={inlinePromo.mobileUrl || inlinePromo.url} />
                                     <img src={inlinePromo.url} alt={inlinePromo.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                   </picture>
-                                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
-                                  <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
-                                    <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{inlinePromo.badge}</span>
-                                    <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{inlinePromo.title}</h3>
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                      <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{inlinePromo.subtitle || 'Explore now'}</p>
-                                      <ArrowRight size={20} className="text-volt" />
-                                    </div>
-                                  </div>
+
                                 </div>
                                 {inlinePromo.itemIds && inlinePromo.itemIds.length > 0 && (
                                   <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', gap: '16px', padding: '4px 0', scrollSnapType: 'x mandatory' }}>
