@@ -831,6 +831,24 @@ export default function AdminPanel() {
                             </button>
                           </div>
                         )}
+                        {promo.position === 'inline' && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Banner Width</span>
+                            <select
+                              value={promo.width || 'full'}
+                              onChange={(e) => {
+                                const updated = [...promos];
+                                updated[idx].width = e.target.value;
+                                setPromos(updated);
+                                setStorageJson('admin/promos.json', updated);
+                              }}
+                              style={{ padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '12px' }}
+                            >
+                              <option value="full">Full Width</option>
+                              <option value="half">Half Width</option>
+                            </select>
+                          </div>
+                        )}
                         <input
                           type="file"
                           accept="image/*"
@@ -874,7 +892,8 @@ export default function AdminPanel() {
                           isVisible: true,
                           position: 'inline',
                           inlineIndex: 6,
-                          itemIds: []
+                          itemIds: [],
+                          width: 'full'
                         };
                         const updated = [...promos, newPromo];
                         setPromos(updated);
