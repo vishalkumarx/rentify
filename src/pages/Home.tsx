@@ -440,7 +440,10 @@ export default function Home() {
               <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', scrollSnapType: 'x mandatory', padding: '0 16px 8px', gap: '16px' }}>
                 {promos.filter(p => p.position === 'top' && p.isVisible).map((p, i) => (
                 <div onClick={() => navigate(p.link || '/coming-soon')} key={p.id || i} className="promo-card" style={{ cursor: 'pointer', height: '180px', borderRadius: '24px', position: 'relative', overflow: 'hidden', scrollSnapAlign: 'center', flexShrink: 0, border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }}>
-                  <img src={p.url} alt={p.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <picture style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}>
+                    <source media="(max-width: 768px)" srcSet={p.mobileUrl || p.url} />
+                    <img src={p.url} alt={p.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </picture>
                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
                   <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
                     <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{p.badge}</span>
@@ -593,7 +596,10 @@ export default function Home() {
                             {inlinePromo && (
                               <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px', margin: '16px 0' }}>
                                 <div className="card-hover item-card" style={{ cursor: 'pointer', height: '320px', borderRadius: '0', position: 'relative', overflow: 'hidden', border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
-                                  <img src={inlinePromo.url} alt={inlinePromo.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  <picture style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}>
+                                    <source media="(max-width: 768px)" srcSet={inlinePromo.mobileUrl || inlinePromo.url} />
+                                    <img src={inlinePromo.url} alt={inlinePromo.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  </picture>
                                   <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
                                   <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
                                     <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{inlinePromo.badge}</span>

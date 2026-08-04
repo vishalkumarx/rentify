@@ -831,31 +831,64 @@ export default function AdminPanel() {
                             </button>
                           </div>
                         )}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={async (e) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            const toastId = toast.loading('Uploading image...');
-                            try {
-                              const ext = file.name.split('.').pop();
-                              const fileName = `promo-${Date.now()}.${ext}`;
-                              const filePath = `promos/${fileName}`;
-                              const { error: uploadError } = await supabase.storage.from('item-images').upload(filePath, file);
-                              if (uploadError) throw uploadError;
-                              const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(filePath);
-                              const updated = [...promos];
-                              updated[idx].url = publicUrl;
-                              setPromos(updated);
-                              await setStorageJson('admin/promos.json', updated);
-                              toast.success('Image uploaded', { id: toastId });
-                            } catch (err) {
-                              toast.error('Upload failed', { id: toastId });
-                            }
-                          }}
-                          style={{ padding: '8px', borderRadius: '8px', border: '1px dashed var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '12px', marginTop: '8px' }}
-                        />
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                          <div style={{ flex: 1 }}>
+                            <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Web Banner (1400x320)</label>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const toastId = toast.loading('Uploading web image...');
+                                try {
+                                  const ext = file.name.split('.').pop();
+                                  const fileName = `promo-web-${Date.now()}.${ext}`;
+                                  const filePath = `promos/${fileName}`;
+                                  const { error: uploadError } = await supabase.storage.from('item-images').upload(filePath, file);
+                                  if (uploadError) throw uploadError;
+                                  const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(filePath);
+                                  const updated = [...promos];
+                                  updated[idx].url = publicUrl;
+                                  setPromos(updated);
+                                  await setStorageJson('admin/promos.json', updated);
+                                  toast.success('Web image uploaded', { id: toastId });
+                                } catch (err) {
+                                  toast.error('Upload failed', { id: toastId });
+                                }
+                              }}
+                              style={{ padding: '8px', borderRadius: '8px', border: '1px dashed var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '12px', width: '100%' }}
+                            />
+                          </div>
+                          <div style={{ flex: 1 }}>
+                            <label style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Mobile Banner (Optional, 400x320)</label>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                const toastId = toast.loading('Uploading mobile image...');
+                                try {
+                                  const ext = file.name.split('.').pop();
+                                  const fileName = `promo-mobile-${Date.now()}.${ext}`;
+                                  const filePath = `promos/${fileName}`;
+                                  const { error: uploadError } = await supabase.storage.from('item-images').upload(filePath, file);
+                                  if (uploadError) throw uploadError;
+                                  const { data: { publicUrl } } = supabase.storage.from('item-images').getPublicUrl(filePath);
+                                  const updated = [...promos];
+                                  updated[idx].mobileUrl = publicUrl;
+                                  setPromos(updated);
+                                  await setStorageJson('admin/promos.json', updated);
+                                  toast.success('Mobile image uploaded', { id: toastId });
+                                } catch (err) {
+                                  toast.error('Upload failed', { id: toastId });
+                                }
+                              }}
+                              style={{ padding: '8px', borderRadius: '8px', border: '1px dashed var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)', fontSize: '12px', width: '100%' }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
