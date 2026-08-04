@@ -11,7 +11,6 @@ import { useSEO } from '../hooks/useSEO';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import MonsoonBanner from '../components/MonsoonBanner';
-import SurjitPatarBanner from '../components/SurjitPatarBanner';
 
 // @ts-ignore
 import imgBooks from '../assets/books and stationary.PNG';
@@ -583,16 +582,12 @@ export default function Home() {
                             {renderItemCard(item, index, false)}
                             {inlinePromo && (
                               <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px', margin: '16px 0' }}>
-                                {inlinePromo.title?.toLowerCase() === 'surjit patar' ? (
-                                  <SurjitPatarBanner />
-                                ) : (
                                   <div className="card-hover item-card inline-promo-banner" style={{ cursor: 'pointer', borderRadius: '0', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
                                     <picture style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' }}>
                                       <source media="(max-width: 768px)" srcSet={inlinePromo.mobileUrl || inlinePromo.url} />
                                       <img src={inlinePromo.url} alt={inlinePromo.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     </picture>
                                   </div>
-                                )}
                                 {inlinePromo.itemIds && inlinePromo.itemIds.length > 0 && (
                                   <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', gap: '16px', padding: '4px 0', scrollSnapType: 'x mandatory' }}>
                                     {inlinePromo.itemIds.map((id: string) => {
