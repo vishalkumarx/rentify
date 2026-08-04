@@ -28,6 +28,7 @@ import ItemRequestsFeed from './pages/ItemRequestsFeed';
 import EditProfile from './pages/EditProfile';
 import UserItems from './pages/UserItems';
 import RequestNeed from './pages/RequestNeed';
+import RecentlyAdded from './pages/RecentlyAdded';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -75,6 +76,7 @@ function AppRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/categories" element={<AllCategories />} />
         <Route path="/category/:categoryId" element={<CategoryItems />} />
+        <Route path="/recently-added" element={<RecentlyAdded />} />
         
         {/* Protected Navigation Tabs */}
         <Route path="/post" element={<ProtectedRoute message="Login to post a new rental listing."><Post /></ProtectedRoute>} />

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { createPortal } from 'react-dom';
 import { Search, SlidersHorizontal, Heart, Flame, ArrowRight, ChevronRight, Building2, Clock, X, Star, Coffee } from 'lucide-react';
 import { useFeed } from '../context/FeedContext';
@@ -153,7 +153,7 @@ export default function Home() {
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
-  const [displayCount, setDisplayCount] = useState(12);
+  const [displayCount] = useState(12);
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeDepartment, setActiveDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -197,20 +197,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting) {
-          setDisplayCount(prev => prev + 12);
-        }
-      },
-      { rootMargin: '200px' }
-    );
-    if (loadMoreRef.current) observer.observe(loadMoreRef.current);
-    return () => observer.disconnect();
-  }, []);
 
   const { items, toggleLike, loading } = useFeed();
   const navigate = useNavigate();
@@ -559,8 +546,8 @@ export default function Home() {
                 featuredItems.push(filteredItems[(safeOffset + i) % filteredItems.length]);
               }
             }
-            // Keep recently added items stable by using a static slice
-            const normalItems = filteredItems.slice(featuredCount, displayCount);
+            // Keep recently added items stable by using a static slice (max 10)
+            const normalItems = filteredItems.slice(featuredCount, featuredCount + 10);
             
             return (
               <>
@@ -629,6 +616,29 @@ export default function Home() {
                         );
                       })}
                     </div>
+                    {filteredItems.length - featuredCount > 10 && (
+                      <div style={{ padding: '0 16px 32px', display: 'flex', justifyContent: 'center' }}>
+                        <button
+                          onClick={() => navigate('/recently-added')}
+                          style={{
+                            background: 'var(--text-main)',
+                            color: 'var(--surface)',
+                            border: 'none',
+                            padding: '16px 32px',
+                            borderRadius: '24px',
+                            fontWeight: 800,
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                          }}
+                        >
+                          View All Items <ArrowRight size={20} />
+                        </button>
+                      </div>
+                    )}
                   </>
                 )}
               </>
@@ -686,12 +696,6 @@ export default function Home() {
             )}
           </div>
         </div>
-
-        {/* Load More Trigger */}
-        {filteredItems.length > displayCount && (
-          <div ref={loadMoreRef} style={{ height: '40px', width: '100%' }} />
-        )}
-        
         {/* Black Footer */}
         <footer style={{ padding: '40px 24px', marginTop: 'auto', background: '#000', display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
           <div style={{ width: '100%', maxWidth: '800px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
