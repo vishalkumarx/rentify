@@ -736,7 +736,8 @@ export default function AdminPanel() {
                         link: '/category/All',
                         isVisible: true,
                         position: 'inline',
-                        inlineIndex: 6
+                        inlineIndex: 6,
+                        itemIds: []
                       };
                       const updated = [...promos, newPromo];
                       setPromos(updated);
@@ -752,8 +753,8 @@ export default function AdminPanel() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
                   {promos.map((promo, idx) => (
                     <div key={promo.id} style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 800, background: 'var(--surface-border)', padding: '4px 8px', borderRadius: '4px', color: 'var(--text-main)' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 800, background: 'var(--surface-border)', padding: '4px 8px', borderRadius: '4px', color: 'var(--text-main)', alignSelf: 'flex-start' }}>
                           {promo.position === 'top' ? 'Top Carousel' : `Inline (After ${promo.inlineIndex} items)`}
                         </span>
                         <button
@@ -765,8 +766,9 @@ export default function AdminPanel() {
                             toast.success(`Promo ${updated[idx].isVisible ? 'enabled' : 'disabled'}`);
                           }}
                           style={{
-                            padding: '4px 8px',
-                            borderRadius: '4px',
+                            width: '100%',
+                            padding: '8px',
+                            borderRadius: '6px',
                             border: 'none',
                             background: promo.isVisible ? 'var(--success)' : 'var(--danger)',
                             color: '#fff',
@@ -811,6 +813,18 @@ export default function AdminPanel() {
                           }}
                           onBlur={() => setStorageJson('admin/promos.json', promos)}
                           placeholder="Link URL (e.g. /category/Electronics)"
+                          style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)' }}
+                        />
+                        <input
+                          type="text"
+                          value={promo.itemIds?.join(', ') || ''}
+                          onChange={(e) => {
+                            const updated = [...promos];
+                            updated[idx].itemIds = e.target.value.split(',').map(s => s.trim()).filter(Boolean);
+                            setPromos(updated);
+                          }}
+                          onBlur={() => setStorageJson('admin/promos.json', promos)}
+                          placeholder="Specific Item IDs (comma separated)"
                           style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)' }}
                         />
                         {promo.position === 'inline' && (

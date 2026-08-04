@@ -591,17 +591,32 @@ export default function Home() {
                           <Fragment key={item.id}>
                             {renderItemCard(item, index, false)}
                             {inlinePromo && (
-                              <div className="card-hover item-card" style={{ cursor: 'pointer', height: '100%', minHeight: '300px', borderRadius: '24px', position: 'relative', overflow: 'hidden', border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
-                                <img src={inlinePromo.url} alt={inlinePromo.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
-                                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
-                                <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
-                                  <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{inlinePromo.badge}</span>
-                                  <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{inlinePromo.title}</h3>
-                                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                    <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{inlinePromo.subtitle || 'Explore now'}</p>
-                                    <ArrowRight size={20} className="text-volt" />
+                              <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '16px', margin: '16px 0' }}>
+                                <div className="card-hover item-card" style={{ cursor: 'pointer', height: '100%', minHeight: '300px', borderRadius: '24px', position: 'relative', overflow: 'hidden', border: '1px solid var(--surface-border)', display: 'flex', alignItems: 'flex-end', padding: '20px' }} onClick={() => navigate(inlinePromo.link || '/coming-soon')}>
+                                  <img src={inlinePromo.url} alt={inlinePromo.title} style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                  <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4), transparent)' }} />
+                                  <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', color: '#fff' }}>
+                                    <span style={{ alignSelf: 'flex-start', padding: '4px 10px', background: 'var(--primary)', color: '#000', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', borderRadius: '20px', letterSpacing: '1px' }}>{inlinePromo.badge}</span>
+                                    <h3 style={{ margin: 0, fontWeight: 800, fontSize: '20px', lineHeight: 1.1 }}>{inlinePromo.title}</h3>
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                      <p style={{ margin: 0, fontSize: '14px', color: 'rgba(255,255,255,0.8)' }}>{inlinePromo.subtitle || 'Explore now'}</p>
+                                      <ArrowRight size={20} className="text-volt" />
+                                    </div>
                                   </div>
                                 </div>
+                                {inlinePromo.itemIds && inlinePromo.itemIds.length > 0 && (
+                                  <div className="hide-scrollbar" style={{ display: 'flex', overflowX: 'auto', gap: '16px', padding: '4px 0', scrollSnapType: 'x mandatory' }}>
+                                    {inlinePromo.itemIds.map((id: string) => {
+                                      const foundItem = items.find(i => String(i.id) === String(id));
+                                      if (!foundItem) return null;
+                                      return (
+                                        <div key={id} style={{ width: '280px', flexShrink: 0, scrollSnapAlign: 'start' }}>
+                                          {renderItemCard(foundItem, 0, false)}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                )}
                               </div>
                             )}
                           </Fragment>
