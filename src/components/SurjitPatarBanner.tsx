@@ -15,10 +15,9 @@ export default function SurjitPatarBanner() {
       {/* Left Content Side */}
       <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 10 }}>
         <h2 style={{ 
-          fontFamily: 'Georgia, serif', 
           fontSize: 'clamp(24px, 5vw, 64px)', 
           margin: 0, 
-          fontWeight: 400, 
+          fontWeight: 800, 
           color: '#000', 
           letterSpacing: '2px',
           textTransform: 'uppercase',
