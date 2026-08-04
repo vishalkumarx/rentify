@@ -153,7 +153,6 @@ export default function Home() {
   // Filter States
   const [showFilters, setShowFilters] = useState(false);
   const [sortOrder, setSortOrder] = useState('newest'); // 'newest', 'price-asc', 'price-desc'
-  const [displayCount] = useState(12);
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeDepartment, setActiveDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -570,9 +569,9 @@ export default function Home() {
                       <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
                         <Clock size={20} className="text-volt" /> Recently Added
                       </h2>
-                      <span style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 500 }}>
-                        {Math.min(filteredItems.length - featuredCount, displayCount - featuredCount)} items
-                      </span>
+                      <button onClick={() => navigate('/recently-added')} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}>
+                        View All <ArrowRight size={16} />
+                      </button>
                     </div>
                     <div className="responsive-grid" style={{ padding: '0 16px 32px' }}>
                       {normalItems.map((item, index) => {
