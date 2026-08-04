@@ -55,6 +55,29 @@ export default function Requests() {
     if (!req) return;
     
     await updateRequestStatus(req.id, 'accepted', price);
+    
+    const reqItem = items.find(i => i.id === req.item_id);
+    const requesterName = (req as any).requester?.full_name || "User";
+    const acceptedConvId = getOrCreateConversation(String(req.item_id), reqItem?.title || '', reqItem?.image || '', req.requester_id, requesterName);
+    if (acceptedConvId && session?.user) {
+      await sendMessage(acceptedConvId, session.user.id, `[System]: Booking accepted by ${session.user.user_metadata.full_name}.`);
+    }
+
+    const otherPendingRequests = requests.filter(r => r.item_id === req.item_id && r.status === 'pending' && r.id !== req.id);
+    if (otherPendingRequests.length > 0) {
+      for (const otherReq of otherPendingRequests) {
+        const reason = '[Declined by owner] Item is Unavailable';
+        await updateRequestStatus(otherReq.id, 'rejected', undefined, reason);
+        
+        const otherRequesterName = (otherReq as any).requester?.full_name || "User";
+        const convId = getOrCreateConversation(String(otherReq.item_id), reqItem?.title || '', reqItem?.image || '', otherReq.requester_id, otherRequesterName);
+        
+        if (convId && session?.user) {
+          await sendMessage(convId, session.user.id, `[System]: Booking request was declined by ${session.user.user_metadata.full_name}.\nReason: Item is Unavailable`);
+        }
+      }
+    }
+    
     setConfirmAction(null);
   };
 

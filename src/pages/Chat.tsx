@@ -20,7 +20,7 @@ export default function Chat() {
   const { session } = useAuth();
   const { items } = useFeed();
   const { requests, updateRequestStatus } = useBookings();
-  const { conversations, messages, sendMessage, unsendMessage, markAsRead, toggleBlockUser } = useChat();
+  const { conversations, messages, sendMessage, unsendMessage, markAsRead, toggleBlockUser, getOrCreateConversation } = useChat();
   const [inputText, setInputText] = useState('');
   
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -92,9 +92,13 @@ export default function Chat() {
       for (const req of otherPendingRequests) {
         const reason = '[Declined by owner] Item is Unavailable';
         await updateRequestStatus(req.id, 'rejected', undefined, reason);
-        const otherConv = conversations.find(c => c.itemId === String(req.item_id) && c.otherUserId === req.requester_id);
-        if (otherConv) {
-          await sendMessage(otherConv.id, session.user.id, `[System]: Booking request was declined by ${session.user.user_metadata.full_name}.\nReason: Item is Unavailable`);
+        
+        const reqItem = items.find(i => i.id === req.item_id);
+        const requesterName = (req as any).requester?.full_name || "User";
+        const convId = getOrCreateConversation(String(req.item_id), reqItem?.title || '', reqItem?.image || '', req.requester_id, requesterName);
+        
+        if (convId) {
+          await sendMessage(convId, session.user.id, `[System]: Booking request was declined by ${session.user.user_metadata.full_name}.\nReason: Item is Unavailable`);
         }
       }
     }
