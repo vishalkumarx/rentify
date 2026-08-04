@@ -724,8 +724,8 @@ export default function AdminPanel() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
                   {promos.map((promo, idx) => (
                     <div key={promo.id} style={{ background: 'var(--surface)', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 800, background: 'var(--surface-border)', padding: '4px 8px', borderRadius: '4px', color: 'var(--text-main)', alignSelf: 'flex-start' }}>
+                      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 800, background: 'var(--surface-border)', padding: '4px 8px', borderRadius: '4px', color: 'var(--text-main)' }}>
                           {promo.position === 'top' ? 'Top Carousel' : `Inline (After ${promo.inlineIndex} items)`}
                         </span>
                         <button
@@ -737,8 +737,8 @@ export default function AdminPanel() {
                             toast.success(`Promo ${updated[idx].isVisible ? 'enabled' : 'disabled'}`);
                           }}
                           style={{
-                            width: '100%',
-                            padding: '8px',
+                            width: 'fit-content',
+                            padding: '6px 12px',
                             borderRadius: '6px',
                             border: 'none',
                             background: promo.isVisible ? 'var(--success)' : 'var(--danger)',
