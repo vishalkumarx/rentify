@@ -285,7 +285,7 @@ export default function Requests() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
                           {req.status === 'pending' && (
                             <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
-                              <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(req.total_price.toString()); }} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
+                              <button onClick={() => { setConfirmAction({ id: req.id, action: 'accepted', originalPrice: req.total_price }); setCustomPrice(''); }} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
                                 <Check size={18} strokeWidth={2.5} /> Accept
                               </button>
                               <button onClick={() => setConfirmAction({ id: req.id, action: 'rejected' })} style={{ flex: 1, height: '44px', borderRadius: '12px', border: 'none', background: 'var(--danger)', color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -519,7 +519,7 @@ export default function Requests() {
                     <div style={{ padding: '16px', background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', fontSize: '14px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Price per day</span>
-                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{(customPrice && Number(customPrice) > 0) ? Number(customPrice) : confirmAction.originalPrice}</span>
+                        <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>₹{(customPrice && Number(customPrice) > 0) ? Number(customPrice) : Math.round((confirmAction.originalPrice || 0) / totalDays)}</span>
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Duration</span>
