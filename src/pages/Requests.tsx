@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { CalendarCheck, Calendar, Check, X, MessageCircle, ChevronDown } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { useChat } from '../context/ChatContext';
-import { getStorageJson, supabase } from '../lib/supabase';
+import { getStorageJson } from '../lib/supabase';
 import { format, parseISO, isToday, isYesterday, differenceInDays } from 'date-fns';
 
 export default function Requests() {
@@ -46,10 +46,7 @@ export default function Requests() {
   const [cancelReason, setCancelReason] = useState('');
   const [showTypeDialog, setShowTypeDialog] = useState(false);
   const [showCustomPriceDialog, setShowCustomPriceDialog] = useState(false);
-  const [showMultiRequestConfirm, setShowMultiRequestConfirm] = useState(false);
-  const [otherPendingRequests, setOtherPendingRequests] = useState<any[]>([]);
-  const [pendingAcceptPrice, setPendingAcceptPrice] = useState<number | null>(null);
-  const [bookingToAccept, setBookingToAccept] = useState<any>(null);
+
 
   const handleAcceptBooking = async (price: number) => {
     if (!confirmAction) return;
@@ -57,29 +54,8 @@ export default function Requests() {
     const req = requests.find(r => r.id === confirmAction.id);
     if (!req) return;
     
-    // Check if there are other pending requests for the same item
-    const { data: otherReqs } = await supabase
-      .from('booking_requests')
-      .select('*')
-      .eq('item_id', req.item_id)
-      .eq('status', 'pending')
-      .neq('id', req.id);
-      
-    if (otherReqs && otherReqs.length > 0) {
-      setOtherPendingRequests(otherReqs);
-      setPendingAcceptPrice(price);
-      setBookingToAccept(req);
-      setConfirmAction(null); // Hide the accept bottom sheet
-      setShowMultiRequestConfirm(true); // Show the warning
-    } else {
-      performAccept(req.id, price);
-    }
-  };
-
-  const performAccept = async (reqId: number, price: number) => {
-    await updateRequestStatus(reqId, 'accepted', price);
+    await updateRequestStatus(req.id, 'accepted', price);
     setConfirmAction(null);
-    setShowMultiRequestConfirm(false);
   };
 
   // Incoming Requests: Requests sent TO me (I am the owner)
@@ -514,8 +490,14 @@ export default function Requests() {
               {(() => {
                 const reqToConfirm = requests.find(r => r.id === confirmAction.id);
                 const totalDays = reqToConfirm ? getDurationDays(reqToConfirm.start_date, reqToConfirm.end_date) : 1;
+                const otherPending = reqToConfirm ? requests.filter(r => r.item_id === reqToConfirm.item_id && r.status === 'pending' && r.id !== reqToConfirm.id) : [];
                 return (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
+                    {otherPending.length > 0 && (
+                      <div style={{ background: 'rgba(245, 158, 11, 0.1)', color: 'var(--warning)', padding: '12px', borderRadius: '12px', fontSize: '14px', borderLeft: '4px solid var(--warning)' }}>
+                        <strong style={{ fontWeight: 700 }}>Note:</strong> This item has been requested by {otherPending.length} other user{otherPending.length > 1 ? 's' : ''}. Accepting this will decline their requests.
+                      </div>
+                    )}
                     <div style={{ padding: '16px', background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', fontSize: '14px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span style={{ color: 'var(--text-muted)' }}>Price per day</span>
@@ -661,43 +643,6 @@ export default function Requests() {
         document.body
       )}
 
-      {showMultiRequestConfirm && createPortal(
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-          <div className="glass-panel animate-fade-in" style={{ width: '100%', maxWidth: '400px', padding: '24px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--surface)', border: '1px solid var(--surface-border)' }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800 }}>Multiple Requests</h3>
-            <p style={{ margin: 0, color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
-              This item has been requested by <strong>{otherPendingRequests.length}</strong> other user{otherPendingRequests.length > 1 ? 's' : ''}. 
-              If you accept this booking, all other pending requests will be automatically declined with the reason "Unavailable".
-            </p>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-              <button 
-                type="button" 
-                onClick={() => { 
-                  setShowMultiRequestConfirm(false); 
-                  if (bookingToAccept) {
-                    setConfirmAction({ id: bookingToAccept.id, action: 'accepted', originalPrice: bookingToAccept.total_price });
-                  }
-                }} 
-                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
-              >
-                Go Back
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (bookingToAccept && pendingAcceptPrice !== null) {
-                    performAccept(bookingToAccept.id, pendingAcceptPrice);
-                  }
-                }}
-                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--success)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}
-              >
-                Confirm Accept
-              </button>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
       {/* Cancel Action Modal */}
       {cancelAction && createPortal(
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
