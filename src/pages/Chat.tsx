@@ -553,38 +553,6 @@ export default function Chat() {
           </div>
         )}
 
-        {/* Cancel Booking Button at top */}
-        {bookingReq?.status === 'accepted' && !isItemDeleted && (
-          <div style={{ padding: '0 0px', marginBottom: '16px' }}>
-            <button
-              onClick={() => {
-                setCancelAction({ 
-                  id: bookingReq?.id || 0, 
-                  role: isOwner ? 'owner' : 'rentee', 
-                  itemTitle: item?.title || '', 
-                  otherUserId: conversation!.otherUserId, 
-                  otherUserName: conversation!.otherUserName 
-                });
-              }}
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: 'rgba(239, 68, 68, 0.1)',
-                color: 'var(--danger)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                borderRadius: '12px',
-                fontWeight: 600,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                cursor: 'pointer'
-              }}
-            >
-              <X size={18} /> Cancel Booking
-            </button>
-          </div>
-        )}
 
         {conversationMessages.length === 0 && !bookingReq?.note && (
           <div style={{ textAlign: 'center', color: 'var(--text-muted)', marginTop: '40px', fontSize: '14px' }}>
@@ -972,8 +940,42 @@ export default function Chat() {
         </div>
       )}
 
+      {/* Cancel Booking Action Bar */}
+      {bookingReq?.status === 'accepted' && !isItemDeleted && (
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', justifyContent: 'center', padding: '12px', background: 'var(--surface)', borderTop: '1px solid var(--surface-border)' }}>
+          <button
+            type="button"
+            onClick={() => {
+              setCancelAction({ 
+                id: bookingReq?.id || 0, 
+                role: isOwner ? 'owner' : 'rentee', 
+                itemTitle: item?.title || '', 
+                otherUserId: conversation!.otherUserId, 
+                otherUserName: conversation!.otherUserName 
+              });
+            }}
+            style={{
+              width: '100%',
+              padding: '12px',
+              background: 'rgba(239, 68, 68, 0.1)',
+              color: 'var(--danger)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              borderRadius: '12px',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            <X size={18} /> Cancel Booking
+          </button>
+        </div>
+      )}
+
       {/* Input */}
-      <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: isOwner && bookingReq?.status === 'pending' ? 'none' : '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
+      <footer style={{ padding: '16px 20px', background: 'var(--surface)', borderTop: (isOwner && bookingReq?.status === 'pending') || (bookingReq?.status === 'accepted' && !isItemDeleted) ? 'none' : '1px solid var(--surface-border)', paddingBottom: 'calc(16px + env(safe-area-inset-bottom))' }}>
 
         {replyingToMessage && (
           <div style={{ padding: '12px', background: '#f3f4f6', borderRadius: '12px 12px 0 0', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', borderLeft: '4px solid var(--primary)' }}>
