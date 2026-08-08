@@ -82,9 +82,16 @@ export default function UserItems() {
                   <img 
                     src={item.images && item.images.length > 0 ? item.images[0] : item.image} 
                     alt={item.title} 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', opacity: item.status === 'booked' ? 0.5 : 1 }} 
                     loading="lazy" 
                   />
+                  {item.status === 'booked' && (
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+                      <div style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, border: '1px solid var(--surface-border)', marginBottom: '4px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                        UNAVAILABLE
+                      </div>
+                    </div>
+                  )}
                   {item.itemRating != null && (
                     <div style={{ position: 'absolute', top: '12px', left: '12px', background: '#ffffff', color: '#000000', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', fontWeight: 800, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', zIndex: 10 }}>
                       <span>{item.itemRating}</span>

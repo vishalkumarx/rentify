@@ -1,6 +1,6 @@
 import { createContext, useState, useContext, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from './AuthContext';
 import toast from 'react-hot-toast';
 
@@ -46,20 +46,12 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
   const refreshRequests = async () => {
     if (!session?.user?.id) return;
     
-    // For this prototype, we'll fetch all requests where user is either requester or owner
-    // Normally we would use actual DB relationships, but we use string parsing if relationships aren't setup
-    const { data, error } = await supabase
-      .from('booking_requests')
-      .select('*')
-      .or(`requester_id.eq.${session.user.id},owner_id.eq.${session.user.id}`)
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.log('Error fetching bookings (Table might not exist yet in DB):', error);
-      // Fallback if table doesn't exist to prevent crash in demo
-    } else if (data) {
+    const data = await getStorageJson('booking_requests.json');
+    if (data && Array.isArray(data)) {
+      const userRequests = data.filter(req => req.requester_id === session.user.id || req.owner_id === session.user.id);
+      
       if (prevRequestsRef.current.length > 0) {
-        data.forEach((req: BookingRequest) => {
+        userRequests.forEach((req: BookingRequest) => {
           if (req.requester_id === session.user.id) {
             const prev = prevRequestsRef.current.find(r => r.id === req.id);
             if (prev && prev.status === 'pending' && req.status === 'accepted') {
@@ -70,8 +62,8 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
           }
         });
       }
-      prevRequestsRef.current = data;
-      setRequests(data);
+      prevRequestsRef.current = userRequests;
+      setRequests(userRequests);
     }
   };
 
@@ -83,90 +75,57 @@ export const BookingProvider = ({ children }: { children: ReactNode }) => {
   }, [session?.user?.id]);
 
   const createRequest = async (booking: Omit<BookingRequest, 'id' | 'created_at' | 'status'>) => {
-    const { data, error } = await supabase
-      .from('booking_requests')
-      .insert([
-        {
-          ...booking,
-          status: 'pending',
-          note: booking.note || null
-        }
-      ])
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating booking request:', error);
-      // Fallback for prototype if table doesn't exist
-      const mockReq: BookingRequest = {
-        ...booking,
-        id: Math.floor(Math.random() * 10000),
-        status: 'pending',
-        created_at: new Date().toISOString()
-      };
-      setRequests(prev => [mockReq, ...prev]);
-      return;
-    }
-
-    if (data) {
-      setRequests(prev => [data, ...prev]);
-    }
+    const globalRequests = await getStorageJson('booking_requests.json') || [];
+    const newReq: BookingRequest = {
+      ...booking,
+      id: Date.now(),
+      status: 'pending',
+      created_at: new Date().toISOString()
+    };
+    
+    globalRequests.push(newReq);
+    await setStorageJson('booking_requests.json', globalRequests);
+    await refreshRequests();
   };
 
   const updateRequestStatus = async (id: number, status: BookingStatus, agreedPrice?: number, cancelReason?: string) => {
-    const updateData: any = { status };
+    const globalRequests = await getStorageJson('booking_requests.json') || [];
+    const index = globalRequests.findIndex((r: BookingRequest) => r.id === id);
+    if (index === -1) return;
+
+    globalRequests[index].status = status;
     if (agreedPrice !== undefined) {
-      updateData.total_price = agreedPrice;
+      globalRequests[index].total_price = agreedPrice;
     }
     
-    let updatedNote: string | undefined;
     if (cancelReason) {
-      const existingReq = requests.find(r => r.id === id);
-      updatedNote = existingReq?.note ? `${existingReq.note}\n\nCancel Reason: ${cancelReason}` : `Cancel Reason: ${cancelReason}`;
-      updateData.note = updatedNote;
+      const existingNote = globalRequests[index].note;
+      globalRequests[index].note = existingNote ? `${existingNote}\n\nCancel Reason: ${cancelReason}` : `Cancel Reason: ${cancelReason}`;
     }
 
-    const { error } = await supabase
-      .from('booking_requests')
-      .update(updateData)
-      .eq('id', id);
+    await setStorageJson('booking_requests.json', globalRequests);
 
-    if (error) {
-      console.error('Error updating status:', error);
-      // Fallback mock
-      setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}), ...(updatedNote !== undefined ? { note: updatedNote } : {}) } : req));
-      return;
+    // If accepted, update the rental item's status to booked in the DB
+    if (status === 'accepted') {
+      await supabase
+        .from('rental_items')
+        .update({ status: 'booked' })
+        .eq('id', globalRequests[index].item_id);
+    } else if (status === 'cancelled' || status === 'rejected') {
+      await supabase
+        .from('rental_items')
+        .update({ status: 'available' })
+        .eq('id', globalRequests[index].item_id);
     }
 
-    setRequests(prev => prev.map(req => req.id === id ? { ...req, status, ...(agreedPrice !== undefined ? { total_price: agreedPrice } : {}), ...(updatedNote !== undefined ? { note: updatedNote } : {}) } : req));
-
-    // If accepted, update the rental item's status to booked
-    const request = requests.find(r => r.id === id);
-    if (request) {
-      if (status === 'accepted') {
-        await supabase
-          .from('rental_items')
-          .update({ status: 'booked' })
-          .eq('id', request.item_id);
-      } else if (status === 'cancelled' || status === 'rejected') {
-        await supabase
-          .from('rental_items')
-          .update({ status: 'available' })
-          .eq('id', request.item_id);
-      }
-    }
+    await refreshRequests();
   };
 
   const deleteRequest = async (id: number) => {
-    const { error } = await supabase
-      .from('booking_requests')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting request:', error);
-    }
-    setRequests(prev => prev.filter(req => req.id !== id));
+    const globalRequests = await getStorageJson('booking_requests.json') || [];
+    const newRequests = globalRequests.filter((r: BookingRequest) => r.id !== id);
+    await setStorageJson('booking_requests.json', newRequests);
+    await refreshRequests();
   };
 
   return (

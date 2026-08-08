@@ -484,7 +484,14 @@ export default function ItemDetail() {
                     setZoomImageIndex(i);
                   }}
                 >
-                  <img src={img} alt={`${item.title} - ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={img} alt={`${item.title} - ${i+1}`} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: item.status === 'booked' ? 0.5 : 1 }} />
+                  {item.status === 'booked' && (
+                    <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(255,255,255,0.4)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 5, pointerEvents: 'none' }}>
+                      <div style={{ background: 'rgba(255,255,255,0.9)', color: 'var(--text-main)', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, border: '1px solid var(--surface-border)', marginBottom: '4px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                        UNAVAILABLE
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
