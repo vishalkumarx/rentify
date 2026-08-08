@@ -115,7 +115,7 @@ export default function Requests() {
         tagText = isIncoming ? 'CANCELLED BY REQUESTER' : 'CANCELLED BY YOU';
         cleanReason = rawReason.replace('[Cancelled by rentee]', '').trim();
       } else {
-        tagText = `CANCELLED (${rawReason})`;
+        tagText = rawReason ? `CANCELLED (${rawReason})` : `CANCELLED`;
         cleanReason = rawReason;
       }
     }
