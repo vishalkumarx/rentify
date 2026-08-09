@@ -80,7 +80,7 @@ export default function AllCategories() {
           ))}
 
           {/* Render remaining categories that don't have visual images */}
-          {CATEGORIES.filter(c => c !== 'All' && !visualCategories.some(vc => vc.title === c || vc.id === c)).map(cat => (
+          {CATEGORIES.filter(c => c !== 'All' && c !== 'Monsoon Essentials' && !visualCategories.some(vc => vc.title === c || vc.id === c)).map(cat => (
             <div 
               key={cat} 
               onClick={() => navigate(`/category/${encodeURIComponent(cat)}`)}
