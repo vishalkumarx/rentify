@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
+import { BannerDesigner } from '../components/BannerDesigner';
 
 export default function AdminPanel() {
   const { session } = useAuth();
@@ -15,7 +16,7 @@ export default function AdminPanel() {
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs' | 'settings' | 'promos'>('verifications');
+  const [activeTab, setActiveTab] = useState<'verifications' | 'reports' | 'users' | 'testimonials' | 'needs' | 'settings' | 'promos' | 'banner-design'>('verifications');
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [needs, setNeeds] = useState<any[]>([]);
   const [promos, setPromos] = useState<any[]>([]);
@@ -319,12 +320,12 @@ export default function AdminPanel() {
             >
               <Star size={20} /> Testimonials ({testimonials.filter(t => t.status === 'pending').length})
             </button>
-            <button 
-              onClick={() => setActiveTab('settings')}
-              style={{ padding: '16px', borderRadius: '16px', border: 'none', background: activeTab === 'settings' ? 'var(--text-main)' : 'transparent', color: activeTab === 'settings' ? 'var(--surface)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '12px', fontWeight: 600, fontSize: '16px', cursor: 'pointer', textAlign: 'left' }}
-            >
-              <Megaphone size={20} /> Site Settings & Promos
-            </button>
+            <button onClick={() => setActiveTab('settings')} style={{ background: activeTab === 'settings' ? 'var(--primary)' : 'transparent', color: activeTab === 'settings' ? '#000' : 'var(--text-main)', border: 'none', padding: '16px 20px', textAlign: 'left', fontWeight: 600, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', borderLeft: activeTab === 'settings' ? '4px solid #000' : '4px solid transparent' }}>
+                <Megaphone size={20} /> Site Settings & Promos
+              </button>
+              <button onClick={() => setActiveTab('banner-design')} style={{ background: activeTab === 'banner-design' ? 'var(--primary)' : 'transparent', color: activeTab === 'banner-design' ? '#000' : 'var(--text-main)', border: 'none', padding: '16px 20px', textAlign: 'left', fontWeight: 600, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', borderLeft: activeTab === 'banner-design' ? '4px solid #000' : '4px solid transparent' }}>
+                <Star size={20} /> Banner Designer
+              </button>
           </div>
 
           {/* Main Content Area */}
@@ -914,6 +915,33 @@ export default function AdminPanel() {
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {activeTab === 'banner-design' && (
+              <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <h2 style={{ fontSize: '24px', margin: 0, fontWeight: 800 }}>Drag-and-Drop Banner Designer</h2>
+                  <p style={{ margin: 0, color: 'var(--text-muted)' }}>Create custom banners visually and save them directly as Promos.</p>
+                </div>
+                
+                <BannerDesigner onSave={async (url) => {
+                  const newPromo = {
+                    id: Math.random().toString(36).substr(2, 9),
+                    title: "New Custom Banner",
+                    subtitle: "",
+                    badge: "New",
+                    url: url,
+                    isVisible: true,
+                    position: 'top',
+                    link: ''
+                  };
+                  const updated = [...promos, newPromo];
+                  setPromos(updated);
+                  await setStorageJson('admin/promos.json', updated);
+                  setActiveTab('settings');
+                  toast.success("Banner added to promos!");
+                }} />
               </div>
             )}
 
