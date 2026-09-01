@@ -170,6 +170,7 @@ export default function ItemDetail() {
   ) : null;
   const isBookingCompleted = userRequest?.status === 'accepted' && userRequest.end_date && new Date(userRequest.end_date).setHours(23, 59, 59, 999) < new Date().getTime();
   const chatExists = item && conversations.some(c => c.itemId === item.id && c.otherUserId === item.userId);
+  const ownerAcceptedRequest = isOwner && item ? requests.find(r => r.item_id === item.id && r.status === 'accepted') : null;
 
   const [ownerRating, setOwnerRating] = useState<string>('0');
 
@@ -936,7 +937,34 @@ export default function ItemDetail() {
               <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
                 Edit Your Item
               </button>
+              {item.status === 'booked' && ownerAcceptedRequest && (
+                <button onClick={async () => {
+                  const reason = window.prompt('Reason for cancellation (optional):');
+                  if (reason !== null) {
+                    const formattedReason = reason.trim() ? `[Cancelled by owner] ${reason.trim()}` : '[Cancelled by owner] No reason provided';
+                    try {
+                      await updateRequestStatus(ownerAcceptedRequest.id, 'cancelled', undefined, formattedReason);
+                      // Send automated message
+                      const convId = getOrCreateConversation(item.id, item.title, item.image || "", ownerAcceptedRequest.requester_id, 'User');
+                      if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                         const reasonText = reason.trim() ? `\nReason: ${reason.trim()}` : '';
+                         await sendMessage(convId, session.user.id, `[System]: Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
+                      }
+                      toast.success('Booking cancelled successfully');
+                    } catch (e) {
+                      toast.error('Failed to cancel booking');
+                    }
+                  }
+                }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+                  <X size={18} />
+                  Cancel Booking
+                </button>
+              )}
               <button onClick={async () => {
+                  if (item.status === 'booked') {
+                    toast.error("Cannot delete a booked listing. Please cancel the booking first.");
+                    return;
+                  }
                   if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
                     try {
                       await deletePost(item.id);
@@ -946,7 +974,7 @@ export default function ItemDetail() {
                       // error handled in context
                     }
                   }
-                }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+                }} style={{ opacity: item.status === 'booked' ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: item.status === 'booked' ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
                 <Trash2 size={18} />
                 Delete Listing
               </button>
