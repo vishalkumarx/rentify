@@ -6,6 +6,8 @@ import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, Shi
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
+import { useBookings } from '../context/BookingContext';
+import { useChat } from '../context/ChatContext';
 
 export default function Profile() {
   const { session } = useAuth();
@@ -15,10 +17,18 @@ export default function Profile() {
   const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
   const navigate = useNavigate();
   const { items, deletePost } = useFeed();
+  const { requests, updateRequestStatus } = useBookings();
+  const { getOrCreateConversation, sendMessage } = useChat();
+  
   const favouriteItems = items.filter(item => item.liked);
   const myItems = items.filter(item => item.userId === session?.user?.id);
+  const myAcceptedRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'accepted');
 
-  const tabs = ['My Listings', 'Favourites', 'My Needs'];
+  const tabs = ['My Listings', 'Items Under Rent', 'Favourites', 'My Needs'];
+
+  const [requesterNames, setRequesterNames] = useState<Record<string, string>>({});
+  const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee', itemTitle: string, otherUserId: string, otherUserName: string } | null>(null);
+  const [cancelReason, setCancelReason] = useState('');
 
 
 
@@ -76,6 +86,26 @@ export default function Profile() {
       });
     }
   }, [session?.user?.id]);
+
+  useEffect(() => {
+    const fetchNames = async () => {
+      const names: Record<string, string> = {};
+      for (const req of myAcceptedRequests) {
+        if (!requesterNames[req.requester_id]) {
+          try {
+            const profile = await getStorageJson(`profiles/${req.requester_id}.json`);
+            names[req.requester_id] = profile?.name || 'A user';
+          } catch (e) {
+            names[req.requester_id] = 'A user';
+          }
+        }
+      }
+      if (Object.keys(names).length > 0) {
+        setRequesterNames(prev => ({ ...prev, ...names }));
+      }
+    };
+    if (myAcceptedRequests.length > 0) fetchNames();
+  }, [requests]);
 
   const fetchMyRequests = async () => {
     if (!session?.user?.id) return;
@@ -399,6 +429,40 @@ export default function Profile() {
           </div>
         )}
 
+        {activeTab === 'Items Under Rent' && (
+          <div style={{ padding: '24px 0' }}>
+            {myAcceptedRequests.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {myAcceptedRequests.map(req => {
+                  const item = items.find(i => i.id === req.item_id);
+                  if (!item) return null;
+                  const renterName = requesterNames[req.requester_id] || 'Loading...';
+                  return (
+                    <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', display: 'flex', gap: '16px', background: 'var(--surface)' }}>
+                      <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 700 }}>{item.title}</h4>
+                        <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Rented to: <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{renterName}</span></div>
+                        <div style={{ display: 'flex', gap: '12px' }}>
+                          <button onClick={() => setCancelAction({ id: req.id, role: 'owner', itemTitle: item.title, otherUserId: req.requester_id, otherUserName: renterName })} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                            Cancel Rent
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '64px 0', color: 'var(--text-muted)', textAlign: 'center' }}>
+                <Package size={64} opacity={0.5} style={{ marginBottom: '16px' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px', color: 'var(--text-main)' }}>No active rentals</h3>
+                <p style={{ margin: 0 }}>You don't have any items currently under rent.</p>
+              </div>
+            )}
+          </div>
+        )}
+
         {activeTab === 'My Needs' && (
           <div style={{ padding: '24px 0', maxWidth: '800px', margin: '0 auto' }}>
             {myRequests.length === 0 ? (
@@ -624,6 +688,53 @@ export default function Profile() {
             >
               Got it
             </button>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Cancel Modal */}
+      {cancelAction && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="animate-fade-in glass-panel" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', borderRadius: '24px', overflow: 'hidden', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800 }}>Cancel Booking</h3>
+            <p style={{ margin: '0 0 20px 0', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Are you sure you want to cancel the rental for <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{cancelAction.itemTitle}</span>?
+            </p>
+            <textarea
+              placeholder="Reason for cancellation (optional)"
+              value={cancelReason}
+              onChange={e => setCancelReason(e.target.value)}
+              style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text-main)', fontSize: '15px', minHeight: '100px', resize: 'vertical', marginBottom: '20px' }}
+            />
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={() => { setCancelAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Keep Booking
+              </button>
+              <button 
+                onClick={async () => {
+                  if (!cancelAction) return;
+                  const formattedReason = `[Cancelled by ${cancelAction.role}] ${cancelReason.trim()}`;
+                  await updateRequestStatus(cancelAction.id, 'cancelled', undefined, formattedReason);
+                  
+                  // Send automated message
+                  const req = requests.find(r => r.id === cancelAction.id);
+                  if (req) {
+                    const convId = getOrCreateConversation(String(req.item_id), cancelAction.itemTitle, "", cancelAction.otherUserId, cancelAction.otherUserName);
+                    if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                      const reasonText = cancelReason.trim() ? `\nReason: ${cancelReason.trim()}` : '';
+                      await sendMessage(convId, session.user.id, `[System]: Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
+                    }
+                  }
+                  
+                  setCancelAction(null);
+                  setCancelReason('');
+                  toast.success("Rent cancelled successfully");
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Confirm Cancel
+              </button>
+            </div>
           </div>
         </div>,
         document.body
