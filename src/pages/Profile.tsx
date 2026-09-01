@@ -500,19 +500,31 @@ export default function Profile() {
         {activeTab === 'Items Under Rent' && (
           <div style={{ padding: '24px 0' }}>
             {myAcceptedRequests.length > 0 ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
                 {myAcceptedRequests.map(req => {
                   const item = items.find(i => i.id === req.item_id);
                   if (!item) return null;
                   const renterName = requesterNames[req.requester_id] || 'Loading...';
                   return (
-                    <div key={req.id} className="glass-panel" style={{ padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', display: 'flex', gap: '16px', background: 'var(--surface)' }}>
+                    <div 
+                      key={req.id} 
+                      onClick={() => navigate(`/item/${item.id}`)}
+                      className="glass-panel hover-scale" 
+                      style={{ padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', display: 'flex', gap: '16px', background: 'var(--surface)', cursor: 'pointer' }}
+                    >
                       <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', borderRadius: '12px', objectFit: 'cover' }} />
                       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 700 }}>{item.title}</h4>
+                        <h4 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 700, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h4>
                         <div style={{ fontSize: '14px', color: 'var(--text-muted)', marginBottom: '8px' }}>Rented to: <span style={{ color: 'var(--text-main)', fontWeight: 600 }}>{renterName}</span></div>
                         <div style={{ display: 'flex', gap: '12px' }}>
-                          <button onClick={() => setCancelAction({ id: req.id, role: 'owner', itemTitle: item.title, otherUserId: req.requester_id, otherUserName: renterName })} style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              setCancelAction({ id: req.id, role: 'owner', itemTitle: item.title, otherUserId: req.requester_id, otherUserName: renterName });
+                            }} 
+                            style={{ padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--danger)', background: 'transparent', color: 'var(--danger)', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}
+                          >
                             Cancel Rent
                           </button>
                         </div>
