@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight,Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft, Mail } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight, Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft, Mail, Menu, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { useChat } from '../context/ChatContext';
 export default function Profile() {
   const { session } = useAuth();
   const [activeTab, setActiveTab] = useState('My Listings');
+  const [isTabsMenuOpen, setIsTabsMenuOpen] = useState(false);
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
   const [openNeedMenuId, setOpenNeedMenuId] = useState<string | null>(null);
   const [confirmDialog, setConfirmDialog] = useState<{ message: string, onConfirm: () => void } | null>(null);
@@ -324,30 +325,76 @@ export default function Profile() {
 
       {/* Main Content: Tabs & Listings */}
       <div className="profile-content">
-        {/* Sub Tabs */}
-        <div className="hide-scrollbar" style={{ display: 'flex', gap: '12px', marginBottom: '24px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: '4px' }}>
-          {tabs.map(tab => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              style={{
-                flexShrink: 0,
-                padding: '10px 20px',
-                background: activeTab === tab ? '#000000' : 'var(--surface)',
-                color: activeTab === tab ? '#ffffff' : 'var(--text-muted)',
-                borderRadius: '100px',
-                fontSize: '14px',
-                fontWeight: 600,
-                border: activeTab === tab ? '1px solid #000000' : '1px solid var(--surface-border)',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease',
-                boxShadow: activeTab === tab ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
-              }}
-            >
-              {tab}
-            </button>
-          ))}
+        {/* Sub Tabs Dropdown Menu */}
+        <div style={{ marginBottom: '24px', position: 'relative' }}>
+          <button
+            onClick={() => setIsTabsMenuOpen(!isTabsMenuOpen)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              padding: '16px 20px',
+              background: 'var(--surface)',
+              borderRadius: '16px',
+              border: '1px solid var(--surface-border)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              fontSize: '16px',
+              color: 'var(--text-main)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.05)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <Menu size={20} />
+              <span>{activeTab}</span>
+            </div>
+            <ChevronDown size={20} style={{ transform: isTabsMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+          </button>
+          
+          {isTabsMenuOpen && (
+            <div className="animate-fade-in" style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              right: 0,
+              marginTop: '8px',
+              background: 'var(--surface)',
+              borderRadius: '16px',
+              border: '1px solid var(--surface-border)',
+              overflow: 'hidden',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.1)',
+              zIndex: 100
+            }}>
+              {tabs.map((tab, idx) => (
+                <button
+                  key={tab}
+                  onClick={() => {
+                    setActiveTab(tab);
+                    setIsTabsMenuOpen(false);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '16px 20px',
+                    textAlign: 'left',
+                    background: activeTab === tab ? 'rgba(0,0,0,0.03)' : 'transparent',
+                    border: 'none',
+                    borderBottom: idx < tabs.length - 1 ? '1px solid var(--surface-border)' : 'none',
+                    cursor: 'pointer',
+                    fontSize: '15px',
+                    fontWeight: activeTab === tab ? 700 : 500,
+                    color: activeTab === tab ? 'var(--text-main)' : 'var(--text-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  {tab}
+                  {activeTab === tab && <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--primary)' }} />}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {activeTab === 'Favourites' && (
