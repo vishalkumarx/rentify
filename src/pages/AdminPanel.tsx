@@ -20,7 +20,7 @@ export default function AdminPanel() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
   const [needs, setNeeds] = useState<any[]>([]);
   const [promos, setPromos] = useState<any[]>([]);
-  const [siteSettings, setSiteSettings] = useState<any>({ showMonsoonBanner: true, showPromoCarousel: true });
+  const [siteSettings, setSiteSettings] = useState<any>({ showMonsoonBanner: true, showRakhiBanner: true, showPromoCarousel: true });
   
   // Needs Filters
   const [needsFilterName, setNeedsFilterName] = useState('');
@@ -48,7 +48,7 @@ export default function AdminPanel() {
 
     const fetchAdminData = async () => {
       // 1. Fetch Site Settings
-      const settings = await getStorageJson('admin/site_settings.json') || { showMonsoonBanner: true, showPromoCarousel: true };
+      const settings = await getStorageJson('admin/site_settings.json') || { showMonsoonBanner: true, showRakhiBanner: true, showPromoCarousel: true };
       setSiteSettings(settings);
 
       // 2. Fetch verifications from JSON
@@ -680,6 +680,36 @@ export default function AdminPanel() {
                       }}
                     >
                       {siteSettings?.showMonsoonBanner ? 'Visible' : 'Hidden'}
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--surface-border)' }}>
+                    <div style={{ flex: 1, minWidth: '200px' }}>
+                      <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>Raksha Bandhan Banner</h3>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Toggle the visibility of the Raksha Bandhan banner on the homepage.</p>
+                    </div>
+                    <button 
+                      onClick={async () => {
+                        const newSettings = { ...siteSettings, showRakhiBanner: !siteSettings.showRakhiBanner };
+                        setSiteSettings(newSettings);
+                        await setStorageJson('admin/site_settings.json', newSettings);
+                        toast.success('Site settings updated');
+                      }}
+                      style={{ 
+                        padding: '8px 16px', 
+                        borderRadius: '10px', 
+                        border: 'none', 
+                        background: siteSettings?.showRakhiBanner ? 'var(--success)' : 'var(--surface-border)', 
+                        color: siteSettings?.showRakhiBanner ? '#fff' : 'var(--text-main)', 
+                        fontWeight: 700,
+                        fontSize: '14px', 
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        whiteSpace: 'nowrap',
+                        width: 'fit-content'
+                      }}
+                    >
+                      {siteSettings?.showRakhiBanner ? 'Visible' : 'Hidden'}
                     </button>
                   </div>
 

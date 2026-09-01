@@ -11,6 +11,7 @@ import { useSEO } from '../hooks/useSEO';
 import { getStorageJson, setStorageJson } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import MonsoonBanner from '../components/MonsoonBanner';
+import RakhiBanner from '../components/RakhiBanner';
 
 // @ts-ignore
 import imgBooks from '../assets/books and stationary.PNG';
@@ -158,6 +159,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredOffset, setFeaturedOffset] = useState(0);
   const [showMonsoonBanner, setShowMonsoonBanner] = useState(true);
+  const [showRakhiBanner, setShowRakhiBanner] = useState(true);
   const [showPromoCarousel, setShowPromoCarousel] = useState(true);
   const [promos, setPromos] = useState<any[]>([]);
 
@@ -166,6 +168,7 @@ export default function Home() {
       const settings = await getStorageJson('admin/site_settings.json');
       if (settings) {
         if (settings.showMonsoonBanner !== undefined) setShowMonsoonBanner(settings.showMonsoonBanner);
+        if (settings.showRakhiBanner !== undefined) setShowRakhiBanner(settings.showRakhiBanner);
         if (settings.showPromoCarousel !== undefined) setShowPromoCarousel(settings.showPromoCarousel);
       }
       
@@ -415,6 +418,15 @@ export default function Home() {
           <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
             <div style={{ width: '100%', maxWidth: '1400px' }}>
               <MonsoonBanner />
+            </div>
+          </div>
+        )}
+
+        {/* Rakhi Banner */}
+        {showRakhiBanner && (
+          <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%', maxWidth: '1400px' }}>
+              <RakhiBanner />
             </div>
           </div>
         )}
