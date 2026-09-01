@@ -934,7 +934,13 @@ export default function ItemDetail() {
         <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
           {isOwner ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-              <button onClick={() => navigate(`/edit/${item.id}`)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+              <button onClick={() => {
+                if (item.status === 'booked') {
+                  toast.error("Cannot edit a booked listing. Please cancel the booking first.");
+                  return;
+                }
+                navigate(`/edit/${item.id}`);
+              }} style={{ opacity: item.status === 'booked' ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: item.status === 'booked' ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
                 Edit Your Item
               </button>
               {item.status === 'booked' && ownerAcceptedRequest && (
