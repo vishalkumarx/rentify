@@ -415,8 +415,8 @@ export default function Home() {
 
         {/* Monsoon Banner */}
         {showMonsoonBanner && (
-          <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '1400px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ width: '100%' }}>
               <MonsoonBanner />
             </div>
           </div>

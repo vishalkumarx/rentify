@@ -39,7 +39,7 @@ const MonsoonBanner: React.FC = () => {
           position: relative;
           width: 100%;
           height: 280px;
-          border-radius: 24px;
+          border-radius: 0;
           overflow: hidden;
           background:
             radial-gradient(circle at 20% 20%, rgba(244, 196, 48, 0.16), transparent 28%),
