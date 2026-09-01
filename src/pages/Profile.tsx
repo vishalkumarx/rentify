@@ -88,6 +88,25 @@ export default function Profile() {
   }, [session?.user?.id]);
 
   useEffect(() => {
+    const fixOrphanedItems = async () => {
+      if (!session?.user?.id) return;
+      const { data } = await supabase.from('rental_items').select('id, status').eq('user_id', session.user.id).eq('status', 'booked');
+      if (data && data.length > 0) {
+        const reqs = await getStorageJson('booking_requests.json') || [];
+        for (const item of data) {
+          const hasBooking = reqs.some((r: any) => r.item_id === item.id && r.status === 'accepted');
+          if (!hasBooking) {
+            await supabase.from('rental_items').update({ status: 'available' }).eq('id', item.id);
+            console.log(`Auto-fixed orphaned booked item: ${item.id}`);
+            setTimeout(() => window.location.reload(), 1000);
+          }
+        }
+      }
+    };
+    fixOrphanedItems();
+  }, [session?.user?.id]);
+
+  useEffect(() => {
     const fetchNames = async () => {
       const names: Record<string, string> = {};
       for (const req of myAcceptedRequests) {
