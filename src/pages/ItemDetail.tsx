@@ -935,15 +935,13 @@ export default function ItemDetail() {
         <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
           {isOwner ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-              <button onClick={() => {
-                if (item.status === 'booked') {
-                  toast.error("Cannot edit a booked listing. Please cancel the booking first.");
-                  return;
-                }
-                navigate(`/edit/${item.id}`);
-              }} style={{ opacity: item.status === 'booked' ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: item.status === 'booked' ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
-                Edit Your Item
-              </button>
+              {item.status !== 'booked' && (
+                <button onClick={() => {
+                  navigate(`/edit/${item.id}`);
+                }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+                  Edit Your Item
+                </button>
+              )}
               {item.status === 'booked' && ownerAcceptedRequest && (
                 <button onClick={() => {
                   setCancelAction({ 
@@ -958,11 +956,8 @@ export default function ItemDetail() {
                   Cancel Booking
                 </button>
               )}
-              <button onClick={async () => {
-                  if (item.status === 'booked') {
-                    toast.error("Cannot delete a booked listing. Please cancel the booking first.");
-                    return;
-                  }
+              {item.status !== 'booked' && (
+                <button onClick={async () => {
                   if (window.confirm('Are you sure you want to delete this listing? This action cannot be undone.')) {
                     try {
                       await deletePost(item.id);
@@ -972,10 +967,11 @@ export default function ItemDetail() {
                       // error handled in context
                     }
                   }
-                }} style={{ opacity: item.status === 'booked' ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: item.status === 'booked' ? 'not-allowed' : 'pointer', fontWeight: 700 }}>
-                <Trash2 size={18} />
-                Delete Listing
-              </button>
+                }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
+                  <Trash2 size={18} />
+                  Delete Listing
+                </button>
+              )}
             </div>
           ) : isBookingCompleted ? (
             <div style={{ padding: '18px', background: 'var(--surface)', color: 'var(--text-main)', borderRadius: '24px', textAlign: 'center', border: '1px solid var(--surface-border)' }}>
