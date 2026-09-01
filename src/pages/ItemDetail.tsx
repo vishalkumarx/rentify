@@ -149,6 +149,7 @@ export default function ItemDetail() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [showChatLockedDialog, setShowChatLockedDialog] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
+  const [cancelAction, setCancelAction] = useState<{ id: number; role: 'owner' | 'rentee', itemTitle: string, otherUserId: string, otherUserName: string } | null>(null);
 
   const [ownerProfile, setOwnerProfile] = useState<any>(null);
   const [verificationStatus, setVerificationStatus] = useState<string>('none');
@@ -944,23 +945,14 @@ export default function ItemDetail() {
                 Edit Your Item
               </button>
               {item.status === 'booked' && ownerAcceptedRequest && (
-                <button onClick={async () => {
-                  const reason = window.prompt('Reason for cancellation (optional):');
-                  if (reason !== null) {
-                    const formattedReason = reason.trim() ? `[Cancelled by owner] ${reason.trim()}` : '[Cancelled by owner] No reason provided';
-                    try {
-                      await updateRequestStatus(ownerAcceptedRequest.id, 'cancelled', undefined, formattedReason);
-                      // Send automated message
-                      const convId = getOrCreateConversation(item.id, item.title, item.image || "", ownerAcceptedRequest.requester_id, 'User');
-                      if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
-                         const reasonText = reason.trim() ? `\nReason: ${reason.trim()}` : '';
-                         await sendMessage(convId, session.user.id, `[System]: Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
-                      }
-                      toast.success('Booking cancelled successfully');
-                    } catch (e) {
-                      toast.error('Failed to cancel booking');
-                    }
-                  }
+                <button onClick={() => {
+                  setCancelAction({ 
+                    id: ownerAcceptedRequest.id, 
+                    role: 'owner', 
+                    itemTitle: item.title, 
+                    otherUserId: ownerAcceptedRequest.requester_id, 
+                    otherUserName: 'User' 
+                  });
                 }} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', fontSize: '16px', borderRadius: '20px', background: 'transparent', color: 'var(--danger)', border: '1px solid var(--danger)', width: '100%', cursor: 'pointer', fontWeight: 700 }}>
                   <X size={18} />
                   Cancel Booking
@@ -1214,6 +1206,53 @@ export default function ItemDetail() {
                 style={{ flex: 1, padding: '14px', borderRadius: '12px', border: 'none', background: 'var(--success)', color: '#fff', fontWeight: 600, cursor: 'pointer', opacity: !tempNote.trim() ? 0.5 : 1 }}
               >
                 Done
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Cancel Modal */}
+      {cancelAction && createPortal(
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(8px)', zIndex: 999999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div className="animate-fade-in glass-panel" style={{ width: '100%', maxWidth: '400px', background: 'var(--surface)', borderRadius: '24px', overflow: 'hidden', padding: '24px' }}>
+            <h3 style={{ margin: '0 0 8px 0', fontSize: '20px', fontWeight: 800 }}>Cancel Booking</h3>
+            <p style={{ margin: '0 0 20px 0', color: 'var(--text-muted)', fontSize: '15px', lineHeight: 1.5 }}>
+              Are you sure you want to cancel the rental for <span style={{ fontWeight: 600, color: 'var(--text-main)' }}>{cancelAction.itemTitle}</span>?
+            </p>
+            <textarea
+              placeholder="Reason for cancellation (optional)"
+              value={cancelReason}
+              onChange={e => setCancelReason(e.target.value)}
+              style={{ width: '100%', padding: '16px', borderRadius: '16px', border: '1px solid var(--surface-border)', background: 'rgba(255,255,255,0.03)', color: 'var(--text-main)', fontSize: '15px', minHeight: '100px', resize: 'vertical', marginBottom: '20px' }}
+            />
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button onClick={() => { setCancelAction(null); setCancelReason(''); }} style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--surface-border)', color: 'var(--text-main)', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Keep Booking
+              </button>
+              <button 
+                onClick={async () => {
+                  if (!cancelAction) return;
+                  const formattedReason = `[Cancelled by ${cancelAction.role}] ${cancelReason.trim()}`;
+                  await updateRequestStatus(cancelAction.id, 'cancelled', undefined, formattedReason);
+                  
+                  // Send automated message
+                  const req = requests.find(r => r.id === cancelAction.id);
+                  if (req) {
+                    const convId = getOrCreateConversation(String(req.item_id), cancelAction.itemTitle, "", cancelAction.otherUserId, cancelAction.otherUserName);
+                    if (convId && session?.user?.id && session?.user?.user_metadata?.full_name) {
+                      const reasonText = cancelReason.trim() ? `\nReason: ${cancelReason.trim()}` : '';
+                      await sendMessage(convId, session.user.id, `[System]: Booking cancelled by ${session.user.user_metadata.full_name}.${reasonText}`);
+                    }
+                  }
+                  
+                  setCancelAction(null);
+                  setCancelReason('');
+                  toast.success("Rent cancelled successfully");
+                }} 
+                style={{ flex: 1, padding: '16px', borderRadius: '16px', border: 'none', background: 'var(--danger)', color: '#fff', fontSize: '16px', fontWeight: 600, cursor: 'pointer' }}>
+                Confirm Cancel
               </button>
             </div>
           </div>
