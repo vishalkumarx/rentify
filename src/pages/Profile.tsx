@@ -306,14 +306,14 @@ export default function Profile() {
       {/* Main Content: Tabs & Listings */}
       <div className="profile-content">
         {/* Sub Tabs */}
-        <div style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '16px' }}>
+        <div className="hide-scrollbar" style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '16px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', gap: '4px' }}>
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                flex: 1,
-                padding: '10px 0',
+                flex: '1 0 auto',
+                padding: '10px 16px',
                 background: activeTab === tab ? '#FEF3C7' : 'transparent',
                 color: activeTab === tab ? '#000000' : 'var(--text-muted)',
                 borderRadius: '12px',
@@ -321,7 +321,8 @@ export default function Profile() {
                 fontWeight: 600,
                 boxShadow: activeTab === tab ? 'var(--card-shadow)' : 'none',
                 border: 'none',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                whiteSpace: 'nowrap'
               }}
             >
               {tab}
