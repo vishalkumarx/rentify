@@ -306,23 +306,24 @@ export default function Profile() {
       {/* Main Content: Tabs & Listings */}
       <div className="profile-content">
         {/* Sub Tabs */}
-        <div className="hide-scrollbar" style={{ display: 'flex', background: 'var(--surface)', padding: '4px', borderRadius: '16px', border: '1px solid var(--surface-border)', marginBottom: '16px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', gap: '4px' }}>
+        <div className="hide-scrollbar" style={{ display: 'flex', gap: '12px', marginBottom: '24px', overflowX: 'auto', WebkitOverflowScrolling: 'touch', paddingBottom: '4px' }}>
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               style={{
-                flex: '1 0 auto',
-                padding: '10px 16px',
-                background: activeTab === tab ? '#FEF3C7' : 'transparent',
-                color: activeTab === tab ? '#000000' : 'var(--text-muted)',
-                borderRadius: '12px',
+                flexShrink: 0,
+                padding: '10px 20px',
+                background: activeTab === tab ? '#000000' : 'var(--surface)',
+                color: activeTab === tab ? '#ffffff' : 'var(--text-muted)',
+                borderRadius: '100px',
                 fontSize: '14px',
                 fontWeight: 600,
-                boxShadow: activeTab === tab ? 'var(--card-shadow)' : 'none',
-                border: 'none',
+                border: activeTab === tab ? '1px solid #000000' : '1px solid var(--surface-border)',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap'
+                whiteSpace: 'nowrap',
+                transition: 'all 0.2s ease',
+                boxShadow: activeTab === tab ? '0 4px 12px rgba(0,0,0,0.1)' : 'none'
               }}
             >
               {tab}
