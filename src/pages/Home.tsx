@@ -424,8 +424,8 @@ export default function Home() {
 
         {/* Rakhi Banner */}
         {showRakhiBanner && (
-          <div style={{ width: '100%', padding: '16px 16px 0 16px', display: 'flex', justifyContent: 'center' }}>
-            <div style={{ width: '100%', maxWidth: '1400px' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '16px' }}>
+            <div style={{ width: '100%' }}>
               <RakhiBanner />
             </div>
           </div>

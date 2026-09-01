@@ -42,7 +42,7 @@ const RakhiBanner: React.FC = () => {
           position: relative;
           width: 100%;
           height: 280px;
-          border-radius: 24px;
+          border-radius: 0;
           overflow: hidden;
           background:
             radial-gradient(circle at 80% 20%, rgba(255, 183, 3, 0.25), transparent 40%),
