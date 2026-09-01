@@ -660,7 +660,8 @@ export default function AdminPanel() {
                     </div>
                     <button 
                       onClick={async () => {
-                        const newSettings = { ...siteSettings, showMonsoonBanner: !siteSettings.showMonsoonBanner };
+                        const current = siteSettings?.showMonsoonBanner ?? true;
+                        const newSettings = { ...siteSettings, showMonsoonBanner: !current };
                         setSiteSettings(newSettings);
                         await setStorageJson('admin/site_settings.json', newSettings);
                         toast.success('Site settings updated');
@@ -669,8 +670,8 @@ export default function AdminPanel() {
                         padding: '8px 16px', 
                         borderRadius: '10px', 
                         border: 'none', 
-                        background: siteSettings?.showMonsoonBanner ? 'var(--success)' : 'var(--surface-border)', 
-                        color: siteSettings?.showMonsoonBanner ? '#fff' : 'var(--text-main)', 
+                        background: (siteSettings?.showMonsoonBanner ?? true) ? 'var(--success)' : 'var(--surface-border)', 
+                        color: (siteSettings?.showMonsoonBanner ?? true) ? '#fff' : 'var(--text-main)', 
                         fontWeight: 700,
                         fontSize: '14px', 
                         cursor: 'pointer',
@@ -679,7 +680,7 @@ export default function AdminPanel() {
                         width: 'fit-content'
                       }}
                     >
-                      {siteSettings?.showMonsoonBanner ? 'Visible' : 'Hidden'}
+                      {(siteSettings?.showMonsoonBanner ?? true) ? 'Visible' : 'Hidden'}
                     </button>
                   </div>
 
@@ -690,7 +691,8 @@ export default function AdminPanel() {
                     </div>
                     <button 
                       onClick={async () => {
-                        const newSettings = { ...siteSettings, showRakhiBanner: !siteSettings.showRakhiBanner };
+                        const current = siteSettings?.showRakhiBanner ?? true;
+                        const newSettings = { ...siteSettings, showRakhiBanner: !current };
                         setSiteSettings(newSettings);
                         await setStorageJson('admin/site_settings.json', newSettings);
                         toast.success('Site settings updated');
@@ -699,8 +701,8 @@ export default function AdminPanel() {
                         padding: '8px 16px', 
                         borderRadius: '10px', 
                         border: 'none', 
-                        background: siteSettings?.showRakhiBanner ? 'var(--success)' : 'var(--surface-border)', 
-                        color: siteSettings?.showRakhiBanner ? '#fff' : 'var(--text-main)', 
+                        background: (siteSettings?.showRakhiBanner ?? true) ? 'var(--success)' : 'var(--surface-border)', 
+                        color: (siteSettings?.showRakhiBanner ?? true) ? '#fff' : 'var(--text-main)', 
                         fontWeight: 700,
                         fontSize: '14px', 
                         cursor: 'pointer',
@@ -709,7 +711,7 @@ export default function AdminPanel() {
                         width: 'fit-content'
                       }}
                     >
-                      {siteSettings?.showRakhiBanner ? 'Visible' : 'Hidden'}
+                      {(siteSettings?.showRakhiBanner ?? true) ? 'Visible' : 'Hidden'}
                     </button>
                   </div>
 
