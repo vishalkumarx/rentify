@@ -932,7 +932,15 @@ export default function ItemDetail() {
         display: 'flex',
         justifyContent: 'center'
       }}>
-        <div style={{ maxWidth: '400px', margin: '0 auto', width: '100%' }}>
+        <div style={{ maxWidth: '500px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+            <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}>
+              <IndianRupee size={20} strokeWidth={3} style={{ marginRight: '-2px' }} />
+              {item.price_per_day}
+            </span>
+            <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>per day</span>
+          </div>
+          <div style={{ flex: 1 }}>
           {isOwner ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
               {item.status !== 'booked' && (
@@ -1010,11 +1018,12 @@ export default function ItemDetail() {
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#000', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none', fontWeight: 800 }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, justifyContent: 'center' }}>
                 <CalendarIcon size={20} />
-                Request Booking
+                Rent now
               </span>
               <ArrowRight size={20} style={{ opacity: 0.8 }} />
             </button>
           )}
+          </div>
         </div>
       </div>
 
