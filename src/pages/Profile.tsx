@@ -250,12 +250,18 @@ export default function Profile() {
             </div>
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', width: '100%', gap: '12px' }}>
             <button 
               onClick={() => navigate('/edit-profile')}
-              style={{ width: 'fit-content', padding: '10px 24px', borderRadius: '12px', background: 'var(--bg)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontWeight: 600, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
+              style={{ flex: 1, padding: '10px 16px', borderRadius: '12px', background: 'var(--bg)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontWeight: 600, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
             >
               <Edit2 size={16} /> Edit Profile
+            </button>
+            <button 
+              onClick={() => navigate('/subscriptions')}
+              style={{ flex: 1, padding: '10px 16px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)', color: '#000', border: 'none', fontWeight: 800, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)' }}
+            >
+              <Star size={16} fill="#000" color="#000" /> Upgrade
             </button>
           </div>
           
