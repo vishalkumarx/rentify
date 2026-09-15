@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { Settings, LogOut, Heart, CreditCard, ChevronRight, Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft, Mail, Menu, ChevronDown } from 'lucide-react';
+import { Settings, LogOut, Heart, CreditCard, ChevronRight, Star, BadgeCheck, ShieldCheck, Upload, X, AlertCircle, Package, Edit2, Trash2, MoreVertical, MapPin, IndianRupee, Calendar, Building2, AlignLeft, Mail, Menu, ChevronDown, Crown, User, Zap, Rocket } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useFeed } from '../context/FeedContext';
 import { useNavigate } from 'react-router-dom';
@@ -215,14 +215,22 @@ export default function Profile() {
                 </div>
               );
             })()}
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                  {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
-                </h2>
-                {verificationInfo?.status === 'approved' && (
-                  <BadgeCheck size={24} fill="#1877F2" color="white" />
-                )}
+            <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', flex: 1, minWidth: 0 }}>
+                  <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+                    {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
+                  </h2>
+                  {verificationInfo?.status === 'approved' && (
+                    <BadgeCheck size={24} fill="#1877F2" color="white" style={{ flexShrink: 0 }} />
+                  )}
+                </div>
+                <button 
+                  onClick={() => navigate('/edit-profile')}
+                  style={{ padding: '6px 12px', borderRadius: '8px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, marginLeft: '8px' }}
+                >
+                  <Edit2 size={14} /> Edit
+                </button>
               </div>
               <div title={profile?.department} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500 }}>
                 <Building2 size={16} color="var(--text-muted)" />
@@ -249,23 +257,37 @@ export default function Profile() {
               </div>
             </div>
           </div>
-          
-          <div style={{ display: 'flex', justifyContent: 'center', width: '100%', gap: '12px' }}>
-            <button 
-              onClick={() => navigate('/edit-profile')}
-              style={{ flex: 1, padding: '10px 16px', borderRadius: '12px', background: 'var(--bg)', color: 'var(--text-main)', border: '1px solid var(--surface-border)', fontWeight: 600, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s' }}
-            >
-              <Edit2 size={16} /> Edit Profile
-            </button>
-            <button 
-              onClick={() => navigate('/subscriptions')}
-              style={{ flex: 1, padding: '10px 16px', borderRadius: '12px', background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)', color: '#000', border: 'none', fontWeight: 800, fontSize: '15px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'all 0.2s', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)' }}
-            >
-              <Star size={16} fill="#000" color="#000" /> Upgrade
-            </button>
-          </div>
-          
+
           <div style={{ width: '100%', height: '1px', background: 'var(--surface-border)', margin: '4px 0' }}></div>
+
+          {/* Subscription Section */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', maxWidth: '320px', margin: '0 auto 16px auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '16px', background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, transparent 100%)', borderRadius: '16px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  {(() => {
+                    const plan = profile?.subscriptionPlan || 'Campus Basic';
+                    if (plan === 'Campus Gold') return <Crown size={20} color="var(--warning)" />;
+                    if (plan === 'Campus Pro') return <Rocket size={20} color="var(--warning)" />;
+                    if (plan === 'Campus Plus') return <Zap size={20} color="var(--warning)" />;
+                    return <User size={20} color="var(--warning)" />;
+                  })()}
+                </div>
+                <div>
+                  <span style={{ display: 'block', fontWeight: 800, color: 'var(--text-main)', fontSize: '15px' }}>{profile?.subscriptionPlan || 'Campus Basic'}</span>
+                  <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px', fontWeight: 500 }}>
+                    {profile?.subscriptionPlan || 'Campus Basic'} member since {profile?.subscriptionDate ? new Date(profile.subscriptionDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : 'recently'}
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={() => navigate('/subscriptions')}
+                style={{ width: '100%', background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 16px', borderRadius: '12px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)' }}
+              >
+                Upgrade
+              </button>
+            </div>
+          </div>
 
           {/* Verification Section */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', maxWidth: '320px', margin: '0' }}>

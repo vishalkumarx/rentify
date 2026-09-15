@@ -345,30 +345,9 @@ export default function Home() {
       <div style={{ padding: '8px 24px 16px', display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--bg)' }}>
         
         {/* Greeting */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-            <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>
-            <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>What do you need today?</h1>
-          </div>
-          <button 
-            onClick={() => navigate('/subscriptions')}
-            style={{ 
-              background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)', 
-              color: '#000', 
-              border: 'none', 
-              padding: '8px 16px', 
-              borderRadius: '20px', 
-              fontWeight: 800, 
-              fontSize: '14px', 
-              cursor: 'pointer', 
-              boxShadow: '0 4px 12px rgba(244, 196, 48, 0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px'
-            }}
-          >
-            <Star size={16} fill="#000" color="#000" /> Upgrade
-          </button>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <p style={{ fontSize: '14px', color: 'var(--text-muted)', fontWeight: 600, margin: 0 }}>Hey {firstName} 👋</p>
+          <h1 style={{ fontSize: '24px', fontWeight: 800, margin: 0, letterSpacing: '-0.5px', color: 'var(--text-main)' }}>What do you need today?</h1>
         </div>
 
         {/* Search & Filter */}

@@ -202,6 +202,19 @@ export default function AdminPanel() {
     setBlockDuration(null);
   };
 
+  const handleAssignPlan = async (userId: string, planName: string) => {
+    try {
+      const profile = await getStorageJson(`profiles/${userId}.json`) || {};
+      profile.subscriptionPlan = planName;
+      await setStorageJson(`profiles/${userId}.json`, profile);
+      
+      setAllUsers(allUsers.map(u => u.id === userId ? { ...u, subscriptionPlan: planName } : u));
+      toast.success(`Assigned ${planName} to user!`);
+    } catch (e) {
+      toast.error('Failed to assign plan');
+    }
+  };
+
   const handleToggleBlock = (userId: string, currentlyBlocked: boolean) => {
     if (!currentlyBlocked) {
       setShowBlockModal(userId);
@@ -479,6 +492,19 @@ export default function AdminPanel() {
                           {user.isBlocked && <span style={{ padding: '2px 8px', borderRadius: '12px', background: 'var(--danger)', color: 'white', fontSize: '10px', textTransform: 'uppercase' }}>Blocked</span>}
                         </h3>
                         <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-muted)' }}>ID: {user.id}</p>
+                        <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '13px', fontWeight: 600 }}>Plan:</span>
+                          <select
+                            value={user.subscriptionPlan || 'Campus Basic'}
+                            onChange={(e) => handleAssignPlan(user.id, e.target.value)}
+                            style={{ padding: '6px 10px', borderRadius: '8px', border: '1px solid var(--surface-border)', background: 'var(--surface)', color: 'var(--text-main)', fontSize: '13px', outline: 'none', cursor: 'pointer' }}
+                          >
+                            <option value="Campus Basic">Campus Basic</option>
+                            <option value="Campus Plus">Campus Plus</option>
+                            <option value="Campus Pro">Campus Pro</option>
+                            <option value="Campus Gold">Campus Gold</option>
+                          </select>
+                        </div>
                       </div>
 
                       <div style={{ display: 'flex', gap: '12px' }}>

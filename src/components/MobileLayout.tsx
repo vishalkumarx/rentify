@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload } from 'lucide-react';
+import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -241,10 +241,30 @@ export default function MobileLayout() {
         <NavItem className="desktop-only" icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
-          icon={avatarUrl ? <img src={avatarUrl} alt="Profile" style={{ width: '24px', height: '24px', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)' }} /> : <User size={24} />} 
+          icon={
+            <div style={{ position: 'relative', width: '24px', height: '24px' }}>
+              <User size={24} style={{ position: 'absolute', top: 0, left: 0, color: 'var(--text-main)' }} />
+              {avatarUrl && (
+                <img 
+                  src={avatarUrl} 
+                  alt="Profile" 
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', background: 'var(--surface)' }} 
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }} 
+                />
+              )}
+            </div>
+          }
           label="Profile" 
           isActive={location.pathname === '/profile'} 
-          onClick={() => navigate('/profile')} 
+          onClick={() => navigate('/profile')}
+          style={{ flexShrink: 0 }}
+        />
+        <NavItem 
+          icon={<Star size={24} color="#000" fill="#000" />} 
+          label="Upgrade" 
+          isActive={location.pathname === '/subscriptions'} 
+          onClick={() => navigate('/subscriptions')}
+          style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)', color: '#000', borderRadius: '20px', margin: '8px 4px', padding: '6px 12px', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.4)', flexShrink: 0 }}
         />
       </nav>
 
