@@ -542,7 +542,6 @@ export default function ItemDetail() {
                 )}
                 <h1 style={{ fontSize: '20px', margin: 0, fontWeight: 700, lineHeight: 1.2 }}>{item.title}</h1>
               </div>
-              <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>₹{item.price}<span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></span>
             </div>
             
             {showReviewConfirm && createPortal(
@@ -851,14 +850,14 @@ export default function ItemDetail() {
         justifyContent: 'center'
       }}>
         <div style={{ maxWidth: '500px', margin: '0 auto', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0, padding: '10px 20px', borderRadius: '20px', border: '1px solid var(--surface-border)', background: 'var(--bg)', alignItems: 'center', justifyContent: 'center' }}>
             <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}>
               <IndianRupee size={20} strokeWidth={3} style={{ marginRight: '-2px' }} />
               {item.price}
             </span>
             <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>per day</span>
           </div>
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
           {isOwner ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
               {item.status !== 'booked' && (
@@ -933,8 +932,8 @@ export default function ItemDetail() {
           ) : (
             <button 
               onClick={handleRequestClick} 
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '18px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#000', boxShadow: 'var(--primary-glow)', width: '100%', cursor: 'pointer', border: 'none', fontWeight: 800 }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, justifyContent: 'center' }}>
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '16px 32px', fontSize: '18px', borderRadius: '24px', background: 'var(--primary)', color: '#000', boxShadow: 'var(--primary-glow)', cursor: 'pointer', border: 'none', fontWeight: 800 }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
                 <CalendarIcon size={20} />
                 Rent now
               </span>
