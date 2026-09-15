@@ -7,7 +7,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2, Share } from 'lucide-react';
+import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2, Share, Edit2, IndianRupee } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
@@ -936,7 +936,7 @@ export default function ItemDetail() {
           <div style={{ display: 'flex', flexDirection: 'column', flexShrink: 0 }}>
             <span style={{ fontSize: '22px', fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center' }}>
               <IndianRupee size={20} strokeWidth={3} style={{ marginRight: '-2px' }} />
-              {item.price_per_day}
+              {item.price}
             </span>
             <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>per day</span>
           </div>
