@@ -1113,63 +1113,7 @@ export default function ItemDetail() {
                   </div>
                 )}
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-                  {!bookingNote ? (
-                    <button
-                      onClick={() => {
-                        setTempNote('');
-                        setShowBargainDialog(true);
-                      }}
-                      style={{
-                        width: '100%',
-                        padding: '14px',
-                        borderRadius: '16px',
-                        background: 'rgba(34, 197, 94, 0.1)',
-                        color: 'var(--success)',
-                        border: '1px dashed var(--success)',
-                        fontWeight: 700,
-                        fontSize: '15px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <MessageCircle size={18} /> Send a bargain request
-                    </button>
-                  ) : (
-                    <div style={{
-                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)',
-                      border: '1px solid var(--success)',
-                      borderRadius: '12px',
-                      padding: '12px 16px',
-                      boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
-                      borderLeft: '4px dashed var(--success)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '2px' }}>
-                          <MessageCircle size={16} color="var(--success)" style={{ flexShrink: 0 }} />
-                          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            Bargain Request Attached
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => setBookingNote('')}
-                          style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, width: '24px', height: '24px', minWidth: '24px', minHeight: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                        >
-                          <X size={18} />
-                        </button>
-                      </div>
-                      <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'pre-wrap', paddingLeft: '22px' }}>
-                        "{bookingNote}"
-                      </span>
-                    </div>
-                  )}
-                </div>
+
               </div>
             )}
 
