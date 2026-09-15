@@ -1088,9 +1088,7 @@ export default function ItemDetail() {
             {/* Booking Calendar Section */}
             {!isOwner && !userRequest && item.status === 'available' && (
               <div className="glass-panel" style={{ padding: 0 }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <CalendarIcon size={20} /> Select booking dates
-                </h3>
+
                 
                 <Calendar 
                   startDate={startDate} 
