@@ -158,6 +158,7 @@ export default function ItemDetail() {
   const [bookingNote, setBookingNote] = useState(location.state?.bookingNote || '');
   const [showBargainDialog, setShowBargainDialog] = useState(false);
   const [tempNote, setTempNote] = useState('');
+  const [showDatePickerSheet, setShowDatePickerSheet] = useState(false);
   const [showConfirmSheet, setShowConfirmSheet] = useState(false);
   const [showSuccessSheet, setShowSuccessSheet] = useState(false);
   
@@ -234,10 +235,14 @@ export default function ItemDetail() {
       navigate('/login', { state: { returnTo: location.pathname, startDate, endDate, bookingNote } });
       return;
     }
+    setShowDatePickerSheet(true);
+  };
+
+  const handleProceedFromDatePicker = () => {
     if (!startDate || !endDate) return toast.error('Select dates');
     const days = differenceInDays(parseISO(endDate), parseISO(startDate));
     if (days < 0) return toast.error('End date must be after start date');
-    
+    setShowDatePickerSheet(false);
     setShowConfirmSheet(true);
   };
 
@@ -720,93 +725,6 @@ export default function ItemDetail() {
               </div>
             )}
 
-            {/* Booking Calendar Section */}
-            {!isOwner && !userRequest && item.status === 'available' && (
-              <div className="glass-panel" style={{ marginTop: '32px', padding: '24px', borderRadius: '20px' }}>
-                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <CalendarIcon size={20} /> Select booking dates
-                </h3>
-                
-                <Calendar 
-                  startDate={startDate} 
-                  endDate={endDate} 
-                  onChange={(start, end) => {
-                    setStartDate(start);
-                    setEndDate(end);
-                  }}
-                  disabled={!!userRequest}
-                />
-
-                {startDate && endDate && calculateDays() > 0 && (
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '16px' }}>
-                    <span style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
-                      ₹{item.price} x {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
-                    </span>
-                    <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>
-                      ₹{calculateDays() * Number(item.price)}
-                    </span>
-                  </div>
-                )}
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-                  {!bookingNote ? (
-                    <button
-                      onClick={() => {
-                        setTempNote('');
-                        setShowBargainDialog(true);
-                      }}
-                      style={{
-                        width: '100%',
-                        padding: '14px',
-                        borderRadius: '16px',
-                        background: 'rgba(34, 197, 94, 0.1)',
-                        color: 'var(--success)',
-                        border: '1px dashed var(--success)',
-                        fontWeight: 700,
-                        fontSize: '15px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <MessageCircle size={18} /> Send a bargain request
-                    </button>
-                  ) : (
-                    <div style={{
-                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)',
-                      border: '1px solid var(--success)',
-                      borderRadius: '12px',
-                      padding: '12px 16px',
-                      boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
-                      borderLeft: '4px dashed var(--success)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '8px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '2px' }}>
-                          <MessageCircle size={16} color="var(--success)" style={{ flexShrink: 0 }} />
-                          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                            Bargain Request Attached
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => setBookingNote('')}
-                          style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, width: '24px', height: '24px', minWidth: '24px', minHeight: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-                        >
-                          <X size={18} />
-                        </button>
-                      </div>
-                      <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'pre-wrap', paddingLeft: '22px' }}>
-                        "{bookingNote}"
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
 
             {/* Seller Trust Profile */}
             {!isOwner && item.seller && (
@@ -1146,6 +1064,124 @@ export default function ItemDetail() {
         >
           Confirm & Send Request
         </button>
+      </div>
+
+            {/* Date Picker Bottom Sheet */}
+      <div 
+        className={`bottom-sheet ${showDatePickerSheet ? 'visible' : ''}`}
+        onClick={() => setShowDatePickerSheet(false)}
+      >
+        <div 
+          className="bottom-sheet-content" 
+          onClick={e => e.stopPropagation()}
+          style={{ padding: '24px', maxHeight: '90vh', overflowY: 'auto' }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '24px', margin: 0, fontWeight: 800 }}>Select Dates</h2>
+            <button onClick={() => setShowDatePickerSheet(false)} style={{ background: 'var(--surface-border)', border: 'none', width: '40px', height: '40px', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-main)', padding: 0 }}>
+              <X size={24} />
+            </button>
+          </div>
+          
+          {/* Booking Calendar Section */}
+          <div style={{ marginBottom: '24px' }}>
+            {/* Booking Calendar Section */}
+            {!isOwner && !userRequest && item.status === 'available' && (
+              <div className="glass-panel" style={{ padding: 0 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <CalendarIcon size={20} /> Select booking dates
+                </h3>
+                
+                <Calendar 
+                  startDate={startDate} 
+                  endDate={endDate} 
+                  onChange={(start, end) => {
+                    setStartDate(start);
+                    setEndDate(end);
+                  }}
+                  disabled={!!userRequest}
+                />
+
+                {startDate && endDate && calculateDays() > 0 && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', marginBottom: '16px' }}>
+                    <span style={{ fontSize: '15px', color: 'var(--text-muted)' }}>
+                      ₹{item.price} x {calculateDays()} {calculateDays() === 1 ? 'day' : 'days'}
+                    </span>
+                    <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--success)' }}>
+                      ₹{calculateDays() * Number(item.price)}
+                    </span>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                  {!bookingNote ? (
+                    <button
+                      onClick={() => {
+                        setTempNote('');
+                        setShowBargainDialog(true);
+                      }}
+                      style={{
+                        width: '100%',
+                        padding: '14px',
+                        borderRadius: '16px',
+                        background: 'rgba(34, 197, 94, 0.1)',
+                        color: 'var(--success)',
+                        border: '1px dashed var(--success)',
+                        fontWeight: 700,
+                        fontSize: '15px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <MessageCircle size={18} /> Send a bargain request
+                    </button>
+                  ) : (
+                    <div style={{
+                      background: 'linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(34, 197, 94, 0.05) 100%)',
+                      border: '1px solid var(--success)',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      boxShadow: '0 4px 12px rgba(34, 197, 94, 0.1)',
+                      borderLeft: '4px dashed var(--success)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', paddingTop: '2px' }}>
+                          <MessageCircle size={16} color="var(--success)" style={{ flexShrink: 0 }} />
+                          <span style={{ fontSize: '12px', fontWeight: 800, color: 'var(--success)', whiteSpace: 'nowrap', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                            Bargain Request Attached
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => setBookingNote('')}
+                          style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: 0, width: '24px', height: '24px', minWidth: '24px', minHeight: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+                        >
+                          <X size={18} />
+                        </button>
+                      </div>
+                      <span style={{ fontSize: '14px', color: 'var(--text-main)', fontStyle: 'italic', whiteSpace: 'pre-wrap', paddingLeft: '22px' }}>
+                        "{bookingNote}"
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          <button 
+            onClick={handleProceedFromDatePicker}
+            style={{ width: '100%', padding: '18px', background: 'var(--primary)', color: 'white', border: 'none', borderRadius: '16px', fontSize: '18px', fontWeight: 700, cursor: 'pointer', boxShadow: 'var(--primary-glow)' }}
+          >
+            Proceed to Review
+          </button>
+        </div>
       </div>
 
       {/* Success Bottom Sheet */}
