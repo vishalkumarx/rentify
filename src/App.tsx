@@ -29,6 +29,7 @@ import EditProfile from './pages/EditProfile';
 import UserItems from './pages/UserItems';
 import RequestNeed from './pages/RequestNeed';
 import RecentlyAdded from './pages/RecentlyAdded';
+import Subscriptions from './pages/Subscriptions';
 
 const ProtectedRoute = ({ children, message }: { children: React.ReactNode, message?: string }) => {
   const { session, loading } = useAuth();
@@ -99,6 +100,7 @@ function AppRoutes() {
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/safety-guidelines" element={<SafetyGuidelines />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+      <Route path="/subscriptions" element={<Subscriptions />} />
     </Routes>
   );
 }
