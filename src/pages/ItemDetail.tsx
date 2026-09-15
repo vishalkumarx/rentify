@@ -7,7 +7,7 @@ import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
 import { useSEO } from '../hooks/useSEO';
 import { supabase, getStorageJson, setStorageJson } from '../lib/supabase';
-import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2, Share, Edit2, IndianRupee } from 'lucide-react';
+import { ArrowRight, ChevronLeft, MessageCircle, Heart, Tag, X, ChevronRight, Bell, BadgeCheck, Star, Calendar as CalendarIcon, Wallet, ShieldCheck, CheckCircle2, Building2, Lock, Trash2, Share, IndianRupee } from 'lucide-react';
 import { Calendar } from '../components/Calendar';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { useBookings } from '../context/BookingContext';
