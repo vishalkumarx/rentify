@@ -110,23 +110,6 @@ export default function MobileLayout() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          {/* Upgrade Button (Mobile Only) */}
-          <div className="mobile-only">
-            <button 
-              onClick={() => navigate('/subscriptions')}
-              style={{
-                display: 'flex', alignItems: 'center', gap: '4px',
-                background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)',
-                color: '#000', borderRadius: '20px', padding: '6px 12px',
-                border: 'none', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(244, 196, 48, 0.4)'
-              }}
-            >
-              <Star size={16} color="#000" fill="#000" />
-              Upgrade
-            </button>
-          </div>
-
           {/* Message Icon (Mobile Only) */}
           <div className="mobile-only">
             <button 
@@ -169,6 +152,10 @@ export default function MobileLayout() {
             
             {showTopMenu && (
               <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+                <div onClick={() => { setShowTopMenu(false); navigate('/subscriptions'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(245, 158, 11, 0.1) 100%)' }}>
+                  <Star size={18} color="#f59e0b" fill="#f59e0b" />
+                  <span style={{ fontSize: '15px', fontWeight: 700, color: '#f59e0b' }}>Upgrade to Premium</span>
+                </div>
                 <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
                   <Info size={18} className="text-volt" />
                   <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
