@@ -800,7 +800,7 @@ export default function ItemDetail() {
                     <div 
                       key={si.id} 
                       className="similar-items-card"
-                      onClick={() => navigate(`/item/${si.id}`)}
+                      onClick={() => window.open(`#/item/${si.id}`, '_blank')}
                       style={{ width: '160px', flexShrink: 0, scrollSnapAlign: 'start', background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
                     >
                       <div style={{ width: '100%', height: '120px', background: 'var(--bg-color)', position: 'relative' }}>
