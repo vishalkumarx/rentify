@@ -202,7 +202,15 @@ export default function Profile() {
       {/* Sidebar: Profile Info & Settings */}
       <div className="profile-sidebar">
         {/* Profile Header */}
-        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+          <button 
+            onClick={() => navigate('/edit-profile')}
+            style={{ position: 'absolute', top: '24px', right: '24px', padding: '0', width: '32px', height: '32px', borderRadius: '16px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}
+            title="Edit Profile"
+          >
+            <Edit2 size={16} />
+          </button>
+          
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {(() => {
               const avatarUrl = profile?.avatar_url || session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture;
@@ -215,22 +223,14 @@ export default function Profile() {
                 </div>
               );
             })()}
-            <div style={{ overflow: 'hidden', flex: 1, minWidth: 0 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden', flex: 1, minWidth: 0 }}>
-                  <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-                    {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
-                  </h2>
-                  {verificationInfo?.status === 'approved' && (
-                    <BadgeCheck size={24} fill="#1877F2" color="white" style={{ flexShrink: 0 }} />
-                  )}
-                </div>
-                <button 
-                  onClick={() => navigate('/edit-profile')}
-                  style={{ padding: '6px 12px', borderRadius: '8px', background: 'var(--surface-border)', color: 'var(--text-main)', border: 'none', fontWeight: 600, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0, marginLeft: '8px' }}
-                >
-                  <Edit2 size={14} /> Edit
-                </button>
+            <div style={{ overflow: 'hidden', flex: 1, minWidth: 0, paddingRight: '36px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                <h2 style={{ fontSize: '22px', margin: '0', fontWeight: 700, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', color: 'var(--text-main)' }}>
+                  {profile?.name || session?.user?.user_metadata?.full_name || session?.user?.email?.split('@')[0] || 'User'}
+                </h2>
+                {verificationInfo?.status === 'approved' && (
+                  <BadgeCheck size={24} fill="#1877F2" color="white" style={{ flexShrink: 0 }} />
+                )}
               </div>
               <div title={profile?.department} style={{ marginTop: '4px', display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-main)', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontWeight: 500 }}>
                 <Building2 size={16} color="var(--text-muted)" />
@@ -242,16 +242,16 @@ export default function Profile() {
                   <span style={{ lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>{profile.bio}</span>
                 </div>
               )}
-              <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Mail size={16} />
-                {session?.user?.email}
+              <div title={session?.user?.email} style={{ marginTop: '4px', color: 'var(--text-muted)', fontSize: '14px', whiteSpace: 'normal', wordBreak: 'break-all', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                <Mail size={16} style={{ flexShrink: 0, marginTop: '2px' }} />
+                <span>{session?.user?.email}</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px' }}>
-                <Star size={16} fill="var(--warning)" color="var(--warning)" />
-                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--warning)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '6px', overflow: 'hidden' }}>
+                <Star size={16} fill="var(--warning)" color="var(--warning)" style={{ flexShrink: 0 }} />
+                <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--warning)', flexShrink: 0 }}>
                   {reviews.length > 0 ? (reviews.reduce((acc, curr) => acc + (curr.rating || 5), 0) / reviews.length).toFixed(1) : '0.0'}
                 </span>
-                <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500 }}>
+                <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   ({reviews.length} {reviews.length === 1 ? 'global rating' : 'global ratings'})
                 </span>
               </div>
@@ -348,13 +348,66 @@ export default function Profile() {
           </div>
         </div>
 
+                {/* Desktop Tabs Menu */}
+        <div className="glass-panel desktop-only" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', padding: '12px' }}>
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                textAlign: 'left',
+                background: activeTab === tab ? 'var(--primary)' : 'transparent',
+                color: activeTab === tab ? '#000' : 'var(--text-main)',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '15px',
+                fontWeight: activeTab === tab ? 800 : 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                transition: 'background 0.2s',
+                marginBottom: '4px'
+              }}
+            >
+              {tab}
+              {activeTab === tab && <ChevronRight size={16} />}
+            </button>
+          ))}
+        </div>
+
+        
+
+        {/* Settings Menu */}
+
+        <div className="glass-panel desktop-only" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', marginTop: '24px' }}>
+          <h3 style={{ padding: '20px 20px 8px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Account Settings</h3>
+          
+          <button onClick={() => setShowComingSoon(true)} style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none', cursor: 'pointer' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><CreditCard size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Payment Methods</span></div>
+            <ChevronRight size={20} color="var(--text-muted)" />
+          </button>
+          <button onClick={() => setShowComingSoon(true)} style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none', cursor: 'pointer' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}><Settings size={20} color="var(--text-muted)" /> <span style={{ fontWeight: 500 }}>Preferences</span></div>
+            <ChevronRight size={20} color="var(--text-muted)" />
+          </button>
+          <button 
+            onClick={() => setShowLogoutConfirm(true)}
+            style={{ background: 'transparent', color: 'var(--danger)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, display: 'flex', alignItems: 'center', gap: '12px', boxShadow: 'none' }}
+          >
+            <LogOut size={20} />
+            <span style={{ fontWeight: 500 }}>Sign Out</span>
+          </button>
+        </div>
         {/* Settings Menu moved to bottom */}
       </div>
 
       {/* Main Content: Tabs & Listings */}
       <div className="profile-content">
         {/* Sub Tabs Dropdown Menu */}
-        <div style={{ marginBottom: '24px', position: 'relative' }}>
+        <div className="mobile-only" style={{ marginBottom: '24px', position: 'relative' }}>
           <button
             onClick={() => setIsTabsMenuOpen(!isTabsMenuOpen)}
             style={{
@@ -447,8 +500,13 @@ export default function Profile() {
                       </div>
                     </div>
                     <div style={{ padding: '12px' }}>
-                      <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h4>
-                      <p style={{ margin: '4px 0 0 0', fontSize: '12px', color: 'var(--text-muted)' }}>₹{item.price}/day</p>
+                      <div className="item-title-price-container">
+            <h4 style={{ margin: 0, fontSize: '14px', fontWeight: 600, flex: 1 }}>{item.title}</h4>
+            <div style={{ background: '#000000', color: '#ffffff', padding: '2px 6px', borderRadius: '6px', fontSize: '11px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+              ₹{item.price}<span style={{ fontSize: '9px', opacity: 0.8, fontWeight: 600 }}>/day</span>
+            </div>
+          </div>
+                      
                     </div>
                   </div>
                 ))}
@@ -649,9 +707,7 @@ export default function Profile() {
             )}
           </div>
         )}
-
-        {/* Settings Menu */}
-        <div className="glass-panel" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', marginTop: '24px' }}>
+        <div className="glass-panel mobile-only" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', marginTop: '24px' }}>
           <h3 style={{ padding: '20px 20px 8px', margin: 0, fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Account Settings</h3>
           
           <button onClick={() => setShowComingSoon(true)} style={{ background: 'transparent', color: 'var(--text-main)', textAlign: 'left', padding: '16px 20px', borderRadius: 0, borderBottom: '1px solid var(--surface-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', boxShadow: 'none', cursor: 'pointer' }}>
@@ -671,7 +727,6 @@ export default function Profile() {
           </button>
         </div>
       </div>
-
 
       {/* Logout Confirmation */}
       {showLogoutConfirm && createPortal(

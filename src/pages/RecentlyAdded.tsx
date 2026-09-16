@@ -107,8 +107,11 @@ export default function RecentlyAdded() {
               </div>
               
               <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, lineHeight: 1.3, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
+                <div className="item-title-price-container">
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, lineHeight: 1.3, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>{item.title}</h3>
+                  <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+                    ₹{item.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '12px' }}>
                   <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '2px 6px', borderRadius: '4px' }}>
@@ -116,10 +119,7 @@ export default function RecentlyAdded() {
                   </span>
                 </div>
                 <div style={{ marginTop: 'auto', paddingTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div>
-                    <span style={{ fontSize: '20px', fontWeight: 800, color: 'var(--primary)' }}>₹{item.price}</span>
-                    <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/day</span>
-                  </div>
+                  
                 </div>
               </div>
             </div>

@@ -242,15 +242,28 @@ export default function MobileLayout() {
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
           icon={
-            <div style={{ position: 'relative', width: '24px', height: '24px' }}>
-              <User size={24} style={{ position: 'absolute', top: 0, left: 0, color: 'var(--text-main)' }} />
-              {avatarUrl && (
-                <img 
-                  src={avatarUrl} 
-                  alt="Profile" 
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', borderRadius: '12px', objectFit: 'cover', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', background: 'var(--surface)' }} 
-                  onError={(e) => { e.currentTarget.style.display = 'none'; }} 
-                />
+            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', overflow: 'hidden' }}>
+              {avatarUrl ? (
+                <>
+                  <img 
+                    src={avatarUrl} 
+                    alt="Profile" 
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      if (e.currentTarget.nextElementSibling) {
+                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'block';
+                      }
+                    }} 
+                  />
+                  <div style={{ display: 'none', width: '100%', height: '100%', display: 'none' }} className="fallback-icon">
+                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <User size={16} color="var(--text-main)" />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <User size={16} color="var(--text-main)" />
               )}
             </div>
           }

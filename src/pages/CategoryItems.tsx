@@ -174,10 +174,13 @@ export default function CategoryItems() {
                       <span style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--surface-border)', color: 'var(--text-muted)', padding: '2px 6px', borderRadius: '4px', marginBottom: '2px', textAlign: 'center', display: 'inline-block', alignSelf: 'flex-start' }}>
                         {item.category}
                       </span>
-                      <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
-                      <div style={{ fontWeight: 800, fontSize: '14px', color: 'var(--success)' }}>
-                        ₹{item.price}<span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
-                      </div>
+                      <div className="item-title-price-container">
+            <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>{item.title}</h3>
+            <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
+              ₹{item.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span>
+            </div>
+          </div>
+                      
                     </div>
                     
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>

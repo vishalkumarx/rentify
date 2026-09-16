@@ -275,9 +275,7 @@ export default function UserProfile() {
                       </span>
                       <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 800, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden', width: '100%' }}>{item.title}</h3>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-                        <div style={{ fontWeight: 800, fontSize: '15px', color: 'var(--success)' }}>
-                          ₹{item.price}<span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>/day</span>
-                        </div>
+                        
 
                       </div>
                     </div>
