@@ -814,7 +814,9 @@ export default function ItemDetail() {
                       </div>
                       <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{si.title}</h4>
-                        <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content' }}>₹{si.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span></div>
+                        <div className="price-chip">
+              ₹{si.price}<span>/day</span>
+            </div>
                       </div>
                     </div>
                   ))}
@@ -1080,7 +1082,9 @@ export default function ItemDetail() {
           <img src={item.image} alt={item.title} style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover' }} />
           <div>
             <h3 style={{ margin: '0 0 6px 0', fontSize: '16px' }}>{item.title}</h3>
-            <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content' }}>₹{item.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span></div>
+            <div className="price-chip">
+              ₹{item.price}<span>/day</span>
+            </div>
           </div>
         </div>
 

@@ -99,9 +99,9 @@ export default function UserItems() {
                     </div>
                   )}
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.8))', padding: '16px 12px 8px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                    <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content' }}>
-                      ₹{item.price}<span style={{ fontSize: '10px', fontWeight: 600, opacity: 0.8 }}>/day</span>
-                    </div>
+                    <div className="price-chip">
+              ₹{item.price}<span>/day</span>
+            </div>
                   </div>
                 </div>
                 <div style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>

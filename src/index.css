@@ -877,3 +877,34 @@ a:hover {
     width: 100% !important;
   }
 }
+
+/* Price Chip Styles */
+.price-chip {
+  background: #000000;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  width: fit-content;
+}
+
+.price-chip span {
+  font-size: 10px;
+  opacity: 0.8;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .price-chip {
+    font-size: 15px;
+    padding: 6px 10px;
+  }
+  
+  .price-chip span {
+    font-size: 12px;
+  }
+}

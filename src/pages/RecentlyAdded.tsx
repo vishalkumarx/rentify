@@ -109,9 +109,9 @@ export default function RecentlyAdded() {
               <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                 <div className="item-title-price-container">
                   <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, lineHeight: 1.3, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>{item.title}</h3>
-                  <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '2px', flexShrink: 0 }}>
-                    ₹{item.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span>
-                  </div>
+                  <div className="price-chip">
+              ₹{item.price}<span>/day</span>
+            </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-muted)', fontSize: '12px' }}>
                   <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', background: 'var(--primary-glow)', color: '#000', padding: '2px 6px', borderRadius: '4px' }}>
