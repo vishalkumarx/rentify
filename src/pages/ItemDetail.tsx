@@ -768,9 +768,10 @@ export default function ItemDetail() {
             )}
 
           </div>
+        </div>
 
             {similarItems.length > 0 && (
-              <div style={{ padding: '0 16px 24px' }}>
+              <div style={{ padding: '0 16px 24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
                 <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 800 }}>Similar Items</h3>
                 <div className="hide-scrollbar similar-items-container">
                   {similarItems.map(si => (
@@ -799,7 +800,6 @@ export default function ItemDetail() {
               </div>
             )}
 
-        </div>
       </main>
     </div>
 
