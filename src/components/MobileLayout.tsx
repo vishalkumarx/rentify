@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, User, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star } from 'lucide-react';
+import { Home, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -242,7 +242,7 @@ export default function MobileLayout() {
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
           icon={
-            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', overflow: 'hidden' }}>
+            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-border)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', overflow: 'hidden' }}>
               {avatarUrl ? (
                 <>
                   <img 
@@ -252,18 +252,20 @@ export default function MobileLayout() {
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       if (e.currentTarget.nextElementSibling) {
-                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'block';
+                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
                       }
                     }} 
                   />
-                  <div style={{ display: 'none', width: '100%', height: '100%' }} className="fallback-icon">
-                    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <User size={16} color="var(--text-main)" />
-                    </div>
+                  <div style={{ display: 'none', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} className="fallback-icon">
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-main)' }}>
+                      {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
+                    </span>
                   </div>
                 </>
               ) : (
-                <User size={16} color="var(--text-main)" />
+                <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-main)' }}>
+                  {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
+                </span>
               )}
             </div>
           }
