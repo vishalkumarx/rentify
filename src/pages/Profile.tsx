@@ -292,15 +292,7 @@ export default function Profile() {
           {/* Verification Section */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100%', maxWidth: '320px', margin: '0' }}>
             
-            {verificationInfo?.status === 'approved' ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '16px', border: '1px solid rgba(34, 197, 94, 0.2)' }}>
-                <ShieldCheck size={24} color="var(--success)" />
-                <div>
-                  <span style={{ display: 'block', fontWeight: 700, color: 'var(--success)' }}>Verified Student</span>
-                  <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>Your ID has been verified.</span>
-                </div>
-              </div>
-            ) : verificationInfo?.status === 'pending' ? (
+            {verificationInfo?.status === 'approved' ? null : verificationInfo?.status === 'pending' ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '16px', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
                 <ShieldCheck size={24} color="var(--warning)" />
                 <div>
