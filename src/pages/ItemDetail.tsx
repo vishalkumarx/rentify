@@ -209,21 +209,30 @@ export default function ItemDetail() {
     if (!item) return [];
     
     // Extract meaningful words (>2 chars) for matching
-    const getKeywords = (text: string) => text.toLowerCase().split(/[\\s\\W]+/).filter(w => w.length > 2);
+    const getKeywords = (text: string) => text.toLowerCase().split(/[\s\W]+/).filter(w => w.length > 2);
     const targetKeywords = getKeywords(item.title);
     
     let scoredItems = items
-      .filter(i => i.category === item.category && i.id !== item.id)
+      .filter(i => i.id !== item.id)
       .map(i => {
         const iKeywords = getKeywords(i.title);
-        // Score is how many keywords from the target title appear in the other item's title
-        const score = targetKeywords.reduce((acc, kw) => {
-          return acc + (iKeywords.some(ikw => ikw.includes(kw) || kw.includes(ikw)) ? 1 : 0);
+        // Assign 2 points for each keyword match
+        let score = targetKeywords.reduce((acc, kw) => {
+          return acc + (iKeywords.some(ikw => ikw.includes(kw) || kw.includes(ikw)) ? 2 : 0);
         }, 0);
+        
+        // Assign 1 point if it's in the same category
+        if (i.category === item.category) {
+          score += 1;
+        }
+        
         return { item: i, score };
       });
       
-    // Sort by score descending, so best text matches appear first.
+    // Filter to items that are either in the same category or share keywords
+    scoredItems = scoredItems.filter(s => s.score > 0);
+      
+    // Sort by score descending, so best matches appear first
     scoredItems.sort((a, b) => b.score - a.score);
     
     return scoredItems.map(s => s.item).slice(0, 5);
