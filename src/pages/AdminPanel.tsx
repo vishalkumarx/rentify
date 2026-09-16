@@ -709,6 +709,30 @@ export default function AdminPanel() {
                       {(siteSettings?.showMonsoonBanner ?? true) ? 'Visible' : 'Hidden'}
                     </button>
                   </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--surface-border)' }}>
+                    <div style={{ flex: 1, minWidth: '200px' }}>
+                      <h3 style={{ margin: '0 0 8px 0', fontSize: '18px', fontWeight: 700 }}>Featured Items</h3>
+                      <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-muted)' }}>Comma separated item IDs to show in the featured section (e.g. 12, 14, 15). Leave empty to hide the featured section.</p>
+                      <div style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
+                        <input 
+                          type="text" 
+                          value={siteSettings?.featuredItemIds?.join(', ') || ''} 
+                          onChange={(e) => setSiteSettings({ ...siteSettings, featuredItemIds: e.target.value.split(',').map((s: string) => s.trim()).filter(Boolean) })}
+                          placeholder="12, 14, 15"
+                          style={{ flex: 1, padding: '10px 12px', borderRadius: '10px', border: '1px solid var(--surface-border)', background: 'var(--bg-color)', color: 'var(--text-main)' }}
+                        />
+                        <button 
+                          onClick={async () => {
+                            await setStorageJson('admin/site_settings.json', siteSettings);
+                            toast.success('Featured items updated');
+                          }}
+                          style={{ padding: '8px 16px', borderRadius: '10px', background: 'var(--primary)', color: '#000', border: 'none', fontWeight: 700, cursor: 'pointer' }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </div>
+                  </div>
 
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--surface-border)' }}>
                     <div style={{ flex: 1, minWidth: '200px' }}>

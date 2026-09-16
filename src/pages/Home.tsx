@@ -157,10 +157,10 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeDepartment, setActiveDepartment] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [featuredOffset, setFeaturedOffset] = useState(0);
   const [showMonsoonBanner, setShowMonsoonBanner] = useState(true);
   const [showRakhiBanner, setShowRakhiBanner] = useState(true);
   const [showPromoCarousel, setShowPromoCarousel] = useState(true);
+  const [featuredItemIds, setFeaturedItemIds] = useState<string[]>([]);
   const [promos, setPromos] = useState<any[]>([]);
 
   useEffect(() => {
@@ -170,6 +170,7 @@ export default function Home() {
         if (settings.showMonsoonBanner !== undefined) setShowMonsoonBanner(settings.showMonsoonBanner);
         if (settings.showRakhiBanner !== undefined) setShowRakhiBanner(settings.showRakhiBanner);
         if (settings.showPromoCarousel !== undefined) setShowPromoCarousel(settings.showPromoCarousel);
+        if (settings.featuredItemIds !== undefined) setFeaturedItemIds(settings.featuredItemIds);
       }
       
       const pData = await getStorageJson('admin/promos.json');
@@ -186,17 +187,6 @@ export default function Home() {
       }
     };
     fetchSettings();
-  }, []);
-
-  useEffect(() => {
-    const updateFeaturedOffset = () => {
-      const msPerDay = 24 * 60 * 60 * 1000;
-      const dayIndex = Math.floor(Date.now() / msPerDay);
-      setFeaturedOffset(dayIndex * 3);
-    };
-    updateFeaturedOffset();
-    const interval = setInterval(updateFeaturedOffset, 60 * 1000);
-    return () => clearInterval(interval);
   }, []);
 
 
@@ -552,16 +542,11 @@ export default function Home() {
           </div>
         ) : (
           (() => {
-            const featuredCount = 3;
-            const safeOffset = filteredItems.length > 0 ? featuredOffset % filteredItems.length : 0;
-            const featuredItems: typeof filteredItems = [];
-            for (let i = 0; i < featuredCount; i++) {
-              if (filteredItems.length > 0) {
-                featuredItems.push(filteredItems[(safeOffset + i) % filteredItems.length]);
-              }
-            }
-            // Keep recently added items stable by using a static slice (max 15)
-            const normalItems = filteredItems.slice(featuredCount, featuredCount + 15);
+            const featuredItems = featuredItemIds.length > 0 
+              ? filteredItems.filter(item => featuredItemIds.includes(String(item.id)))
+              : [];
+            
+            const normalItems = filteredItems.filter(item => !featuredItems.some(f => f.id === item.id)).slice(0, 15);
             
             return (
               <>
@@ -584,7 +569,7 @@ export default function Home() {
                       <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
                         <Clock size={20} className="text-volt" /> Recently Added
                       </h2>
-                      {filteredItems.length > featuredCount + 15 && (
+                      {filteredItems.length > featuredItems.length + 15 && (
                         <button onClick={() => navigate('/recently-added')} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}>
                           View All <ArrowRight size={16} />
                         </button>
@@ -623,7 +608,7 @@ export default function Home() {
                         );
                       })}
                     </div>
-                    {filteredItems.length - featuredCount > 15 && (
+                    {filteredItems.length - featuredItems.length > 15 && (
                       <div style={{ padding: '0 16px 32px', display: 'flex', justifyContent: 'center' }}>
                         <button
                           onClick={() => navigate('/recently-added')}
