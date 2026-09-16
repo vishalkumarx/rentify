@@ -284,7 +284,7 @@ export default function Profile() {
                 onClick={() => navigate('/subscriptions')}
                 style={{ width: '100%', background: 'var(--primary)', color: '#000', border: 'none', padding: '10px 16px', borderRadius: '12px', fontWeight: 700, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)' }}
               >
-                Upgrade
+                {profile?.subscriptionPlan === 'Campus Gold' ? 'Manage' : 'Upgrade'}
               </button>
             </div>
           </div>

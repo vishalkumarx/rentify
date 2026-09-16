@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star, User } from 'lucide-react';
+import { Home, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star, User, Crown } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -13,7 +13,7 @@ export default function MobileLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { conversations } = useChat();
-  const { session } = useAuth();
+  const { session, profile } = useAuth();
   const { requests } = useBookings();
   
   const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
@@ -152,10 +152,17 @@ export default function MobileLayout() {
             
             {showTopMenu && (
               <div className="animate-fade-in" style={{ position: 'absolute', top: '50px', right: '-10px', width: '220px', background: 'var(--surface)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.15)', border: '1px solid var(--surface-border)', overflow: 'hidden', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
-                <div onClick={() => { setShowTopMenu(false); navigate('/subscriptions'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(245, 158, 11, 0.1) 100%)' }}>
-                  <Star size={18} color="#f59e0b" fill="#f59e0b" />
-                  <span style={{ fontSize: '15px', fontWeight: 700, color: '#f59e0b' }}>Upgrade to Premium</span>
-                </div>
+                {profile?.subscriptionPlan === 'Campus Gold' ? (
+                  <div onClick={() => { setShowTopMenu(false); navigate('/subscriptions'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.2) 100%)' }}>
+                    <Crown size={18} color="#f59e0b" fill="#f59e0b" />
+                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#f59e0b' }}>Campus Gold</span>
+                  </div>
+                ) : (
+                  <div onClick={() => { setShowTopMenu(false); navigate('/subscriptions'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer', background: 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.1) 0%, rgba(245, 158, 11, 0.1) 100%)' }}>
+                    <Star size={18} color="#f59e0b" fill="#f59e0b" />
+                    <span style={{ fontSize: '15px', fontWeight: 700, color: '#f59e0b' }}>Upgrade to Premium</span>
+                  </div>
+                )}
                 <div onClick={() => { setShowTopMenu(false); navigate('/coming-soon'); }} style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: '12px', borderBottom: '1px solid var(--surface-border)', cursor: 'pointer' }}>
                   <Info size={18} className="text-volt" />
                   <span style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-main)' }}>About the App</span>
@@ -245,8 +252,8 @@ export default function MobileLayout() {
         <NavItem icon={<User size={24} />} label="Profile" isActive={location.pathname === '/profile'} onClick={() => navigate('/profile')} />
         <NavItem 
           className="desktop-only"
-          icon={<Star size={24} color="#000" fill="#000" />} 
-          label="Upgrade" 
+          icon={profile?.subscriptionPlan === 'Campus Gold' ? <Crown size={24} color="#000" fill="#000" /> : <Star size={24} color="#000" fill="#000" />} 
+          label={profile?.subscriptionPlan === 'Campus Gold' ? "Manage" : "Upgrade"} 
           isActive={location.pathname === '/subscriptions'} 
           onClick={() => navigate('/subscriptions')}
           style={{ background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)', color: '#000', borderRadius: '20px', margin: '8px 4px', padding: '6px 12px', boxShadow: '0 4px 12px rgba(244, 196, 48, 0.4)', flexShrink: 0 }}
