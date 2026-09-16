@@ -86,6 +86,7 @@ function AppRoutes() {
         <Route path="/profile" element={<ProtectedRoute message="Login to view your profile and manage your active listings."><Profile /></ProtectedRoute>} />
         <Route path="/edit/:id" element={<ProtectedRoute message="Login to edit your listing."><EditPost /></ProtectedRoute>} />
         <Route path="/item-requests" element={<ItemRequestsFeed />} />
+        <Route path="/subscriptions" element={<Subscriptions />} />
       </Route>
       
       {/* Full Screen Modals/Pages */}
@@ -100,7 +101,6 @@ function AppRoutes() {
       <Route path="/how-it-works" element={<HowItWorks />} />
       <Route path="/safety-guidelines" element={<SafetyGuidelines />} />
       <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-      <Route path="/subscriptions" element={<Subscriptions />} />
     </Routes>
   );
 }

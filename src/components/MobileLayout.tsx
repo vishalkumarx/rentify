@@ -1,6 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { Home, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star } from 'lucide-react';
+import { Home, MessageCircle, CalendarCheck, Menu, X, Info, HelpCircle, ShieldCheck, Megaphone, Plus, Coffee, Upload, Star, User } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useChat } from '../context/ChatContext';
 import { useAuth } from '../context/AuthContext';
@@ -13,11 +13,8 @@ export default function MobileLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { conversations } = useChat();
-  const { session, profile } = useAuth();
-  const [avatarError, setAvatarError] = useState(false);
+  const { session } = useAuth();
   const { requests } = useBookings();
-
-  const avatarUrl = profile?.avatar_url || session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture;
   
   const totalUnread = conversations.reduce((acc, curr) => acc + (curr.unreadCount || 0), 0);
   const myIncomingRequests = requests.filter(r => r.owner_id === session?.user?.id && r.status === 'pending');
@@ -113,6 +110,23 @@ export default function MobileLayout() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {/* Upgrade Button (Mobile Only) */}
+          <div className="mobile-only">
+            <button 
+              onClick={() => navigate('/subscriptions')}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '4px',
+                background: 'linear-gradient(135deg, var(--primary) 0%, #f59e0b 100%)',
+                color: '#000', borderRadius: '20px', padding: '6px 12px',
+                border: 'none', fontWeight: 800, fontSize: '13px', cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(244, 196, 48, 0.4)'
+              }}
+            >
+              <Star size={16} color="#000" fill="#000" />
+              Upgrade
+            </button>
+          </div>
+
           {/* Message Icon (Mobile Only) */}
           <div className="mobile-only">
             <button 
@@ -241,31 +255,9 @@ export default function MobileLayout() {
         />
         <NavItem className="desktop-only" icon={<MessageCircle size={24} />} label="Messages" isActive={location.pathname === '/messages'} badgeCount={totalUnread} onClick={() => navigate('/messages')} />
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
+        <NavItem icon={<User size={24} />} label="Profile" isActive={location.pathname === '/profile'} onClick={() => navigate('/profile')} />
         <NavItem 
-          icon={
-            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary-glow)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--primary)' : '1px solid var(--primary-glow)', overflow: 'hidden', position: 'relative' }}>
-              {/* Always render the fallback initial behind the image */}
-              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--primary)', position: 'absolute', zIndex: 1 }}>
-                {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
-              </span>
-              
-              {/* Render image on top. If it's a transparent pixel, the initial will show through! */}
-              {avatarUrl && !avatarError && (
-                <img 
-                  src={avatarUrl} 
-                  alt="Profile" 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 2 }} 
-                  onError={() => setAvatarError(true)} 
-                />
-              )}
-            </div>
-          }
-          label="Profile" 
-          isActive={location.pathname === '/profile'} 
-          onClick={() => navigate('/profile')}
-          style={{ flexShrink: 0 }}
-        />
-        <NavItem 
+          className="desktop-only"
           icon={<Star size={24} color="#000" fill="#000" />} 
           label="Upgrade" 
           isActive={location.pathname === '/subscriptions'} 
