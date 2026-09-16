@@ -517,7 +517,7 @@ export default function Profile() {
                       <img src={item.image} alt={item.title} style={{ width: '100%', aspectRatio: '1/1', borderRadius: '8px', objectFit: 'cover' }} />
                       <div style={{ padding: '0 4px 4px', display: 'flex', flexDirection: 'column' }}>
                         <h3 style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{item.title}</h3>
-                        <span style={{ fontSize: '14px', fontWeight: 800, color: 'var(--primary)', marginTop: '2px' }}>₹{item.price}<span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>/day</span></span>
+                        <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content', marginTop: '2px' }}>₹{item.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span></div>
                       </div>
                       
                       <div style={{ position: 'absolute', top: '12px', right: '12px' }}>

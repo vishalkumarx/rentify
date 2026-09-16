@@ -383,7 +383,7 @@ export default function Home() {
                     <img src={item.image || 'https://via.placeholder.com/40'} alt={item.title} style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} />
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <span style={{ fontWeight: 600, fontSize: '14px', color: 'var(--text-main)' }}>{item.title}</span>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>₹{item.price}/day</span>
+                      <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '11px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content', marginTop: '4px' }}>₹{item.price}<span style={{ fontSize: '9px', opacity: 0.8, fontWeight: 600 }}>/day</span></div>
                     </div>
                   </div>
                 ))

@@ -814,7 +814,7 @@ export default function ItemDetail() {
                       </div>
                       <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                         <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{si.title}</h4>
-                        <div style={{ fontWeight: 800, color: 'var(--success)', fontSize: '14px' }}>₹{si.price}<span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></div>
+                        <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content' }}>₹{si.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span></div>
                       </div>
                     </div>
                   ))}
@@ -1080,7 +1080,7 @@ export default function ItemDetail() {
           <img src={item.image} alt={item.title} style={{ width: '60px', height: '60px', borderRadius: '12px', objectFit: 'cover' }} />
           <div>
             <h3 style={{ margin: '0 0 6px 0', fontSize: '16px' }}>{item.title}</h3>
-            <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--success)' }}>₹{item.price} / day</p>
+            <div style={{ background: '#000000', color: '#ffffff', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px', width: 'fit-content' }}>₹{item.price}<span style={{ fontSize: '10px', opacity: 0.8, fontWeight: 600 }}>/day</span></div>
           </div>
         </div>
 
@@ -1108,7 +1108,7 @@ export default function ItemDetail() {
               <span style={{ color: 'var(--text-main)', fontSize: '16px', fontWeight: 700 }}>Total Amount</span>
               <span style={{ color: 'var(--text-muted)', fontSize: '13px', marginTop: '2px' }}>{calculateDays()} {calculateDays() === 1 ? 'day' : 'days'} × ₹{item.price}</span>
             </div>
-            <span style={{ color: 'var(--success)', fontSize: '20px', fontWeight: 800 }}>₹{calculateDays() * Number(item.price)}</span>
+            <div style={{ background: '#000000', color: '#ffffff', padding: '6px 12px', borderRadius: '10px', fontSize: '16px', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '2px' }}>₹{calculateDays() * Number(item.price)}</div>
           </div>
         </div>
 
