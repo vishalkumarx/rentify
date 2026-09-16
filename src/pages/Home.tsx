@@ -560,8 +560,8 @@ export default function Home() {
                 featuredItems.push(filteredItems[(safeOffset + i) % filteredItems.length]);
               }
             }
-            // Keep recently added items stable by using a static slice (max 10)
-            const normalItems = filteredItems.slice(featuredCount, featuredCount + 10);
+            // Keep recently added items stable by using a static slice (max 15)
+            const normalItems = filteredItems.slice(featuredCount, featuredCount + 15);
             
             return (
               <>
@@ -584,7 +584,7 @@ export default function Home() {
                       <h2 style={{ fontSize: '20px', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
                         <Clock size={20} className="text-volt" /> Recently Added
                       </h2>
-                      {filteredItems.length > featuredCount + 10 && (
+                      {filteredItems.length > featuredCount + 15 && (
                         <button onClick={() => navigate('/recently-added')} style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', fontSize: '14px', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', padding: 0 }}>
                           View All <ArrowRight size={16} />
                         </button>
@@ -623,7 +623,7 @@ export default function Home() {
                         );
                       })}
                     </div>
-                    {filteredItems.length - featuredCount > 10 && (
+                    {filteredItems.length - featuredCount > 15 && (
                       <div style={{ padding: '0 16px 32px', display: 'flex', justifyContent: 'center' }}>
                         <button
                           onClick={() => navigate('/recently-added')}
