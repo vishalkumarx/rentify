@@ -856,3 +856,24 @@ a:hover {
     gap: 32px;
   }
 }
+
+/* Similar Items Responsive Layout */
+.similar-items-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 16px;
+  padding-bottom: 8px;
+  scroll-snap-type: x mandatory;
+}
+
+@media (min-width: 768px) {
+  .similar-items-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    overflow-x: visible;
+    scroll-snap-type: none;
+  }
+  .similar-items-card {
+    width: 100% !important;
+  }
+}

@@ -205,6 +205,8 @@ export default function ItemDetail() {
     }
   }, [item?.userId]);
 
+  const similarItems = item ? items.filter(i => i.category === item.category && i.id !== item.id).slice(0, 5) : [];
+
   if (loading) return null;
 
   if (!item) {
@@ -766,6 +768,37 @@ export default function ItemDetail() {
             )}
 
           </div>
+
+            {similarItems.length > 0 && (
+              <div style={{ padding: '0 16px 24px' }}>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', fontWeight: 800 }}>Similar Items</h3>
+                <div className="hide-scrollbar similar-items-container">
+                  {similarItems.map(si => (
+                    <div 
+                      key={si.id} 
+                      className="similar-items-card"
+                      onClick={() => navigate(`/item/${si.id}`)}
+                      style={{ width: '160px', flexShrink: 0, scrollSnapAlign: 'start', background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--surface-border)', overflow: 'hidden', cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
+                    >
+                      <div style={{ width: '100%', height: '120px', background: 'var(--bg-color)', position: 'relative' }}>
+                        <img src={si.image} alt={si.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                          onClick={(e) => { e.stopPropagation(); toggleLike(si.id); }}
+                          style={{ position: 'absolute', top: '8px', right: '8px', width: '28px', height: '28px', borderRadius: '14px', background: 'rgba(0,0,0,0.5)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                        >
+                          <Heart size={14} fill={si.liked ? 'var(--danger)' : 'none'} color={si.liked ? 'var(--danger)' : 'white'} />
+                        </button>
+                      </div>
+                      <div style={{ padding: '12px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+                        <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{si.title}</h4>
+                        <div style={{ fontWeight: 800, color: 'var(--success)', fontSize: '14px' }}>₹{si.price}<span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 500 }}>/day</span></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
         </div>
       </main>
     </div>
