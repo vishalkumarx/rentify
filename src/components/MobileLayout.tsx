@@ -243,18 +243,20 @@ export default function MobileLayout() {
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
           icon={
-            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary-glow)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--primary)' : '1px solid var(--primary-glow)', overflow: 'hidden' }}>
-              {avatarUrl && !avatarError ? (
+            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--primary-glow)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--primary)' : '1px solid var(--primary-glow)', overflow: 'hidden', position: 'relative' }}>
+              {/* Always render the fallback initial behind the image */}
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--primary)', position: 'absolute', zIndex: 1 }}>
+                {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
+              </span>
+              
+              {/* Render image on top. If it's a transparent pixel, the initial will show through! */}
+              {avatarUrl && !avatarError && (
                 <img 
                   src={avatarUrl} 
                   alt="Profile" 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'relative', zIndex: 2 }} 
                   onError={() => setAvatarError(true)} 
                 />
-              ) : (
-                <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--primary)' }}>
-                  {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
-                </span>
               )}
             </div>
           }
