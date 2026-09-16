@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useFeed } from '../context/FeedContext';
@@ -205,7 +205,29 @@ export default function ItemDetail() {
     }
   }, [item?.userId]);
 
-  const similarItems = item ? items.filter(i => i.category === item.category && i.id !== item.id).slice(0, 5) : [];
+  const similarItems = useMemo(() => {
+    if (!item) return [];
+    
+    // Extract meaningful words (>2 chars) for matching
+    const getKeywords = (text: string) => text.toLowerCase().split(/[\\s\\W]+/).filter(w => w.length > 2);
+    const targetKeywords = getKeywords(item.title);
+    
+    let scoredItems = items
+      .filter(i => i.category === item.category && i.id !== item.id)
+      .map(i => {
+        const iKeywords = getKeywords(i.title);
+        // Score is how many keywords from the target title appear in the other item's title
+        const score = targetKeywords.reduce((acc, kw) => {
+          return acc + (iKeywords.some(ikw => ikw.includes(kw) || kw.includes(ikw)) ? 1 : 0);
+        }, 0);
+        return { item: i, score };
+      });
+      
+    // Sort by score descending, so best text matches appear first.
+    scoredItems.sort((a, b) => b.score - a.score);
+    
+    return scoredItems.map(s => s.item).slice(0, 5);
+  }, [item, items]);
 
   if (loading) return null;
 
