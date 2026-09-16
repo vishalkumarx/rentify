@@ -14,6 +14,7 @@ export default function MobileLayout() {
   const navigate = useNavigate();
   const { conversations } = useChat();
   const { session, profile } = useAuth();
+  const [avatarError, setAvatarError] = useState(false);
   const { requests } = useBookings();
 
   const avatarUrl = profile?.avatar_url || session?.user?.user_metadata?.avatar_url || session?.user?.user_metadata?.picture;
@@ -242,30 +243,20 @@ export default function MobileLayout() {
         <NavItem icon={<CalendarCheck size={24} />} label="Requests" isActive={location.pathname === '/requests'} badgeCount={myIncomingRequests.length} onClick={() => navigate('/requests')} />
         <NavItem 
           icon={
-            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-border)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', overflow: 'hidden' }}>
-              {avatarUrl ? (
-                <>
-                  <img 
-                    src={avatarUrl} 
-                    alt="Profile" 
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      if (e.currentTarget.nextElementSibling) {
-                        (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                      }
-                    }} 
-                  />
-                  <div style={{ display: 'none', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'center' }} className="fallback-icon">
-                    <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-main)' }}>
-                      {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-main)' }}>
-                  {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
-                </span>
+            <div style={{ width: '26px', height: '26px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-border)', borderRadius: '13px', border: location.pathname === '/profile' ? '2px solid var(--text-main)' : '1px solid var(--surface-border)', overflow: 'hidden', position: 'relative' }}>
+              {/* Always render fallback underneath */}
+              <span style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-main)', zIndex: 1 }}>
+                {(profile?.name?.[0] || session?.user?.user_metadata?.full_name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
+              </span>
+              
+              {/* Conditionally render image on top if no error yet */}
+              {avatarUrl && !avatarError && (
+                <img 
+                  src={avatarUrl} 
+                  alt="Profile" 
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 2, background: 'var(--surface-border)' }} 
+                  onError={() => setAvatarError(true)} 
+                />
               )}
             </div>
           }
