@@ -256,7 +256,7 @@ export default function MobileLayout() {
                       }
                     }} 
                   />
-                  <div style={{ display: 'none', width: '100%', height: '100%', display: 'none' }} className="fallback-icon">
+                  <div style={{ display: 'none', width: '100%', height: '100%' }} className="fallback-icon">
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <User size={16} color="var(--text-main)" />
                     </div>
